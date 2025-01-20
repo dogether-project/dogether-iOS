@@ -4,8 +4,8 @@
 <dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
-        <key>ITSAppUsesNonExemptEncryption</key>
-        <false/>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>
