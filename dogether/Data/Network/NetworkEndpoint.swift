@@ -24,23 +24,23 @@ enum NetworkMethod: String {
 }
 
 enum ServerEndpoint: NetworkEndpoint {
-    var serverURL: URL? { URL(string: "dogether.domain.site") }    // TODO: 추후 dogether domain으로 수정
+    var serverURL: URL? { URL(string: "https://api-dev.dogether.site") }
     // MARK: - APIs
-    case test   // TODO: 추후 테스트 API 또는 실 API로 수정
+    case createGroup(createGroupRequest: CreateGroupRequest)
     
     // MARK: - path
     var path: String {
         switch self {
-        case .test:
-            return "/test"
+        case .createGroup:
+            return "/api/groups"
         }
     }
     
     // MARK: - method
     var method: NetworkMethod {
         switch self {
-        case .test:
-            return .get
+        case .createGroup:
+            return .post
         }
     }
     
@@ -55,16 +55,17 @@ enum ServerEndpoint: NetworkEndpoint {
     // MARK: - header
     var header: [String : String]? {
         switch self {
-        default:
-            return nil
+        case .createGroup:
+//            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
+            return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
         }
     }
     
     // MARK: - body
     var body: (any Encodable)? {
         switch self {
-        default:
-            return nil
+        case .createGroup(let createGroupRequest):
+            return createGroupRequest
         }
     }
 }
