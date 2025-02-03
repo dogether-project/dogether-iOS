@@ -34,7 +34,7 @@ class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
                 await UIApplication.shared.registerForRemoteNotifications()
             }
         case .denied:
-            break   // TODO: 알림이 꺼져있다는 Alert 등으로 사용자를 설정 앱으로 유도
+            SystemManager().openSettingApp()    // TODO: 추후 Alert 추가
         default:    // MARK: .authorized, .provisional, .ephemeral
             break
         }
