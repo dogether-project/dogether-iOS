@@ -1,0 +1,71 @@
+//
+//  NetworkEndpoint.swift
+//  dogether
+//
+//  Created by seungyooooong on 1/27/25.
+//
+
+import Foundation
+
+protocol NetworkEndpoint {
+    var serverURL: URL? { get }
+    var path: String { get }
+    var method: NetworkMethod { get }
+    var parameters: [URLQueryItem]? { get }
+    var header: [String: String]? { get }
+    var body: Encodable? { get }
+}
+
+enum NetworkMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case delete = "DELETE"
+}
+
+enum ServerEndpoint: NetworkEndpoint {
+    var serverURL: URL? { URL(string: "https://api-dev.dogether.site") }
+    // MARK: - APIs
+    case createGroup(createGroupRequest: CreateGroupRequest)
+    
+    // MARK: - path
+    var path: String {
+        switch self {
+        case .createGroup:
+            return "/api/groups"
+        }
+    }
+    
+    // MARK: - method
+    var method: NetworkMethod {
+        switch self {
+        case .createGroup:
+            return .post
+        }
+    }
+    
+    // MARK: - parameters
+    var parameters: [URLQueryItem]? {
+        switch self {
+        default:
+            return nil
+        }
+    }
+    
+    // MARK: - header
+    var header: [String : String]? {
+        switch self {
+        case .createGroup:
+//            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
+            return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
+        }
+    }
+    
+    // MARK: - body
+    var body: (any Encodable)? {
+        switch self {
+        case .createGroup(let createGroupRequest):
+            return createGroupRequest
+        }
+    }
+}
