@@ -15,7 +15,7 @@ class NetworkService {
         guard let baseURL = endpoint.serverURL else { return nil }
         let url = baseURL.appendingPathComponent(endpoint.path)
         
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return nil}
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return nil }
         components.queryItems = endpoint.parameters
         
         return components.url
