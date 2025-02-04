@@ -33,6 +33,9 @@ enum ServerEndpoint: NetworkEndpoint {
     case getGroupInfo
     case getMySummary
     case getTeamSummary
+    case createTodos(createTodosRequest: CreateTodosRequest)
+    case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
+    case getMyYesterdayTodos
     
     // MARK: - path
     var path: String {
@@ -51,6 +54,12 @@ enum ServerEndpoint: NetworkEndpoint {
             return "/api/groups/summary/my"
         case .getTeamSummary:
             return "/api/groups/summary/team"
+        case .createTodos:
+            return "/api/todos"
+        case .certifyTodo(let todoId, _):
+            return "/api/todos/\(todoId)/certify"
+        case .getMyYesterdayTodos:
+            return "/api/todos/my/yesterday"
         }
     }
     
@@ -59,11 +68,14 @@ enum ServerEndpoint: NetworkEndpoint {
         switch self {
         case .getGroupInfo,
                 .getMySummary,
-                .getTeamSummary:
+                .getTeamSummary,
+                .getMyYesterdayTodos:
             return .get
         case .appleLogin,
                 .createGroup,
-                .joinGroup:
+                .joinGroup,
+                .createTodos,
+                .certifyTodo:
             return .post
         case .withdraw:
             return .delete
@@ -88,7 +100,10 @@ enum ServerEndpoint: NetworkEndpoint {
                 .joinGroup,
                 .getGroupInfo,
                 .getMySummary,
-                .getTeamSummary:
+                .getTeamSummary,
+                .createTodos,
+                .certifyTodo,
+                .getMyYesterdayTodos:
 //            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
             return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
         }
@@ -105,6 +120,10 @@ enum ServerEndpoint: NetworkEndpoint {
             return createGroupRequest
         case .joinGroup(let joinGroupRequest):
             return joinGroupRequest
+        case .createTodos(let createTodosRequest):
+            return createTodosRequest
+        case .certifyTodo(_, let certifyTodoRequest):
+            return certifyTodoRequest
         default:
             return nil
         }
