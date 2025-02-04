@@ -29,6 +29,10 @@ enum ServerEndpoint: NetworkEndpoint {
     case appleLogin(appleLoginRequest: AppleLoginRequest)
     case withdraw(withdrawRequest: WithdrawRequest)
     case createGroup(createGroupRequest: CreateGroupRequest)
+    case joinGroup(joinGroupRequest: JoinGroupRequest)
+    case getGroupInfo
+    case getMySummary
+    case getTeamSummary
     
     // MARK: - path
     var path: String {
@@ -39,14 +43,27 @@ enum ServerEndpoint: NetworkEndpoint {
             return "/api/auth/withdraw"
         case .createGroup:
             return "/api/groups"
+        case .joinGroup:
+            return "/api/groups/join"
+        case .getGroupInfo:
+            return "/api/groups/info/current"
+        case .getMySummary:
+            return "/api/groups/summary/my"
+        case .getTeamSummary:
+            return "/api/groups/summary/team"
         }
     }
     
     // MARK: - method
     var method: NetworkMethod {
         switch self {
+        case .getGroupInfo,
+                .getMySummary,
+                .getTeamSummary:
+            return .get
         case .appleLogin,
-                .createGroup:
+                .createGroup,
+                .joinGroup:
             return .post
         case .withdraw:
             return .delete
@@ -67,7 +84,11 @@ enum ServerEndpoint: NetworkEndpoint {
         case .appleLogin:
             return ["Content-Type": "application/json"]
         case .withdraw,
-                .createGroup:
+                .createGroup,
+                .joinGroup,
+                .getGroupInfo,
+                .getMySummary,
+                .getTeamSummary:
 //            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
             return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
         }
@@ -82,6 +103,10 @@ enum ServerEndpoint: NetworkEndpoint {
             return withdrawRequest
         case .createGroup(let createGroupRequest):
             return createGroupRequest
+        case .joinGroup(let joinGroupRequest):
+            return joinGroupRequest
+        default:
+            return nil
         }
     }
 }
