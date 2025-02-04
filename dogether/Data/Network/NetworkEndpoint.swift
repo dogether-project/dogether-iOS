@@ -26,11 +26,17 @@ enum NetworkMethod: String {
 enum ServerEndpoint: NetworkEndpoint {
     var serverURL: URL? { URL(string: "https://api-dev.dogether.site") }
     // MARK: - APIs
+    case appleLogin(appleLoginRequest: AppleLoginRequest)
+    case withdraw(withdrawRequest: WithdrawRequest)
     case createGroup(createGroupRequest: CreateGroupRequest)
     
     // MARK: - path
     var path: String {
         switch self {
+        case .appleLogin:
+            return "/api/auth/login"
+        case .withdraw:
+            return "/api/auth/withdraw"
         case .createGroup:
             return "/api/groups"
         }
@@ -39,8 +45,11 @@ enum ServerEndpoint: NetworkEndpoint {
     // MARK: - method
     var method: NetworkMethod {
         switch self {
-        case .createGroup:
+        case .appleLogin,
+                .createGroup:
             return .post
+        case .withdraw:
+            return .delete
         }
     }
     
@@ -55,7 +64,10 @@ enum ServerEndpoint: NetworkEndpoint {
     // MARK: - header
     var header: [String : String]? {
         switch self {
-        case .createGroup:
+        case .appleLogin:
+            return ["Content-Type": "application/json"]
+        case .withdraw,
+                .createGroup:
 //            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
             return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
         }
@@ -64,6 +76,10 @@ enum ServerEndpoint: NetworkEndpoint {
     // MARK: - body
     var body: (any Encodable)? {
         switch self {
+        case .appleLogin(let appleLoginRequest):
+            return appleLoginRequest
+        case .withdraw(let withdrawRequest):
+            return withdrawRequest
         case .createGroup(let createGroupRequest):
             return createGroupRequest
         }
