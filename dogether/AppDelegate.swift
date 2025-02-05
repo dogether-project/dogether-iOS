@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // MARK: - about PushNotice
         FirebaseApp.configure()
         _ = PushNoticeManager.shared
+        application.registerForRemoteNotifications()
         
         return true
     }

@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 2/1/25.
 //
 
-import UIKit
 import UserNotifications
 import FirebaseMessaging
 
@@ -30,13 +29,11 @@ class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
         let settings = await userNoti.notificationSettings()
         switch settings.authorizationStatus {
         case .notDetermined:
-            if try await userNoti.requestAuthorization(options: [.alert, .badge, .sound]) {
-                await UIApplication.shared.registerForRemoteNotifications()
-            }
+            try await userNoti.requestAuthorization(options: [.alert, .badge, .sound])
         case .denied:
             SystemManager().openSettingApp()    // TODO: 추후 Alert 추가
         default:    // MARK: .authorized, .provisional, .ephemeral
-            await UIApplication.shared.registerForRemoteNotifications()
+            break
         }
     }
     
