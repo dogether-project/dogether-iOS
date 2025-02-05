@@ -39,6 +39,8 @@ enum ServerEndpoint: NetworkEndpoint {
     case reviewTodo(todoId: String, reviewTodoRequest: ReviewTodoRequest)
     case getReviews
     case getReview(todoId: String)
+    case saveNotiToken(saveNotiTokenRequest: SaveNotiTokenRequest)
+    case removeNotiToken(removeNotiTokenRequest: RemoveNotiTokenRequest)
     
     // MARK: - path
     var path: String {
@@ -69,6 +71,10 @@ enum ServerEndpoint: NetworkEndpoint {
             return "/api/todo-certifications/pending-review"
         case .getReview(let todoId):
             return "/api/todo=certifications/\(todoId)"
+        case .saveNotiToken:
+            return "/api/notification/tokens"
+        case .removeNotiToken:
+            return "/api/notification/tokens"
         }
     }
     
@@ -87,9 +93,11 @@ enum ServerEndpoint: NetworkEndpoint {
                 .joinGroup,
                 .createTodos,
                 .certifyTodo,
-                .reviewTodo:
+                .reviewTodo,
+                .saveNotiToken:
             return .post
-        case .withdraw:
+        case .withdraw,
+                .removeNotiToken:
             return .delete
         }
     }
@@ -118,7 +126,9 @@ enum ServerEndpoint: NetworkEndpoint {
                 .getMyYesterdayTodos,
                 .reviewTodo,
                 .getReviews,
-                .getReview:
+                .getReview,
+                .saveNotiToken,
+                .removeNotiToken:
 //            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
             return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
         }
@@ -141,6 +151,10 @@ enum ServerEndpoint: NetworkEndpoint {
             return certifyTodoRequest
         case .reviewTodo(_, let reviewTodoRequest):
             return reviewTodoRequest
+        case .saveNotiToken(let saveNotiTokenRequest):
+            return saveNotiTokenRequest
+        case .removeNotiToken(let removeNotiTokenRequest):
+            return removeNotiTokenRequest
         default:
             return nil
         }
