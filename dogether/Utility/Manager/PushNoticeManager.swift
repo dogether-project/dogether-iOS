@@ -36,7 +36,7 @@ class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
         case .denied:
             SystemManager().openSettingApp()    // TODO: 추후 Alert 추가
         default:    // MARK: .authorized, .provisional, .ephemeral
-            break
+            await UIApplication.shared.registerForRemoteNotifications()
         }
     }
     
