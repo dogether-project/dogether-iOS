@@ -36,6 +36,9 @@ enum ServerEndpoint: NetworkEndpoint {
     case createTodos(createTodosRequest: CreateTodosRequest)
     case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
     case getMyYesterdayTodos
+    case reviewTodo(todoId: String, reviewTodoRequest: ReviewTodoRequest)
+    case getReviews
+    case getReview(todoId: String)
     
     // MARK: - path
     var path: String {
@@ -60,6 +63,12 @@ enum ServerEndpoint: NetworkEndpoint {
             return "/api/todos/\(todoId)/certify"
         case .getMyYesterdayTodos:
             return "/api/todos/my/yesterday"
+        case .reviewTodo(let todoId, _):
+            return "/api/todo-certifications/\(todoId)/review"
+        case .getReviews:
+            return "/api/todo-certifications/pending-review"
+        case .getReview(let todoId):
+            return "/api/todo=certifications/\(todoId)"
         }
     }
     
@@ -69,13 +78,16 @@ enum ServerEndpoint: NetworkEndpoint {
         case .getGroupInfo,
                 .getMySummary,
                 .getTeamSummary,
-                .getMyYesterdayTodos:
+                .getMyYesterdayTodos,
+                .getReviews,
+                .getReview:
             return .get
         case .appleLogin,
                 .createGroup,
                 .joinGroup,
                 .createTodos,
-                .certifyTodo:
+                .certifyTodo,
+                .reviewTodo:
             return .post
         case .withdraw:
             return .delete
@@ -103,7 +115,10 @@ enum ServerEndpoint: NetworkEndpoint {
                 .getTeamSummary,
                 .createTodos,
                 .certifyTodo,
-                .getMyYesterdayTodos:
+                .getMyYesterdayTodos,
+                .reviewTodo,
+                .getReviews,
+                .getReview:
 //            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
             return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
         }
@@ -124,6 +139,8 @@ enum ServerEndpoint: NetworkEndpoint {
             return createTodosRequest
         case .certifyTodo(_, let certifyTodoRequest):
             return certifyTodoRequest
+        case .reviewTodo(_, let reviewTodoRequest):
+            return reviewTodoRequest
         default:
             return nil
         }

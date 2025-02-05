@@ -11,5 +11,5 @@ struct GetTeamSummaryResponse: TotalCount, Decodable {
     let totalTodoCount: Int
     let totalCertificatedCount: Int
     let totalApprovedCount: Int
-    let ranking: [RankingInfo]
+    let ranking: [RankingModel]
 }
