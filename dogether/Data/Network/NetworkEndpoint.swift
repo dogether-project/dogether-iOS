@@ -8,7 +8,6 @@
 import Foundation
 
 protocol NetworkEndpoint {
-    var serverURL: URL? { get }
     var path: String { get }
     var method: NetworkMethod { get }
     var parameters: [URLQueryItem]? { get }
@@ -23,140 +22,24 @@ enum NetworkMethod: String {
     case delete = "DELETE"
 }
 
-enum ServerEndpoint: NetworkEndpoint {
-    var serverURL: URL? { URL(string: "https://api-dev.dogether.site") }
-    // MARK: - APIs
-    case appleLogin(appleLoginRequest: AppleLoginRequest)
-    case withdraw(withdrawRequest: WithdrawRequest)
-    case createGroup(createGroupRequest: CreateGroupRequest)
-    case joinGroup(joinGroupRequest: JoinGroupRequest)
-    case getGroupInfo
-    case getMySummary
-    case getTeamSummary
-    case createTodos(createTodosRequest: CreateTodosRequest)
-    case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
-    case getMyYesterdayTodos
-    case reviewTodo(todoId: String, reviewTodoRequest: ReviewTodoRequest)
-    case getReviews
-    case getReview(todoId: String)
-    case saveNotiToken(saveNotiTokenRequest: SaveNotiTokenRequest)
-    case removeNotiToken(removeNotiTokenRequest: RemoveNotiTokenRequest)
-    
-    // MARK: - path
-    var path: String {
-        switch self {
-        case .appleLogin:
-            return "/api/auth/login"
-        case .withdraw:
-            return "/api/auth/withdraw"
-        case .createGroup:
-            return "/api/groups"
-        case .joinGroup:
-            return "/api/groups/join"
-        case .getGroupInfo:
-            return "/api/groups/info/current"
-        case .getMySummary:
-            return "/api/groups/summary/my"
-        case .getTeamSummary:
-            return "/api/groups/summary/team"
-        case .createTodos:
-            return "/api/todos"
-        case .certifyTodo(let todoId, _):
-            return "/api/todos/\(todoId)/certify"
-        case .getMyYesterdayTodos:
-            return "/api/todos/my/yesterday"
-        case .reviewTodo(let todoId, _):
-            return "/api/todo-certifications/\(todoId)/review"
-        case .getReviews:
-            return "/api/todo-certifications/pending-review"
-        case .getReview(let todoId):
-            return "/api/todo=certifications/\(todoId)"
-        case .saveNotiToken:
-            return "/api/notification/tokens"
-        case .removeNotiToken:
-            return "/api/notification/tokens"
-        }
+enum Path {
+    static let api = "/api"
+    static let auth = "/auth"
+    static let groups = "/groups"
+    static let todos = "/todos"
+    static let todoCertifications = "/todo-certifications"
+    static let notification = "/notification"
+}
+
+enum Header {
+    enum Key {
+        static let contentType = "Content-Type"
+        static let authorization = "Authorization"
     }
     
-    // MARK: - method
-    var method: NetworkMethod {
-        switch self {
-        case .getGroupInfo,
-                .getMySummary,
-                .getTeamSummary,
-                .getMyYesterdayTodos,
-                .getReviews,
-                .getReview:
-            return .get
-        case .appleLogin,
-                .createGroup,
-                .joinGroup,
-                .createTodos,
-                .certifyTodo,
-                .reviewTodo,
-                .saveNotiToken:
-            return .post
-        case .withdraw,
-                .removeNotiToken:
-            return .delete
-        }
-    }
-    
-    // MARK: - parameters
-    var parameters: [URLQueryItem]? {
-        switch self {
-        default:
-            return nil
-        }
-    }
-    
-    // MARK: - header
-    var header: [String : String]? {
-        switch self {
-        case .appleLogin:
-            return ["Content-Type": "application/json"]
-        case .withdraw,
-                .createGroup,
-                .joinGroup,
-                .getGroupInfo,
-                .getMySummary,
-                .getTeamSummary,
-                .createTodos,
-                .certifyTodo,
-                .getMyYesterdayTodos,
-                .reviewTodo,
-                .getReviews,
-                .getReview,
-                .saveNotiToken,
-                .removeNotiToken:
-//            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
-            return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
-        }
-    }
-    
-    // MARK: - body
-    var body: (any Encodable)? {
-        switch self {
-        case .appleLogin(let appleLoginRequest):
-            return appleLoginRequest
-        case .withdraw(let withdrawRequest):
-            return withdrawRequest
-        case .createGroup(let createGroupRequest):
-            return createGroupRequest
-        case .joinGroup(let joinGroupRequest):
-            return joinGroupRequest
-        case .createTodos(let createTodosRequest):
-            return createTodosRequest
-        case .certifyTodo(_, let certifyTodoRequest):
-            return certifyTodoRequest
-        case .reviewTodo(_, let reviewTodoRequest):
-            return reviewTodoRequest
-        case .saveNotiToken(let saveNotiTokenRequest):
-            return saveNotiTokenRequest
-        case .removeNotiToken(let removeNotiTokenRequest):
-            return removeNotiTokenRequest
-        default:
-            return nil
-        }
+    enum Value {
+        static let applicationJson = "application/json"
+        static let bearer = "Bearer "
+        static let accessToken = "accessToken"  // TODO: 추후 accessToken 관리 부분 추가
     }
 }

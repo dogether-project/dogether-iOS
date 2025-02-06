@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: 추후 수정
 struct RemoveNotiTokenRequest: TokenInfo, Encodable {
-    let token: String = "kelly-token-value"
+    let token: String
 }

@@ -1,0 +1,68 @@
+//
+//  GroupsRouter.swift
+//  dogether
+//
+//  Created by seungyooooong on 2/6/25.
+//
+
+import Foundation
+
+enum GroupsRouter: NetworkEndpoint {
+    case createGroup(createGroupRequest: CreateGroupRequest)
+    case joinGroup(joinGroupRequest: JoinGroupRequest)
+    case getGroupInfo
+    case getMySummary
+    case getTeamSummary
+    
+    var path: String {
+        switch self {
+        case .createGroup:
+            return Path.api + Path.groups
+        case .joinGroup:
+            return Path.api + Path.groups + "/join"
+        case .getGroupInfo:
+            return Path.api + Path.groups + "/info/current"
+        case .getMySummary:
+            return Path.api + Path.groups + "/summary/my"
+        case .getTeamSummary:
+            return Path.api + Path.groups + "/summary/team"
+        }
+    }
+    
+    var method: NetworkMethod {
+        switch self {
+        case .getGroupInfo, .getMySummary, .getTeamSummary:
+            return .get
+        case .createGroup, .joinGroup:
+            return .post
+        }
+    }
+    
+    var parameters: [URLQueryItem]? {
+        switch self {
+        default:
+            return nil
+        }
+    }
+    
+    var header: [String : String]? {
+        switch self {
+        default:
+            return [
+                Header.Key.contentType: Header.Value.applicationJson,
+                Header.Key.authorization: Header.Value.bearer + Header.Value.accessToken
+            ]
+        }
+    }
+    
+    var body: (any Encodable)? {
+        switch self {
+        case .createGroup(let createGroupRequest):
+            return createGroupRequest
+        case .joinGroup(let joinGroupRequest):
+            return joinGroupRequest
+        default:
+            return nil
+        }
+    }
+}

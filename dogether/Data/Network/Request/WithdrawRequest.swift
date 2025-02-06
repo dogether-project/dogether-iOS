@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: 추후 수정
 struct WithdrawRequest: Encodable {
-    let authorizationCode: String = "authorizationCodeauthorizationCodeauthorizationCode"
+    let authorizationCode: String
 }

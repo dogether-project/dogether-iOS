@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: 추후 수정
 struct JoinGroupRequest: JoinCode, Encodable {
-    let joinCode: String = "kelly-join-code"
+    let joinCode: String
 }
