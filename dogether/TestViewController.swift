@@ -20,6 +20,12 @@ class TestViewController: UIViewController {
         testButton.addAction(UIAction(handler: { _ in
             checkFCMToken()
         }), for: .touchUpInside)
+        
+        testButton.setImage(Icons.check, for: .normal)
+        
+        testButton.setTitleColor(Colors.red, for: .normal)
+        
+        testButton.titleLabel?.font = Fonts.pretendardExtraBold(size: 20)
 
         testButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(testButton)
