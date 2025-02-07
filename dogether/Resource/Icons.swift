@@ -17,7 +17,7 @@ enum Icons {
     static let chevronLeft = UIImage(named: "chevron-left.png")
     static let chevronRight = UIImage(named: "chevron-right.png")
     
-    static let my = UIImage(named: "my.png")
+    static let profile = UIImage(named: "profile.png")
     static let barChart = UIImage(named: "bar-chart.png")
     
     static let check = UIImage(named: "check.png")
