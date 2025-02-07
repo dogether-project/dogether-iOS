@@ -11,7 +11,7 @@ class NetworkManager {
     static let shared = NetworkManager()
     private init() { }
     
-    func request<T: Decodable>(_ endpoint: ServerEndpoint) async throws -> T {
+    func request<T: Decodable>(_ endpoint: NetworkEndpoint) async throws -> T {
         do {
             let response: ServerResponse<T> = try await NetworkService.shared.request(endpoint)
             
@@ -27,7 +27,7 @@ class NetworkManager {
         }
     }
     
-    func request(_ endpoint: ServerEndpoint) async throws -> Void {
+    func request(_ endpoint: NetworkEndpoint) async throws -> Void {
         do {
             let response: ServerResponse<EmptyData> = try await NetworkService.shared.request(endpoint)
             
