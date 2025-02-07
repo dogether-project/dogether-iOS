@@ -23,9 +23,9 @@ enum GroupsRouter: NetworkEndpoint {
         case .getGroupInfo:
             return Path.api + Path.groups + "/info/current"
         case .getMySummary:
-            return Path.api + Path.groups + "/summary/my"
+            return Path.api + Path.groups + Path.summary + "/my"
         case .getTeamSummary:
-            return Path.api + Path.groups + "/summary/team"
+            return Path.api + Path.groups + Path.summary + "/team"
         }
     }
     

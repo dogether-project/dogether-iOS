@@ -24,11 +24,15 @@ enum NetworkMethod: String {
 
 enum Path {
     static let api = "/api"
+    
     static let auth = "/auth"
     static let groups = "/groups"
     static let todos = "/todos"
     static let todoCertifications = "/todo-certifications"
     static let notification = "/notification"
+    
+    static let summary = "/summary"
+    static let tokens = "/tokens"
 }
 
 enum Header {
