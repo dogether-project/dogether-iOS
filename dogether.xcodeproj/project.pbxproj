@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F6A082532D58D31700635AE5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F6A082522D58D31700635AE5 /* SnapKit */; };
 		F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */; };
 		F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6A082532D58D31700635AE5 /* SnapKit in Frameworks */,
 				F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */,
 				F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */,
 			);
@@ -87,6 +89,7 @@
 			packageProductDependencies = (
 				F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */,
 				F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */,
+				F6A082522D58D31700635AE5 /* SnapKit */,
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -118,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F6A082512D58D31700635AE5 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F63EEEB42D3D51E600C9914F /* Products */;
@@ -371,6 +375,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F6A082512D58D31700635AE5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = exactVersion;
+				version = 5.7.1;
+			};
+		};
 		F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -382,6 +394,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F6A082522D58D31700635AE5 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6A082512D58D31700635AE5 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
 		F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
