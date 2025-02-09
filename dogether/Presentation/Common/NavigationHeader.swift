@@ -17,6 +17,9 @@ class NavigationHeader: UIView {
         super.init(frame: .zero)
         setUI()
     }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // TODO: 추후 UIButton으로 수정
     private let prevIcon = {
@@ -46,9 +49,5 @@ class NavigationHeader: UIView {
             $0.centerX.equalToSuperview()
             $0.height.equalTo(28)
         }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
