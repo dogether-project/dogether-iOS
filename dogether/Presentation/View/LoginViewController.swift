@@ -47,8 +47,8 @@ final class LoginViewController: BaseViewController {
     override func configureConstraints() {
         
         dogetherLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(160)
             $0.centerX.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(160)
         }
         
         logo.snp.makeConstraints {
