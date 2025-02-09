@@ -35,4 +35,18 @@ enum Fonts {
     static func thin(size: CGFloat) -> UIFont {
         return UIFont(name: "Pretendard-Thin", size: size) ?? UIFont.systemFont(ofSize: size, weight: .thin)
     }
+    
+    static let emphasisB = Fonts.bold(size: 28)
+    static let head1B = Fonts.bold(size: 24)
+    static let head2B = Fonts.bold(size: 18)
+    static let body1B = Fonts.bold(size: 16)
+    
+    static let body1S = Fonts.semiBold(size: 16)
+    static let body2S = Fonts.semiBold(size: 14)
+    static let smallS = Fonts.semiBold(size: 12)
+    
+    static let head1R = Fonts.regular(size: 24)
+    static let body1R = Fonts.regular(size: 16)
+    static let body2R = Fonts.regular(size: 14)
+    static let smallR = Fonts.regular(size: 12)
 }
