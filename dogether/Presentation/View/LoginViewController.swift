@@ -73,18 +73,16 @@ final class LoginViewController: BaseViewController {
         
         let controller = ASAuthorizationController(authorizationRequests: [request])
         
-        // 로그인 정보 관련 대리자 설정
-        // 인증창을 보여주기 위해 대리자 설정
+        // 인증창을 보여주기 위해 로그인 정보 관련 대리자 설정
         controller.delegate = appleSignInDelegate
-        // 요청
         controller.performRequests()
     }
     
-    @objc private func withdrawButtonClicked() {
-        
-        let request = ASAuthorizationAppleIDProvider()
-        let userIdentifier = UserDefaultsManager.shared.userID
-    }
+//    @objc private func withdrawButtonClicked() {
+//        
+//        let request = ASAuthorizationAppleIDProvider()
+//        let userIdentifier = UserDefaultsManager.shared.userID
+//    }
 }
 
 // MARK: - 로그인 인증 화면 요청

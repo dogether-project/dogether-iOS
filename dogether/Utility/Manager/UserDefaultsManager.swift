@@ -16,18 +16,12 @@ final class UserDefaultsManager {
     
     enum UserDefaultsKey: String {
         case userFullName
-        case email
         case userID
     }
     
     var userFullName: String? {
         get { userDefaults.string(forKey: UserDefaultsKey.userFullName.rawValue) }
         set { userDefaults.set(newValue, forKey: UserDefaultsKey.userFullName.rawValue) }
-    }
-    
-    var email: String? {
-        get { userDefaults.string(forKey: UserDefaultsKey.email.rawValue) }
-        set { userDefaults.set(newValue, forKey: UserDefaultsKey.email.rawValue) }
     }
     
     var userID: String? {
