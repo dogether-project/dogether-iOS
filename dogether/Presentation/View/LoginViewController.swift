@@ -30,7 +30,7 @@ final class LoginViewController: BaseViewController {
     }()
     
     private let signInButton =  {
-        let button = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
+        let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
         return button
     }()
     
