@@ -9,38 +9,61 @@ import UIKit
 import SnapKit
 import AuthenticationServices
 
-final class LoginViewController: UIViewController {
+final class LoginViewController: BaseViewController {
     
     private let appleSignInDelegate = AppleSignInDelegate()
-    private let signInButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
-    private let logoutButton = UIButton()
-    private let withdrawButton = UIButton()
+    
+    private let dogetherLabel = {
+        let label = UILabel()
+        label.text = "함께하면 두개 더,\n지금부터 Do Gether"
+        label.font = .boldSystemFont(ofSize: 24)
+        label.textColor = .black
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var logo = {
+        let logo = UIImageView()
+        logo.image = .logo
+        return logo
+    }()
+    
+    private let signInButton =  {
+        let button = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+                
+
+    }
+    
+    override func configureHierarchy() {
+        [dogetherLabel, logo, signInButton].forEach { view.addSubview($0) }
+    }
+    
+    override func configureConstraints() {
         
-        [signInButton, logoutButton, withdrawButton].forEach { view.addSubview($0) }
+        dogetherLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(160)
+            $0.centerX.equalToSuperview()
+        }
+        
+        logo.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(dogetherLabel.snp.bottom).offset(56)
+        }
         
         signInButton.snp.makeConstraints {
-            $0.center.equalTo(view)
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(logo.snp.bottom).offset(40)
             $0.height.equalTo(40)
         }
-        
-        logoutButton.snp.makeConstraints {
-            $0.centerX.equalTo(view)
-            $0.top.equalTo(signInButton.snp.bottom)
-        }
-        
-        withdrawButton.snp.makeConstraints {
-            $0.centerX.equalTo(view)
-            $0.top.equalTo(logoutButton.snp.bottom)
-        }
-        
-        logoutButton.setTitle("로그아웃", for: .normal)
-        withdrawButton.setTitle("탈퇴하기", for: .normal)
-        
-        signInButton.addTarget(self, action: #selector(signInButtonClicked), for: .touchUpInside)
     }
+    
+    override func configureView() { }
     
     @objc private func signInButtonClicked() {
         
