@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseCore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // MARK: - about PushNotice
+        FirebaseApp.configure()
+        _ = PushNoticeManager.shared
+        application.registerForRemoteNotifications()
+        
         return true
     }
 
@@ -34,3 +41,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+// TODO: 추후 Extensions로 이동
+import FirebaseMessaging
+
+extension AppDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        // TODO: 추후 에러 핸들링 방법 논의하고 구현
+    }
+}

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C2E970AA2D586FEA00DE5363 /* SnapKit */; };
+		F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */; };
+		F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */,
+				F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */,
+				F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +88,8 @@
 			name = dogether;
 			packageProductDependencies = (
 				C2E970AA2D586FEA00DE5363 /* SnapKit */,
+				F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */,
+				F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */,
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -115,6 +121,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F63EEEB42D3D51E600C9914F /* Products */;
@@ -152,6 +159,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = dogether/dogether.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -190,6 +198,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = dogether/dogether.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -372,6 +381,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.7.1;
+      };
+    };
+		F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 11.7.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -381,6 +398,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+    };
+		F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
