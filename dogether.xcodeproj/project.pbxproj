@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */; };
-		F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */; };
+		C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C2E970AA2D586FEA00DE5363 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,10 +15,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F63EEEC52D3D51E700C9914F /* Exceptions for "dogether" folder in "dogether" target */ = {
+		C2E970A02D58607400DE5363 /* Exceptions for "dogether" folder in "dogether" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Config/Info.plist,
 			);
 			target = F63EEEB22D3D51E600C9914F /* dogether */;
 		};
@@ -29,7 +28,7 @@
 		F63EEEB52D3D51E600C9914F /* dogether */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F63EEEC52D3D51E700C9914F /* Exceptions for "dogether" folder in "dogether" target */,
+				C2E970A02D58607400DE5363 /* Exceptions for "dogether" folder in "dogether" target */,
 			);
 			path = dogether;
 			sourceTree = "<group>";
@@ -41,8 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */,
-				F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */,
+				C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,8 +83,7 @@
 			);
 			name = dogether;
 			packageProductDependencies = (
-				F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */,
-				F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */,
+				C2E970AA2D586FEA00DE5363 /* SnapKit */,
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -117,7 +114,7 @@
 			mainGroup = F63EEEAA2D3D51E600C9914F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F63EEEB42D3D51E600C9914F /* Products */;
@@ -155,7 +152,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = dogether/dogether.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -194,7 +190,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = dogether/dogether.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
@@ -371,26 +366,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
-				kind = exactVersion;
-				version = 11.7.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */ = {
+		C2E970AA2D586FEA00DE5363 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseMessaging;
+			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
