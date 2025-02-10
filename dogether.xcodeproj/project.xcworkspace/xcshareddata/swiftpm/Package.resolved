@@ -2,9 +2,9 @@
   "originHash" : "97f8a28d0b14c1e796bebfe3889c10a9c5ad8de8cf9a8eef4f2bed62f87ff439",
   "pins" : [
     {
-      "identity" : "abseil-cpp-binary",
+      "identity" : "snapkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/google/abseil-cpp-binary.git",
+      "location" : "https://github.com/SnapKit/SnapKit.git",
       "state" : {
         "revision" : "194a6706acbd25e4ef639bcaddea16e8758a3e27",
         "version" : "1.2024011602.0"
