@@ -9,15 +9,12 @@ import Foundation
 import UIKit
 import SnapKit
 
-class DogetherHeader: UIView {
+final class DogetherHeader: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUI()
     }
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setUI()
-    }
+    required init?(coder: NSCoder) { fatalError() }
     
     private let dogetherIcon = {
         let imageView = UIImageView()
