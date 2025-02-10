@@ -27,6 +27,24 @@ struct CreateGroupRequest: GroupInfo, Encodable {
 enum GroupStartAts: String {
     case today = "TODAY"
     case tommorow = "TOMMOROW"
+    
+    var text: String {
+        switch self {
+        case .today:
+            return "오늘"
+        case .tommorow:
+            return "내일"
+        }
+    }
+    
+    var daysFromToday: Int {
+        switch self {
+        case .today:
+            return 0
+        case .tommorow:
+            return 1
+        }
+    }
 }
 
 enum GroupChallengeDurations: Int {

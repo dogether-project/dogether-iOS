@@ -1,0 +1,156 @@
+//
+//  DogetherGroupInfo.swift
+//  dogether
+//
+//  Created by seungyooooong on 2/10/25.
+//
+
+import Foundation
+import UIKit
+
+final class DogetherGroupInfo: UIView {
+    let groupName: String
+    let memberCount: Int
+    let duration: GroupChallengeDurations
+    let startAt: GroupStartAts
+    
+    init(groupName: String, memberCount: Int, duration: GroupChallengeDurations, startAt: GroupStartAts) {
+        self.groupName = groupName
+        self.memberCount = memberCount
+        self.duration = duration
+        self.startAt = startAt
+        
+        super.init(frame: .zero)
+        setUI()
+    }
+    required init?(coder: NSCoder) { fatalError() }
+    
+    private let groupInfoView = {
+        let view = UIView()
+        view.backgroundColor = .grey50
+        view.layer.cornerRadius = 12
+        view.layer.borderColor = UIColor.grey100.cgColor
+        view.layer.borderWidth = 1
+        return view
+    }()
+    
+    private var groupNameLabel = {
+        let label = UILabel()
+        label.textColor = .grey900
+        label.font = Fonts.head1B
+        return label
+    }()
+    
+    private let dividerView = {
+        let view = UIView()
+        view.backgroundColor = .grey100
+        return view
+    }()
+    
+    private func descriptionLabel() -> UILabel {
+        let label = UILabel()
+        label.textColor = .blue300
+        label.font = Fonts.body1B
+        return label
+    }
+    
+    private func infoLabel() -> UILabel {
+        let label = UILabel()
+        label.textColor = .grey800
+        label.font = Fonts.body1R
+        return label
+    }
+    
+    private lazy var durationDescriptionLabel = descriptionLabel()
+    private lazy var memberCountDescriptionLabel = descriptionLabel()
+    private lazy var startDayDescriptionLabel = descriptionLabel()
+    private lazy var endDayDescriptionLabel = descriptionLabel()
+    
+    private lazy var durationInfoLabel = infoLabel()
+    private lazy var memberCountInfoLabel = infoLabel()
+    private lazy var startDayInfoLabel = infoLabel()
+    private lazy var endDayInfoLabel = infoLabel()
+    
+    private func setUI() {
+        [groupInfoView].forEach { addSubview($0) }
+        [groupNameLabel, dividerView].forEach { groupInfoView.addSubview($0) }
+        [durationDescriptionLabel, memberCountDescriptionLabel, startDayDescriptionLabel, endDayDescriptionLabel].forEach { addSubview($0) }
+        [durationInfoLabel, memberCountInfoLabel, startDayInfoLabel, endDayInfoLabel].forEach { addSubview($0) }
+        
+        groupInfoView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        groupNameLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(23)
+            $0.height.equalTo(36)
+        }
+        
+        dividerView.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.top.equalTo(groupNameLabel.snp.bottom).offset(24)
+            $0.height.equalTo(1)
+        }
+        
+        durationDescriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(dividerView.snp.bottom).offset(24)
+            $0.left.equalTo(dividerView)
+            $0.height.equalTo(25)
+        }
+        
+        memberCountDescriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(durationDescriptionLabel.snp.bottom).offset(12)
+            $0.left.equalTo(durationDescriptionLabel)
+            $0.height.equalTo(25)
+        }
+        
+        startDayDescriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(memberCountDescriptionLabel.snp.bottom).offset(12)
+            $0.left.equalTo(memberCountDescriptionLabel)
+            $0.height.equalTo(25)
+        }
+        
+        endDayDescriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(startDayDescriptionLabel.snp.bottom).offset(12)
+            $0.left.equalTo(startDayDescriptionLabel)
+            $0.height.equalTo(25)
+        }
+        
+        durationInfoLabel.snp.makeConstraints {
+            $0.top.equalTo(dividerView.snp.bottom).offset(24)
+            $0.right.equalTo(dividerView)
+            $0.height.equalTo(25)
+        }
+        
+        memberCountInfoLabel.snp.makeConstraints {
+            $0.top.equalTo(durationInfoLabel.snp.bottom).offset(12)
+            $0.right.equalTo(durationInfoLabel)
+            $0.height.equalTo(25)
+        }
+        
+        startDayInfoLabel.snp.makeConstraints {
+            $0.top.equalTo(memberCountInfoLabel.snp.bottom).offset(12)
+            $0.right.equalTo(memberCountInfoLabel)
+            $0.height.equalTo(25)
+        }
+        
+        endDayInfoLabel.snp.makeConstraints {
+            $0.top.equalTo(startDayInfoLabel.snp.bottom).offset(12)
+            $0.right.equalTo(startDayInfoLabel)
+            $0.height.equalTo(25)
+        }
+        
+        groupNameLabel.text = groupName
+        
+        durationDescriptionLabel.text = "총 회차"
+        memberCountDescriptionLabel.text = "그룹원"
+        startDayDescriptionLabel.text = "시작일"
+        endDayDescriptionLabel.text = "종료일"
+        
+        durationInfoLabel.text = "\(duration.rawValue)일"
+        memberCountInfoLabel.text = "총 \(memberCount)명"
+        startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
+        endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
+    }
+}
