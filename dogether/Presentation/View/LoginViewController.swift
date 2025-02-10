@@ -38,7 +38,6 @@ final class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
                 
-
     }
     
     override func configureHierarchy() {
@@ -78,12 +77,6 @@ final class LoginViewController: BaseViewController {
         controller.delegate = appleSignInDelegate
         controller.performRequests()
     }
-    
-//    @objc private func withdrawButtonClicked() {
-//        
-//        let request = ASAuthorizationAppleIDProvider()
-//        let userIdentifier = UserDefaultsManager.shared.userID
-//    }
 }
 
 // MARK: - 로그인 인증 화면 요청

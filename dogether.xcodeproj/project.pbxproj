@@ -12,8 +12,7 @@
 		C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D22D59D0E200DE5363 /* FirebaseCore */; };
 		C2E975D52D59D0E200DE5363 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */; };
 		C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D62D59D0E200DE5363 /* FirebaseMessaging */; };
-		F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */; };
-		F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */; };
+		F6E85BE82D4E4403005A3B9B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE72D4E4403005A3B9B /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,7 +50,7 @@
 				C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */,
 				C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */,
 				C2E975D12D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
-				F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */,
+				F6E85BE82D4E4403005A3B9B /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,7 +98,7 @@
 				C2E975D22D59D0E200DE5363 /* FirebaseCore */,
 				C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */,
 				C2E975D62D59D0E200DE5363 /* FirebaseMessaging */,
-				F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */,
+				F6E85BE72D4E4403005A3B9B /* SnapKit */,
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -385,27 +384,22 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.7.1;
+				kind = exactVersion;
+				version = 5.7.1;
 			};
 		};
 		C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.8.1;
+				kind = exactVersion;
+				version = 11.7.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		C2E970AA2D586FEA00DE5363 /* SnapKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = SnapKit;
-    };
-		F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
@@ -429,6 +423,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		F6E85BE72D4E4403005A3B9B /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
