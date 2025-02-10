@@ -12,21 +12,24 @@ import SnapKit
 class StartViewController: BaseViewController {
     private let dogetherHeader = DogetherHeader()
     private lazy var createGroupButton = {
-        let view = UIButton()
-        view.backgroundColor = .grey50
-        view.layer.cornerRadius = 12
-        return view
+        let button = UIButton()
+        button.backgroundColor = .grey50
+        button.layer.cornerRadius = 12
+        button.addTarget(self, action: #selector(didTapCreateGroupButton), for: .touchUpInside)
+        return button
     }()
     private let plusImageBackgroundView = {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 12
+        view.isUserInteractionEnabled = false
         return view
     }()
     private let plusImageView = {
         let imageView = UIImageView()
         imageView.image = .plus.withRenderingMode(.alwaysTemplate)
         imageView.tintColor = .grey400
+        imageView.isUserInteractionEnabled = false
         return imageView
     }()
     private let createGroupLabel = {
@@ -34,6 +37,7 @@ class StartViewController: BaseViewController {
         label.text = "새 그룹 만들기"
         label.textColor = .grey500
         label.font = Fonts.bold(size: 18)
+        label.isUserInteractionEnabled = false
         return label
     }()
     private let joinGroupButton = DogetherButton(action: {
@@ -88,13 +92,7 @@ class StartViewController: BaseViewController {
         }
     }
     
-    override func configureView() {
-        createGroupButton.addTarget(self, action: #selector(didTapCreateGroupButton), for: .touchUpInside)
-        
-        plusImageBackgroundView.isUserInteractionEnabled = false
-        plusImageView.isUserInteractionEnabled = false
-        createGroupLabel.isUserInteractionEnabled = false
-    }
+    override func configureView() { }
     
     @objc func didTapCreateGroupButton() {
         // TODO: 그룹 만들기 화면으로 넘어가도록 구현
