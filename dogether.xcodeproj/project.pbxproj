@@ -47,15 +47,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */,
-<<<<<<< HEAD
 				C2E975D52D59D0E200DE5363 /* FirebaseCrashlytics in Frameworks */,
 				C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */,
 				C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */,
 				C2E975D12D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
-=======
-				F6E85BEA2D4E4A4B005A3B9B /* FirebaseMessaging in Frameworks */,
 				F6E85BE82D4E4403005A3B9B /* FirebaseAnalytics in Frameworks */,
->>>>>>> 7cf1959763651ccb391897283df6321411600a87
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,15 +95,11 @@
 			name = dogether;
 			packageProductDependencies = (
 				C2E970AA2D586FEA00DE5363 /* SnapKit */,
-<<<<<<< HEAD
 				C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				C2E975D22D59D0E200DE5363 /* FirebaseCore */,
 				C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */,
 				C2E975D62D59D0E200DE5363 /* FirebaseMessaging */,
-=======
 				F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */,
-				F6E85BE92D4E4A4B005A3B9B /* FirebaseMessaging */,
->>>>>>> 7cf1959763651ccb391897283df6321411600a87
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -139,11 +131,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */,
-<<<<<<< HEAD
 				C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-=======
-				F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
->>>>>>> 7cf1959763651ccb391897283df6321411600a87
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F63EEEB42D3D51E600C9914F /* Products */;
@@ -399,15 +387,9 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.7.1;
-<<<<<<< HEAD
 			};
 		};
 		C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-=======
-      };
-    };
-		F6E85BE62D4E4403005A3B9B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
->>>>>>> 7cf1959763651ccb391897283df6321411600a87
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
@@ -419,14 +401,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		C2E970AA2D586FEA00DE5363 /* SnapKit */ = {
-<<<<<<< HEAD
-=======
 			isa = XCSwiftPackageProductDependency;
 			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
     };
 		F6E85BE72D4E4403005A3B9B /* FirebaseAnalytics */ = {
->>>>>>> 7cf1959763651ccb391897283df6321411600a87
 			isa = XCSwiftPackageProductDependency;
 			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
