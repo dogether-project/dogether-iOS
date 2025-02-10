@@ -17,9 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         // MARK: - about PushNotice
-        FirebaseApp.configure()
-        _ = PushNoticeManager.shared
-        application.registerForRemoteNotifications()
+//        FirebaseApp.configure()
+//        _ = PushNoticeManager.shared
+//        application.registerForRemoteNotifications()
         
         return true
     }

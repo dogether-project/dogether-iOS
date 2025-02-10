@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C2E970AA2D586FEA00DE5363 /* SnapKit */; };
+		C2E975D12D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */; };
+		C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D22D59D0E200DE5363 /* FirebaseCore */; };
+		C2E975D52D59D0E200DE5363 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */; };
+		C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D62D59D0E200DE5363 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +45,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */,
+				C2E975D52D59D0E200DE5363 /* FirebaseCrashlytics in Frameworks */,
+				C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */,
+				C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */,
+				C2E975D12D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +92,10 @@
 			name = dogether;
 			packageProductDependencies = (
 				C2E970AA2D586FEA00DE5363 /* SnapKit */,
+				C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */,
+				C2E975D22D59D0E200DE5363 /* FirebaseCore */,
+				C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */,
+				C2E975D62D59D0E200DE5363 /* FirebaseMessaging */,
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -115,6 +127,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F63EEEB42D3D51E600C9914F /* Products */;
@@ -158,12 +171,11 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3NLDZW4Z5J;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = dogether/Info.plist;
+				INFOPLIST_FILE = dogether/Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = dogether;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -196,12 +208,11 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3NLDZW4Z5J;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = dogether/Info.plist;
+				INFOPLIST_FILE = dogether/Config/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = dogether;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -374,6 +385,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.8.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -381,6 +400,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
+		C2E975D22D59D0E200DE5363 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		C2E975D62D59D0E200DE5363 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

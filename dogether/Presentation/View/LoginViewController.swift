@@ -23,14 +23,15 @@ final class LoginViewController: BaseViewController {
         return label
     }()
     
+    // TODO: - 공용 컴포넌트 사용 예정
     private lazy var logo = {
         let logo = UIImageView()
-        logo.image = .logo
         return logo
     }()
     
-    private let signInButton =  {
+    private lazy var signInButton =  {
         let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
+        button.addTarget(self, action: #selector(signInButtonClicked), for: .touchUpInside)
         return button
     }()
     
