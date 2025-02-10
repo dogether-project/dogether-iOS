@@ -10,9 +10,11 @@ import Foundation
 class NetworkService {
     static let shared = NetworkService()
     private init () { }
+    
+    private let serverURL: URL? = URL(string: "https://api-dev.dogether.site")
 
     private func configureURL(_ endpoint: NetworkEndpoint) -> URL? {
-        guard let baseURL = endpoint.serverURL else { return nil }
+        guard let baseURL = serverURL else { return nil }
         let url = baseURL.appendingPathComponent(endpoint.path)
         
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return nil }

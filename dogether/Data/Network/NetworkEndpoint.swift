@@ -8,7 +8,6 @@
 import Foundation
 
 protocol NetworkEndpoint {
-    var serverURL: URL? { get }
     var path: String { get }
     var method: NetworkMethod { get }
     var parameters: [URLQueryItem]? { get }
@@ -23,49 +22,28 @@ enum NetworkMethod: String {
     case delete = "DELETE"
 }
 
-enum ServerEndpoint: NetworkEndpoint {
-    var serverURL: URL? { URL(string: "https://api-dev.dogether.site") }
-    // MARK: - APIs
-    case createGroup(createGroupRequest: CreateGroupRequest)
+enum Path {
+    static let api = "/api"
     
-    // MARK: - path
-    var path: String {
-        switch self {
-        case .createGroup:
-            return "/api/groups"
-        }
+    static let auth = "/auth"
+    static let groups = "/groups"
+    static let todos = "/todos"
+    static let todoCertifications = "/todo-certifications"
+    static let notification = "/notification"
+    
+    static let summary = "/summary"
+    static let tokens = "/tokens"
+}
+
+enum Header {
+    enum Key {
+        static let contentType = "Content-Type"
+        static let authorization = "Authorization"
     }
     
-    // MARK: - method
-    var method: NetworkMethod {
-        switch self {
-        case .createGroup:
-            return .post
-        }
-    }
-    
-    // MARK: - parameters
-    var parameters: [URLQueryItem]? {
-        switch self {
-        default:
-            return nil
-        }
-    }
-    
-    // MARK: - header
-    var header: [String : String]? {
-        switch self {
-        case .createGroup:
-//            guard let accessToken: String = UserDefaultManager.accessToken else { return nil }    // TODO: 추후 accessToken 관리 부분 추가
-            return ["Content-Type": "application/json", "Authorization": "Bearer " + "accessToken"]
-        }
-    }
-    
-    // MARK: - body
-    var body: (any Encodable)? {
-        switch self {
-        case .createGroup(let createGroupRequest):
-            return createGroupRequest
-        }
+    enum Value {
+        static let applicationJson = "application/json"
+        static let bearer = "Bearer "
+        static let accessToken = "accessToken"  // TODO: 추후 accessToken 관리 부분 추가
     }
 }
