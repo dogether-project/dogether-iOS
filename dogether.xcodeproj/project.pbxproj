@@ -7,11 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C2E970AA2D586FEA00DE5363 /* SnapKit */; };
-		C2E975D12D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */; };
-		C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D22D59D0E200DE5363 /* FirebaseCore */; };
-		C2E975D52D59D0E200DE5363 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */; };
-		C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C2E975D62D59D0E200DE5363 /* FirebaseMessaging */; };
+		C20172CC2D5AF2C6000B9099 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C20172CB2D5AF2C6000B9099 /* SnapKit */; };
+		C20172D02D5AF37D000B9099 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C20172CF2D5AF37D000B9099 /* FirebaseCore */; };
+		C20172D22D5AF37D000B9099 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C20172D12D5AF37D000B9099 /* FirebaseMessaging */; };
+		C2E970AB2D586FEA00DE5363 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		F6E85BE82D4E4403005A3B9B /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F6E85BE72D4E4403005A3B9B /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -20,10 +19,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F63EEEC52D3D51E700C9914F /* Exceptions for "dogether" folder in "dogether" target */ = {
+		C20172CD2D5AF304000B9099 /* Exceptions for "dogether" folder in "dogether" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Config/Info.plist,
 			);
 			target = F63EEEB22D3D51E600C9914F /* dogether */;
 		};
@@ -33,7 +32,7 @@
 		F63EEEB52D3D51E600C9914F /* dogether */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F63EEEC52D3D51E700C9914F /* Exceptions for "dogether" folder in "dogether" target */,
+				C20172CD2D5AF304000B9099 /* Exceptions for "dogether" folder in "dogether" target */,
 			);
 			path = dogether;
 			sourceTree = "<group>";
@@ -45,11 +44,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C2E970AB2D586FEA00DE5363 /* SnapKit in Frameworks */,
-				C2E975D52D59D0E200DE5363 /* FirebaseCrashlytics in Frameworks */,
-				C2E975D72D59D0E200DE5363 /* FirebaseMessaging in Frameworks */,
-				C2E975D32D59D0E200DE5363 /* FirebaseCore in Frameworks */,
-				C2E975D12D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				C20172CC2D5AF2C6000B9099 /* SnapKit in Frameworks */,
+				C2E970AB2D586FEA00DE5363 /* (null) in Frameworks */,
+				C20172D22D5AF37D000B9099 /* FirebaseMessaging in Frameworks */,
+				C20172D02D5AF37D000B9099 /* FirebaseCore in Frameworks */,
 				F6E85BE82D4E4403005A3B9B /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -93,12 +91,10 @@
 			);
 			name = dogether;
 			packageProductDependencies = (
-				C2E970AA2D586FEA00DE5363 /* SnapKit */,
-				C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */,
-				C2E975D22D59D0E200DE5363 /* FirebaseCore */,
-				C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */,
-				C2E975D62D59D0E200DE5363 /* FirebaseMessaging */,
 				F6E85BE72D4E4403005A3B9B /* SnapKit */,
+				C20172CB2D5AF2C6000B9099 /* SnapKit */,
+				C20172CF2D5AF37D000B9099 /* FirebaseCore */,
+				C20172D12D5AF37D000B9099 /* FirebaseMessaging */,
 			);
 			productName = dogether;
 			productReference = F63EEEB32D3D51E600C9914F /* dogether.app */;
@@ -129,8 +125,8 @@
 			mainGroup = F63EEEAA2D3D51E600C9914F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				C20172CA2D5AF2C6000B9099 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				C20172CE2D5AF37D000B9099 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F63EEEB42D3D51E600C9914F /* Products */;
@@ -382,15 +378,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F6A082512D58D31700635AE5 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+		C20172CA2D5AF2C6000B9099 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
 			requirement = {
 				kind = exactVersion;
 				version = 5.7.1;
 			};
 		};
-		C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		C20172CE2D5AF37D000B9099 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
@@ -401,34 +397,23 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F6A082522D58D31700635AE5 /* SnapKit */ = {
+		C20172CB2D5AF2C6000B9099 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F6A082512D58D31700635AE5 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			package = C20172CA2D5AF2C6000B9099 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
-		C2E975D02D59D0E200DE5363 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+		C20172CF2D5AF37D000B9099 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsWithoutAdIdSupport;
-		};
-		C2E975D22D59D0E200DE5363 /* FirebaseCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C20172CE2D5AF37D000B9099 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
 		};
-		C2E975D42D59D0E200DE5363 /* FirebaseCrashlytics */ = {
+		C20172D12D5AF37D000B9099 /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCrashlytics;
-		};
-		C2E975D62D59D0E200DE5363 /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C2E975CF2D59D0E200DE5363 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = C20172CE2D5AF37D000B9099 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
 		};
 		F6E85BE72D4E4403005A3B9B /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C2E970A92D586FEA00DE5363 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
 /* End XCSwiftPackageProductDependency section */
