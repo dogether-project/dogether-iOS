@@ -21,9 +21,7 @@ final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
             let fullName = appleIDCrendential.fullName
             guard let identityToken = appleIDCrendential.identityToken else { return }
             guard let authrizationCode = appleIDCrendential.authorizationCode else { return }
-            
-            UserDefaultsManager.shared.userID = userIdentifier
-            
+                        
             if let firstName = fullName?.givenName,
                let lastName = fullName?.familyName {
                 let fullUserName = "\(firstName)\(lastName)"
