@@ -23,9 +23,13 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "40.png",
       "idiom" : "universal",
       "platform" : "ios",
-      "filename" : "40.png",
+      "scale" : "2x",
+      "size" : "20x20"
+    },
+    {
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"

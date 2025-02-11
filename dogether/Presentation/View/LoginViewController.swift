@@ -23,21 +23,21 @@ final class LoginViewController: BaseViewController {
         return label
     }()
     
+    // TODO: - 공용 컴포넌트 사용 예정
     private lazy var logo = {
         let logo = UIImageView()
-        logo.image = .logo
         return logo
     }()
     
-    private let signInButton =  {
+    private lazy var signInButton =  {
         let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
+        button.addTarget(self, action: #selector(signInButtonClicked), for: .touchUpInside)
         return button
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
                 
-
     }
     
     override func configureHierarchy() {
@@ -77,12 +77,6 @@ final class LoginViewController: BaseViewController {
         controller.delegate = appleSignInDelegate
         controller.performRequests()
     }
-    
-//    @objc private func withdrawButtonClicked() {
-//        
-//        let request = ASAuthorizationAppleIDProvider()
-//        let userIdentifier = UserDefaultsManager.shared.userID
-//    }
 }
 
 // MARK: - 로그인 인증 화면 요청

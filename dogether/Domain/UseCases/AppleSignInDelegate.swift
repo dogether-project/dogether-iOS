@@ -26,7 +26,7 @@ final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
             
             if let firstName = fullName?.givenName,
                let lastName = fullName?.familyName {
-                let fullUserName = "\(firstName) \(lastName)"
+                let fullUserName = "\(firstName)\(lastName)"
                 UserDefaultsManager.shared.userFullName = fullUserName
             } else if let firstName = fullName?.givenName {
                 UserDefaultsManager.shared.userFullName = firstName
@@ -34,6 +34,7 @@ final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
                 UserDefaultsManager.shared.userFullName = lastName
             }
                         
+            // TODO: - OSLog로 변경하기
             print("============= 🚀 Login Log 🚀 =============")
             print("✅ 로그인 성공")
             print("사용자 ID: \(userIdentifier)")
