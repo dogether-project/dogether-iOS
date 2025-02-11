@@ -12,14 +12,14 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureView()
         configureHierarchy()
         configureConstraints()
-        configureView()
         
         view.backgroundColor = .white
     }
     
+    func configureView() { } // 뷰의 시각적인 속성을 설정하는 역할을 합니다
     func configureHierarchy() { } // 뷰 계층을 구성하는 역할을 합니다
     func configureConstraints() { } // SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
-    func configureView() { } // 뷰의 시각적인 속성을 설정하는 역할을 합니다
 }
