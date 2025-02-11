@@ -1,5 +1,5 @@
 //
-//  DogetherCountButton.swift
+//  DogetherCountView.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/10/25.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class DogetherCountButton: UIView {
+final class DogetherCountView: UIView {
     let min: Int
     let max: Int
     var current: Int
@@ -25,7 +25,7 @@ final class DogetherCountButton: UIView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let dogetherCountButtonView = {
+    private let dogetherCountView = {
         let view = UIView()
         view.backgroundColor = .grey50
         view.layer.cornerRadius = 12
@@ -68,11 +68,10 @@ final class DogetherCountButton: UIView {
     }()
     
     private func setUI() {
-        [dogetherCountButtonView].forEach { addSubview($0) }
-        [minusButton, plusButton, currentLabel].forEach { dogetherCountButtonView.addSubview($0) }
-        [minLabel, maxLabel].forEach { addSubview($0) }
+        [dogetherCountView, minLabel, maxLabel].forEach { addSubview($0) }
+        [minusButton, plusButton, currentLabel].forEach { dogetherCountView.addSubview($0) }
         
-        dogetherCountButtonView.snp.makeConstraints {
+        dogetherCountView.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(50)
@@ -95,12 +94,12 @@ final class DogetherCountButton: UIView {
         }
         
         minLabel.snp.makeConstraints {
-            $0.top.equalTo(dogetherCountButtonView.snp.bottom).offset(8)
+            $0.top.equalTo(dogetherCountView.snp.bottom).offset(8)
             $0.left.equalToSuperview()
         }
         
         maxLabel.snp.makeConstraints {
-            $0.top.equalTo(dogetherCountButtonView.snp.bottom).offset(8)
+            $0.top.equalTo(dogetherCountView.snp.bottom).offset(8)
             $0.right.equalToSuperview()
         }
         

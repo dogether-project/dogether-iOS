@@ -34,6 +34,10 @@ final class DogetherButton: UIButton {
     }()
     
     private func setUI() {
+        dogetherButton.setTitle(title, for: .normal)
+        dogetherButton.backgroundColor = buttonColor
+        dogetherButton.addTarget(self, action: #selector(didTapDogetherButton), for: .touchUpInside)
+        
         [dogetherButton].forEach { addSubview($0) }
         
         dogetherButton.snp.makeConstraints {
@@ -41,10 +45,6 @@ final class DogetherButton: UIButton {
             $0.width.equalToSuperview()
             $0.height.equalTo(50)
         }
-        
-        dogetherButton.setTitle(title, for: .normal)
-        dogetherButton.backgroundColor = buttonColor
-        dogetherButton.addTarget(self, action: #selector(didTapDogetherButton), for: .touchUpInside)
     }
     
     func setButtonDisabled(_ disabled: Bool) {

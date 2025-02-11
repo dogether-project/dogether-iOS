@@ -19,25 +19,26 @@ final class NavigationHeader: UIView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    // TODO: 추후 UIButton으로 수정
-    private let prevIcon = {
-        let imageView = UIImageView()
-        imageView.image = .arrowLeft
-        return imageView
+    private var prevButton = {
+        let button = UIButton()
+        button.setImage(.arrowLeft, for: .normal)
+        return button
     }()
     
-    private lazy var titleLabel = {
+    private var titleLabel = {
         let label = UILabel()
-        label.text = title
         label.textColor = .grey900
         label.font = Fonts.bold(size: 18)
         return label
     }()
     
     private func setUI() {
-        [prevIcon, titleLabel].forEach { addSubview($0) }
+        prevButton.addTarget(self, action: #selector(didTapPrevButton), for: .touchUpInside)
+        titleLabel.text = title
         
-        prevIcon.snp.makeConstraints {
+        [prevButton, titleLabel].forEach { addSubview($0) }
+        
+        prevButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalToSuperview()
             $0.width.height.equalTo(24)
@@ -47,5 +48,9 @@ final class NavigationHeader: UIView {
             $0.centerX.equalToSuperview()
             $0.height.equalTo(28)
         }
+    }
+    
+    @objc func didTapPrevButton() {
+        // TODO: 추후 이전 페이지로 이동하도록 구현
     }
 }

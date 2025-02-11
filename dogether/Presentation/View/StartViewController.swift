@@ -11,11 +11,10 @@ import SnapKit
 
 class StartViewController: BaseViewController {
     private let dogetherHeader = DogetherHeader()
-    private lazy var createGroupButton = {
+    private var createGroupButton = {
         let button = UIButton()
         button.backgroundColor = .grey50
         button.layer.cornerRadius = 12
-        button.addTarget(self, action: #selector(didTapCreateGroupButton), for: .touchUpInside)
         return button
     }()
     private let plusImageBackgroundView = {
@@ -46,6 +45,10 @@ class StartViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func configureView() {
+        createGroupButton.addTarget(self, action: #selector(didTapCreateGroupButton), for: .touchUpInside)
     }
     
     override func configureHierarchy() {
@@ -91,8 +94,6 @@ class StartViewController: BaseViewController {
             $0.height.equalTo(50)
         }
     }
-    
-    override func configureView() { }
     
     @objc func didTapCreateGroupButton() {
         // TODO: 그룹 만들기 화면으로 넘어가도록 구현

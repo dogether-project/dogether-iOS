@@ -61,21 +61,45 @@ final class DogetherGroupInfo: UIView {
         return label
     }
     
-    private lazy var durationDescriptionLabel = descriptionLabel()
-    private lazy var memberCountDescriptionLabel = descriptionLabel()
-    private lazy var startDayDescriptionLabel = descriptionLabel()
-    private lazy var endDayDescriptionLabel = descriptionLabel()
+    private var durationDescriptionLabel = UILabel()
+    private var memberCountDescriptionLabel = UILabel()
+    private var startDayDescriptionLabel = UILabel()
+    private var endDayDescriptionLabel = UILabel()
     
-    private lazy var durationInfoLabel = infoLabel()
-    private lazy var memberCountInfoLabel = infoLabel()
-    private lazy var startDayInfoLabel = infoLabel()
-    private lazy var endDayInfoLabel = infoLabel()
+    private var durationInfoLabel = UILabel()
+    private var memberCountInfoLabel = UILabel()
+    private var startDayInfoLabel = UILabel()
+    private var endDayInfoLabel = UILabel()
     
     private func setUI() {
-        [groupInfoView].forEach { addSubview($0) }
+        durationDescriptionLabel = descriptionLabel()
+        memberCountDescriptionLabel = descriptionLabel()
+        startDayDescriptionLabel = descriptionLabel()
+        endDayDescriptionLabel = descriptionLabel()
+        
+        durationInfoLabel = infoLabel()
+        memberCountInfoLabel = infoLabel()
+        startDayInfoLabel = infoLabel()
+        endDayInfoLabel = infoLabel()
+        
+        groupNameLabel.text = groupName
+        
+        durationDescriptionLabel.text = "총 회차"
+        memberCountDescriptionLabel.text = "그룹원"
+        startDayDescriptionLabel.text = "시작일"
+        endDayDescriptionLabel.text = "종료일"
+        
+        durationInfoLabel.text = "\(duration.rawValue)일"
+        memberCountInfoLabel.text = "총 \(memberCount)명"
+        startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
+        endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
+        
+        [
+            groupInfoView,
+            durationDescriptionLabel, memberCountDescriptionLabel, startDayDescriptionLabel, endDayDescriptionLabel,
+            durationInfoLabel, memberCountInfoLabel, startDayInfoLabel, endDayInfoLabel
+        ].forEach { addSubview($0) }
         [groupNameLabel, dividerView].forEach { groupInfoView.addSubview($0) }
-        [durationDescriptionLabel, memberCountDescriptionLabel, startDayDescriptionLabel, endDayDescriptionLabel].forEach { addSubview($0) }
-        [durationInfoLabel, memberCountInfoLabel, startDayInfoLabel, endDayInfoLabel].forEach { addSubview($0) }
         
         groupInfoView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -140,17 +164,5 @@ final class DogetherGroupInfo: UIView {
             $0.right.equalTo(startDayInfoLabel)
             $0.height.equalTo(25)
         }
-        
-        groupNameLabel.text = groupName
-        
-        durationDescriptionLabel.text = "총 회차"
-        memberCountDescriptionLabel.text = "그룹원"
-        startDayDescriptionLabel.text = "시작일"
-        endDayDescriptionLabel.text = "종료일"
-        
-        durationInfoLabel.text = "\(duration.rawValue)일"
-        memberCountInfoLabel.text = "총 \(memberCount)명"
-        startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
-        endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
     }
 }
