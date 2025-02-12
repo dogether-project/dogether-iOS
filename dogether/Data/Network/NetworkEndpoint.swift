@@ -30,6 +30,7 @@ enum Path {
     static let todos = "/todos"
     static let todoCertifications = "/todo-certifications"
     static let notification = "/notification"
+    static let s3 = "/s3"
     
     static let summary = "/summary"
     static let tokens = "/tokens"
