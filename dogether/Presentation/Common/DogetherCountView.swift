@@ -9,12 +9,14 @@ import Foundation
 import UIKit
 
 final class DogetherCountView: UIView {
+    var changeCountAction: (Int) async -> Void
     let min: Int
     let max: Int
     var current: Int
     let unit: String
     
-    init(min: Int = 2, max: Int = 10, current: Int, unit: String) {
+    init(changeCountAction: @escaping (Int) async -> Void, min: Int = 2, max: Int = 10, current: Int, unit: String) {
+        self.changeCountAction = changeCountAction
         self.min = min
         self.max = max
         self.current = current
@@ -115,6 +117,9 @@ final class DogetherCountView: UIView {
         if min <= after && after <= max {
             current = after
             updateUI()
+            Task { @MainActor in
+                await changeCountAction(current)
+            }
         }
     }
     

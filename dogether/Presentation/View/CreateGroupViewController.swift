@@ -9,33 +9,34 @@ import Foundation
 import UIKit
 import SnapKit
 
-class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
+final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
     private var viewModel = CreateGroupViewModel()
     
     private let dogetherHeader = NavigationHeader(title: "그룹 만들기")
-    private func stepButton(step: CreateGroupSteps) -> UIButton {
-        let button = UIButton()
-        button.setTitle(step.text, for: .normal)
-        button.setTitleColor(viewModel.currentStep == step ? .white : .grey400, for: .normal)
-        button.titleLabel?.font = Fonts.body2R
-        button.backgroundColor = viewModel.currentStep == step ? .grey900 : .grey50
-        button.layer.cornerRadius = 12
-        button.tag = step.rawValue
-        button.addTarget(self, action: #selector(didTapStepButton(_:)), for: .touchUpInside)
-        return button
+    private func stepLabel(step: CreateGroupSteps) -> UILabel {
+        let label = UILabel()
+        label.text = step.text
+        label.textColor = viewModel.currentStep == step ? .white : .grey400
+        label.textAlignment = .center
+        label.font = Fonts.body2R
+        label.backgroundColor = viewModel.currentStep == step ? .grey900 : .grey50
+        label.layer.cornerRadius = 12
+        label.clipsToBounds = true
+        label.tag = step.rawValue
+        return label
     }
-    private var stepOne = UIButton()
-    private var stepTwo = UIButton()
-    private var stepThree = UIButton()
-    private var stepFour = UIButton()
-    private func stepButtonStackView(buttons: [UIButton]) -> UIStackView {
-        let stackView = UIStackView(arrangedSubviews: buttons)
+    private var stepOne = UILabel()
+    private var stepTwo = UILabel()
+    private var stepThree = UILabel()
+    private var stepFour = UILabel()
+    private func stepLabelStackView(labels: [UILabel]) -> UIStackView {
+        let stackView = UIStackView(arrangedSubviews: labels)
         stackView.axis = .horizontal
         stackView.spacing = 8
         stackView.distribution = .fillEqually
         return stackView
     }
-    private var stepButtonStack = UIStackView()
+    private var stepLabelStack = UIStackView()
     private func descriptionLabel(step: CreateGroupSteps) -> UILabel {
         let label = UILabel()
         label.text = step.description
@@ -44,9 +45,7 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         return label
     }
     private var stepDescriptionLabel = UILabel()
-    private var completeButton = DogetherButton(action: {
-        // TODO: 추후 구현
-    }, title: "다음", buttonColor: .grey100, disabled: true)
+    private var completeButton = DogetherButton(action: { }, title: "다음", disabled: true)
     private func stepView(step: CreateGroupSteps) -> UIView {
         let view = UIView()
         view.isHidden = viewModel.currentStep != step
@@ -185,18 +184,18 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
     }
     private var todayDescription = UILabel()
     private var tomorrowDescription = UILabel()
-    private var dogetherGroupInfo = UIView()
+    private var dogetherGroupInfo = DogetherGroupInfo()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func configureView() {
-        stepOne = stepButton(step: .one)
-        stepTwo = stepButton(step: .two)
-        stepThree = stepButton(step: .three)
-        stepFour = stepButton(step: .four)
-        stepButtonStack = stepButtonStackView(buttons: [stepOne, stepTwo, stepThree, stepFour])
+        stepOne = stepLabel(step: .one)
+        stepTwo = stepLabel(step: .two)
+        stepThree = stepLabel(step: .three)
+        stepFour = stepLabel(step: .four)
+        stepLabelStack = stepLabelStackView(labels: [stepOne, stepTwo, stepThree, stepFour])
         
         stepDescriptionLabel = descriptionLabel(step: viewModel.currentStep)
         
@@ -205,15 +204,24 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         stepThreeView = stepView(step: .three)
         stepFourView = stepView(step: .four)
         
+        completeButton.action = { @MainActor in
+            await self.viewModel.completeAction()
+            self.updateStep()
+        }
+        
         groupName = componentTitleLabel(componentTitle: "그룹명")
         groupNameTextField.delegate = self
         groupNameTextField.addTarget(self, action: #selector(didChangeGroupName), for: .editingChanged)
         groupNameCountLabel.text = "0/\(viewModel.groupNameMaxLength)"
         memberCount = componentTitleLabel(componentTitle: "그룹 인원")
-        memberCountView = DogetherCountView(min: 2, max: 20, current: viewModel.memberCount, unit: "명")
+        memberCountView = DogetherCountView(changeCountAction: {
+            self.viewModel.updateMemberCount(count: $0)
+        }, min: 2, max: 20, current: viewModel.memberCount, unit: "명")
         
         todoLimit = componentTitleLabel(componentTitle: "투두 개수")
-        todoLimitView = DogetherCountView(min: 2, max: 10, current: viewModel.todoLimit, unit: "개")
+        todoLimitView = DogetherCountView(changeCountAction: {
+            self.viewModel.updateTodoLimit(count: $0)
+        }, min: 2, max: 10, current: viewModel.todoLimit, unit: "개")
         duration = componentTitleLabel(componentTitle: "기간")
         startAt = componentTitleLabel(componentTitle: "시작일")
         
@@ -235,13 +243,11 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         tomorrowText = startAtTextLabel(startAt: .tomorrow)
         todayDescription = startAtDescriptionLabel(startAt: .today)
         tomorrowDescription = startAtDescriptionLabel(startAt: .tomorrow)
-        
-        dogetherGroupInfo = DogetherGroupInfo(groupName: "testGroupName", memberCount: 100, duration: .threeDays, startAt: .today) // TODO: 추후 viewModel에서 데이터 연동
     }
     
     override func configureHierarchy() {
         [
-            dogetherHeader, stepButtonStack, stepDescriptionLabel, completeButton,
+            dogetherHeader, stepLabelStack, stepDescriptionLabel, completeButton,
             stepOneView, stepTwoView, stepThreeView, stepFourView
         ].forEach { view.addSubview($0) }
         
@@ -267,7 +273,7 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
             $0.height.equalTo(28)
         }
         
-        stepButtonStack.snp.makeConstraints {
+        stepLabelStack.snp.makeConstraints {
             $0.top.equalTo(dogetherHeader.snp.bottom).offset(56)
             $0.left.equalToSuperview().inset(16)
             $0.width.equalTo(24 * 4 + 8 * 3)
@@ -415,19 +421,11 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         }
     }
     
-    @objc private func didTapStepButton(_ sender: UIButton) {
-        guard let step = CreateGroupSteps(rawValue: sender.tag) else { return }
-        
-        Task { @MainActor in
-            await viewModel.updateStep(step: step)
-            updateStep()
-        }
-    }
-    
     private func updateStep() {
         [stepOne, stepTwo, stepThree, stepFour].forEach {
             guard let step = CreateGroupSteps(rawValue: $0.tag) else { return }
-            $0.setTitleColor(viewModel.currentStep == step ? .white : .grey400, for: .normal)
+//            $0.setTitleColor(viewModel.currentStep == step ? .white : .grey400, for: .normal)
+            $0.textColor = viewModel.currentStep == step ? .white : .grey400
             $0.backgroundColor = viewModel.currentStep == step ? .grey900 : .grey50
         }
         
@@ -437,6 +435,15 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         }
         
         stepDescriptionLabel.text = viewModel.currentStep.description
+        if viewModel.currentStep == .three { completeButton.setTitle("그룹 생성") }
+        if viewModel.currentStep == .four {
+            dogetherGroupInfo.setInfo(
+                groupName: viewModel.currentGroupName,
+                memberCount: viewModel.memberCount,
+                duration: viewModel.currentDuration,
+                startAt: viewModel.currentStartAt
+            )
+        }
     }
     
     @objc private func didChangeGroupName() {
@@ -445,9 +452,10 @@ class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         }
         
         Task { @MainActor in
-            let (groupName, countLabelText) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
+            let (groupName, countLabelText, isDisabledCompleteButton) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
             groupNameTextField.text = groupName
             groupNameCountLabel.text = countLabelText
+            completeButton.setButtonDisabled(isDisabledCompleteButton)
         }
     }
     

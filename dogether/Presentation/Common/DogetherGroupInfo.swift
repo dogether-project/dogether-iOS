@@ -9,12 +9,17 @@ import Foundation
 import UIKit
 
 final class DogetherGroupInfo: UIView {
-    let groupName: String
-    let memberCount: Int
-    let duration: GroupChallengeDurations
-    let startAt: GroupStartAts
+    var groupName: String
+    var memberCount: Int
+    var duration: GroupChallengeDurations
+    var startAt: GroupStartAts
     
-    init(groupName: String, memberCount: Int, duration: GroupChallengeDurations, startAt: GroupStartAts) {
+    init(
+        groupName: String = "",
+        memberCount: Int = 0,
+        duration: GroupChallengeDurations = .threeDays,
+        startAt: GroupStartAts = .today
+    ) {
         self.groupName = groupName
         self.memberCount = memberCount
         self.duration = duration
@@ -164,5 +169,18 @@ final class DogetherGroupInfo: UIView {
             $0.right.equalTo(startDayInfoLabel)
             $0.height.equalTo(25)
         }
+    }
+    
+    func setInfo(groupName: String, memberCount: Int, duration: GroupChallengeDurations, startAt: GroupStartAts) {
+        self.groupName = groupName
+        self.memberCount = memberCount
+        self.duration = duration
+        self.startAt = startAt
+        
+        groupNameLabel.text = groupName
+        durationInfoLabel.text = "\(duration.rawValue)일"
+        memberCountInfoLabel.text = "총 \(memberCount)명"
+        startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
+        endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
     }
 }

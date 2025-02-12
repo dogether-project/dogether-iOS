@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SnapKit
 
-class StartViewController: BaseViewController {
+final class StartViewController: BaseViewController {
     private let dogetherHeader = DogetherHeader()
     private var createGroupButton = {
         let button = UIButton()
@@ -41,7 +41,7 @@ class StartViewController: BaseViewController {
     }()
     private let joinGroupButton = DogetherButton(action: {
         // TODO: 그룹 가입하기 화면으로 넘어가도록 구현
-    }, title: "그룹 가입하기", buttonColor: .grey900)
+    }, title: "그룹 가입하기", abledButtonColor: .grey900)
 
     override func viewDidLoad() {
         super.viewDidLoad()
