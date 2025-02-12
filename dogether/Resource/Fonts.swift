@@ -49,4 +49,15 @@ enum Fonts {
     static let body1R = Fonts.regular(size: 16)
     static let body2R = Fonts.regular(size: 14)
     static let smallR = Fonts.regular(size: 12)
+    
+    // TODO: lineHeight를 적용할 때 사용, 현재는 body2R에 대해서만 적용이 되어있으며, 추후 어떻게 확장할지 고민 필요
+    static func getAttributes() -> [NSAttributedString.Key: Any] {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 21 / body2R.lineHeight
+        
+        return [
+            .font: body2R,
+            .paragraphStyle: paragraphStyle
+        ]
+    }
 }

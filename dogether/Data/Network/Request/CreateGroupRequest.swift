@@ -24,15 +24,15 @@ struct CreateGroupRequest: GroupInfo, Encodable {
 }
 
 // TODO: 추후 Domain - Entity로 이동
-enum GroupStartAts: String {
+enum GroupStartAts: String, CaseIterable {
     case today = "TODAY"
-    case tommorow = "TOMMOROW"
+    case tomorrow = "TOMORROW"
     
     var text: String {
         switch self {
         case .today:
             return "오늘"
-        case .tommorow:
+        case .tomorrow:
             return "내일"
         }
     }
@@ -41,8 +41,17 @@ enum GroupStartAts: String {
         switch self {
         case .today:
             return 0
-        case .tommorow:
+        case .tomorrow:
             return 1
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .today:
+            return "오늘부터 실천!\n지금 바로 시작할래요"
+        case .tomorrow:
+            return "조금 더 준비하고,\n내일부터 시작할래요"
         }
     }
 }
