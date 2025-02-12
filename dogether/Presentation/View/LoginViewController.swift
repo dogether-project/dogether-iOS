@@ -11,26 +11,26 @@ import AuthenticationServices
 
 final class LoginViewController: BaseViewController {
     
-    private let appleSignInDelegate = AppleSignInDelegate()
+    private let viewModel = LoginViewModel()
     
     private let dogetherLabel = {
         let label = UILabel()
         label.text = "함께하면 두개 더,\n지금부터 Do Gether"
-        label.font = .boldSystemFont(ofSize: 24)
+        label.font = Fonts.head1B
         label.textColor = .black
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
     }()
     
-    // TODO: - 공용 컴포넌트 사용 예정
     private lazy var logo = {
         let logo = UIImageView()
+        logo.image = UIImage(named: "logo")
         return logo
     }()
     
     private lazy var signInButton =  {
-        let button = ASAuthorizationAppleIDButton(type: .signIn, style: .black)
+        let button = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
         button.addTarget(self, action: #selector(signInButtonClicked), for: .touchUpInside)
         return button
     }()
@@ -48,34 +48,36 @@ final class LoginViewController: BaseViewController {
         
         dogetherLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(160)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(162)
         }
         
         logo.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(dogetherLabel.snp.bottom).offset(56)
+            $0.top.equalTo(dogetherLabel.snp.bottom).offset(54)
         }
         
         signInButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(logo.snp.bottom).offset(40)
-            $0.height.equalTo(40)
+            $0.top.equalTo(logo.snp.bottom).offset(100)
+            $0.height.equalTo(50)
         }
     }
     
     override func configureView() { }
     
     @objc private func signInButtonClicked() {
-        
-        // Apple로 로그인을 시작할 메서드(버튼을 눌렀을때 호출할 메서드)
-        let request = ASAuthorizationAppleIDProvider().createRequest()
-        request.requestedScopes = [.fullName, .email] // 유저로부터 알 수 있는 정보들
-        
-        let controller = ASAuthorizationController(authorizationRequests: [request])
-        
-        // 인증창을 보여주기 위해 로그인 정보 관련 대리자 설정
-        controller.delegate = appleSignInDelegate
-        controller.performRequests()
+        Task {
+            do {
+                let response = try await viewModel.singInWithApple()
+                print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
+                
+                //TODO: - 로그인 성공 후 이동하는 로직
+                self.navigationController?.pushViewController(LoginSuccessViewController(), animated: true)
+
+            } catch {
+                print("❌ 로그인 실패: \(error.localizedDescription)")
+            }
+        }
     }
 }
 
