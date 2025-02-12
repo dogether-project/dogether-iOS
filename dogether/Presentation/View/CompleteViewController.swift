@@ -40,23 +40,26 @@ final class CompleteViewController: BaseViewController {
         imageView.tintColor = .white
         return imageView
     }()
-    private let joinCodeView = {
-        let view = UIView()
-        view.backgroundColor = .grey0
-        view.layer.cornerRadius = 12
-        view.layer.borderColor = UIColor.grey100.cgColor
-        view.layer.borderWidth = 1
-        return view
+    private var joinCodeShareButton = {
+        let button = UIButton()
+        button.backgroundColor = .grey0
+        button.layer.cornerRadius = 12
+        button.layer.borderColor = UIColor.grey100.cgColor
+        button.layer.borderWidth = 1
+        return button
     }()
     private var joinCodeLabel: UIView = {
         let label = UILabel()
         label.textColor = .grey900
         label.font = Fonts.head1B
+        label.isUserInteractionEnabled = false
         return label
     }()
     private let joinCodeImageView: UIView = {
         let imageView = UIImageView()
-        imageView.image = .copy
+        imageView.image = .share.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .grey900
+        imageView.isUserInteractionEnabled = false
         return imageView
     }()
 
@@ -84,6 +87,7 @@ final class CompleteViewController: BaseViewController {
         case .create:
             let label = joinCodeLabel as? UILabel
             label?.text = "123456789"
+            joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
     }
     
@@ -93,7 +97,7 @@ final class CompleteViewController: BaseViewController {
         case .join:
             [groupInfoView].forEach { view.addSubview($0) }
         case .create:
-            [checkImageBackgroundView, checkImageView, joinCodeView, joinCodeLabel, joinCodeImageView].forEach { view.addSubview($0) }
+            [checkImageBackgroundView, checkImageView, joinCodeShareButton, joinCodeLabel, joinCodeImageView].forEach { view.addSubview($0) }
         }
     }
     
@@ -114,7 +118,7 @@ final class CompleteViewController: BaseViewController {
             case .join:
                 $0.top.equalTo(titleLabel.snp.bottom).offset(8)
             case .create:
-                $0.top.equalTo(joinCodeView.snp.bottom).offset(20)
+                $0.top.equalTo(joinCodeShareButton.snp.bottom).offset(20)
             }
             $0.height.equalTo(25)
         }
@@ -139,20 +143,25 @@ final class CompleteViewController: BaseViewController {
                 $0.center.equalTo(checkImageBackgroundView)
                 $0.width.height.equalTo(34)
             }
-            joinCodeView.snp.makeConstraints {
+            joinCodeShareButton.snp.makeConstraints {
                 $0.top.equalTo(titleLabel.snp.bottom).offset(47)
                 $0.horizontalEdges.equalToSuperview().inset(36)
                 $0.height.equalTo(75)
             }
             joinCodeLabel.snp.makeConstraints {
-                $0.centerX.equalTo(joinCodeView).offset(-17)
-                $0.centerY.equalTo(joinCodeView)
+                $0.centerX.equalTo(joinCodeShareButton).offset(-17)
+                $0.centerY.equalTo(joinCodeShareButton)
             }
             joinCodeImageView.snp.makeConstraints {
-                $0.centerY.equalTo(joinCodeView)
+                $0.centerY.equalTo(joinCodeShareButton)
                 $0.left.equalTo(joinCodeLabel.snp.right).offset(10)
                 $0.width.height.equalTo(24)
             }
         }
+    }
+    
+    @objc private func didTapJoinCodeShareButton() {
+        // TODO: 추후 수정
+        present(UIActivityViewController(activityItems: ["12345678999"], applicationActivities: nil), animated: true)
     }
 }
