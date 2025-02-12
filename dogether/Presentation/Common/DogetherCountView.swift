@@ -127,18 +127,3 @@ final class DogetherCountView: UIView {
         currentLabel.text = "\(current)\(unit)"
     }
 }
-
-// TODO: 추후 Domain - Entity로 이동
-enum Directions {
-    case minus
-    case plus
-    
-    var tag: Int {
-        switch self {
-        case .minus:
-            return -1
-        case .plus:
-            return 1
-        }
-    }
-}
