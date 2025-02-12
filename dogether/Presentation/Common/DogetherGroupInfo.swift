@@ -13,26 +13,28 @@ final class DogetherGroupInfo: UIView {
     var memberCount: Int
     var duration: GroupChallengeDurations
     var startAt: GroupStartAts
+    let bgColor: UIColor
     
     init(
         groupName: String = "",
         memberCount: Int = 0,
         duration: GroupChallengeDurations = .threeDays,
-        startAt: GroupStartAts = .today
+        startAt: GroupStartAts = .today,
+        backgroundColor: UIColor = .grey50
     ) {
         self.groupName = groupName
         self.memberCount = memberCount
         self.duration = duration
         self.startAt = startAt
+        self.bgColor = backgroundColor
         
         super.init(frame: .zero)
         setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let groupInfoView = {
+    private var groupInfoView = {
         let view = UIView()
-        view.backgroundColor = .grey50
         view.layer.cornerRadius = 12
         view.layer.borderColor = UIColor.grey100.cgColor
         view.layer.borderWidth = 1
@@ -77,6 +79,8 @@ final class DogetherGroupInfo: UIView {
     private var endDayInfoLabel = UILabel()
     
     private func setUI() {
+        groupInfoView.backgroundColor = bgColor
+        
         durationDescriptionLabel = descriptionLabel()
         memberCountDescriptionLabel = descriptionLabel()
         startDayDescriptionLabel = descriptionLabel()
