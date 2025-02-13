@@ -11,50 +11,86 @@ import SnapKit
 
 final class StartViewController: BaseViewController {
     private let dogetherHeader = DogetherHeader()
-    private var createGroupButton = {
-        let button = UIButton()
-        button.backgroundColor = .grey50
-        button.layer.cornerRadius = 12
-        return button
-    }()
-    private let plusImageBackgroundView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 12
-        view.isUserInteractionEnabled = false
-        return view
-    }()
-    private let plusImageView = {
-        let imageView = UIImageView()
-        imageView.image = .plus.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .grey400
-        imageView.isUserInteractionEnabled = false
-        return imageView
-    }()
-    private let createGroupLabel = {
+    private let titleLabel = {
         let label = UILabel()
-        label.text = "새 그룹 만들기"
-        label.textColor = .grey500
-        label.font = Fonts.bold(size: 18)
-        label.isUserInteractionEnabled = false
+        label.attributedText = NSAttributedString(
+            string: "소속된 그룹이 없어요.\n그룹을 만들거나 참여하세요!",
+            attributes: Fonts.getAttributes(for: Fonts.head1B)
+        )
+        label.textColor = .grey0
+        label.numberOfLines = 0
         return label
     }()
-    private let joinGroupButton = DogetherButton(action: {
-        // TODO: 그룹 가입하기 화면으로 넘어가도록 구현
-    }, title: "그룹 가입하기", abledButtonColor: .grey900)
+    // TODO: 추후 descriptionButton 추가
+    private func startButton(groupType: GroupTypes) -> UIButton {
+        let button = UIButton()
+        button.backgroundColor = .grey800
+        button.layer.cornerRadius = 12
+        return button
+    }
+    private var createButton = UIButton()
+    private var joinButton = UIButton()
+    private func startImageView(groupType: GroupTypes) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.image = groupType.image
+        imageView.isUserInteractionEnabled = false
+        return imageView
+    }
+    private var createImageView = UIImageView()
+    private var joinImageView = UIImageView()
+    private func startTitleLabel(groupType: GroupTypes) -> UILabel {
+        let label = UILabel()
+        label.text = groupType.startTitleText
+        label.textColor = .grey0
+        label.font = Fonts.head2B
+        label.isUserInteractionEnabled = false
+        return label
+    }
+    private var createTitleLabel = UILabel()
+    private var joinTitleLabel = UILabel()
+    private func startSubTitleLabel(groupType: GroupTypes) -> UILabel {
+        let label = UILabel()
+        label.text = groupType.startSubTitleText
+        label.textColor = .grey400
+        label.font = Fonts.body2R
+        label.isUserInteractionEnabled = false
+        return label
+    }
+    private var createSubTitleLabel = UILabel()
+    private var joinSubTitleLabel = UILabel()
+    private func startSChevronImageView() -> UIImageView {
+        let imageView = UIImageView()
+        imageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .grey300
+        imageView.isUserInteractionEnabled = false
+        return imageView
+    }
+    private var createChevronImageView = UIImageView()
+    private var joinChevronImageView = UIImageView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func configureView() {
-        createGroupButton.addTarget(self, action: #selector(didTapCreateGroupButton), for: .touchUpInside)
+        createButton = startButton(groupType: .create)
+        createButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
+        joinButton = startButton(groupType: .join)
+        joinButton.addTarget(self, action: #selector(didTapJoinButton), for: .touchUpInside)
+        createImageView = startImageView(groupType: .create)
+        joinImageView = startImageView(groupType: .join)
+        createTitleLabel = startTitleLabel(groupType: .create)
+        joinTitleLabel = startTitleLabel(groupType: .join)
+        createSubTitleLabel = startSubTitleLabel(groupType: .create)
+        joinSubTitleLabel = startSubTitleLabel(groupType: .join)
+        createChevronImageView = startSChevronImageView()
+        joinChevronImageView = startSChevronImageView()
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, createGroupButton, joinGroupButton].forEach { view.addSubview($0) }
-        [plusImageBackgroundView, createGroupLabel].forEach { createGroupButton.addSubview($0) }
-        [plusImageView].forEach { plusImageBackgroundView.addSubview($0) }
+        [dogetherHeader, titleLabel, createButton, joinButton].forEach { view.addSubview($0) }
+        [createImageView, createTitleLabel, createSubTitleLabel, createChevronImageView].forEach { createButton.addSubview($0) }
+        [joinImageView, joinTitleLabel, joinSubTitleLabel, joinChevronImageView].forEach { joinButton.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -64,39 +100,79 @@ final class StartViewController: BaseViewController {
             $0.height.equalTo(28)
         }
         
-        createGroupButton.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(36)
+        titleLabel.snp.makeConstraints {
+            $0.top.equalTo(dogetherHeader.snp.bottom).offset(28)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(150)
+            $0.height.equalTo(72)
         }
         
-        plusImageBackgroundView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(createGroupButton.snp.top).offset(37)
-            $0.width.height.equalTo(32)
+        createButton.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(41)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(100)
         }
         
-        plusImageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.edges.equalToSuperview().inset(6.4)
-            $0.width.height.equalTo(19.2)
+        createImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(22)
+            $0.left.equalToSuperview().offset(16)
+            $0.width.height.equalTo(24)
         }
         
-        createGroupLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(createGroupButton.snp.bottom).offset(-37)
+        createTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
+            $0.left.equalTo(createImageView.snp.right).offset(8)
             $0.height.equalTo(28)
         }
         
-        joinGroupButton.snp.makeConstraints {
-            $0.top.equalTo(createGroupButton.snp.bottom).offset(12)
+        createSubTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(createTitleLabel.snp.bottom).offset(8)
+            $0.left.equalTo(createImageView)
+            $0.height.equalTo(21)
+        }
+        
+        createChevronImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().offset(-21)
+            $0.width.height.equalTo(28)
+        }
+        
+        joinButton.snp.makeConstraints {
+            $0.top.equalTo(createButton.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
+            $0.height.equalTo(100)
+        }
+        
+        joinImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(22)
+            $0.left.equalToSuperview().offset(16)
+            $0.width.height.equalTo(24)
+        }
+        
+        joinTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
+            $0.left.equalTo(joinImageView.snp.right).offset(8)
+            $0.height.equalTo(28)
+        }
+        
+        joinSubTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(joinTitleLabel.snp.bottom).offset(8)
+            $0.left.equalTo(joinImageView)
+            $0.height.equalTo(21)
+        }
+        
+        joinChevronImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().offset(-21)
+            $0.width.height.equalTo(28)
         }
     }
     
-    @objc func didTapCreateGroupButton() {
+    @objc private func didTapCreateButton() {
         // TODO: 그룹 만들기 화면으로 넘어가도록 구현
+    }
+    
+    @objc private func didTapJoinButton() {
+        // TODO: 그룹 가입 화면으로 넘어가도록 구현
     }
 }
 

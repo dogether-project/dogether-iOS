@@ -50,8 +50,9 @@ enum Fonts {
     static let body2R = Fonts.regular(size: 14)
     static let smallR = Fonts.regular(size: 12)
     
-    static func getAttributes(for font: UIFont) -> [NSAttributedString.Key: Any] {
+    static func getAttributes(for font: UIFont, textAlignment: NSTextAlignment = .center) -> [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = textAlignment
         paragraphStyle.lineHeightMultiple = getLineHeight(for: font) / font.lineHeight
         
         return [

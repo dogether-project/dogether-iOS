@@ -1,5 +1,5 @@
 //
-//  CreateGroupViewModel.swift
+//  GroupCreateViewModel.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/10/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CreateGroupViewModel {
+class GroupCreateViewModel {
     let groupNameMaxLength: Int = 12
     private(set) var currentStep: CreateGroupSteps = .one
     private(set) var isDisabledCompleteButton: Bool = true
@@ -30,10 +30,10 @@ class CreateGroupViewModel {
         }
     }
     
-    func updateGroupName(groupName: String?) async -> (String, String, Bool) {
+    func updateGroupName(groupName: String?) async -> (String, String, ButtonStatus) {
         currentGroupName = groupName ?? ""
-        isDisabledCompleteButton = !(currentStep == .one && currentGroupName.count > 0)
-        return (currentGroupName, "\(currentGroupName.count)/\(groupNameMaxLength)", isDisabledCompleteButton)
+        let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .abled : .disabled
+        return (currentGroupName, "\(currentGroupName.count)/\(groupNameMaxLength)", buttonStatus)
     }
     func updateMemberCount(count: Int) {
         memberCount = count
