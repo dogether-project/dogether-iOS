@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SnapKit
 
-final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
+final class CreateGroupViewController: BaseViewController {
     private var viewModel = CreateGroupViewModel()
     
     private let dogetherHeader = NavigationHeader(title: "그룹 만들기")
@@ -76,10 +76,15 @@ final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
     }()
     private var groupNameTextField = {
         let textField = UITextField()
-        textField.placeholder = "그룹명을 입력해주세요"
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "그룹명을 입력해주세요",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.grey400]
+        )
         textField.text = ""
+        textField.textColor = .grey900
         textField.font = Fonts.body1S
         textField.tintColor = .blue400
+        textField.returnKeyType = .done
         return textField
     }()
     private var groupNameCountLabel = {
@@ -187,6 +192,11 @@ final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupKeyboardHandling()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func configureView() {
@@ -498,4 +508,46 @@ final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
             button.textColor = viewModel.currentStartAt == startAt ? .blue400 : .grey900
         }
     }
+}
+
+// MARK: - abount keyboard
+extension CreateGroupViewController: UITextFieldDelegate {
+    private func setupKeyboardHandling() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+    }
+    
+    // MARK: - UITextFieldDelegate
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    @objc private func keyboardWillShow(_ notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        completeButton.snp.updateConstraints {
+            $0.bottom.equalToSuperview().inset(keyboardFrame.cgRectValue.height + 16)
+        }
+        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+    }
+    
+    @objc private func keyboardWillHide(_ notification: NSNotification) {
+        completeButton.snp.updateConstraints {
+            $0.bottom.equalToSuperview().inset(48)
+        }
+        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+    }
+    
+    @objc private func dismissKeyboard() { view.endEditing(true) }
 }
