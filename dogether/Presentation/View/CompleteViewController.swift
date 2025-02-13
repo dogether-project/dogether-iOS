@@ -48,14 +48,14 @@ final class CompleteViewController: BaseViewController {
         button.layer.borderWidth = 1
         return button
     }()
-    private var joinCodeLabel: UIView = {
+    private var joinCodeLabel = {
         let label = UILabel()
         label.textColor = .grey900
         label.font = Fonts.head1B
         label.isUserInteractionEnabled = false
         return label
     }()
-    private let joinCodeImageView: UIView = {
+    private let joinCodeImageView = {
         let imageView = UIImageView()
         imageView.image = .share.withRenderingMode(.alwaysTemplate)
         imageView.tintColor = .grey900
@@ -85,8 +85,7 @@ final class CompleteViewController: BaseViewController {
         case .join:
             groupInfoView.setInfo(groupName: "groupName", memberCount: 0, duration: .threeDays, startAt: .today)
         case .create:
-            let label = joinCodeLabel as? UILabel
-            label?.text = "123456789"
+            joinCodeLabel.text = "123456789"
             joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
     }

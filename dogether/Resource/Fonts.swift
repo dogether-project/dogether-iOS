@@ -50,14 +50,32 @@ enum Fonts {
     static let body2R = Fonts.regular(size: 14)
     static let smallR = Fonts.regular(size: 12)
     
-    // TODO: lineHeight를 적용할 때 사용, 현재는 body2R에 대해서만 적용이 되어있으며, 추후 어떻게 확장할지 고민 필요
-    static func getAttributes() -> [NSAttributedString.Key: Any] {
+    static func getAttributes(for font: UIFont) -> [NSAttributedString.Key: Any] {
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 21 / body2R.lineHeight
+        paragraphStyle.lineHeightMultiple = getLineHeight(for: font) / font.lineHeight
         
         return [
-            .font: body2R,
+            .font: font,
             .paragraphStyle: paragraphStyle
         ]
+    }
+    
+    private static func getLineHeight(for font: UIFont) -> CGFloat {
+        switch font {
+        case Fonts.emphasisB:
+            return 45
+        case Fonts.head1B, Fonts.head1R:
+            return 36
+        case Fonts.head2B:
+            return 28
+        case Fonts.body1B, Fonts.body1S, Fonts.body1R:
+            return 25
+        case Fonts.body2S, Fonts.body2R:
+            return 21
+        case Fonts.smallS, Fonts.smallR:
+            return 18
+        default:
+            return 0
+        }
     }
 }

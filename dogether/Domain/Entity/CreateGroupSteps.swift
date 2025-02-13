@@ -13,19 +13,6 @@ enum CreateGroupSteps: Int {
     case three = 3
     case four = 4
     
-    var text: String {
-        switch self {
-        case .one:
-            return "1"
-        case .two:
-            return "2"
-        case .three:
-            return "3"
-        case .four:
-            return "4"
-        }
-    }
-    
     var description: String {
         switch self {
         case .one:

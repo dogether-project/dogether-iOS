@@ -9,11 +9,11 @@ import Foundation
 import UIKit
 
 final class DogetherCountView: UIView {
-    var changeCountAction: (Int) async -> Void
     let min: Int
     let max: Int
-    var current: Int
     let unit: String
+    var current: Int
+    var changeCountAction: (Int) async -> Void
     
     init(changeCountAction: @escaping (Int) async -> Void, min: Int = 2, max: Int = 10, current: Int, unit: String) {
         self.changeCountAction = changeCountAction
@@ -70,6 +70,12 @@ final class DogetherCountView: UIView {
     }()
     
     private func setUI() {
+        minusButton.addTarget(self, action: #selector(didTapCountButton(_:)), for: .touchUpInside)
+        plusButton.addTarget(self, action: #selector(didTapCountButton(_:)), for: .touchUpInside)
+        currentLabel.text = "\(current)\(unit)"
+        minLabel.text = "\(min)\(unit)"
+        maxLabel.text = "\(max)\(unit)"
+        
         [dogetherCountView, minLabel, maxLabel].forEach { addSubview($0) }
         [minusButton, plusButton, currentLabel].forEach { dogetherCountView.addSubview($0) }
         
@@ -104,12 +110,6 @@ final class DogetherCountView: UIView {
             $0.top.equalTo(dogetherCountView.snp.bottom).offset(8)
             $0.right.equalToSuperview()
         }
-        
-        minusButton.addTarget(self, action: #selector(didTapCountButton(_:)), for: .touchUpInside)
-        plusButton.addTarget(self, action: #selector(didTapCountButton(_:)), for: .touchUpInside)
-        currentLabel.text = "\(current)\(unit)"
-        minLabel.text = "\(min)\(unit)"
-        maxLabel.text = "\(max)\(unit)"
     }
     
     @objc private func didTapCountButton(_ sender: UIButton) {

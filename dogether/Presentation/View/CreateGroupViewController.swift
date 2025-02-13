@@ -15,7 +15,7 @@ final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
     private let dogetherHeader = NavigationHeader(title: "그룹 만들기")
     private func stepLabel(step: CreateGroupSteps) -> UILabel {
         let label = UILabel()
-        label.text = step.text
+        label.text = String(step.rawValue)
         label.textColor = viewModel.currentStep == step ? .white : .grey400
         label.textAlignment = .center
         label.font = Fonts.body2R
@@ -175,10 +175,9 @@ final class CreateGroupViewController: BaseViewController, UITextFieldDelegate {
         let label = UILabel()
         label.attributedText = NSAttributedString(
             string: startAt.description,
-            attributes: Fonts.getAttributes()
+            attributes: Fonts.getAttributes(for: Fonts.body2R)
         )
         label.textColor = .grey700
-        label.font = Fonts.body2R
         label.numberOfLines = 0
         return label
     }
