@@ -49,4 +49,33 @@ enum Fonts {
     static let body1R = Fonts.regular(size: 16)
     static let body2R = Fonts.regular(size: 14)
     static let smallR = Fonts.regular(size: 12)
+    
+    static func getAttributes(for font: UIFont) -> [NSAttributedString.Key: Any] {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = getLineHeight(for: font) / font.lineHeight
+        
+        return [
+            .font: font,
+            .paragraphStyle: paragraphStyle
+        ]
+    }
+    
+    private static func getLineHeight(for font: UIFont) -> CGFloat {
+        switch font {
+        case Fonts.emphasisB:
+            return 45
+        case Fonts.head1B, Fonts.head1R:
+            return 36
+        case Fonts.head2B:
+            return 28
+        case Fonts.body1B, Fonts.body1S, Fonts.body1R:
+            return 25
+        case Fonts.body2S, Fonts.body2R:
+            return 21
+        case Fonts.smallS, Fonts.smallR:
+            return 18
+        default:
+            return 0
+        }
+    }
 }

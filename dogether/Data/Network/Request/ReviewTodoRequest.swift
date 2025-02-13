@@ -16,9 +16,3 @@ struct ReviewTodoRequest: Encodable {
         self.rejectReason = rejectReason
     }
 }
-
-// TODO: 추후 Domain - Entity로 이동
-enum ReviewResults: String {
-    case approve = "APPROVE"
-    case reject = "REJECT"
-}

@@ -28,21 +28,23 @@ final class DogetherHeader: UIView {
         return imageView
     }()
     
-    // TODO: 추후 UIButton으로 수정
-    private let chartIcon = {
-        let imageView = UIImageView()
-        imageView.image = .barChart
-        return imageView
+    private var statButton = {
+        let button = UIButton()
+        button.setImage(.barChart, for: .normal)
+        return button
     }()
     
-    private let profileIcon = {
-        let imageView = UIImageView()
-        imageView.image = .profile
-        return imageView
+    private var myPageButton = {
+        let button = UIButton()
+        button.setImage(.profile, for: .normal)
+        return button
     }()
     
     private func setUI() {
-        [dogetherIcon, dogetherIconTypo, chartIcon, profileIcon].forEach { addSubview($0) }
+        statButton.addTarget(self, action: #selector(didTapStatButton), for: .touchUpInside)
+        myPageButton.addTarget(self, action: #selector(didTapMyPageButton), for: .touchUpInside)
+        
+        [dogetherIcon, dogetherIconTypo, statButton, myPageButton].forEach { addSubview($0) }
         
         dogetherIcon.snp.makeConstraints {
             $0.left.equalToSuperview()
@@ -56,16 +58,24 @@ final class DogetherHeader: UIView {
             $0.height.equalTo(18)
         }
         
-        profileIcon.snp.makeConstraints {
+        myPageButton.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.right.equalToSuperview()
             $0.width.height.equalTo(24)
         }
         
-        chartIcon.snp.makeConstraints {
+        statButton.snp.makeConstraints {
             $0.top.equalToSuperview()
-            $0.right.equalTo(profileIcon.snp.left).offset(-24)
+            $0.right.equalTo(myPageButton.snp.left).offset(-24)
             $0.width.height.equalTo(24)
         }
+    }
+    
+    @objc func didTapStatButton() {
+        // TODO: 추후 내통계로 이동하도록 구현
+    }
+    
+    @objc func didTapMyPageButton() {
+        // TODO: 추후 마이페이지로 이동하도록 구현
     }
 }
