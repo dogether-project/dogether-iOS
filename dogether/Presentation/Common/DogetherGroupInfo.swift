@@ -13,44 +13,40 @@ final class DogetherGroupInfo: UIView {
     var memberCount: Int
     var duration: GroupChallengeDurations
     var startAt: GroupStartAts
-    let bgColor: UIColor
     
     init(
         groupName: String = "",
         memberCount: Int = 0,
         duration: GroupChallengeDurations = .threeDays,
-        startAt: GroupStartAts = .today,
-        backgroundColor: UIColor = .grey50
+        startAt: GroupStartAts = .today
     ) {
         self.groupName = groupName
         self.memberCount = memberCount
         self.duration = duration
         self.startAt = startAt
-        self.bgColor = backgroundColor
         
         super.init(frame: .zero)
         setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var groupInfoView = {
+    private let groupInfoView = {
         let view = UIView()
+        view.backgroundColor = .grey700
         view.layer.cornerRadius = 12
-        view.layer.borderColor = UIColor.grey100.cgColor
-        view.layer.borderWidth = 1
         return view
     }()
     
-    private var groupNameLabel = {
+    private let groupNameLabel = {
         let label = UILabel()
-        label.textColor = .grey900
+        label.textColor = .grey0
         label.font = Fonts.head1B
         return label
     }()
     
     private let dividerView = {
         let view = UIView()
-        view.backgroundColor = .grey100
+        view.backgroundColor = .grey600
         return view
     }()
     
@@ -63,7 +59,7 @@ final class DogetherGroupInfo: UIView {
     
     private func infoLabel() -> UILabel {
         let label = UILabel()
-        label.textColor = .grey800
+        label.textColor = .grey200
         label.font = Fonts.body1R
         return label
     }
@@ -79,8 +75,6 @@ final class DogetherGroupInfo: UIView {
     private var endDayInfoLabel = UILabel()
     
     private func setUI() {
-        groupInfoView.backgroundColor = bgColor
-        
         durationDescriptionLabel = descriptionLabel()
         memberCountDescriptionLabel = descriptionLabel()
         startDayDescriptionLabel = descriptionLabel()
@@ -116,7 +110,7 @@ final class DogetherGroupInfo: UIView {
         
         groupNameLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(23)
+            $0.top.equalToSuperview().inset(24)
             $0.height.equalTo(36)
         }
         

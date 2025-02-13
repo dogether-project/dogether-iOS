@@ -10,47 +10,33 @@ import UIKit
 import SnapKit
 
 final class CompleteViewController: BaseViewController {
-    private let completeType: CompleteTypes
+    private let groupType: GroupTypes
     
-    private var titleLabel = {
-        let label = UILabel()
-        label.textColor = .grey900
-        label.font = Fonts.emphasisB
-        return label
+    private let firecrackerImageView = {
+        let imageView = UIImageView()
+        imageView.image = .firecracker
+        return imageView
     }()
-    private var subTitleLabel = {
+    private let titleLabel = {
         let label = UILabel()
-        label.textColor = .grey500
-        label.font = Fonts.body1R
+        label.textColor = .grey0
+        label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }()
     private let completeButton = DogetherButton(action: {
-        // TODO: 추후 투두 작성하기로 이동
-    }, title: "투두 작성하기")
-    private var groupInfoView = DogetherGroupInfo(backgroundColor: .white)
-    private let checkImageBackgroundView = {
-        let view = UIView()
-        view.backgroundColor = .blue300
-        view.layer.cornerRadius = 29
-        return view
-    }()
-    private let checkImageView = {
-        let imageView = UIImageView()
-        imageView.image = .check.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .white
-        return imageView
-    }()
-    private var joinCodeShareButton = {
+        // TODO: 추후 홈으로 이동
+    }, title: "홈으로 가기", status: .abled)
+    private var groupInfoView = UIView()
+    private let joinCodeShareButton = {
         let button = UIButton()
-        button.backgroundColor = .grey0
+        button.backgroundColor = .grey700
         button.layer.cornerRadius = 12
-        button.layer.borderColor = UIColor.grey100.cgColor
-        button.layer.borderWidth = 1
         return button
     }()
-    private var joinCodeLabel = {
+    private let joinCodeLabel = {
         let label = UILabel()
-        label.textColor = .grey900
+        label.textColor = .grey0
         label.font = Fonts.head1B
         label.isUserInteractionEnabled = false
         return label
@@ -58,92 +44,85 @@ final class CompleteViewController: BaseViewController {
     private let joinCodeImageView = {
         let imageView = UIImageView()
         imageView.image = .share.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .grey900
+        imageView.tintColor = .grey400
         imageView.isUserInteractionEnabled = false
+        return imageView
+    }()
+    private let noticeLabel = {
+        let label = UILabel()
+        label.textColor = .grey400
+        label.font = Fonts.body2R
+        label.numberOfLines = 0
+        return label
+    }()
+    private let noticeImageView = {
+        let imageView = UIImageView()
+        imageView.image = .notice
         return imageView
     }()
 
     // TODO: 추후 초대 코드 또는 그룹 정보를 포함하도록 수정
-    override init(type: CompleteTypes) {
-        self.completeType = type
+    override init(type: GroupTypes) {
+        self.groupType = type
         super.init()
     }
     required init?(coder: NSCoder) { fatalError() }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .blue100
     }
     
     override func configureView() {
-        titleLabel.text = completeType.titleText
-        subTitleLabel.text = completeType.subTitleText
-        
+        titleLabel.attributedText = NSAttributedString(
+            string: groupType.completeTitleText,
+            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
+        )
         // TODO: 추후 수정
-        switch completeType {
+        switch groupType {
         case .join:
-            groupInfoView.setInfo(groupName: "groupName", memberCount: 0, duration: .threeDays, startAt: .today)
+            groupInfoView = DogetherGroupInfo(groupName: "groupName", memberCount: 0, duration: .threeDays, startAt: .today)
         case .create:
+            noticeLabel.text = groupType.completeNoticeText
             joinCodeLabel.text = "123456789"
             joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
     }
     
     override func configureHierarchy() {
-        [titleLabel, subTitleLabel, completeButton].forEach { view.addSubview($0) }
-        switch completeType {
+        [firecrackerImageView, titleLabel, completeButton].forEach { view.addSubview($0) }
+        switch groupType {
         case .join:
             [groupInfoView].forEach { view.addSubview($0) }
         case .create:
-            [checkImageBackgroundView, checkImageView, joinCodeShareButton, joinCodeLabel, joinCodeImageView].forEach { view.addSubview($0) }
+            [joinCodeShareButton, joinCodeLabel, joinCodeImageView, noticeLabel, noticeImageView].forEach { view.addSubview($0) }
         }
     }
     
     override func configureConstraints() {
+        firecrackerImageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(68)
+            $0.width.height.equalTo(40)
+        }
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            switch completeType {
-            case .join:
-                $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
-            case .create:
-                $0.top.equalTo(checkImageBackgroundView.snp.bottom).offset(36)
-            }
-            $0.height.equalTo(45)
-        }
-        subTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            switch completeType {
-            case .join:
-                $0.top.equalTo(titleLabel.snp.bottom).offset(8)
-            case .create:
-                $0.top.equalTo(joinCodeShareButton.snp.bottom).offset(20)
-            }
-            $0.height.equalTo(25)
+            $0.top.equalTo(firecrackerImageView.snp.bottom).offset(20)
+            $0.height.equalTo(72)
         }
         completeButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(48)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-        switch completeType {
+        switch groupType {
         case .join:
             groupInfoView.snp.makeConstraints {
-                $0.top.equalTo(subTitleLabel.snp.bottom).offset(36)
+                $0.top.equalTo(titleLabel.snp.bottom).offset(40)
                 $0.horizontalEdges.equalToSuperview().inset(36)
-                $0.height.equalTo(267)
+                $0.height.equalTo(269)
             }
         case .create:
-            checkImageBackgroundView.snp.makeConstraints {
-                $0.centerX.equalToSuperview()
-                $0.top.equalTo(view.safeAreaLayoutGuide).offset(112)
-                $0.width.height.equalTo(58)
-            }
-            checkImageView.snp.makeConstraints {
-                $0.center.equalTo(checkImageBackgroundView)
-                $0.width.height.equalTo(34)
-            }
             joinCodeShareButton.snp.makeConstraints {
-                $0.top.equalTo(titleLabel.snp.bottom).offset(47)
+                $0.top.equalTo(titleLabel.snp.bottom).offset(68)
                 $0.horizontalEdges.equalToSuperview().inset(36)
                 $0.height.equalTo(75)
             }
@@ -155,6 +134,16 @@ final class CompleteViewController: BaseViewController {
                 $0.centerY.equalTo(joinCodeShareButton)
                 $0.left.equalTo(joinCodeLabel.snp.right).offset(10)
                 $0.width.height.equalTo(24)
+            }
+            noticeLabel.snp.makeConstraints {
+                $0.centerX.equalToSuperview().offset(12)
+                $0.top.equalTo(joinCodeShareButton.snp.bottom).offset(16)
+                $0.height.equalTo(21)
+            }
+            noticeImageView.snp.makeConstraints {
+                $0.top.equalTo(noticeLabel)
+                $0.right.equalTo(noticeLabel.snp.left).offset(-4)
+                $0.width.height.equalTo(20)
             }
         }
     }

@@ -12,8 +12,8 @@ final class DogetherCountView: UIView {
     let min: Int
     let max: Int
     let unit: String
-    var current: Int
-    var changeCountAction: (Int) async -> Void
+    private var changeCountAction: (Int) async -> Void
+    private(set) var current: Int
     
     init(changeCountAction: @escaping (Int) async -> Void, min: Int = 2, max: Int = 10, current: Int, unit: String) {
         self.changeCountAction = changeCountAction
@@ -29,42 +29,60 @@ final class DogetherCountView: UIView {
     
     private let dogetherCountView = {
         let view = UIView()
-        view.backgroundColor = .grey50
+        view.backgroundColor = .grey800
         view.layer.cornerRadius = 12
         return view
     }()
     
     private let minusButton = {
         let button = UIButton()
-        button.setImage(.minusButton, for: .normal)
         button.tag = Directions.minus.tag
+        button.backgroundColor = .grey700
+        button.layer.cornerRadius = 8
         return button
+    }()
+    
+    private let minusImageView = {
+        let imageView = UIImageView()
+        imageView.image = .minus.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .grey0
+        imageView.isUserInteractionEnabled = false
+        return imageView
     }()
     
     private let plusButton = {
         let button = UIButton()
-        button.setImage(.plusButton, for: .normal)
         button.tag = Directions.plus.tag
+        button.backgroundColor = .grey700
+        button.layer.cornerRadius = 8
         return button
     }()
     
-    private var currentLabel = {
+    private let plusImageView = {
+        let imageView = UIImageView()
+        imageView.image = .plus.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .grey0
+        imageView.isUserInteractionEnabled = false
+        return imageView
+    }()
+    
+    private let currentLabel = {
         let label = UILabel()
-        label.textColor = .grey900
+        label.textColor = .grey0
         label.font = Fonts.body1S
         return label
     }()
     
     private let minLabel = {
         let label = UILabel()
-        label.textColor = .grey500
+        label.textColor = .grey300
         label.font = Fonts.body2S
         return label
     }()
     
     private let maxLabel = {
         let label = UILabel()
-        label.textColor = .grey500
+        label.textColor = .grey300
         label.font = Fonts.body2S
         return label
     }()
@@ -77,7 +95,7 @@ final class DogetherCountView: UIView {
         maxLabel.text = "\(max)\(unit)"
         
         [dogetherCountView, minLabel, maxLabel].forEach { addSubview($0) }
-        [minusButton, plusButton, currentLabel].forEach { dogetherCountView.addSubview($0) }
+        [minusButton, minusImageView, plusButton, plusImageView, currentLabel].forEach { dogetherCountView.addSubview($0) }
         
         dogetherCountView.snp.makeConstraints {
             $0.top.equalToSuperview()
@@ -87,14 +105,24 @@ final class DogetherCountView: UIView {
         
         minusButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.left.equalToSuperview().inset(5)
+            $0.left.equalTo(dogetherCountView).offset(5)
             $0.width.height.equalTo(40)
+        }
+        
+        minusImageView.snp.makeConstraints {
+            $0.center.equalTo(minusButton)
+            $0.width.height.equalTo(24)
         }
         
         plusButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.right.equalToSuperview().inset(-5)
+            $0.right.equalTo(dogetherCountView).offset(-5)
             $0.width.height.equalTo(40)
+        }
+        
+        plusImageView.snp.makeConstraints {
+            $0.center.equalTo(plusButton)
+            $0.width.height.equalTo(24)
         }
         
         currentLabel.snp.makeConstraints {
@@ -115,15 +143,15 @@ final class DogetherCountView: UIView {
     @objc private func didTapCountButton(_ sender: UIButton) {
         let after = current + sender.tag
         if min <= after && after <= max {
-            current = after
-            updateUI()
+            self.setCurrent(after)
             Task { @MainActor in
                 await changeCountAction(current)
             }
         }
     }
     
-    private func updateUI() {
+    private func setCurrent(_ currentCount: Int) {
+        self.current = currentCount
         currentLabel.text = "\(current)\(unit)"
     }
 }
