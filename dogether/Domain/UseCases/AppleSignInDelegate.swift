@@ -42,8 +42,6 @@ final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
             let lastName = fullName?.familyName ?? "이름없음"
             let fullUserName = firstName + lastName
             
-            UserDefaultsManager.shared.userFullName = fullUserName
-            
             // TODO: - OSLog로 변경하기
             print("============= 🚀 Login Log 🚀 =============")
             print("✅ 로그인 성공")

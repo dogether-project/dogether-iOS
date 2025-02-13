@@ -15,7 +15,13 @@ final class UserDefaultsManager {
     private init() { }
     
     enum UserDefaultsKey: String {
+        case accessToken
         case userFullName
+    }
+    
+    var accessToken: String? {
+        get { userDefaults.string(forKey: UserDefaultsKey.accessToken.rawValue) }
+        set { userDefaults.set(newValue, forKey: UserDefaultsKey.accessToken.rawValue) }
     }
     
     var userFullName: String? {

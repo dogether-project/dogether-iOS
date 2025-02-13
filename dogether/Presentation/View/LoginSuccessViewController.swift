@@ -12,7 +12,7 @@ final class LoginSuccessViewController: BaseViewController {
     
     private lazy var logo = {
         let logo = UIImageView()
-        logo.image = UIImage(named: "logo")
+        logo.image = .logo
         return logo
     }()
     
@@ -20,7 +20,7 @@ final class LoginSuccessViewController: BaseViewController {
         let label = UILabel()
         label.text = "회원가입 완료!"
         label.font = Fonts.head1B
-        label.textColor = .black
+        label.textColor = .grey900
         return label
     }()
     

@@ -17,15 +17,15 @@ final class LoginViewController: BaseViewController {
         let label = UILabel()
         label.text = "함께하면 두개 더,\n지금부터 Do Gether"
         label.font = Fonts.head1B
-        label.textColor = .black
+        label.textColor = .grey900
         label.numberOfLines = 0
         label.textAlignment = .center
         return label
     }()
     
-    private lazy var logo = {
+    private let logo = {
         let logo = UIImageView()
-        logo.image = UIImage(named: "logo")
+        logo.image = .logo
         return logo
     }()
     
@@ -37,7 +37,7 @@ final class LoginViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
     }
     
     override func configureHierarchy() {
@@ -60,6 +60,7 @@ final class LoginViewController: BaseViewController {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(logo.snp.bottom).offset(100)
             $0.height.equalTo(50)
+            $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
     
@@ -67,16 +68,14 @@ final class LoginViewController: BaseViewController {
     
     @objc private func signInButtonClicked() {
         Task {
-            do {
-                let response = try await viewModel.singInWithApple()
-                print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
-                
-                // 로그인 성공 후 이동하는 로직
-                self.navigationController?.setViewControllers([LoginSuccessViewController()], animated: true)
-
-            } catch {
-                print("❌ 로그인 실패: \(error.localizedDescription)")
-            }
+            let response = try await viewModel.singInWithApple()
+            print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
+            
+            UserDefaultsManager.shared.userFullName = response.name
+            UserDefaultsManager.shared.accessToken = response.accessToken
+            
+            // 로그인 성공 후 이동하는 로직
+            self.navigationController?.setViewControllers([LoginSuccessViewController()], animated: true)
         }
     }
 }
