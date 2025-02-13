@@ -9,33 +9,26 @@ import Foundation
 import UIKit
 
 final class DogetherButton: UIButton {
-    var action: () async -> Void
-    var title: String
-    var abledButtonColor: UIColor
-    var disabledButtonColor: UIColor
-    var disabled: Bool
+    var action: () async -> Void    // TODO: 추후 개선
+    private(set) var title: String
+    private(set) var status: ButtonStatus
     
     init(
         action: @escaping () -> Void,
         title: String,
-        abledButtonColor: UIColor = .blue300,
-        disabledButtonColor: UIColor = .grey100,
-        disabled: Bool = false
+        status: ButtonStatus
     ) {
         self.action = action
         self.title = title
-        self.abledButtonColor = abledButtonColor
-        self.disabledButtonColor = disabledButtonColor
-        self.disabled = disabled
+        self.status = status
         
         super.init(frame: .zero)
         setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var dogetherButton = {
+    private let dogetherButton = {
         let button = UIButton()
-        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = Fonts.body1B
         button.layer.cornerRadius = 12
         return button
@@ -43,7 +36,8 @@ final class DogetherButton: UIButton {
     
     private func setUI() {
         dogetherButton.setTitle(title, for: .normal)
-        dogetherButton.backgroundColor = disabled ? disabledButtonColor : abledButtonColor
+        dogetherButton.setTitleColor(status.textColor, for: .normal)
+        dogetherButton.backgroundColor = status.backgroundColor
         dogetherButton.addTarget(self, action: #selector(didTapDogetherButton), for: .touchUpInside)
         
         [dogetherButton].forEach { addSubview($0) }
@@ -60,15 +54,15 @@ final class DogetherButton: UIButton {
         dogetherButton.setTitle(self.title, for: .normal)
     }
     
-    func setButtonDisabled(_ disabled: Bool) {
-        self.disabled = disabled
-        self.backgroundColor = disabled ? disabledButtonColor : abledButtonColor
-        dogetherButton.backgroundColor = self.backgroundColor
+    func setButtonStatus(status: ButtonStatus) {
+        self.status = status
+        dogetherButton.setTitleColor(status.textColor, for: .normal)
+        dogetherButton.backgroundColor = status.backgroundColor
     }
     
-    @objc func didTapDogetherButton() {
+    @objc private func didTapDogetherButton() {
         Task { @MainActor in
-            if !disabled {
+            if status == .abled {
                 await action()
             }
         }

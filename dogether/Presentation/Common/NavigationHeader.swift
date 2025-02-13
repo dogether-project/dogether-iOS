@@ -19,16 +19,17 @@ final class NavigationHeader: UIView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var prevButton = {
+    private let prevButton = {
         let button = UIButton()
-        button.setImage(.arrowLeft, for: .normal)
+        button.setImage(.arrowLeft.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .grey0
         return button
     }()
     
-    private var titleLabel = {
+    private let titleLabel = {
         let label = UILabel()
-        label.textColor = .grey900
-        label.font = Fonts.bold(size: 18)
+        label.textColor = .grey0
+        label.font = Fonts.head2B
         return label
     }()
     
@@ -45,12 +46,12 @@ final class NavigationHeader: UIView {
         }
         
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.center.equalToSuperview()
             $0.height.equalTo(28)
         }
     }
     
-    @objc func didTapPrevButton() {
+    @objc private func didTapPrevButton() {
         // TODO: 추후 이전 페이지로 이동하도록 구현
     }
 }

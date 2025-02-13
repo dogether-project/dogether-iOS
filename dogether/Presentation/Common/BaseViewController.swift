@@ -9,7 +9,7 @@ import UIKit
 
 class BaseViewController: UIViewController {
     
-    init(type: CompleteTypes = .create) {
+    init(type: GroupTypes = .create) {
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) { fatalError() }
@@ -21,7 +21,7 @@ class BaseViewController: UIViewController {
         configureHierarchy()
         configureConstraints()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .grey900
     }
     
     func configureView() { } // 뷰의 시각적인 속성을 설정하는 역할을 합니다
