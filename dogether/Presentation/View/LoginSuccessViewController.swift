@@ -27,6 +27,11 @@ final class LoginSuccessViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 3초 후 그룹 가입뷰로 이동
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            let groupJoinVC = GroupJoinViewController()
+            self?.navigationController?.setViewControllers([groupJoinVC], animated: true)
+        }
     }
     
     override func configureHierarchy() {
