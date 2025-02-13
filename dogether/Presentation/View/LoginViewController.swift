@@ -71,7 +71,7 @@ final class LoginViewController: BaseViewController {
                 let response = try await viewModel.singInWithApple()
                 print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
                 
-                //TODO: - 로그인 성공 후 이동하는 로직
+                // 로그인 성공 후 이동하는 로직
                 self.navigationController?.pushViewController(LoginSuccessViewController(), animated: true)
 
             } catch {
