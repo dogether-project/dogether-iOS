@@ -72,7 +72,7 @@ final class LoginViewController: BaseViewController {
                 print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
                 
                 // 로그인 성공 후 이동하는 로직
-                self.navigationController?.pushViewController(LoginSuccessViewController(), animated: true)
+                self.navigationController?.setViewControllers([LoginSuccessViewController()], animated: true)
 
             } catch {
                 print("❌ 로그인 실패: \(error.localizedDescription)")
