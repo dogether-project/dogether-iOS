@@ -20,8 +20,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
-        let loginNavigationController = UINavigationController(rootViewController: LoginViewController())
-        window?.rootViewController = loginNavigationController
+//        let loginNavigationController = UINavigationController(rootViewController: LoginViewController())
+        let vc = UINavigationController(rootViewController: TodoWriteViewController())
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
     }
 
