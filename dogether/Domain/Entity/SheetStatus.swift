@@ -10,4 +10,13 @@ import Foundation
 enum SheetStatus {
     case expand
     case normal
+    
+    var offset: CGFloat {
+        switch self {
+        case .expand:
+            return 16
+        case .normal:
+            return 281
+        }
+    }
 }
