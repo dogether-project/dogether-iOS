@@ -19,11 +19,12 @@ final class TodoWriteViewController: BaseViewController {
     
     private let dateLabel = {
         let label = UILabel()
-        label.text = "2월 2일 일요일"
+        label.text = DateFormatterManager.today()
         label.font = Fonts.head1B
         return label
     }()
     
+    // TODO: - + 아이콘 말고 엔터액션에서도 투두 추가되게 하기
     private let toDoTextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
@@ -41,9 +42,16 @@ final class TodoWriteViewController: BaseViewController {
         
         textField.layer.cornerRadius = 12
         textField.backgroundColor = .grey800
+        
+        // placeholder 왼쪽 여백
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        
         return textField
     }()
     
+    // TODO: - 작성된 글자수에 맞춰서 숫자 변동
     private let toDoLimitTextCount = {
         let label = UILabel()
         label.text = "0/21"
@@ -52,6 +60,7 @@ final class TodoWriteViewController: BaseViewController {
         return label
     }()
     
+    // TODO: - 아이콘 변경
     private let addButton = {
         let button = UIButton()
         button.setImage(.plus, for: .normal)
@@ -81,6 +90,7 @@ final class TodoWriteViewController: BaseViewController {
         return label
     }()
     
+    // TODO: - 수정 필요
     private let emptyView = {
         let view = UIView()
         let label = UILabel()
@@ -96,6 +106,7 @@ final class TodoWriteViewController: BaseViewController {
         return view
     }()
     
+    // TODO: - 테이블뷰셀 스타일 변경
     private lazy var toDoTableView = {
         let tableView = UITableView()
         tableView.isHidden = true
@@ -118,6 +129,8 @@ final class TodoWriteViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupTapGesture()
     }
     
     override func configureHierarchy() {
@@ -198,6 +211,15 @@ final class TodoWriteViewController: BaseViewController {
         toDoTableView.isHidden = toDoList.isEmpty
         toDoTableView.reloadData()
     }
+    
+    private func setupTapGesture() {
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+            view.addGestureRecognizer(tapGesture)
+        }
+    
+    @objc private func dismissKeyboard() {
+            view.endEditing(true)
+        }
     
     @objc private func addTodo() {
         guard let text = toDoTextField.text, !text.isEmpty, text.count <= 21 else { return }
