@@ -77,7 +77,55 @@ final class MainViewController: BaseViewController {
         return label
     }()
     private let dogetherScrollView = UIScrollView()
-    private let dogetherScrollContentView = UIView()
+    private func dogetherContentView(status: MainViewStatus) -> UIView {
+        let view = UIView()
+        view.tag = status.rawValue
+        view.isHidden = viewModel.mainViewStatus != status
+        return view
+    }
+    private var beforeStartView = UIView()
+    private var emptyListView = UIView()
+    private let timerView = {
+        let view = UIView()
+        view.backgroundColor = .grey700
+        view.layer.cornerRadius = 142 / 2
+        return view
+    }()
+    private let timerInfoView = UIView()
+    private var timeProgress = UIView()
+    private let timeProgressLayer = {
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.strokeColor = UIColor.blue300.cgColor
+        shapeLayer.fillColor = UIColor.clear.cgColor
+        shapeLayer.lineWidth = 6
+        return shapeLayer
+    }()
+    private let timerImageView = {
+        let imageView = UIImageView()
+        imageView.image = .wait.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .blue300
+        return imageView
+    }()
+    private let timerLabel = {
+        let label = UILabel()
+        label.textColor = .grey0
+        label.font = Fonts.head1B
+        return label
+    }()
+    private let beforeStartTitleLabel = {
+        let label = UILabel()
+        label.text = "내일부터 투두를 시작할 수 있어요!"
+        label.textColor = .grey0
+        label.font = Fonts.head2B
+        return label
+    }()
+    private let beforeStartSubTitleLabel = {
+        let label = UILabel()
+        label.text = "오늘은 계획을 세우고, 내일부터 실천해보세요!"
+        label.textColor = .grey300
+        label.font = Fonts.body2R
+        return label
+    }()
     private let todoImageView = {
         let imageView = UIImageView()
         imageView.image = .todo
@@ -102,6 +150,23 @@ final class MainViewController: BaseViewController {
     }, title: "투두 작성하기", status: .abled)
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        timeProgress.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        
+        let circlePath = UIBezierPath(
+            arcCenter: CGPoint(x: timeProgress.bounds.width / 2, y: timeProgress.bounds.height / 2),
+            radius: (timeProgress.bounds.width - 6) / 2,
+            startAngle: -CGFloat.pi / 2,
+            endAngle: 1.5 * CGFloat.pi,
+            clockwise: true
+        )
+        
+        timeProgressLayer.path = circlePath.cgPath
+        timeProgressLayer.strokeEnd = viewModel.timeProgress
+        timeProgress.layer.addSublayer(timeProgressLayer)
     }
     
     override func configureView() {
@@ -144,6 +209,11 @@ final class MainViewController: BaseViewController {
         dogetherScrollView.delegate = self
         dogetherScrollView.bounces = false
         dogetherScrollView.showsVerticalScrollIndicator = false
+        
+        beforeStartView = dogetherContentView(status: .beforeStart)
+        emptyListView = dogetherContentView(status: .emptyList)
+        
+        timerLabel.text = viewModel.time
     }
     
     override func configureHierarchy() {
@@ -154,8 +224,12 @@ final class MainViewController: BaseViewController {
         ].forEach { view.addSubview($0) }
         
         [dogetherSheetHeaderLabel, dogetherScrollView].forEach { dogetherSheet.addSubview($0) }
-        [dogetherScrollContentView].forEach { dogetherScrollView.addSubview($0) }
-        [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { dogetherScrollContentView.addSubview($0) }
+        [beforeStartView, emptyListView].forEach { dogetherScrollView.addSubview($0) }
+        [
+            timerView, timerInfoView, timeProgress, timerImageView, timerLabel,
+            beforeStartTitleLabel, beforeStartSubTitleLabel
+        ].forEach { beforeStartView.addSubview($0) }
+        [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { emptyListView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -217,10 +291,57 @@ final class MainViewController: BaseViewController {
             $0.left.right.bottom.equalToSuperview()
         }
         
-        dogetherScrollContentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.width.equalTo(dogetherScrollView)
-            make.height.equalTo(UIScreen.main.bounds.height * 2)
+        // MARK: - beforeStart
+        beforeStartView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(dogetherScrollView)
+            $0.height.equalTo(UIScreen.main.bounds.height * 2)
+        }
+        
+        timerView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(40)
+            $0.centerX.equalToSuperview()
+            $0.width.height.equalTo(142)
+        }
+        
+        timeProgress.snp.makeConstraints {
+            $0.edges.equalTo(timerView)
+        }
+        
+        timerInfoView.snp.makeConstraints {
+            $0.center.equalTo(timerView)
+            $0.height.equalTo(58)
+        }
+        
+        timerImageView.snp.makeConstraints {
+            $0.centerX.equalTo(timerInfoView)
+            $0.top.equalTo(timerInfoView)
+            $0.width.height.equalTo(20)
+        }
+        
+        timerLabel.snp.makeConstraints {
+            $0.centerX.equalTo(timerInfoView)
+            $0.bottom.equalTo(timerInfoView)
+            $0.height.equalTo(36)
+        }
+        
+        beforeStartTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(timerView.snp.bottom).offset(24)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(28)
+        }
+        
+        beforeStartSubTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(beforeStartTitleLabel.snp.bottom).offset(4)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(21)
+        }
+        
+        // MARK: - emptyList
+        emptyListView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(dogetherScrollView)
+            $0.height.equalTo(UIScreen.main.bounds.height * 2)
         }
         
         todoImageView.snp.makeConstraints {

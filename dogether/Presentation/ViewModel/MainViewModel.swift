@@ -8,6 +8,9 @@
 import Foundation
 
 class MainViewModel {
+    private(set) var mainViewStatus: MainViewStatus = .beforeStart
+    
+    // TODO: 추후 수정
     private(set) var groupName: String = "DND 작심삼일 탈출러"
     private(set) var currentDay: Int = 1
     private(set) var joinCode: String = "123456"
@@ -15,6 +18,10 @@ class MainViewModel {
     
     private(set) var isBlockPanGesture = false
     private(set) var sheetStatus: SheetStatus = .normal
+    
+    // TODO: 추후 구현
+    private(set) var time: String = "14:59:59"
+    private(set) var timeProgress: CGFloat = 0.8
     
     
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
