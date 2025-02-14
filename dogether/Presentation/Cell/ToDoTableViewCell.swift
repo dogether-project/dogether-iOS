@@ -10,14 +10,18 @@ import SnapKit
 
 class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
     
-    private let todoLabel = {
+    let todoLabel = {
         let label = UILabel()
+        label.font = Fonts.body1S
+        label.textColor = .grey50
         return label
     }()
     
-    private let deleteButton = {
+    let deleteButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark"), for: .normal)
+        button.setTitleColor(.grey300, for: .normal)
+        button.backgroundColor = .red
         return button
     }()
     
@@ -32,6 +36,7 @@ class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
     }
     
     override func configureConstraints() {
+        
         todoLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.leading.equalToSuperview().offset(16)
@@ -40,11 +45,19 @@ class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
         deleteButton.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(20)
         }
     }
     
     override func configureView() {
+
         contentView.backgroundColor = .yellow
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0))
     }
     
     required init?(coder: NSCoder) {

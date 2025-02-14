@@ -24,10 +24,14 @@ final class TodoWriteViewController: BaseViewController {
         return label
     }()
     
-    // TODO: - + 아이콘 말고 엔터액션에서도 투두 추가되게 하기
-    private let toDoTextField = {
+    private lazy var toDoTextField = {
         let textField = UITextField()
-        textField.borderStyle = .roundedRect
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        textField.backgroundColor = .grey800
+        textField.layer.borderWidth = 1
+        textField.layer.borderColor = UIColor.clear.cgColor
+        textField.delegate = self
         
         // placeholder 스타일
         let attributes: [NSAttributedString.Key: Any] = [
@@ -40,30 +44,31 @@ final class TodoWriteViewController: BaseViewController {
             attributes: attributes
         )
         
-        textField.layer.cornerRadius = 12
-        textField.backgroundColor = .grey800
-        
         // placeholder 왼쪽 여백
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: textField.frame.height))
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
         textField.leftView = paddingView
         textField.leftViewMode = .always
+        
+        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        textField.addTarget(self, action: #selector(textFieldDidBegin), for: .editingDidBegin)
+        textField.addTarget(self, action: #selector(textFieldDidEnd), for: .editingDidEnd)
         
         return textField
     }()
     
-    // TODO: - 작성된 글자수에 맞춰서 숫자 변동
     private let toDoLimitTextCount = {
         let label = UILabel()
-        label.text = "0/21"
+        label.text = "0/20"
         label.font = Fonts.smallS
         label.textColor = .grey300
         return label
     }()
     
     // TODO: - 아이콘 변경
-    private let addButton = {
+    private lazy var addButton = {
         let button = UIButton()
         button.setImage(.plus, for: .normal)
+        button.addTarget(self, action: #selector(addTodo), for: .touchUpInside)
         return button
     }()
     
@@ -102,7 +107,6 @@ final class TodoWriteViewController: BaseViewController {
         label.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-        
         return view
     }()
     
@@ -110,20 +114,22 @@ final class TodoWriteViewController: BaseViewController {
     private lazy var toDoTableView = {
         let tableView = UITableView()
         tableView.isHidden = true
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: ToDoTableViewCell.identifier)
+        tableView.backgroundColor = .clear
+        tableView.register(ToDoTableViewCell.self, forCellReuseIdentifier: ToDoTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
-        
     }()
     
-    private let saveButton = {
+    private lazy var saveButton = {
         let button = UIButton()
         button.setTitle("투두 저장", for: .normal)
         button.backgroundColor = .grey500
         button.setTitleColor(.grey400, for: .normal)
+        button.titleLabel?.font = Fonts.body1B
         button.layer.cornerRadius = 12
         button.isEnabled = false
+        button.addTarget(self, action: #selector(saveButtonClicked), for: .touchUpInside)
         return button
     }()
     
@@ -203,7 +209,6 @@ final class TodoWriteViewController: BaseViewController {
     
     override func configureView() {
         navigationItem.title = "투두 작성"
-        addButton.addTarget(self, action: #selector(addTodo), for: .touchUpInside)
     }
     
     private func updateView() {
@@ -213,32 +218,111 @@ final class TodoWriteViewController: BaseViewController {
     }
     
     private func setupTapGesture() {
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-            view.addGestureRecognizer(tapGesture)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    private func updateSaveButtonState() {
+        if saveButton.isEnabled {
+            saveButton.backgroundColor = .blue300
+            saveButton.setTitleColor(.grey800, for: .normal)
+        } else {
+            saveButton.backgroundColor = .grey500
+            saveButton.setTitleColor(.grey400, for: .normal)
         }
+    }
+    
+    @objc private func saveButtonClicked() {
+        print("투두 저장 버튼 클릭")
+    }
     
     @objc private func dismissKeyboard() {
-            view.endEditing(true)
-        }
+        view.endEditing(true)
+    }
     
     @objc private func addTodo() {
-        guard let text = toDoTextField.text, !text.isEmpty, text.count <= 21 else { return }
+        guard let text = toDoTextField.text, !text.isEmpty, text.count <= 20 else { return }
         guard toDoList.count < maxToDoCount else { return }
         
         toDoList.insert(text, at: 0)
         toDoTextField.text = ""
+        toDoLimitTextCount.text = "0/20"
+        saveButton.isEnabled = true
+        updateSaveButtonState()
+    }
+    
+    // 텍스트필드 입력한 문자 수
+    @objc private func textFieldDidChange() {
+        toDoLimitTextCount.text = "\(toDoTextField.text?.count ?? 0)/20"
+    }
+    
+    // 텍스트필드 입력 시 borderColor
+    @objc private func textFieldDidBegin() {
+        toDoTextField.layer.borderColor = UIColor.blue300.cgColor
+    }
+    
+    // 텍스트필드 입력 완료 시
+    @objc private func textFieldDidEnd() {
+        toDoTextField.layer.borderColor = UIColor.clear.cgColor
+    }
+    
+    // 엔터 액션에도 투두 추가
+    @objc private func textFieldReturnPressed(_ textField: UITextField) {
+        addTodo()
     }
 }
 
-extension TodoWriteViewController: UITableViewDataSource, UITableViewDelegate {
+extension TodoWriteViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return toDoList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ToDoTableViewCell.identifier, for: indexPath)
-        cell.textLabel?.text = toDoList[indexPath.row]
+        
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: ToDoTableViewCell.identifier,
+                                                 for: indexPath) as! ToDoTableViewCell
+        
+        
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        
+        cell.todoLabel.text = toDoList[indexPath.row]
+        cell.deleteButton.tag = indexPath.row
+        cell.selectionStyle = .none
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 64
+    }
+}
+
+extension TodoWriteViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        addTodo()
+        return true
+    }
+}
+
+class ModalViewController: UIViewController {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = .white
+        
+        let label = UILabel()
+        label.text = "modal sheet"
+        label.font = Fonts.body1B
+        label.textColor = .black
+        
+        view.addSubview(label)
+        
+        label.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
     }
 }
