@@ -45,6 +45,7 @@ final class GroupJoinViewController: BaseViewController {
     private lazy var joinButton = {
         let button = UIButton()
         button.setTitle("가입하기", for: .normal)
+        button.titleLabel?.font = Fonts.body1B
         button.setTitleColor(.grey400, for: .normal)
         button.backgroundColor = .grey500
         button.layer.cornerRadius = 12
@@ -95,21 +96,18 @@ final class GroupJoinViewController: BaseViewController {
         navigationItem.title = "그룹 가입하기"
     }
     
-    private func setupTapGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
-    }
-    
     @objc private func joinButtonClicked() {
         
         Task {
             do {
-                let request = JoinGroupRequest(joinCode: enterCode)
+                let request = JoinGroupRequest(joinCode: enterCode) // "kelly-join-code"
                 let response: Void = try await NetworkManager.shared.request(GroupsRouter.joinGroup(joinGroupRequest: request))
                 
+                // 가입 성공 시 다음 화면 이동
                 print("✅ 가입 성공")
-                // TODO: - 가입 성공 시 다음 화면 이동
-                
+                let completeVC = CompleteViewController(type: .join)
+                self.navigationController?.setViewControllers([completeVC], animated: true)
+
             } catch {
                 print("❌ 가입 실패: \(error)")
                 
@@ -137,8 +135,14 @@ final class GroupJoinViewController: BaseViewController {
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    private func setupTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
 }
 
+// TODO: - 빈 텍스트필드일때 백스페이스 액션이 안먹히는 상황이라서 텍스트필드를 개별로 나누는 작업을 해야함
 extension GroupJoinViewController: UITextFieldDelegate {
     
     private func configureTextFields() {
@@ -178,17 +182,56 @@ extension GroupJoinViewController: UITextFieldDelegate {
         for (index, textF) in textFields.enumerated() where textF == textField {
             if index < textFields.count - 1 {
                 textFields[index + 1].becomeFirstResponder()
+            } else {
+                // 마지막 입력 후 키보드 내리기
+                textField.resignFirstResponder()
+                joinButton.isEnabled = true
             }
         }
+        
+        // 입력중인 텍스트필드 border 색상 변경
+        setTextFieldBorderColor()
+        
         joinButton.backgroundColor = joinButton.isEnabled ? .blue300 : .grey100
+        joinButton.setTitleColor(joinButton.isEnabled ? .grey800 : .grey400, for: .normal)
+    }
+    
+    private func setTextFieldBorderColor() {
+        for textField in textFields {
+            if textField.isFirstResponder {
+                textField.layer.borderColor = UIColor.blue300.cgColor
+                textField.layer.borderWidth = 1.5
+            } else {
+                textField.layer.borderColor = UIColor.clear.cgColor
+                textField.layer.borderWidth = 0
+            }
+        }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        setTextFieldBorderColor()
+    }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        // 첫번째 텍스트필드부터 입력
+        if let index = textFields.firstIndex(of: textField) {
+            return index == 0 || !textFields[index - 1].text!.isEmpty
+        }
+        return false
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        setTextFieldBorderColor()
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        // 빈 텍스트필드에 무언가를 입력할때
         if string.isEmpty {
-            
             if let currentText = textField.text, !currentText.isEmpty {
                 // 현재 값이 있으면 삭제
                 textField.text = ""
+                
                 if let index = textFields.firstIndex(of: textField), index > 0 {
                     let previousTextField = textFields[index - 1]
                     
@@ -196,11 +239,8 @@ extension GroupJoinViewController: UITextFieldDelegate {
                         previousTextField.becomeFirstResponder()
                     }
                 }
+                return false
             }
-            
-            // TODO: - 현재 값이 없을때 백스페이스 했을 경우 이전 입력했던 문자 없애기
-            
-            return false
         }
         // 한글자만 입력 가능
         return textField.text?.isEmpty ?? true
