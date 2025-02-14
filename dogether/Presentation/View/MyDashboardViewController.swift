@@ -10,26 +10,26 @@ import SnapKit
 
 final class MyDashboardViewController: BaseViewController {
     
+    private let messageLabel = {
+        let label = UILabel()
+        label.text = "대단해요!\n총 123개의 투두를 달성했어요"
+        label.font = Fonts.head1B
+        label.textColor = .grey0
+        label.numberOfLines = 0
+        return label
+    }()
+    
     private let progressStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 16
         stackView.alignment = .bottom
         stackView.distribution = .equalSpacing
-        stackView.backgroundColor = .grey700
+        stackView.backgroundColor = .yellow
         stackView.layer.cornerRadius = 12
         return stackView
     }()
-    
-    private let messageLabel = {
-        let label = UILabel()
-        label.text = "대단해요!\n목표까지 얼마 남지 않았어요"
-        label.font = Fonts.head2B
-        label.textColor = .grey0
-        label.numberOfLines = 0
-        return label
-    }()
-    
+
     private func createProgressView(title: String, progress: Float) -> UIStackView {
         
         let progressBarContainer = UIView()
@@ -76,7 +76,7 @@ final class MyDashboardViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [progressStackView, messageLabel, collectionView].forEach {
+        [messageLabel, progressStackView, collectionView].forEach {
             view.addSubview($0)
         }
     }
@@ -84,12 +84,12 @@ final class MyDashboardViewController: BaseViewController {
     override func configureConstraints() {
         
         messageLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(44)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(28)
             $0.leading.equalTo(view.safeAreaLayoutGuide).offset(32)
         }
         
         progressStackView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(24)
+            $0.top.equalTo(messageLabel.snp.bottom).offset(40)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(341)
         }
