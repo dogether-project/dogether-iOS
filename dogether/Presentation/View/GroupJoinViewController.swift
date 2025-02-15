@@ -12,7 +12,7 @@ final class GroupJoinViewController: BaseViewController {
     private let titleLabel = {
         let label = UILabel()
         label.text = "초대번호 입력"
-        label.font = Fonts.emphasisB
+        label.font = Fonts.emphasis2B
         label.textColor = .grey0
         return label
     }()

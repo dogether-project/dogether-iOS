@@ -36,7 +36,8 @@ enum Fonts {
         return UIFont(name: "Pretendard-Thin", size: size) ?? UIFont.systemFont(ofSize: size, weight: .thin)
     }
     
-    static let emphasisB = Fonts.bold(size: 28)
+    static let emphasis1B = Fonts.bold(size: 36)
+    static let emphasis2B = Fonts.bold(size: 28)
     static let head1B = Fonts.bold(size: 24)
     static let head2B = Fonts.bold(size: 18)
     static let body1B = Fonts.bold(size: 16)
@@ -63,9 +64,9 @@ enum Fonts {
     
     private static func getLineHeight(for font: UIFont) -> CGFloat {
         switch font {
-        case Fonts.emphasisB:
-            return 45
-        case Fonts.head1B, Fonts.head1R:
+        case Fonts.emphasis1B:
+            return 100
+        case Fonts.emphasis2B, Fonts.head1B, Fonts.head1R:
             return 36
         case Fonts.head2B:
             return 28
