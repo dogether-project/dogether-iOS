@@ -589,7 +589,7 @@ final class MainViewController: BaseViewController {
     }
     
     @objc private func didTapRankingButton() {
-        // TODO: 추후 팀 정보(팀 랭킹)화면으로 이동하도록 구현
+        NavigationManager.shared.pushViewController(RankingViewController())
     }
     
     @objc private func didTapFilterButton(_ sender: UIButton) {

@@ -168,11 +168,11 @@ final class StartViewController: BaseViewController {
     }
     
     @objc private func didTapCreateButton() {
-        // TODO: 그룹 만들기 화면으로 넘어가도록 구현
+        NavigationManager.shared.pushViewController(GroupCreateViewController())
     }
     
     @objc private func didTapJoinButton() {
-        // TODO: 그룹 가입 화면으로 넘어가도록 구현
+        NavigationManager.shared.pushViewController(GroupJoinViewController())
     }
 }
 

@@ -177,7 +177,7 @@ final class GroupCreateViewController: BaseViewController {
         let label = UILabel()
         label.attributedText = NSAttributedString(
             string: startAt.description,
-            attributes: Fonts.getAttributes(for: Fonts.body2R)
+            attributes: Fonts.getAttributes(for: Fonts.body2R, textAlignment: .left)
         )
         label.textColor = viewModel.currentStartAt == startAt ? .blue300 : .grey0
         label.numberOfLines = 0
@@ -212,8 +212,12 @@ final class GroupCreateViewController: BaseViewController {
         stepFourView = stepView(step: .four)
         
         completeButton.action = { @MainActor in
-            await self.viewModel.completeAction()
-            self.updateStep()
+            if self.viewModel.currentStep == .four {
+                NavigationManager.shared.setNavigationController(CompleteViewController(type: .create))
+            } else {
+                await self.viewModel.completeAction()
+                self.updateStep()
+            }
         }
         
         groupName = componentTitleLabel(componentTitle: "그룹명")
