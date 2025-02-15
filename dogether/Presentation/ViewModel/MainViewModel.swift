@@ -10,7 +10,7 @@ import UIKit
 
 class MainViewModel {
     private(set) var mainViewStatus: MainViewStatus
-    private(set) var isBlockPanGesture: Bool
+    private(set) var isBlockPanGesture: Bool = true
     
     // TODO: 추후 수정
     private(set) var groupName: String = "DND 작심삼일 탈출러"
@@ -26,12 +26,7 @@ class MainViewModel {
     
     // TODO: 추후 수정
     private(set) var currentFilter: FilterTypes = .all
-    private(set) var todoList: [TodoInfo] = [
-        TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
-        TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
-        TodoInfo(id: 2, content: "노인정 투두", status: .reject),
-        TodoInfo(id: 3, content: "인정 투두", status: .approve)
-    ]
+    private(set) var todoList: [TodoInfo] = []
     
     // MARK: - Computed
     var todoListHeight: Int { 64 * todoList.count + 8 * (todoList.count - 1) }
@@ -39,7 +34,6 @@ class MainViewModel {
     // MARK: - init
     init(status: MainViewStatus) {
         self.mainViewStatus = status
-        self.isBlockPanGesture = status != .todoList
     }
     
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
@@ -50,5 +44,9 @@ class MainViewModel {
     }
     func updateFilter(_ filter: FilterTypes) {
         self.currentFilter = filter
+    }
+    func setTodoList(_ todoList: [TodoInfo]) {
+        self.todoList = todoList
+        self.isBlockPanGesture = self.todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140))
     }
 }

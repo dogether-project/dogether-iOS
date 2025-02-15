@@ -75,13 +75,13 @@ final class MainViewController: BaseViewController {
         label.font = Fonts.head2B
         return label
     }()
-    private let dogetherScrollView = UIScrollView()
     private func dogetherContentView(status: MainViewStatus) -> UIView {
         let view = UIView()
         view.tag = status.rawValue
         view.isHidden = viewModel.mainViewStatus != status
         return view
     }
+    private let dogetherScrollView = UIScrollView()
     private var beforeStartView = UIView()
     private var emptyListView = UIView()
     private var todoListView = UIView()
@@ -200,6 +200,23 @@ final class MainViewController: BaseViewController {
     private var todoListStackView = UIStackView()
     
     override func viewDidLoad() {
+        // TODO: 추후 API 연동하면서 위치 와 방법 수정
+        viewModel.setTodoList(
+            [
+                TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
+                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
+                TodoInfo(id: 2, content: "노인정 투두", status: .reject),
+                TodoInfo(id: 3, content: "인정 투두", status: .approve),
+                TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
+                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
+                TodoInfo(id: 2, content: "노인정 투두", status: .reject),
+                TodoInfo(id: 3, content: "인정 투두", status: .approve),
+                TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
+                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
+                TodoInfo(id: 2, content: "노인정 투두", status: .reject),
+                TodoInfo(id: 3, content: "인정 투두", status: .approve)
+            ]
+        )
         super.viewDidLoad()
     }
     override func viewDidLayoutSubviews() {
@@ -303,17 +320,19 @@ final class MainViewController: BaseViewController {
             dogetherSheet
         ].forEach { view.addSubview($0) }
         
-        [dogetherSheetHeaderLabel, dogetherScrollView].forEach { dogetherSheet.addSubview($0) }
-        [beforeStartView, emptyListView, todoListView].forEach { dogetherScrollView.addSubview($0) }
+        [dogetherSheetHeaderLabel, beforeStartView, emptyListView].forEach { dogetherSheet.addSubview($0) }
         [
             timerView, timerInfoView, timeProgress, timerImageView, timerLabel,
             beforeStartTitleLabel, beforeStartSubTitleLabel
         ].forEach { beforeStartView.addSubview($0) }
         [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { emptyListView.addSubview($0) }
+        
         [
             filterStackView, allLabel, waitLabel, rejectLabel, approveLabel,
-            waitImageView, rejectImageView, approveImageView, todoListStackView
-        ].forEach { todoListView.addSubview($0) }
+            waitImageView, rejectImageView, approveImageView, dogetherScrollView
+        ].forEach { dogetherSheet.addSubview($0) }
+        [todoListView].forEach { dogetherScrollView.addSubview($0) }
+        [todoListStackView].forEach { todoListView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -360,8 +379,8 @@ final class MainViewController: BaseViewController {
         
         dogetherSheet.snp.makeConstraints {
             dogetherSheetTopConstraint = $0.top.equalTo(view.safeAreaLayoutGuide).offset(SheetStatus.normal.offset).constraint
-            $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
         }
         
         dogetherSheetHeaderLabel.snp.makeConstraints {
@@ -370,16 +389,10 @@ final class MainViewController: BaseViewController {
             $0.height.equalTo(28)
         }
         
-        dogetherScrollView.snp.makeConstraints {
-            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
-            $0.left.right.bottom.equalToSuperview()
-        }
-        
         // MARK: - beforeStart
         beforeStartView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalTo(dogetherScrollView)
-            $0.height.equalTo(UIScreen.main.bounds.height * 2)
+            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
+            $0.left.right.bottom.equalToSuperview()
         }
         
         timerView.snp.makeConstraints {
@@ -423,9 +436,8 @@ final class MainViewController: BaseViewController {
         
         // MARK: - emptyList
         emptyListView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalTo(dogetherScrollView)
-            $0.height.equalTo(UIScreen.main.bounds.height * 2)
+            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
+            $0.left.right.bottom.equalToSuperview()
         }
         
         todoImageView.snp.makeConstraints {
@@ -448,20 +460,14 @@ final class MainViewController: BaseViewController {
         }
         
         todoButton.snp.makeConstraints {
-            $0.top.equalTo(todoSubTitleLabel.snp.bottom).offset(32)
+            $0.bottom.equalToSuperview().inset(48)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
         
         // MARK: - todoList
-        todoListView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalTo(dogetherScrollView)
-            $0.height.equalTo(UIScreen.main.bounds.height * 2)
-        }
-        
         filterStackView.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
             $0.left.equalToSuperview().offset(16)
         }
         
@@ -519,8 +525,19 @@ final class MainViewController: BaseViewController {
             $0.width.height.equalTo(24)
         }
         
-        todoListStackView.snp.makeConstraints {
+        dogetherScrollView.snp.makeConstraints {
             $0.top.equalTo(filterStackView.snp.bottom).offset(28)
+            $0.bottom.left.right.equalToSuperview()
+        }
+        
+        todoListView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(dogetherScrollView)
+            $0.height.equalTo(viewModel.todoListHeight)
+        }
+        
+        todoListStackView.snp.makeConstraints {
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(viewModel.todoListHeight)
         }
