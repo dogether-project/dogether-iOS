@@ -30,10 +30,11 @@ final class SplashViewController: BaseViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             if UserDefaultsManager.shared.accessToken == nil {
                 NavigationManager.shared.setNavigationController(OnboardingViewController())
-            } else {    // TODO: 추후 그룹 가입 여부 판단 추가
+            } else if false {    // TODO: 추후 그룹 가입 여부 판단 추가 (API가 좋다고 생각합니다)
+                NavigationManager.shared.setNavigationController(MainViewController())
+            } else {
                 NavigationManager.shared.setNavigationController(StartViewController())
             }
-//            NavigationManager.shared.setNavigationController(MainViewController())
         }
     }
     
