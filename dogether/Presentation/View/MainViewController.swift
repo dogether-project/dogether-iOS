@@ -147,7 +147,7 @@ final class MainViewController: BaseViewController {
     }()
     private let todoButton = DogetherButton(action: {
         // TODO: 추후 투두 작성하기로 이동하도록 구현
-    }, title: "투두 작성하기", status: .abled)
+    }, title: "투두 작성하기", status: .enabled)
     private func filterButton(type: FilterTypes) -> UIButton {
         let button = UIButton()
         button.backgroundColor = viewModel.currentFilter == type ? type.backgroundColor : .grey800

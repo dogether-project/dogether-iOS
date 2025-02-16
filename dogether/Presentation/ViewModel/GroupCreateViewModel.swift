@@ -28,7 +28,7 @@ class GroupCreateViewModel {
     
     func updateGroupName(groupName: String?) async -> (String, String, ButtonStatus) {
         currentGroupName = groupName ?? ""
-        let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .abled : .disabled
+        let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .enabled : .disabled
         return (currentGroupName, "\(currentGroupName.count)/\(groupNameMaxLength)", buttonStatus)
     }
     func updateMemberCount(count: Int) {

@@ -9,12 +9,12 @@ import Foundation
 import UIKit
 
 enum ButtonStatus {
-    case abled
+    case enabled
     case disabled
     
     var textColor: UIColor {
         switch self {
-        case .abled:
+        case .enabled:
             return .grey800
         case .disabled:
             return .grey400
@@ -23,7 +23,7 @@ enum ButtonStatus {
     
     var backgroundColor: UIColor {
         switch self {
-        case .abled:
+        case .enabled:
             return .blue300
         case .disabled:
             return .grey500

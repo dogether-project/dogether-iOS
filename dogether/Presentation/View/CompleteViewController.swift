@@ -26,7 +26,7 @@ final class CompleteViewController: BaseViewController {
     }()
     private let completeButton = DogetherButton(action: {
         NavigationManager.shared.setNavigationController(MainViewController())
-    }, title: "홈으로 가기", status: .abled)
+    }, title: "홈으로 가기", status: .enabled)
     private var groupInfoView = UIView()
     private let joinCodeShareButton = {
         let button = UIButton()
