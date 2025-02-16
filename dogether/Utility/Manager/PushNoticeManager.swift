@@ -8,7 +8,7 @@
 import UserNotifications
 import FirebaseMessaging
 
-class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
+final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
     static let shared = PushNoticeManager()
     private override init() {
         super.init()
