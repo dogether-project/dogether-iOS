@@ -304,7 +304,7 @@ final class MainViewController: BaseViewController {
             items: viewModel.todoList.map { todo in
                 DogetherTodoItem(action: {
                     if todo.status == .waitCertificattion {
-                        // TODO: 추후 인증하기 팝업을 띄우도록 구현
+                        PopupManager.shared.showPopup(type: .certification)
                     } else {
                         // TODO: 추후 인증정보 팝업을 띄우도록 구현
                     }
