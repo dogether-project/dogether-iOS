@@ -12,7 +12,7 @@ final class MyPageViewController: BaseViewController {
     
     private let profileImageView = {
         let imageView = UIImageView()
-        imageView.image = .logo
+        imageView.image = .profile2
         return imageView
     }()
     
@@ -26,7 +26,26 @@ final class MyPageViewController: BaseViewController {
     
     private let myHistory = {
         let button = UIButton()
-        button.backgroundColor = .blue300
+        button.backgroundColor = .grey700
+        button.layer.cornerRadius = 12
+        return button
+    }()
+    
+    private let checkMyTodosLabel = {
+        let label = UILabel()
+        label.text = "내가 해낸 모든 투두들을 확인해보세요 !"
+        label.font = Fonts.body1S
+        label.textColor = .grey0
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let goToButton = {
+        let button = UIButton()
+        button.setTitle("보러가기", for: .normal)
+        button.titleLabel?.font = Fonts.body1B
+        button.setTitleColor(.grey700, for: .normal)
+        button.backgroundColor = .grey0
         button.layer.cornerRadius = 12
         return button
     }()
@@ -43,11 +62,17 @@ final class MyPageViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupGestureReconizers()
     }
     
     override func configureHierarchy() {
         [profileImageView, nameLabel, myHistory, logoutView, withdrawView].forEach {
             view.addSubview($0)
+        }
+        
+        [checkMyTodosLabel, goToButton].forEach {
+            myHistory.addSubview($0)
         }
     }
     
@@ -66,7 +91,18 @@ final class MyPageViewController: BaseViewController {
         myHistory.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(40)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(150)
+            $0.height.equalTo(131)
+        }
+        
+        checkMyTodosLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        goToButton.snp.makeConstraints {
+            $0.top.equalTo(checkMyTodosLabel.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(50)
         }
         
         setUpView(logoutView, iconName: .logout, text: "로그아웃")
@@ -87,33 +123,43 @@ final class MyPageViewController: BaseViewController {
     
     override func configureView() {
         navigationItem.title = "마이페이지"
+        view.backgroundColor = .red
     }
     
     private func setUpView(_ view: UIView, iconName: UIImage, text: String) {
-        view.backgroundColor = .grey700
-        view.layer.cornerRadius = 12
         view.isUserInteractionEnabled = true
         
         let icon = UIImageView()
-        icon.image = iconName
+        icon.image = iconName.withRenderingMode(.alwaysTemplate)
+        icon.tintColor = .grey100
 
         let label = UILabel()
         label.text = text
         label.textColor = .grey100
         
-        [icon, label].forEach {
+        let goToIcon = UIImageView()
+        goToIcon.image = .chevronRight.withRenderingMode(.alwaysTemplate)
+        goToIcon.tintColor = .grey400
+        
+        [icon, label, goToIcon].forEach {
             view.addSubview($0)
         }
         
         icon.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(16)
             $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(16)
             $0.width.height.equalTo(24)
         }
         
         label.snp.makeConstraints {
-            $0.leading.equalTo(icon.snp.trailing).offset(8)
             $0.centerY.equalToSuperview()
+            $0.leading.equalTo(icon.snp.trailing).offset(8)
+        }
+        
+        goToIcon.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().offset(-32)
+            $0.width.height.equalTo(20)
         }
     }
     
