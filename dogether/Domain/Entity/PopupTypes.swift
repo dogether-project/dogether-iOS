@@ -10,13 +10,4 @@ import Foundation
 enum PopupTypes {
     case certification
     case certificationInfo
-    
-    var popupHeight: CGFloat {
-        switch self {
-        case .certification:
-            return 240
-        case .certificationInfo:
-            return 581
-        }
-    }
 }

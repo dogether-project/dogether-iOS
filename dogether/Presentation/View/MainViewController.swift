@@ -174,17 +174,17 @@ final class MainViewController: BaseViewController {
         viewModel.setTodoList(
             [
                 TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
-                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
-                TodoInfo(id: 2, content: "노인정 투두", status: .reject),
-                TodoInfo(id: 3, content: "인정 투두", status: .approve),
-                TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
-                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
-                TodoInfo(id: 2, content: "노인정 투두", status: .reject),
-                TodoInfo(id: 3, content: "인정 투두", status: .approve),
-                TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
-                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination),
-                TodoInfo(id: 2, content: "노인정 투두", status: .reject),
-                TodoInfo(id: 3, content: "인정 투두", status: .approve)
+                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
+                TodoInfo(id: 2, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: ""),
+                TodoInfo(id: 3, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "짧은노인정이유"),
+                TodoInfo(id: 4, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "노인정이유노인정이유노인정이유노인정이유노인정이유"),
+                TodoInfo(id: 5, content: "인증도 안한 투두", status: .waitCertificattion),
+                TodoInfo(id: 6, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
+                TodoInfo(id: 7, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: ""),
+                TodoInfo(id: 8, content: "인증도 안한 투두", status: .waitCertificattion),
+                TodoInfo(id: 9, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
+                TodoInfo(id: 10, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "노인정이유노인정이유노인정이유노인정이유"),
+                TodoInfo(id: 11, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: "")
             ]
         )
         super.viewDidLoad()
@@ -264,9 +264,11 @@ final class MainViewController: BaseViewController {
             items: viewModel.todoList.map { todo in
                 DogetherTodoItem(action: {
                     if todo.status == .waitCertificattion {
-                        PopupManager.shared.showPopup(type: .certification)
+                        PopupManager.shared.showPopup(type: .certification, completion: {
+                            // TODO: 추후에 인증을 성공했을 때 UI 업데이트 등 추가
+                        })
                     } else {
-                        // TODO: 추후 인증정보 팝업을 띄우도록 구현
+                        PopupManager.shared.showPopup(type: .certificationInfo, todoInfo: todo)
                     }
                 }, todo: todo)
             }

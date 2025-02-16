@@ -11,6 +11,7 @@ import SnapKit
 
 final class PopupViewController: BaseViewController {
     var popupType: PopupTypes?
+    var todoInfo: TodoInfo?
     var completeAction: (() -> Void)?
     
     private var cameraManager: CameraManager!
@@ -26,8 +27,6 @@ final class PopupViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        configureSubView()
     }
     
     override func configureView() {
@@ -36,8 +35,32 @@ final class PopupViewController: BaseViewController {
         switch popupType {
         case .certification:
             popupView = CertificationPopupView(completeAction: completeAction ?? { })
+            
+            cameraManager = CameraManager(viewController: self)
+            galleryManager = GalleryManager(viewController: self)
+            
+            if let popupView = popupView as? CertificationPopupView {
+                popupView.cameraManager = cameraManager
+                popupView.galleryManager = galleryManager
+                
+                let completion = {
+                    self.uploadImage(view: popupView, image: $0)
+                    // TODO: 추후 S3Manager로 이동
+//                    private func uploadImageToS3(image: UIImage) {
+//                        Task {
+//                            let request: PresignedUrlRequest = PresignedUrlRequest(todoId: 0, uploadFileTypes: [.image])
+//                            let response: PresignedUrlResponse = try await NetworkService.shared.request(
+//                                S3.presignedUrls(presignedUrlRequest: request)
+//                            )
+//                        }
+//                    }
+                }
+                cameraManager.completion = completion
+                galleryManager.completion = completion
+            }
         case .certificationInfo:
-            break   // TODO: 추후 CertificationInfoPopupView 추가
+            guard let todoInfo else { return }
+            popupView = CertificationInfoPopupView(todoInfo: todoInfo)
         }
     }
     
@@ -53,37 +76,11 @@ final class PopupViewController: BaseViewController {
         popupView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.equalTo(343)
-            $0.height.equalTo(popupType?.popupHeight ?? 0)
         }
     }
     
     @objc private func dismissPopup() {
         self.dismiss(animated: true)
-    }
-    
-    private func configureSubView() {
-        cameraManager = CameraManager(viewController: self)
-        galleryManager = GalleryManager(viewController: self)
-        
-        if let popupView = self.popupView as? CertificationPopupView {
-            popupView.cameraManager = cameraManager
-            popupView.galleryManager = galleryManager
-            
-            let completion = {
-                self.uploadImage(view: popupView, image: $0)
-                // TODO: 추후 S3Manager로 이동
-//                private func uploadImageToS3(image: UIImage) {
-//                    Task {
-//                        let request: PresignedUrlRequest = PresignedUrlRequest(todoId: 0, uploadFileTypes: [.image])
-//                        let response: PresignedUrlResponse = try await NetworkService.shared.request(
-//                            S3.presignedUrls(presignedUrlRequest: request)
-//                        )
-//                    }
-//                }
-            }
-            cameraManager.completion = completion
-            galleryManager.completion = completion
-        }
     }
     
     private func uploadImage(view certificationPopupView: CertificationPopupView, image: UIImage?) {
