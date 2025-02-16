@@ -31,7 +31,7 @@ final class CertificationPopupView: UIView {
     private let titleLabel = {
         let label = UILabel()
         label.text = "인증 하기"
-        label.textColor = .grey50
+        label.textColor = .grey0
         label.font = Fonts.head2B
         return label
     }()
@@ -200,6 +200,10 @@ final class CertificationPopupView: UIView {
         
         [titleLabel, closeButton, todoContentLabel, certificationStackView].forEach { addSubview($0) }
         
+        self.snp.updateConstraints {
+            $0.height.equalTo(240)
+        }
+
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.left.equalToSuperview().offset(20)

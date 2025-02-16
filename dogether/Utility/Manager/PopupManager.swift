@@ -13,11 +13,12 @@ final class PopupManager {
 
     private init() {}
 
-    func showPopup(type: PopupTypes, animated: Bool = true, completion: (() -> Void)? = nil) {
+    func showPopup(type: PopupTypes, animated: Bool = true, completion: (() -> Void)? = nil, todoInfo: TodoInfo? = nil) {
         guard let currentViewController = getCurrentViewController() else { return }
 
         let popupViewController = PopupViewController()
         popupViewController.popupType = type
+        popupViewController.todoInfo = todoInfo
         popupViewController.modalPresentationStyle = .overFullScreen
         popupViewController.modalTransitionStyle = .crossDissolve
         currentViewController.present(popupViewController, animated: animated, completion: completion)
