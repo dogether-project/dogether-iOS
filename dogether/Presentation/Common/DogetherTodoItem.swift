@@ -61,7 +61,7 @@ final class DogetherTodoItem: UIButton {
             todoImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.left.equalToSuperview().offset(16)
-                $0.width.height.equalTo(28)
+                $0.width.height.equalTo(todo.status == .waitExamination ? 22 : todo.status == .reject ? 26 : 28)    // MARK: 임의로 사이즈 조정
             }
         }
         
