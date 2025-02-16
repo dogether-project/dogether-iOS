@@ -22,17 +22,13 @@ class GroupCreateViewModel {
     }
     
     func completeAction() async {
-        if currentStep.rawValue < CreateGroupSteps.four.rawValue {
-            guard let nextStep = CreateGroupSteps(rawValue: currentStep.rawValue + 1) else { return }
-            await updateStep(step: nextStep)
-        } else {
-            // TODO: 추후 그룹 생성 API 연동, 그룹 만들기 완료 화면으로 이동
-        }
+        guard let nextStep = CreateGroupSteps(rawValue: currentStep.rawValue + 1) else { return }
+        await updateStep(step: nextStep)
     }
     
     func updateGroupName(groupName: String?) async -> (String, String, ButtonStatus) {
         currentGroupName = groupName ?? ""
-        let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .abled : .disabled
+        let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .enabled : .disabled
         return (currentGroupName, "\(currentGroupName.count)/\(groupNameMaxLength)", buttonStatus)
     }
     func updateMemberCount(count: Int) {

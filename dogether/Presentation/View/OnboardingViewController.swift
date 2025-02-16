@@ -98,11 +98,7 @@ final class OnboardingViewController: BaseViewController {
             UserDefaultsManager.shared.userFullName = response.name
             UserDefaultsManager.shared.accessToken = response.accessToken
             
-            // 로그인 성공 후 3초 뒤 StartView로 이동
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-                let startVC = StartViewController()
-                self?.navigationController?.setViewControllers([startVC], animated: true)
-            }
+            NavigationManager.shared.setNavigationController(StartViewController())
         }
     }
     
@@ -135,12 +131,14 @@ final class OnboardingViewController: BaseViewController {
         
         label.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
+            $0.top.equalToSuperview()
         }
         
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(label.snp.bottom).offset(58)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(340)
         }
         return view
     }

@@ -38,6 +38,7 @@ final class DogetherButton: UIButton {
         dogetherButton.setTitle(title, for: .normal)
         dogetherButton.setTitleColor(status.textColor, for: .normal)
         dogetherButton.backgroundColor = status.backgroundColor
+        dogetherButton.isEnabled = status == .enabled
         dogetherButton.addTarget(self, action: #selector(didTapDogetherButton), for: .touchUpInside)
         
         [dogetherButton].forEach { addSubview($0) }
@@ -58,13 +59,12 @@ final class DogetherButton: UIButton {
         self.status = status
         dogetherButton.setTitleColor(status.textColor, for: .normal)
         dogetherButton.backgroundColor = status.backgroundColor
+        dogetherButton.isEnabled = status == .enabled
     }
     
     @objc private func didTapDogetherButton() {
         Task { @MainActor in
-            if status == .abled {
-                await action()
-            }
+            await action()
         }
     }
 }

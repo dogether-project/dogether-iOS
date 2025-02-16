@@ -105,8 +105,7 @@ final class GroupJoinViewController: BaseViewController {
                 
                 // 가입 성공 시 다음 화면 이동
                 print("✅ 가입 성공")
-                let completeVC = CompleteViewController(type: .join)
-                self.navigationController?.setViewControllers([completeVC], animated: true)
+                NavigationManager.shared.setNavigationController(CompleteViewController(type: .join))
 
             } catch {
                 print("❌ 가입 실패: \(error)")
