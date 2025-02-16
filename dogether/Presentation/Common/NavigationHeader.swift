@@ -52,6 +52,6 @@ final class NavigationHeader: UIView {
     }
     
     @objc private func didTapPrevButton() {
-        // TODO: 추후 이전 페이지로 이동하도록 구현
+        NavigationManager.shared.popViewController()
     }
 }

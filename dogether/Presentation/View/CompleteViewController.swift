@@ -25,8 +25,8 @@ final class CompleteViewController: BaseViewController {
         return label
     }()
     private let completeButton = DogetherButton(action: {
-        // TODO: 추후 홈으로 이동
-    }, title: "홈으로 가기", status: .abled)
+        NavigationManager.shared.setNavigationController(MainViewController())
+    }, title: "홈으로 가기", status: .enabled)
     private var groupInfoView = UIView()
     private let joinCodeShareButton = {
         let button = UIButton()
@@ -83,7 +83,7 @@ final class CompleteViewController: BaseViewController {
             groupInfoView = DogetherGroupInfo(groupName: "groupName", memberCount: 0, duration: .threeDays, startAt: .today)
         case .create:
             noticeLabel.text = groupType.completeNoticeText
-            joinCodeLabel.text = "123456789"
+            joinCodeLabel.text = "123456"
             joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
     }
@@ -150,6 +150,6 @@ final class CompleteViewController: BaseViewController {
     
     @objc private func didTapJoinCodeShareButton() {
         // TODO: 추후 수정
-        present(UIActivityViewController(activityItems: ["12345678999"], applicationActivities: nil), animated: true)
+        present(UIActivityViewController(activityItems: ["123456"], applicationActivities: nil), animated: true)
     }
 }
