@@ -148,41 +148,11 @@ final class MainViewController: BaseViewController {
     private let todoButton = DogetherButton(action: {
         // TODO: 추후 투두 작성하기로 이동하도록 구현
     }, title: "투두 작성하기", status: .enabled)
-    private func filterButton(type: FilterTypes) -> UIButton {
-        let button = UIButton()
-        button.backgroundColor = viewModel.currentFilter == type ? type.backgroundColor : .grey800
-        button.layer.cornerRadius = 16
-        button.layer.borderColor = viewModel.currentFilter == type ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
-        button.layer.borderWidth = 1
-        button.tag = type.tag
-        return button
-    }
-    private var allButton = UIButton()
-    private var waitButton = UIButton()
-    private var rejectButton = UIButton()
-    private var approveButton = UIButton()
-    private func filterLabel(type: FilterTypes) -> UILabel {
-        let label = UILabel()
-        label.text = type.rawValue
-        label.textColor = viewModel.currentFilter == type ? .grey900 : .grey400
-        label.font = Fonts.body2S
-        label.tag = type.tag
-        return label
-    }
-    private var allLabel = UILabel()
-    private var waitLabel = UILabel()
-    private var rejectLabel = UILabel()
-    private var approveLabel = UILabel()
-    private func filterImageView(type: FilterTypes) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = type.image?.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = viewModel.currentFilter == type ? .grey900 : .grey400
-        imageView.tag = type.tag
-        return imageView
-    }
-    private var waitImageView = UIImageView()
-    private var rejectImageView = UIImageView()
-    private var approveImageView = UIImageView()
+    
+    private var allButton = FilterButton(action: { _ in }, type: .all)
+    private var waitButton = FilterButton(action: { _ in }, type: .wait)
+    private var rejectButton = FilterButton(action: { _ in }, type: .reject)
+    private var approveButton = FilterButton(action: { _ in }, type: .approve)
     private func filterButtonStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
         stackView.axis = .horizontal
@@ -284,21 +254,11 @@ final class MainViewController: BaseViewController {
         
         timerLabel.text = viewModel.time
         
-        allButton = filterButton(type: .all)
-        waitButton = filterButton(type: .wait)
-        rejectButton = filterButton(type: .reject)
-        approveButton = filterButton(type: .approve)
-        allButton.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
-        waitButton.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
-        rejectButton.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
-        approveButton.addTarget(self, action: #selector(didTapFilterButton(_:)), for: .touchUpInside)
-        allLabel = filterLabel(type: .all)
-        waitLabel = filterLabel(type: .wait)
-        rejectLabel = filterLabel(type: .reject)
-        approveLabel = filterLabel(type: .approve)
-        waitImageView = filterImageView(type: .wait)
-        rejectImageView = filterImageView(type: .reject)
-        approveImageView = filterImageView(type: .approve)
+        allButton = FilterButton(action: { self.updateTodoList(type: $0) }, type: .all)
+        waitButton = FilterButton(action: { self.updateTodoList(type: $0) }, type: .wait, isColorful: false)
+        rejectButton = FilterButton(action: { self.updateTodoList(type: $0) }, type: .reject, isColorful: false)
+        approveButton = FilterButton(action: { self.updateTodoList(type: $0) }, type: .approve, isColorful: false)
+        
         filterStackView = filterButtonStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
         todoListStackView = todoItemStackView(
             items: viewModel.todoList.map { todo in
@@ -327,10 +287,7 @@ final class MainViewController: BaseViewController {
         ].forEach { beforeStartView.addSubview($0) }
         [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { emptyListView.addSubview($0) }
         
-        [
-            filterStackView, allLabel, waitLabel, rejectLabel, approveLabel,
-            waitImageView, rejectImageView, approveImageView, dogetherScrollView
-        ].forEach { dogetherSheet.addSubview($0) }
+        [filterStackView, dogetherScrollView].forEach { dogetherSheet.addSubview($0) }
         [todoListView].forEach { dogetherScrollView.addSubview($0) }
         [todoListStackView].forEach { todoListView.addSubview($0) }
     }
@@ -471,60 +428,6 @@ final class MainViewController: BaseViewController {
             $0.left.equalToSuperview().offset(16)
         }
         
-        // TODO: 추후 개선
-        allButton.snp.makeConstraints {
-            $0.width.equalTo(FilterTypes.all.width)
-        }
-        
-        waitButton.snp.makeConstraints {
-            $0.width.equalTo(FilterTypes.wait.width)
-        }
-        
-        rejectButton.snp.makeConstraints {
-            $0.width.equalTo(FilterTypes.reject.width)
-        }
-        
-        approveButton.snp.makeConstraints {
-            $0.width.equalTo(FilterTypes.approve.width)
-        }
-        
-        allLabel.snp.makeConstraints {
-            $0.center.equalTo(allButton)
-        }
-        
-        waitLabel.snp.makeConstraints {
-            $0.centerX.equalTo(waitButton).offset(13)
-            $0.centerY.equalTo(waitButton)
-        }
-        
-        rejectLabel.snp.makeConstraints {
-            $0.centerX.equalTo(rejectButton).offset(13)
-            $0.centerY.equalTo(rejectButton)
-        }
-        
-        approveLabel.snp.makeConstraints {
-            $0.centerX.equalTo(approveButton).offset(13)
-            $0.centerY.equalTo(approveButton)
-        }
-        
-        waitImageView.snp.makeConstraints {
-            $0.left.equalTo(waitButton).offset(8)
-            $0.centerY.equalTo(waitButton)
-            $0.width.height.equalTo(24)
-        }
-        
-        rejectImageView.snp.makeConstraints {
-            $0.left.equalTo(rejectButton).offset(8)
-            $0.centerY.equalTo(rejectButton)
-            $0.width.height.equalTo(24)
-        }
-        
-        approveImageView.snp.makeConstraints {
-            $0.left.equalTo(approveButton).offset(8)
-            $0.centerY.equalTo(approveButton)
-            $0.width.height.equalTo(24)
-        }
-        
         dogetherScrollView.snp.makeConstraints {
             $0.top.equalTo(filterStackView.snp.bottom).offset(28)
             $0.bottom.left.right.equalToSuperview()
@@ -592,26 +495,12 @@ final class MainViewController: BaseViewController {
         NavigationManager.shared.pushViewController(RankingViewController())
     }
     
-    @objc private func didTapFilterButton(_ sender: UIButton) {
-        guard let filterType = FilterTypes.allCases.first(where: { $0.tag == sender.tag }) else { return }
-        viewModel.updateFilter(filterType)
-        updateTodoList()
-    }
-    
-    private func updateTodoList() {
-        [allButton, waitButton, rejectButton, approveButton].forEach { button in
-            guard let type = FilterTypes.allCases.first(where: { $0.tag == button.tag }) else { return }
-            button.backgroundColor = viewModel.currentFilter == type ? type.backgroundColor : .grey800
-            button.layer.borderColor = viewModel.currentFilter == type ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
-        }
-        [allLabel, waitLabel, rejectLabel, approveLabel].forEach { label in
-            guard let type = FilterTypes.allCases.first(where: { $0.tag == label.tag }) else { return }
-            label.textColor = viewModel.currentFilter == type ? .grey900 : .grey400
-        }
-        [waitImageView, rejectImageView, approveImageView].forEach { imageView in
-            guard let type = FilterTypes.allCases.first(where: { $0.tag == imageView.tag }) else { return }
-            imageView.tintColor = viewModel.currentFilter == type ? .grey900 : .grey400
-        }
+    private func updateTodoList(type: FilterTypes) {
+        viewModel.updateFilter(type)
+        allButton.setIsColorful(type == .all)
+        waitButton.setIsColorful(type == .wait)
+        rejectButton.setIsColorful(type == .reject)
+        approveButton.setIsColorful(type == .approve)
     }
 }
 
