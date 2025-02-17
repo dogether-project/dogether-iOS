@@ -10,9 +10,28 @@ import SnapKit
 
 final class MyDashboardViewController: BaseViewController {
     
+    private let scrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = false
+        return scrollView
+    }()
+    
+    private let contentView = {
+        let view = UIView()
+        return view
+    }()
+    
+    private let contentStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 20
+        return stackView
+    }()
+    
     private let messageLabel = {
         let label = UILabel()
         let myTodoMessage = "대단해요!\n총 123개의 투두를 달성했어요"
+        
         let attributedText = NSMutableAttributedString(string: myTodoMessage)
         
         if let range = myTodoMessage.range(of: "123개") {
@@ -22,30 +41,37 @@ final class MyDashboardViewController: BaseViewController {
         
         label.attributedText = attributedText
         label.font = Fonts.head1B
-        label.textColor = .grey0
         label.numberOfLines = 0
         return label
     }()
     
     
-    private lazy var collectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+    private lazy var myDataCollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createMyDataCollectionLayout())
+        collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(MyDashboardCollectionViewCell.self, forCellWithReuseIdentifier: "MyDashboardCollectionViewCell")
+        collectionView.register(MyDashboardCollectionViewCell.self, forCellWithReuseIdentifier: MyDashboardCollectionViewCell.identifier)
         return collectionView
     }()
     
+    // MARK: - 인증한 기간
     private let progressStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 20
         stackView.alignment = .bottom
         stackView.distribution = .equalSpacing
-        stackView.backgroundColor = .orange
+        stackView.backgroundColor = .grey700
         stackView.layer.cornerRadius = 12
-        
         return stackView
+    }()
+    
+    private let calendarIcon = {
+        let icon = UIImageView()
+        icon.image = .today.withRenderingMode(.alwaysTemplate)
+        icon.tintColor = .grey0
+        return icon
     }()
     
     private let progressTitleLabel = {
@@ -60,6 +86,7 @@ final class MyDashboardViewController: BaseViewController {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 15
+        stackView.distribution = .equalSpacing
         stackView.alignment = .leading
         
         let yLabels = ["10", "8", "6", "4", "2", "0"]
@@ -72,17 +99,17 @@ final class MyDashboardViewController: BaseViewController {
         }
         return stackView
     }()
-
+    
     private func createProgressView(title: String, progress: Float) -> UIStackView {
         
         // 프로그레스바 전체
         let progressBarContainer = UIView()
-        progressBarContainer.backgroundColor = .yellow
+        progressBarContainer.backgroundColor = .grey500
         progressBarContainer.layer.cornerRadius = 10
 
         // 프로그레스바 실행률
         let progressBar = UIView()
-        progressBar.backgroundColor = .green
+        progressBar.backgroundColor = .blue200
         progressBar.layer.cornerRadius = 8
  
         progressBarContainer.addSubview(progressBar)
@@ -109,6 +136,42 @@ final class MyDashboardViewController: BaseViewController {
         return stackView
     }
     
+    // MARK: - 인증 목록
+    private let certificationStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 6
+        stackView.distribution = .equalSpacing
+        stackView.backgroundColor = .grey700
+        stackView.layer.cornerRadius = 12
+        return stackView
+    }()
+    
+    private let certificationIcon = {
+        let icon = UIImageView()
+        icon.image = UIImage(systemName: "list.bullet")
+        icon.tintColor = .grey0
+        return icon
+    }()
+    
+    private let certificationTitleLabel = {
+        let label = UILabel()
+        label.text = "인증 목록"
+        label.font = Fonts.head2B
+        label.textColor = .grey0
+        return label
+    }()
+
+    private lazy var certificationCollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCeritificationCollectionLayout())
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(CertificationCollectionViewCell.self, forCellWithReuseIdentifier: CertificationCollectionViewCell.identifier)
+        return collectionView
+
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -116,38 +179,67 @@ final class MyDashboardViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [messageLabel, collectionView, progressStackView].forEach {
+        
+        [scrollView].forEach {
             view.addSubview($0)
         }
+
+        [contentView].forEach {
+            scrollView.addSubview($0)
+        }
         
-        [progressTitleLabel, progressYLabels].forEach {
+        [contentStackView].forEach {
+            scrollView.addSubview($0)
+        }
+        
+        [messageLabel, myDataCollectionView, progressStackView, certificationStackView].forEach {
+            contentStackView.addArrangedSubview($0)
+        }
+        
+        [calendarIcon, progressTitleLabel, progressYLabels].forEach {
             progressStackView.addSubview($0)
+        }
+        
+        [certificationIcon, certificationTitleLabel, certificationCollectionView].forEach {
+            certificationStackView.addSubview($0)
         }
     }
     
     override func configureConstraints() {
         
-        messageLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(28)
-            $0.leading.equalTo(view.safeAreaLayoutGuide).offset(32)
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
+        }
         
-        collectionView.snp.makeConstraints {
+        contentStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(16)
+            $0.width.equalToSuperview().offset(-32)
+        }
+                
+        myDataCollectionView.snp.makeConstraints {
             $0.top.equalTo(messageLabel.snp.bottom).offset(40)
-            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(107)
         }
         
         progressStackView.snp.makeConstraints {
-            $0.top.equalTo(collectionView.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.top.equalTo(myDataCollectionView.snp.bottom).offset(20)
             $0.height.equalTo(343)
+        }
+        
+        calendarIcon.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(20)
+            $0.leading.equalToSuperview().offset(17)
+            $0.width.height.equalTo(20)
         }
         
         progressTitleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
-            $0.leading.equalToSuperview().offset(44)
+            $0.leading.equalTo(calendarIcon.snp.trailing).offset(9)
         }
         
         progressYLabels.snp.makeConstraints {
@@ -155,12 +247,33 @@ final class MyDashboardViewController: BaseViewController {
             $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(201)
         }
-
+        
+        certificationStackView.snp.makeConstraints {
+            $0.top.equalTo(progressStackView.snp.bottom).offset(20)
+            $0.height.equalTo(340)
+        }
+        
+        certificationIcon.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(16)
+            $0.width.height.equalTo(20)
+        }
+        
+        certificationTitleLabel.snp.makeConstraints {
+            $0.leading.equalTo(certificationIcon.snp.trailing).offset(8)
+            $0.centerY.equalTo(certificationIcon)
+        }
+        
+        certificationCollectionView.snp.makeConstraints {
+            $0.top.equalTo(certificationTitleLabel.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(206)
+        }
     }
     
     override func configureView() { }
     
-    private func createLayout() -> UICollectionViewFlowLayout {
+    private func createMyDataCollectionLayout() -> UICollectionViewFlowLayout {
         
         let layout = UICollectionViewFlowLayout()
         let spacing: CGFloat = 7
@@ -170,6 +283,21 @@ final class MyDashboardViewController: BaseViewController {
         layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         layout.minimumLineSpacing = spacing
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumInteritemSpacing = spacing
+        
+        return layout
+    }
+    
+    private func createCeritificationCollectionLayout() -> UICollectionViewFlowLayout {
+        
+        let layout = UICollectionViewFlowLayout()
+        let spacing: CGFloat = 4
+        let itemWidth = 101
+        let itemHeight = 101
+        
+        layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
+        layout.minimumLineSpacing = spacing
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
         layout.minimumInteritemSpacing = spacing
         
         return layout
@@ -185,15 +313,16 @@ final class MyDashboardViewController: BaseViewController {
         
         // 프로그레스 바를 하나로 묶을 stackView
         let progressBarsContainer = UIStackView()
-        progressBarsContainer.axis = .horizontal
+
         progressBarsContainer.spacing = 2
         progressBarsContainer.distribution = .equalSpacing
         
         for (title, progress) in progressData {
             let progressView = createProgressView(title: title, progress: Float(progress))
-            
-            progressView.layer.borderColor = UIColor.white.cgColor
-            progressView.layer.borderWidth = 1
+        
+            if let label = progressView.subviews.first(where: { $0 is UILabel }) as? UILabel {
+                label.font = Fonts.body2S
+            }
             
             progressBarsContainer.addArrangedSubview(progressView)
             
@@ -202,38 +331,51 @@ final class MyDashboardViewController: BaseViewController {
             }
         }
         
-        progressStackView.addArrangedSubview(progressBarsContainer)
-        
-        progressBarsContainer.layer.borderColor = UIColor.purple.cgColor
-        progressBarsContainer.layer.borderWidth = 1
+        progressStackView.addSubview(progressBarsContainer)
         
         progressBarsContainer.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(51)
             $0.trailing.equalToSuperview().offset(-32)
+            $0.bottom.equalToSuperview().offset(-20)
         }
     }
 }
 
 extension MyDashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        if collectionView == myDataCollectionView {
+            return 3
+        } else {
+            return 6
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MyDashboardCollectionViewCell", for: indexPath)
-        
-        let items = [
-            (image: UIImage(), title: "달성 개수", count: "123개"),
-            (image: UIImage(), title: "인정 개수", count: "123개"),
-            (image: UIImage(), title: "노인정 개수", count: "123개")
-        ]
-        
-        let item = items[indexPath.row]
-        
-        cell.backgroundColor = .grey700
-        cell.layer.cornerRadius = 12
-        
-        return cell
+        if collectionView == myDataCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyDashboardCollectionViewCell.identifier, for: indexPath) as! MyDashboardCollectionViewCell
+            
+            let items: [(UIImage, String, String)] = [
+                (image: .certification, title: "달성 개수", count: "123개"),
+                (image: .approve, title: "인정 개수", count: "123개"),
+                (image: .reject, title: "노인정 개수", count: "123개")
+            ]
+            
+            let item = items[indexPath.row]
+            
+            cell.backgroundColor = .grey700
+            cell.layer.cornerRadius = 12
+            cell.configure(with: item.0, title: item.1, count: item.2)
+
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CertificationCollectionViewCell.identifier, for: indexPath) as! CertificationCollectionViewCell
+            
+            cell.backgroundColor = .grey500
+            cell.layer.cornerRadius = 12
+
+            return cell
+        }
+        return UICollectionViewCell()
     }
 }
