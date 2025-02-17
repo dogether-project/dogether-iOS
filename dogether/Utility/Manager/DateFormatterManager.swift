@@ -19,7 +19,7 @@ struct DateFormatterManager {
         return formatter
     }()
     
-    static func formattedDate(_ days: Int) -> String {
+    static func formattedDate(_ days: Int = 0) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy.MM.dd"
         
