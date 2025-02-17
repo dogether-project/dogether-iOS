@@ -34,7 +34,7 @@ final class CertificationInfoPopupView: UIView {
         return button
     }()
     
-    private let imageView = UIImageView()
+    private var imageView = UIImageView()
     
     private var statusView = FilterButton(action: { _ in }, type: .all)
     
@@ -75,7 +75,12 @@ final class CertificationInfoPopupView: UIView {
         
         closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         
-//        imageView.image = todoInfo.mediaUrl   // TODO: 추후 mediaUrl로 이미지 가져와서 넣기
+        // TODO: 추후 수정
+        imageView = CertificationImageView(
+            image: .logo,
+            todoContent: todoInfo.todoContent ?? "",
+            certificator: UserDefaultsManager.shared.userFullName ?? ""
+        )
         
         statusView = FilterButton(
             action: { _ in },

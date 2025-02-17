@@ -8,11 +8,11 @@
 import Foundation
 
 struct PresignedUrlRequest: Encodable {
-    let todoId: Int
-    let uploadFileTypes: [FileTypes]
+    let dailyTodoId: Int
+    let uploadFileTypes: [String]
     
-    init(todoId: Int, uploadFileTypes: [FileTypes]) {
-        self.todoId = todoId
+    init(dailyTodoId: Int, uploadFileTypes: [String]) {
+        self.dailyTodoId = dailyTodoId
         self.uploadFileTypes = uploadFileTypes
     }
 }

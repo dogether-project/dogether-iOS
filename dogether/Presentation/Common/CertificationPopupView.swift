@@ -26,7 +26,7 @@ final class CertificationPopupView: UIView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var imageView: UIImageView? = nil
+    private var imageView = CertificationImageView(image: nil)
     
     private let titleLabel = {
         let label = UILabel()
@@ -244,13 +244,7 @@ final class CertificationPopupView: UIView {
     }
     
     func uploadImage(image: UIImage) {
-        if imageView == nil {
-            imageView = UIImageView()
-            
-            guard let imageView else { return }
-            imageView.layer.cornerRadius = 12
-            imageView.contentMode = .scaleAspectFit
-            
+        if imageView.image == nil {
             [imageView, nextButton].forEach { addSubview($0) }
             
             todoContentLabel.snp.removeConstraints()
@@ -277,7 +271,7 @@ final class CertificationPopupView: UIView {
             }
         }
         
-        imageView?.image = image
+        imageView.image = image
     }
     
     private func updatePopup() {
