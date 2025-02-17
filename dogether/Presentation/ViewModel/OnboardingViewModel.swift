@@ -8,11 +8,11 @@
 import Foundation
 import AuthenticationServices
 
-final class LoginViewModel: ObservableObject {
+final class OnboardingViewModel: ObservableObject {
     
     private let appleSignInDelegate = AppleSignInDelegate()
 
-    func singInWithApple() async throws -> AppleLoginResponse {
+    func signInWithApple() async throws -> AppleLoginResponse {
         
         // Apple로 로그인을 시작할 메서드(버튼을 눌렀을때 호출할 메서드)
         let request = ASAuthorizationAppleIDProvider().createRequest()
