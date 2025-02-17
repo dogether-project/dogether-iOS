@@ -43,17 +43,12 @@ final class PopupViewController: BaseViewController {
                 popupView.cameraManager = cameraManager
                 popupView.galleryManager = galleryManager
                 
-                let completion = {
-                    self.uploadImage(view: popupView, image: $0)
-                    // TODO: 추후 S3Manager로 이동
-//                    private func uploadImageToS3(image: UIImage) {
-//                        Task {
-//                            let request: PresignedUrlRequest = PresignedUrlRequest(todoId: 0, uploadFileTypes: [.image])
-//                            let response: PresignedUrlResponse = try await NetworkService.shared.request(
-//                                S3.presignedUrls(presignedUrlRequest: request)
-//                            )
-//                        }
-//                    }
+                let completion = { image in
+                    self.uploadImage(view: popupView, image: image)
+                    Task { @MainActor in
+                        let imageUrl = try await S3Manager.shared.uploadImage(image: image)
+                        // TODO: imageUrl을 viewModel에 저장, 인증하기 API 호출할 때 request에 넣어줘야 함
+                    }
                 }
                 cameraManager.completion = completion
                 galleryManager.completion = completion
