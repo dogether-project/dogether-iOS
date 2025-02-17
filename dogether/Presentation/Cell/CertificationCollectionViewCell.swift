@@ -10,7 +10,21 @@ import SnapKit
 
 class CertificationCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
     
-    private let imageView = {
+    let dateHeaderLabel = {
+        let label = UILabel()
+        label.font = Fonts.head2B
+        label.textColor = .grey0
+        return label
+    }()
+    
+    let dateLabel = {
+        let label = UILabel()
+        label.font = Fonts.body1S
+        label.textColor = .grey400
+        return label
+    }()
+    
+    var imageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
@@ -21,14 +35,25 @@ class CertificationCollectionViewCell: BaseCollectionViewCell, ReusableProtocol 
     }
     
     override func configureHierarchy() {
-        [imageView].forEach {
+        [dateHeaderLabel, dateLabel, imageView].forEach {
             contentView.addSubview($0)
         }
     }
     
     override func configureConstraints() {
+        
+        dateHeaderLabel.snp.makeConstraints {
+            $0.top.leading.equalTo(contentView)
+        }
+        
+        dateLabel.snp.makeConstraints {
+            $0.top.equalTo(dateHeaderLabel.snp.bottom)
+            $0.leading.equalTo(dateHeaderLabel.snp.leading)
+        }
+        
         imageView.snp.makeConstraints {
-            $0.edges.equalTo(contentView)
+            $0.top.equalTo(dateHeaderLabel.snp.bottom).offset(8)
+            $0.leading.equalTo(dateLabel.snp.leading)
         }
     }
     
@@ -41,5 +66,4 @@ class CertificationCollectionViewCell: BaseCollectionViewCell, ReusableProtocol 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
