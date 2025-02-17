@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class MyDashboardCollectionViewCell: BaseCollectionViewCell {
+class MyDashboardCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
     
     private let icon = {
         let icon = UIImageView()
@@ -25,7 +25,7 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell {
     
     private let countLabel = {
         let label = UILabel()
-        label.font = Fonts.head1B
+        label.font = .systemFont(ofSize: 20)
         label.textColor = .grey0
         label.textAlignment = .center
         return label
@@ -43,7 +43,7 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell {
     
     override func configureConstraints() {
         icon.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalToSuperview().offset(17.5)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(20)
         }
@@ -61,7 +61,7 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell {
     
     override func configureView() { }
     
-    func configure(with image: UIImage?, title: String, count: String) {
+    func configure(with image: UIImage, title: String, count: String) {
         icon.image = image
         titleLabel.text = title
         countLabel.text = count
