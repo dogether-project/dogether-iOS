@@ -30,7 +30,7 @@ final class MyDashboardViewController: BaseViewController {
     
     private let messageLabel = {
         let label = UILabel()
-        let myTodoMessage = "대단해요!\n총 123개의 투두를 달성했어요"
+        let myTodoMessage = "대단해요!\n총 0개의 투두를 달성했어요"
         
         let attributedText = NSMutableAttributedString(string: myTodoMessage)
         
@@ -45,7 +45,6 @@ final class MyDashboardViewController: BaseViewController {
         return label
     }()
     
-    
     private lazy var myDataCollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createMyDataCollectionLayout())
         collectionView.backgroundColor = .clear
@@ -54,6 +53,12 @@ final class MyDashboardViewController: BaseViewController {
         collectionView.register(MyDashboardCollectionViewCell.self, forCellWithReuseIdentifier: MyDashboardCollectionViewCell.identifier)
         return collectionView
     }()
+    
+    private var items: [(UIImage, String, String)] = [
+        (image: .certification, title: "달성 개수", count: "0개"),
+        (image: .approve, title: "인정 개수", count: "0개"),
+        (image: .reject, title: "노인정 개수", count: "0개")
+    ]
     
     // MARK: - 인증한 기간
     private let progressStackView = {
@@ -100,30 +105,32 @@ final class MyDashboardViewController: BaseViewController {
         return stackView
     }()
     
-    private func createProgressView(title: String, progress: Float) -> UIStackView {
+    private func createProgressView(title: String, progress: Float, isToday: Bool = false) -> UIStackView {
         
         // 프로그레스바 전체
-        let progressBarContainer = UIView()
+        let progressBarContainer = StripedView()
+        
         progressBarContainer.backgroundColor = .grey500
         progressBarContainer.layer.cornerRadius = 10
-
+        progressBarContainer.clipsToBounds = true
+        
         // 프로그레스바 실행률
         let progressBar = UIView()
-        progressBar.backgroundColor = .blue200
+        progressBar.backgroundColor = isToday ? .blue300 : .blue200
         progressBar.layer.cornerRadius = 8
- 
+        
         progressBarContainer.addSubview(progressBar)
         
         progressBarContainer.snp.makeConstraints {
             $0.width.equalTo(50)
             $0.height.equalTo(180)
         }
-
+        
         progressBar.snp.makeConstraints {
             $0.bottom.leading.trailing.equalToSuperview()
             $0.height.equalToSuperview().multipliedBy(progress)
         }
-
+        
         let label = UILabel()
         label.text = title
         label.font = Fonts.body2R
@@ -133,6 +140,55 @@ final class MyDashboardViewController: BaseViewController {
         stackView.spacing = 10
         stackView.alignment = .center
         
+        if isToday {
+            let progressLabel = UILabel()
+            progressLabel.text = "20% 달성중"
+            progressLabel.font = .systemFont(ofSize: 14)
+            progressLabel.textColor = .grey0
+            progressLabel.backgroundColor = .blue300
+            progressLabel.layer.cornerRadius = 20
+            progressLabel.layer.masksToBounds = true
+            progressLabel.textAlignment = .center
+            
+            // 말풍선 삼각형
+//            let triangleSize: CGFloat = 10
+//            let trianglePath = UIBezierPath()
+//            
+//            trianglePath.move(to: CGPoint(x: triangleSize, y: 0)) // 꼭짓점
+//            trianglePath.addLine(to: CGPoint(x: 0, y: triangleSize)) // 두 점을 추가
+//            trianglePath.addLine(to: CGPoint(x: triangleSize * 2, y: triangleSize)) // 두 점을 추가
+//            trianglePath.close() // 마지막점과 첫번째 점을 연결
+//            
+//            let triangleLayer = CAShapeLayer()
+//            triangleLayer.path = trianglePath.cgPath
+//            triangleLayer.fillColor = UIColor.yellow.cgColor
+//            triangleLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi))
+//            triangleLayer.position = CGPoint(x: (progressBarContainer.frame.width - triangleSize) / 2, y: progressLabel.frame.height / 2)
+//            
+//            progressLabel.layer.addSublayer(triangleLayer)
+            
+            [progressLabel].forEach {
+                stackView.addSubview($0)
+            }
+            
+            progressLabel.snp.makeConstraints {
+                $0.bottom.equalTo(progressBarContainer.snp.top).offset(-20)
+                $0.centerX.equalTo(progressBar)
+                $0.width.equalTo(90)
+                $0.height.equalTo(36)
+            }
+            
+//            DispatchQueue.main.async {
+//                let progressLabelWidth = progressLabel.frame.width
+//                let progressLabelHeight = progressLabel.frame.height
+//                let progressBarWidth = progressBarContainer.frame.width
+//                
+//                triangleLayer.position = CGPoint(
+//                    x: progressLabelWidth / 2,  // 가로 중앙 정렬
+//                    y: progressLabelHeight - 5  // 말풍선 아래쪽에 배치 (조정 가능)
+//                )
+//            }
+        }
         return stackView
     }
     
@@ -161,7 +217,14 @@ final class MyDashboardViewController: BaseViewController {
         label.textColor = .grey0
         return label
     }()
-
+    
+    private let goToCertificationDetailIcon = {
+        let icon = UIImageView()
+        icon.image = .chevronRight.withRenderingMode(.alwaysTemplate)
+        icon.tintColor = .grey400
+        return icon
+    }()
+    
     private lazy var certificationCollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCeritificationCollectionLayout())
         collectionView.backgroundColor = .clear
@@ -169,13 +232,14 @@ final class MyDashboardViewController: BaseViewController {
         collectionView.dataSource = self
         collectionView.register(CertificationCollectionViewCell.self, forCellWithReuseIdentifier: CertificationCollectionViewCell.identifier)
         return collectionView
-
+        
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureProgressBars()
+        fetchMySummary()
     }
     
     override func configureHierarchy() {
@@ -183,7 +247,7 @@ final class MyDashboardViewController: BaseViewController {
         [scrollView].forEach {
             view.addSubview($0)
         }
-
+        
         [contentView].forEach {
             scrollView.addSubview($0)
         }
@@ -200,7 +264,7 @@ final class MyDashboardViewController: BaseViewController {
             progressStackView.addSubview($0)
         }
         
-        [certificationIcon, certificationTitleLabel, certificationCollectionView].forEach {
+        [certificationIcon, certificationTitleLabel, goToCertificationDetailIcon, certificationCollectionView].forEach {
             certificationStackView.addSubview($0)
         }
     }
@@ -220,7 +284,7 @@ final class MyDashboardViewController: BaseViewController {
             $0.edges.equalToSuperview().inset(16)
             $0.width.equalToSuperview().offset(-32)
         }
-                
+        
         myDataCollectionView.snp.makeConstraints {
             $0.top.equalTo(messageLabel.snp.bottom).offset(40)
             $0.height.equalTo(107)
@@ -250,7 +314,7 @@ final class MyDashboardViewController: BaseViewController {
         
         certificationStackView.snp.makeConstraints {
             $0.top.equalTo(progressStackView.snp.bottom).offset(20)
-            $0.height.equalTo(340)
+            $0.height.equalTo(294)
         }
         
         certificationIcon.snp.makeConstraints {
@@ -262,6 +326,12 @@ final class MyDashboardViewController: BaseViewController {
         certificationTitleLabel.snp.makeConstraints {
             $0.leading.equalTo(certificationIcon.snp.trailing).offset(8)
             $0.centerY.equalTo(certificationIcon)
+        }
+        
+        goToCertificationDetailIcon.snp.makeConstraints {
+            $0.centerY.equalTo(certificationTitleLabel)
+            $0.width.height.equalTo(20)
+            $0.trailing.equalToSuperview().offset(-16)
         }
         
         certificationCollectionView.snp.makeConstraints {
@@ -297,29 +367,33 @@ final class MyDashboardViewController: BaseViewController {
         
         layout.itemSize = CGSize(width: itemWidth, height: itemHeight)
         layout.minimumLineSpacing = spacing
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumInteritemSpacing = spacing
         
         return layout
     }
     
     private func configureProgressBars() {
+        
         let progressData = [
             ("1일차", 0.2),
             ("2일차", 0.5),
             ("3일차", 0.7),
-            ("4일차", 1.0)
+            ("4일차", 0.4)
         ]
         
         // 프로그레스 바를 하나로 묶을 stackView
         let progressBarsContainer = UIStackView()
-
+        
         progressBarsContainer.spacing = 2
         progressBarsContainer.distribution = .equalSpacing
         
         for (title, progress) in progressData {
-            let progressView = createProgressView(title: title, progress: Float(progress))
-        
+            
+            let isToday = (title == "4일차")
+            
+            let progressView = createProgressView(title: title, progress: Float(progress), isToday: isToday)
+            
             if let label = progressView.subviews.first(where: { $0 is UILabel }) as? UILabel {
                 label.font = Fonts.body2S
             }
@@ -339,6 +413,30 @@ final class MyDashboardViewController: BaseViewController {
             $0.bottom.equalToSuperview().offset(-20)
         }
     }
+    
+    private func fetchMySummary() {
+        Task {
+            do {
+                let mySummary: GetMySummaryResponse = try await NetworkManager.shared.request(GroupsRouter.getMySummary)
+                
+                DispatchQueue.main.async {
+                    let messageLabel = "대단해요!\n총 \(mySummary.totalTodoCount)개의 투두를 달성했어요"
+                    
+                    let attributedText = NSMutableAttributedString(string: messageLabel)
+                    
+                    if let range = messageLabel.range(of: "\(mySummary.totalTodoCount)") {
+                        let nsRagne = NSRange(range, in: messageLabel)
+                        attributedText.addAttribute(.foregroundColor, value: UIColor.blue300, range: nsRagne)
+                    }
+                    self.messageLabel.attributedText = attributedText
+                    self.updateCollectionViewData(mySummary: mySummary)
+                }
+                
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
 }
 
 extension MyDashboardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -355,27 +453,51 @@ extension MyDashboardViewController: UICollectionViewDelegate, UICollectionViewD
         if collectionView == myDataCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyDashboardCollectionViewCell.identifier, for: indexPath) as! MyDashboardCollectionViewCell
             
-            let items: [(UIImage, String, String)] = [
-                (image: .certification, title: "달성 개수", count: "123개"),
-                (image: .approve, title: "인정 개수", count: "123개"),
-                (image: .reject, title: "노인정 개수", count: "123개")
-            ]
-            
             let item = items[indexPath.row]
             
             cell.backgroundColor = .grey700
             cell.layer.cornerRadius = 12
             cell.configure(with: item.0, title: item.1, count: item.2)
-
+            
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CertificationCollectionViewCell.identifier, for: indexPath) as! CertificationCollectionViewCell
             
             cell.backgroundColor = .grey500
             cell.layer.cornerRadius = 12
-
+            
             return cell
         }
         return UICollectionViewCell()
+    }
+    
+    private func updateCollectionViewData(mySummary: GetMySummaryResponse) {
+        items = [
+            (image: .certification, title: "달성 개수", count: "\(mySummary.totalTodoCount)개"),
+            (image: .approve, title: "인정 개수", count: "\(mySummary.totalCertificatedCount)개"),
+            (image: .reject, title: "노인정 개수", count: "123개")
+        ]
+        
+        myDataCollectionView.reloadData()
+    }
+}
+
+final class StripedView: UIView {
+    
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        
+        let stripeColor = UIColor(white: 1.0, alpha: 0.3).cgColor
+        let stripeWidth: CGFloat = 5
+        let spacing: CGFloat = 10
+        
+        context.setLineWidth(stripeWidth)
+        context.setStrokeColor(stripeColor)
+        
+        for x in stride(from: -rect.height, to: rect.width, by: spacing) {
+            context.move(to: CGPoint(x: x, y: 0))
+            context.addLine(to: CGPoint(x: x + rect.height, y: rect.height))
+        }
+        context.strokePath()
     }
 }
