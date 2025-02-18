@@ -150,44 +150,30 @@ final class MyDashboardViewController: BaseViewController {
             progressLabel.layer.masksToBounds = true
             progressLabel.textAlignment = .center
             
-            // 말풍선 삼각형
-//            let triangleSize: CGFloat = 10
-//            let trianglePath = UIBezierPath()
-//            
-//            trianglePath.move(to: CGPoint(x: triangleSize, y: 0)) // 꼭짓점
-//            trianglePath.addLine(to: CGPoint(x: 0, y: triangleSize)) // 두 점을 추가
-//            trianglePath.addLine(to: CGPoint(x: triangleSize * 2, y: triangleSize)) // 두 점을 추가
-//            trianglePath.close() // 마지막점과 첫번째 점을 연결
-//            
-//            let triangleLayer = CAShapeLayer()
-//            triangleLayer.path = trianglePath.cgPath
-//            triangleLayer.fillColor = UIColor.yellow.cgColor
-//            triangleLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi))
-//            triangleLayer.position = CGPoint(x: (progressBarContainer.frame.width - triangleSize) / 2, y: progressLabel.frame.height / 2)
-//            
-//            progressLabel.layer.addSublayer(triangleLayer)
+            let circleView = UIView()
+            circleView.backgroundColor = .blue300
+            circleView.layer.borderColor = UIColor.white.cgColor
+            circleView.layer.borderWidth = 2
+            circleView.layer.cornerRadius = 1
+            
+            stackView.addSubview(circleView)
+            
+            circleView.snp.makeConstraints {
+                $0.bottom.equalTo(progressBarContainer.snp.top).offset(4)
+                $0.centerX.equalTo(progressBar)
+                $0.width.height.equalTo(9)
+            }
             
             [progressLabel].forEach {
                 stackView.addSubview($0)
             }
             
             progressLabel.snp.makeConstraints {
-                $0.bottom.equalTo(progressBarContainer.snp.top).offset(-20)
+                $0.bottom.equalTo(progressBarContainer.snp.top).offset(-16)
                 $0.centerX.equalTo(progressBar)
                 $0.width.equalTo(90)
                 $0.height.equalTo(36)
             }
-            
-//            DispatchQueue.main.async {
-//                let progressLabelWidth = progressLabel.frame.width
-//                let progressLabelHeight = progressLabel.frame.height
-//                let progressBarWidth = progressBarContainer.frame.width
-//                
-//                triangleLayer.position = CGPoint(
-//                    x: progressLabelWidth / 2,  // 가로 중앙 정렬
-//                    y: progressLabelHeight - 5  // 말풍선 아래쪽에 배치 (조정 가능)
-//                )
-//            }
         }
         return stackView
     }
@@ -475,7 +461,7 @@ extension MyDashboardViewController: UICollectionViewDelegate, UICollectionViewD
         items = [
             (image: .certification, title: "달성 개수", count: "\(mySummary.totalTodoCount)개"),
             (image: .approve, title: "인정 개수", count: "\(mySummary.totalCertificatedCount)개"),
-            (image: .reject, title: "노인정 개수", count: "123개")
+            (image: .reject, title: "노인정 개수", count: "\(mySummary.totalRejectedCount)개")
         ]
         
         myDataCollectionView.reloadData()
