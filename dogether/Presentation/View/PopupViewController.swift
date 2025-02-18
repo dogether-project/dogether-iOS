@@ -12,7 +12,7 @@ import SnapKit
 final class PopupViewController: BaseViewController {
     var popupType: PopupTypes?
     var todoInfo: TodoInfo?
-    var completeAction: (() -> Void)?
+    var completeAction: ((String) -> Void)?
     
     private var cameraManager: CameraManager!
     private var galleryManager: GalleryManager!
@@ -34,7 +34,7 @@ final class PopupViewController: BaseViewController {
         guard let popupType else { return }
         switch popupType {
         case .certification:
-            popupView = CertificationPopupView(completeAction: completeAction ?? { })
+            popupView = CertificationPopupView(completeAction: completeAction ?? { _ in })
             
             cameraManager = CameraManager(viewController: self)
             galleryManager = GalleryManager(viewController: self)
@@ -56,6 +56,8 @@ final class PopupViewController: BaseViewController {
         case .certificationInfo:
             guard let todoInfo else { return }
             popupView = CertificationInfoPopupView(todoInfo: todoInfo)
+        case .rejectReason:
+            popupView = RejectReasonPopupView(completeAction: completeAction ?? { _ in })
         }
     }
     
