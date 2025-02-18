@@ -16,9 +16,9 @@ final class CertificationPopupView: UIView {
     private let certificationMaxLength = 20
     
     // TODO: 추후 수정
-    private var completeAction: () -> Void
+    private var completeAction: (String) -> Void
     
-    init(completeAction: @escaping () -> Void) {
+    init(completeAction: @escaping (String) -> Void) {
         self.completeAction = completeAction
         super.init(frame: .zero)
         setUI()
@@ -119,18 +119,18 @@ final class CertificationPopupView: UIView {
         label.textColor = .grey400
         label.font = Fonts.body2S
         
-        [imageView, label].forEach { view.addSubview($0) }
+        let stackView = UIStackView(arrangedSubviews: [imageView, label])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
         
-        imageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalTo(45)
-            $0.width.height.equalTo(24)
+        [stackView].forEach { view.addSubview($0) }
+        
+        stackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
         
-        label.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalTo(imageView.snp.right).offset(8)
-            $0.height.equalTo(21)
+        imageView.snp.makeConstraints {
+            $0.width.height.equalTo(24)
         }
         
         return view
@@ -289,8 +289,8 @@ final class CertificationPopupView: UIView {
         certificationTextView.becomeFirstResponder()
         certificationMaxLengthLabel.text = "/\(certificationMaxLength)"
         certificationButton = DogetherButton(action: {
+            self.completeAction(self.certificationTextView.text)
             PopupManager.shared.hidePopup()
-            self.completeAction()
         }, title: "인증하기", status: .enabled)
         
         [
@@ -384,14 +384,15 @@ extension CertificationPopupView: UITextViewDelegate {
     
     // MARK: - UITextFieldDelegate
     @objc private func keyboardWillShow(_ notification: Notification) {
-        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-            let keyboardHeight = keyboardFrame.height
-            self.snp.updateConstraints { $0.centerY.equalToSuperview().offset(-keyboardHeight / 2) }
-            UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
-        }
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
+                 let superview = self.superview else { return }
+        let keyboardHeight = keyboardFrame.height
+        self.snp.updateConstraints { $0.centerY.equalToSuperview().offset(-keyboardHeight / 2) }
+        UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
     }
     
     @objc private func keyboardWillHide(_ notification: Notification) {
+        guard let superview = self.superview else { return }
         self.snp.updateConstraints { $0.centerY.equalToSuperview() }
         UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
     }

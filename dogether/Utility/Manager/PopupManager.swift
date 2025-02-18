@@ -13,12 +13,19 @@ final class PopupManager {
 
     private init() {}
 
-    func showPopup(type: PopupTypes, animated: Bool = true, completion: (() -> Void)? = nil, todoInfo: TodoInfo? = nil) {
+    func showPopup(
+        type: PopupTypes,
+        animated: Bool = true,
+        completion: (() -> Void)? = nil,
+        todoInfo: TodoInfo? = nil,
+        completeAction: ((String) -> Void)? = nil
+    ) {
         guard let currentViewController = getCurrentViewController() else { return }
 
         let popupViewController = PopupViewController()
         popupViewController.popupType = type
         popupViewController.todoInfo = todoInfo
+        popupViewController.completeAction = completeAction
         popupViewController.modalPresentationStyle = .overFullScreen
         popupViewController.modalTransitionStyle = .crossDissolve
         currentViewController.present(popupViewController, animated: animated, completion: completion)
@@ -30,11 +37,8 @@ final class PopupManager {
     }
 
     private func getCurrentViewController() -> UIViewController? {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first,
-              let rootViewController = window.rootViewController else {
-            return nil
-        }
+        guard let window = getCurrentWindow(),
+              let rootViewController = window.rootViewController else { return nil }
         
         var currentViewController = rootViewController
         while let presentedViewController = currentViewController.presentedViewController {
@@ -42,5 +46,15 @@ final class PopupManager {
         }
         
         return currentViewController
+    }
+    
+    private func getCurrentWindow() -> UIWindow? {
+        if let window = ModalityManager.shared.window {
+            return window
+        } else {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let window = windowScene.windows.first else { return nil }
+            return window
+        }
     }
 }
