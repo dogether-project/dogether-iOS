@@ -45,7 +45,7 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
         icon.snp.makeConstraints {
             $0.top.equalToSuperview().offset(17.5)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(20)
+            $0.size.equalTo(24)
         }
         
         titleLabel.snp.makeConstraints {
@@ -54,7 +54,7 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
         }
         
         countLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(6)
             $0.centerX.equalToSuperview()
         }
     }
