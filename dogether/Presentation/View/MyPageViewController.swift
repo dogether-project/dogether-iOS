@@ -132,7 +132,7 @@ final class MyPageViewController: BaseViewController {
         let icon = UIImageView()
         icon.image = iconName.withRenderingMode(.alwaysTemplate)
         icon.tintColor = .grey100
-
+        
         let label = UILabel()
         label.text = text
         label.textColor = .grey100
@@ -158,7 +158,7 @@ final class MyPageViewController: BaseViewController {
         
         goToIcon.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-32)
+            $0.trailing.equalToSuperview().offset(-16)
             $0.width.height.equalTo(20)
         }
     }
@@ -172,11 +172,32 @@ final class MyPageViewController: BaseViewController {
     }
     
     @objc private func logoutTapped() {
-        print("로그아웃 화면 이동")
+        AlertHelper.alert(on: self,
+                          title: "로그아웃 하시겠어요?",
+                          message: "",
+                          okTitle: "로그아웃") {
+            
+            UserDefaultsManager.shared.accessToken = nil
+            UserDefaultsManager.shared.userFullName = nil
+            
+            // 온보딩 화면으로 이동
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                NavigationManager.shared.setNavigationController(OnboardingViewController())
+            }
+        } cancelAction: { }
     }
     
+    // TODO: - 탈퇴하기 로직 구현
     @objc private func withdrawTapped() {
-        print("회원탈퇴 화면 이동")
-    }
+        AlertHelper.alert(on: self,
+                          title: "정말 회원탈퇴를 하시겠어요?",
+                          message: "탈퇴하면 모든 데이터가 삭제되며\n복구할 수 없어요.",
+                          okTitle: "탈퇴하기") {
+            
+            // 온보딩 화면으로 이동
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                NavigationManager.shared.setNavigationController(OnboardingViewController())
+            }
+        } cancelAction: { }    }
 }
 
