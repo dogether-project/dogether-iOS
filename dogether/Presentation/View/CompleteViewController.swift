@@ -12,6 +12,8 @@ import SnapKit
 final class CompleteViewController: BaseViewController {
     private let groupType: GroupTypes
     
+    var viewModel = CompleteViewModel()
+    
     private let firecrackerImageView = {
         let imageView = UIImageView()
         imageView.image = .firecracker
@@ -83,7 +85,7 @@ final class CompleteViewController: BaseViewController {
             groupInfoView = DogetherGroupInfo(groupName: "groupName", memberCount: 0, duration: .threeDays, startAt: .today)
         case .create:
             noticeLabel.text = groupType.completeNoticeText
-            joinCodeLabel.text = "123456"
+            joinCodeLabel.text = viewModel.joinCode
             joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
     }

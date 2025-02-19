@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct GetGroupInfoResponse: GroupInfo, Decodable {
-    let groupName: String
-    let memberCount: Int
-    let dailyTodoLimit: Int
+struct GetGroupInfoResponse: Decodable {
+    let name: String
+    let duration: Int
+    let joinCode: String
+    let endAt: String
+    let remainingDays: Int
 }

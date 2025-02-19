@@ -50,6 +50,12 @@ final class MyPageViewController: BaseViewController {
         return button
     }()
     
+    // TODO: 추후 isJoining 값을 가져와 비활성화 하는 부분 추가
+    private let leaveGroupView = {
+        let view = UIView()
+        return view
+    }()
+    
     private let logoutView = {
         let view = UIView()
         return view
@@ -67,7 +73,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [profileImageView, nameLabel, myHistory, logoutView, withdrawView].forEach {
+        [profileImageView, nameLabel, myHistory, leaveGroupView, logoutView, withdrawView].forEach {
             view.addSubview($0)
         }
         
@@ -105,11 +111,18 @@ final class MyPageViewController: BaseViewController {
             $0.height.equalTo(50)
         }
         
+        setUpView(leaveGroupView, iconName: .leaveGroup, text: "그룹탈퇴")
         setUpView(logoutView, iconName: .logout, text: "로그아웃")
         setUpView(withdrawView, iconName: .withdraw, text: "회원탈퇴")
         
-        logoutView.snp.makeConstraints {
+        leaveGroupView.snp.makeConstraints {
             $0.top.equalTo(myHistory.snp.bottom).offset(8)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(48)
+        }
+        
+        logoutView.snp.makeConstraints {
+            $0.top.equalTo(leaveGroupView.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
         }
@@ -164,12 +177,31 @@ final class MyPageViewController: BaseViewController {
     }
     
     private func setupGestureReconizers() {
+        let leaveGroupTap = UITapGestureRecognizer(target: self, action: #selector(leaveGroupTapped))
+        leaveGroupView.addGestureRecognizer(leaveGroupTap)
+        
         let logoutTap = UITapGestureRecognizer(target: self, action: #selector(logoutTapped))
         logoutView.addGestureRecognizer(logoutTap)
         
         let withdrawTap = UITapGestureRecognizer(target: self, action: #selector(withdrawTapped))
         withdrawView.addGestureRecognizer(withdrawTap)
     }
+    
+    @objc private func leaveGroupTapped() {
+        AlertHelper.alert(on: self,
+                          title: "현재 그룹을 탈퇴하시겠어요?",
+                          message: "그룹을 탈퇴하면 그룹 내 모든 데이터가\n삭제되어 복구할 수 없어요.",
+                          okTitle: "탈퇴하기") {
+            
+            // TODO: 추후 viewModel로 이동
+            Task { @MainActor in
+                try await NetworkManager.shared.request(GroupsRouter.leaveGroup)
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    NavigationManager.shared.setNavigationController(StartViewController())
+                }
+            }
+        } cancelAction: { }    }
     
     @objc private func logoutTapped() {
         AlertHelper.alert(on: self,

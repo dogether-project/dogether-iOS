@@ -7,7 +7,7 @@
 
 import Foundation
 
-class GroupCreateViewModel {
+final class GroupCreateViewModel {
     let groupNameMaxLength: Int = 12
     private(set) var currentStep: CreateGroupSteps = .one
     private(set) var isDisabledCompleteButton: Bool = true
@@ -26,10 +26,29 @@ class GroupCreateViewModel {
         await updateStep(step: nextStep)
     }
     
-    func updateGroupName(groupName: String?) async -> (String, String, ButtonStatus) {
+    func getJoinCode() async -> String {
+        // TODO: 추후 UseCase 추가
+        let createGroupRequest = CreateGroupRequest(
+            name: currentGroupName,
+            maximumMemberCount: memberCount,
+            startAt: currentStartAt,
+            durationOption: currentDuration,
+            maximumTodoCount: todoLimit
+        )
+        do {
+            let response: CreateGroupResponse = try await NetworkManager.shared.request(GroupsRouter.createGroup(createGroupRequest: createGroupRequest))
+            
+            return response.joinCode
+        } catch {
+            // TODO: API 실패 시 처리에 대해 추후 논의
+        }
+        return ""
+    }
+    
+    func updateGroupName(groupName: String?) async -> (String, ButtonStatus) {
         currentGroupName = groupName ?? ""
         let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .enabled : .disabled
-        return (currentGroupName, "\(currentGroupName.count)/\(groupNameMaxLength)", buttonStatus)
+        return (currentGroupName, buttonStatus)
     }
     func updateMemberCount(count: Int) {
         memberCount = count

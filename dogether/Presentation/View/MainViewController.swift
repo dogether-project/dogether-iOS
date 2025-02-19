@@ -15,51 +15,117 @@ final class MainViewController: BaseViewController {
     private var dogetherSheetTopConstraint: Constraint?
     
     private let dogetherHeader = DogetherHeader()
-    private let groupNameLabel = {
-        let label = UILabel()
-        label.textColor = .blue300
-        label.font = Fonts.emphasis2B
-        return label
-    }()
-    private var joinCodeDescriptionLabel = UILabel()
-    private var endDateDescriptionLabel = UILabel()
-    private var joinCodeInfoLabel = UILabel()
-    private var endDateInfoLabel = UILabel()
-    private var joinCodeStackView = UIStackView()
-    private var endDateStackView = UIStackView()
-    private func mainInfoStackView(stackViews: [UIStackView]) -> UIStackView {
-        let stackView = UIStackView(arrangedSubviews: stackViews)
-        stackView.axis = .horizontal
-        stackView.spacing = 28
-        return stackView
+    
+    private func groupInfoView(groupInfo: GroupInfo) -> UIView {
+        let view = UIView()
+        
+        let nameLabel = UILabel()
+        nameLabel.text = groupInfo.name
+        nameLabel.textColor = .blue300
+        nameLabel.font = Fonts.emphasis2B
+        
+        func descriptionLabel(text: String) -> UILabel {
+            let label = UILabel()
+            label.attributedText = NSAttributedString(
+                string: text,
+                attributes: Fonts.getAttributes(for: Fonts.body2S, textAlignment: .left)
+            )
+            label.textColor = .grey300
+            return label
+        }
+        
+        func infoLabel(text: String) -> UILabel {
+            let label = UILabel()
+            label.attributedText = NSAttributedString(
+                string: text,
+                attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+            )
+            label.textColor = .grey0
+            return label
+        }
+        
+        let durationDescriptionLabel = descriptionLabel(text: "총 기간")
+        let durationInfoLabel = infoLabel(text: "\(groupInfo.duration)일")
+        
+        let joinCodeDescriptionLabel = descriptionLabel(text: "초대코드")
+        let joinCodeInfoLabel = infoLabel(text: groupInfo.joinCode)
+        
+        let endDateDescriptionLabel = descriptionLabel(text: "종료일")
+        let endDateInfoLabel = infoLabel(
+            text: "\(groupInfo.endAt)(D-\(groupInfo.remainingDays))"
+        )
+        
+        func infoStackView(labels: [UILabel]) -> UIStackView {
+            let stackView = UIStackView(arrangedSubviews: labels)
+            stackView.axis = .vertical
+            return stackView
+        }
+        
+        let durationStackView = infoStackView(labels: [durationDescriptionLabel, durationInfoLabel])
+        let joinCodeStackView = infoStackView(labels: [joinCodeDescriptionLabel, joinCodeInfoLabel])
+        let endDateStackView = infoStackView(labels: [endDateDescriptionLabel, endDateInfoLabel])
+        
+        let groupInfoStackView = UIStackView(arrangedSubviews: [durationStackView, joinCodeStackView, endDateStackView])
+        groupInfoStackView.axis = .horizontal
+        groupInfoStackView.spacing = 28
+        
+        [nameLabel, groupInfoStackView].forEach { view.addSubview($0) }
+        
+        nameLabel.snp.makeConstraints {
+            $0.top.left.equalToSuperview()
+            $0.height.equalTo(36)
+        }
+        
+        groupInfoStackView.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(16)
+            $0.left.equalToSuperview()
+        }
+        
+        return view
     }
-    private var mainInfoStackView = UIStackView()
+    private var groupInfoView = UIView()
+    
     private let rankingButton = {
         let button = UIButton()
         button.backgroundColor = .grey700
         button.layer.cornerRadius = 8
-        return button
-    }()
-    private let rankingImageView = {
+        
         let imageView = UIImageView()
         imageView.image = .chart
         imageView.isUserInteractionEnabled = false
-        return imageView
-    }()
-    private let rankingLabel = {
+        
         let label = UILabel()
         label.text = "순위 보러가기 !"
         label.textColor = .grey100
         label.font = Fonts.body1S
         label.isUserInteractionEnabled = false
-        return label
-    }()
-    private let rankingChevronImageView = {
-        let imageView = UIImageView()
-        imageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .grey100
-        imageView.isUserInteractionEnabled = false
-        return imageView
+        
+        let chevronImageView = UIImageView()
+        chevronImageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
+        chevronImageView.tintColor = .grey100
+        chevronImageView.isUserInteractionEnabled = false
+        
+        [imageView, label, chevronImageView].forEach { button.addSubview($0) }
+        
+        imageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.width.height.equalTo(24)
+        }
+        
+        label.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalTo(imageView.snp.right).offset(8)
+            $0.height.equalTo(25)
+        }
+        
+        chevronImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(22)
+        }
+        
+        return button
     }()
     private let dogetherSheet = {
         let view = UIView()
@@ -187,7 +253,18 @@ final class MainViewController: BaseViewController {
                 TodoInfo(id: 11, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: "")
             ]
         )
-        super.viewDidLoad()
+        
+        Task { @MainActor in
+            do {
+                try await viewModel.getGroupStatus()
+                try await viewModel.getGroupInfo()
+            } catch {
+                // TODO: API 실패 시 처리에 대해 추후 논의
+            }
+            
+            super.viewDidLoad()
+        }
+        
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -208,33 +285,7 @@ final class MainViewController: BaseViewController {
     }
     
     override func configureView() {
-        groupNameLabel.text = viewModel.groupName
-        
-        joinCodeDescriptionLabel.attributedText = NSAttributedString(
-            string: "초대코드",
-            attributes: Fonts.getAttributes(for: Fonts.body2S, textAlignment: .left)
-        )
-        joinCodeDescriptionLabel.textColor = .grey300
-        endDateDescriptionLabel.attributedText = NSAttributedString(
-            string: "종료일",
-            attributes: Fonts.getAttributes(for: Fonts.body2S, textAlignment: .left)
-        )
-        endDateDescriptionLabel.textColor = .grey300
-        joinCodeInfoLabel.attributedText = NSAttributedString(
-            string: viewModel.joinCode,
-            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-        )
-        joinCodeInfoLabel.textColor = .grey0
-        endDateInfoLabel.attributedText = NSAttributedString(
-            string: "\(DateFormatterManager.formattedDate(viewModel.restDay))(D-\(viewModel.restDay))",
-            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-        )
-        endDateInfoLabel.textColor = .grey0
-        joinCodeStackView = UIStackView(arrangedSubviews: [joinCodeDescriptionLabel, joinCodeInfoLabel])
-        joinCodeStackView.axis = .vertical
-        endDateStackView = UIStackView(arrangedSubviews: [endDateDescriptionLabel, endDateInfoLabel])
-        endDateStackView.axis = .vertical
-        mainInfoStackView = mainInfoStackView(stackViews: [joinCodeStackView, endDateStackView])
+        groupInfoView = groupInfoView(groupInfo: viewModel.groupInfo)
         
         rankingButton.addTarget(self, action: #selector(didTapRankingButton), for: .touchUpInside)
         
@@ -276,11 +327,7 @@ final class MainViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [
-            dogetherHeader, groupNameLabel, mainInfoStackView,
-            rankingButton, rankingImageView, rankingLabel, rankingChevronImageView,
-            dogetherSheet
-        ].forEach { view.addSubview($0) }
+        [dogetherHeader, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
         [dogetherSheetHeaderLabel, beforeStartView, emptyListView].forEach { dogetherSheet.addSubview($0) }
         [
@@ -301,39 +348,16 @@ final class MainViewController: BaseViewController {
             $0.height.equalTo(24)
         }
         
-        groupNameLabel.snp.makeConstraints {
+        groupInfoView.snp.makeConstraints {
             $0.top.equalTo(dogetherHeader.snp.bottom).offset(28)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(36)
-        }
-        
-        mainInfoStackView.snp.makeConstraints {
-            $0.top.equalTo(groupNameLabel.snp.bottom).offset(16)
-            $0.left.equalTo(groupNameLabel)
+            $0.height.equalTo(97)
         }
         
         rankingButton.snp.makeConstraints {
-            $0.top.equalTo(mainInfoStackView.snp.bottom).offset(28)
+            $0.top.equalTo(groupInfoView.snp.bottom).offset(28)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
-        }
-        
-        rankingImageView.snp.makeConstraints {
-            $0.centerY.equalTo(rankingButton)
-            $0.left.equalTo(rankingButton).offset(16)
-            $0.width.height.equalTo(24)
-        }
-        
-        rankingLabel.snp.makeConstraints {
-            $0.centerY.equalTo(rankingButton)
-            $0.left.equalTo(rankingImageView.snp.right).offset(8)
-            $0.height.equalTo(25)
-        }
-        
-        rankingChevronImageView.snp.makeConstraints {
-            $0.centerY.equalTo(rankingButton)
-            $0.right.equalTo(rankingButton).offset(-16)
-            $0.width.height.equalTo(22)
         }
         
         dogetherSheet.snp.makeConstraints {

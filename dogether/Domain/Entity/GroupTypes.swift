@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum GroupTypes {
+enum GroupTypes: Int {
     case join
     case create
     

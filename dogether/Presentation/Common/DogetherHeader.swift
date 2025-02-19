@@ -50,6 +50,6 @@ final class DogetherHeader: UIView {
     }
     
     @objc private func didTapMyPageButton() {
-        // TODO: 추후 마이페이지로 이동하도록 구현
+        NavigationManager.shared.pushViewController(MyPageViewController())
     }
 }

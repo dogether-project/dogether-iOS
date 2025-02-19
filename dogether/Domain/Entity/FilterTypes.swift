@@ -10,7 +10,7 @@ import UIKit
 
 enum FilterTypes: String, CaseIterable {
     case all = "전체"
-    case wait = "인증 대기"
+    case wait = "검사 대기"
     case reject = "노인정"
     case approve = "인정"
     

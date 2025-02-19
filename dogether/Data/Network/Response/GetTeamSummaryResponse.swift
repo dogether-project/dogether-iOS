@@ -7,9 +7,6 @@
 
 import Foundation
 
-struct GetTeamSummaryResponse: TotalCount, Decodable {
-    let totalTodoCount: Int
-    let totalCertificatedCount: Int
-    let totalApprovedCount: Int
+struct GetTeamSummaryResponse: Decodable {
     let ranking: [RankingModel]
 }

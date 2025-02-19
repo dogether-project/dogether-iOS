@@ -8,15 +8,12 @@
 import Foundation
 import UIKit
 
-class MainViewModel {
+final class MainViewModel {
     private(set) var mainViewStatus: MainViewStatus
     private(set) var isBlockPanGesture: Bool = true
     
     // TODO: 추후 수정
-    private(set) var groupName: String = "DND 작심삼일 탈출러"
-    private(set) var currentDay: Int = 1
-    private(set) var joinCode: String = "123456"
-    private(set) var restDay: Int = 7
+    private(set) var groupInfo: GroupInfo = GroupInfo()
     
     private(set) var sheetStatus: SheetStatus = .normal
     
@@ -48,5 +45,22 @@ class MainViewModel {
     func setTodoList(_ todoList: [TodoInfo]) {
         self.todoList = todoList
         self.isBlockPanGesture = self.todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140))
+    }
+    
+    func getGroupStatus() async throws {
+        let response: GetGroupStatusResponse = try await NetworkManager.shared.request(GroupsRouter.getGroupStatus)
+        // TODO: 추후 수정 (FINISHED에 대한 정의가 제대로 나오면 MainViewStatus와 결합하며 enum으로 수정)
+        mainViewStatus = response.status == "READY" ? .beforeStart : .emptyList
+    }
+    
+    func getGroupInfo() async throws {
+        let response: GetGroupInfoResponse = try await NetworkManager.shared.request(GroupsRouter.getGroupInfo)
+        self.groupInfo = GroupInfo(
+            name: response.name,
+            duration: response.duration,
+            joinCode: response.joinCode,
+            endAt: response.endAt,
+            remainingDays: response.remainingDays
+        )
     }
 }

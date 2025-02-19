@@ -73,6 +73,7 @@ final class GroupCreateViewController: BaseViewController {
         let view = UIView()
         view.backgroundColor = .grey800
         view.layer.cornerRadius = 12
+        view.layer.borderWidth = 1
         return view
     }()
     private let groupNameTextField = {
@@ -90,12 +91,20 @@ final class GroupCreateViewController: BaseViewController {
     }()
     private let groupNameCountLabel = {
         let label = UILabel()
+        label.text = "0"
+        label.font = Fonts.smallS
+        return label
+    }()
+    private let groupNameMaxLengthLabel = {
+        let label = UILabel()
         label.textColor = .grey300
         label.font = Fonts.smallS
         return label
     }()
     private var memberCountView = UIView()
     private var todoLimitView = UIView()
+    
+    // TODO: 추후 durationStackView, startAtStackView 공용 컴포넌트로 빼기
     private func durationButton(duration: GroupChallengeDurations) -> UIButton {
         let button = UIButton()
         button.backgroundColor = .grey800
@@ -190,9 +199,11 @@ final class GroupCreateViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        groupNameTextField.becomeFirstResponder()
         setupKeyboardHandling()
     }
     
+    // TODO: 추후 확인 필요 (하도 헤메다가 추가한 부분이라.. 무슨 의미를 갖는지 모르겠네요)
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -213,7 +224,9 @@ final class GroupCreateViewController: BaseViewController {
         
         completeButton.action = { @MainActor in
             if self.viewModel.currentStep == .four {
-                NavigationManager.shared.setNavigationController(CompleteViewController(type: .create))
+                let completeViewController = CompleteViewController(type: .create)
+                completeViewController.viewModel.joinCode = await self.viewModel.getJoinCode()
+                NavigationManager.shared.setNavigationController(completeViewController)
             } else {
                 await self.viewModel.completeAction()
                 self.updateStep()
@@ -223,7 +236,7 @@ final class GroupCreateViewController: BaseViewController {
         groupName = componentTitleLabel(componentTitle: "그룹명")
         groupNameTextField.delegate = self
         groupNameTextField.addTarget(self, action: #selector(didChangeGroupName), for: .editingChanged)
-        groupNameCountLabel.text = "0/\(viewModel.groupNameMaxLength)"
+        groupNameMaxLengthLabel.text = "/\(viewModel.groupNameMaxLength)"
         memberCount = componentTitleLabel(componentTitle: "그룹 인원")
         memberCountView = DogetherCountView(changeCountAction: {
             self.viewModel.updateMemberCount(count: $0)
@@ -265,7 +278,7 @@ final class GroupCreateViewController: BaseViewController {
         ].forEach { view.addSubview($0) }
         
         [
-            groupName, groupNameView, groupNameTextField, groupNameCountLabel,
+            groupName, groupNameView, groupNameTextField, groupNameCountLabel, groupNameMaxLengthLabel,
             memberCount, memberCountView
         ].forEach { stepOneView.addSubview($0) }
         
@@ -325,6 +338,11 @@ final class GroupCreateViewController: BaseViewController {
             $0.height.equalTo(25)
         }
         groupNameCountLabel.snp.makeConstraints {
+            $0.centerY.equalTo(groupNameView)
+            $0.right.equalTo(groupNameMaxLengthLabel.snp.left)
+            $0.height.equalTo(18)
+        }
+        groupNameMaxLengthLabel.snp.makeConstraints {
             $0.centerY.equalTo(groupNameView)
             $0.right.equalTo(groupNameView).inset(16)
             $0.height.equalTo(18)
@@ -466,9 +484,9 @@ final class GroupCreateViewController: BaseViewController {
         }
         
         Task { @MainActor in
-            let (groupName, countLabelText, buttonStatus) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
+            let (groupName, buttonStatus) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
             groupNameTextField.text = groupName
-            groupNameCountLabel.text = countLabelText
+            groupNameCountLabel.text = String(groupName.count)
             completeButton.setButtonStatus(status: buttonStatus)
         }
     }
@@ -545,17 +563,21 @@ extension GroupCreateViewController: UITextFieldDelegate {
     
     @objc private func keyboardWillShow(_ notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        groupNameView.layer.borderColor = UIColor.blue300.cgColor
+        groupNameCountLabel.textColor = .blue300
         completeButton.snp.updateConstraints {
             $0.bottom.equalToSuperview().inset(keyboardFrame.cgRectValue.height + 16)
         }
-        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+        self.view.layoutIfNeeded()
     }
     
     @objc private func keyboardWillHide(_ notification: NSNotification) {
+        groupNameView.layer.borderColor = UIColor.grey800.cgColor
+        groupNameCountLabel.textColor = .grey300
         completeButton.snp.updateConstraints {
             $0.bottom.equalToSuperview().inset(48)
         }
-        UIView.animate(withDuration: 0.3) { self.view.layoutIfNeeded() }
+        self.view.layoutIfNeeded()
     }
     
     @objc private func dismissKeyboard() { view.endEditing(true) }
