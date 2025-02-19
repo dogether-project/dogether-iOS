@@ -8,7 +8,9 @@
 import UIKit
 import SnapKit
 
-class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
+class ToDoWirteListTableViewCell: BaseTableViewCell, ReusableProtocol {
+    
+    var deleteAction: ((Int) -> Void)?
     
     let todoLabel = {
         let label = UILabel()
@@ -17,11 +19,13 @@ class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
         return label
     }()
     
-    let deleteButton = {
+    lazy var deleteButton = {
         let button = UIButton()
+//        button.setImage(.close, for: .normal)
         button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.setTitleColor(.grey300, for: .normal)
-        button.backgroundColor = .red
+//        button.setTitleColor(.grey300, for: .normal)
+        button.tintColor = .grey300
+        button.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -38,12 +42,12 @@ class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
     override func configureConstraints() {
         
         todoLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().offset(16)
         }
         
         deleteButton.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-16)
             $0.width.height.equalTo(20)
         }
@@ -51,13 +55,18 @@ class ToDoTableViewCell: BaseTableViewCell, ReusableProtocol {
     
     override func configureView() {
 
-        contentView.backgroundColor = .yellow
+        contentView.backgroundColor = .grey800
+        contentView.layer.cornerRadius = 8
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0))
+    }
+    
+    @objc private func deleteButtonTapped() {
+        deleteAction?(deleteButton.tag)
     }
     
     required init?(coder: NSCoder) {
