@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 
 final class PopupViewController: BaseViewController {
+    private var viewModel = PopupViewModel()
+    
     var popupType: PopupTypes?
     var todoInfo: TodoInfo?
     var completeAction: ((String) -> Void)?
@@ -34,7 +36,10 @@ final class PopupViewController: BaseViewController {
         guard let popupType else { return }
         switch popupType {
         case .certification:
-            popupView = CertificationPopupView(completeAction: completeAction ?? { _ in })
+            guard let todoInfo else { return }
+            popupView = CertificationPopupView(todoInfo: todoInfo, completeAction: completeAction ?? { certificationContent in
+                self.viewModel.certifyTodo(todoId: self.todoInfo?.id ?? 0, certificationContent: certificationContent)
+            })
             
             cameraManager = CameraManager(viewController: self)
             galleryManager = GalleryManager(viewController: self)
@@ -43,13 +48,7 @@ final class PopupViewController: BaseViewController {
                 popupView.cameraManager = cameraManager
                 popupView.galleryManager = galleryManager
                 
-                let completion = { image in
-                    self.uploadImage(view: popupView, image: image)
-                    Task { @MainActor in
-                        let imageUrl = try await S3Manager.shared.uploadImage(image: image)
-                        // TODO: imageUrl을 viewModel에 저장, 인증하기 API 호출할 때 request에 넣어줘야 함
-                    }
-                }
+                let completion = { self.uploadImage(view: popupView, image: $0) }
                 cameraManager.completion = completion
                 galleryManager.completion = completion
             }
@@ -83,5 +82,6 @@ final class PopupViewController: BaseViewController {
     private func uploadImage(view certificationPopupView: CertificationPopupView, image: UIImage?) {
         guard let image else { return }
         certificationPopupView.uploadImage(image: image)
+        viewModel.uploadImage(image: image)
     }
 }

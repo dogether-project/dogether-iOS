@@ -35,12 +35,7 @@ final class ModalityViewController: BaseViewController {
     
     override func configureView() {
         // TODO: 추후 수정
-        let todoInfos = [
-            TodoInfo(id: 0, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
-            TodoInfo(id: 1, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: ""),
-            TodoInfo(id: 2, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "짧은노인정이유"),
-            TodoInfo(id: 3, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "노인정이유노인정이유노인정이유노인정이유노인정이유")
-        ]
+        let todoInfos: [TodoInfo] = []
         
         closeButton.action = didTapCloseButton
         todoExaminationModalityView = ExaminationModalityView(buttonAction: { type in

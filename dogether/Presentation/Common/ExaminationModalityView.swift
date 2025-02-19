@@ -81,7 +81,7 @@ final class ExaminationModalityView: UIView {
         // TODO: 추후 수정
         imageView = CertificationImageView(
             image: .logo,
-            todoContent: todoInfo.todoContent ?? "",
+            certificationContent: todoInfo.certificationContent ?? "",
             certificator: UserDefaultsManager.shared.userFullName ?? ""
         )
         

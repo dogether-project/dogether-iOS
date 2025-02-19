@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 
 final class MainViewController: BaseViewController {
-    private var viewModel = MainViewModel(status: .todoList)
+    private var viewModel = MainViewModel()
     private var dogetherPanGesture: UIPanGestureRecognizer!
     private var dogetherSheetTopConstraint: Constraint?
     
@@ -18,6 +18,7 @@ final class MainViewController: BaseViewController {
     
     private func groupInfoView(groupInfo: GroupInfo) -> UIView {
         let view = UIView()
+        view.isUserInteractionEnabled = true
         
         let nameLabel = UILabel()
         nameLabel.text = groupInfo.name
@@ -212,7 +213,7 @@ final class MainViewController: BaseViewController {
         return label
     }()
     private let todoButton = DogetherButton(action: {
-        // TODO: 추후 투두 작성하기로 이동하도록 구현
+        NavigationManager.shared.pushViewController(TodoWriteViewController())
     }, title: "투두 작성하기", status: .enabled)
     
     private var allButton = FilterButton(action: { _ in }, type: .all)
@@ -236,28 +237,13 @@ final class MainViewController: BaseViewController {
     private var todoListStackView = UIStackView()
     
     override func viewDidLoad() {
-        // TODO: 추후 API 연동하면서 위치 와 방법 수정
-        viewModel.setTodoList(
-            [
-                TodoInfo(id: 0, content: "인증도 안한 투두", status: .waitCertificattion),
-                TodoInfo(id: 1, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
-                TodoInfo(id: 2, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: ""),
-                TodoInfo(id: 3, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "짧은노인정이유"),
-                TodoInfo(id: 4, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "노인정이유노인정이유노인정이유노인정이유노인정이유"),
-                TodoInfo(id: 5, content: "인증도 안한 투두", status: .waitCertificattion),
-                TodoInfo(id: 6, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
-                TodoInfo(id: 7, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: ""),
-                TodoInfo(id: 8, content: "인증도 안한 투두", status: .waitCertificattion),
-                TodoInfo(id: 9, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
-                TodoInfo(id: 10, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "노인정이유노인정이유노인정이유노인정이유"),
-                TodoInfo(id: 11, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: "")
-            ]
-        )
-        
         Task { @MainActor in
             do {
                 try await viewModel.getGroupStatus()
                 try await viewModel.getGroupInfo()
+                if viewModel.mainViewStatus != .beforeStart {
+                    try await viewModel.getTodos()
+                }
             } catch {
                 // TODO: API 실패 시 처리에 대해 추후 논의
             }
@@ -286,6 +272,7 @@ final class MainViewController: BaseViewController {
     
     override func configureView() {
         groupInfoView = groupInfoView(groupInfo: viewModel.groupInfo)
+        groupInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapGroupInfoView)))
         
         rankingButton.addTarget(self, action: #selector(didTapRankingButton), for: .touchUpInside)
         
@@ -293,7 +280,7 @@ final class MainViewController: BaseViewController {
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
         
-        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate()
+        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
         
         dogetherScrollView.delegate = self
         dogetherScrollView.bounces = false
@@ -314,10 +301,10 @@ final class MainViewController: BaseViewController {
         todoListStackView = todoItemStackView(
             items: viewModel.todoList.map { todo in
                 DogetherTodoItem(action: {
-                    if todo.status == .waitCertificattion {
+                    if TodoStatus(rawValue: todo.status) == .waitCertificattion {
                         PopupManager.shared.showPopup(type: .certification, completion: {
                             // TODO: 추후에 인증을 성공했을 때 UI 업데이트 등 추가
-                        })
+                        }, todoInfo: todo)
                     } else {
                         PopupManager.shared.showPopup(type: .certificationInfo, todoInfo: todo)
                     }
@@ -329,16 +316,16 @@ final class MainViewController: BaseViewController {
     override func configureHierarchy() {
         [dogetherHeader, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
-        [dogetherSheetHeaderLabel, beforeStartView, emptyListView].forEach { dogetherSheet.addSubview($0) }
+        [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView].forEach { dogetherSheet.addSubview($0) }
         [
             timerView, timerInfoView, timeProgress, timerImageView, timerLabel,
             beforeStartTitleLabel, beforeStartSubTitleLabel
         ].forEach { beforeStartView.addSubview($0) }
+        
         [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { emptyListView.addSubview($0) }
         
-        [filterStackView, dogetherScrollView].forEach { dogetherSheet.addSubview($0) }
-        [todoListView].forEach { dogetherScrollView.addSubview($0) }
-        [todoListStackView].forEach { todoListView.addSubview($0) }
+        [filterStackView, dogetherScrollView].forEach { todoListView.addSubview($0) }
+        [todoListStackView].forEach { dogetherScrollView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -454,21 +441,19 @@ final class MainViewController: BaseViewController {
             $0.left.equalToSuperview().offset(16)
         }
         
-        dogetherScrollView.snp.makeConstraints {
+        todoListView.snp.makeConstraints {
             $0.top.equalTo(filterStackView.snp.bottom).offset(28)
-            $0.bottom.left.right.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.height.equalTo(viewModel.todoListHeight)
         }
         
-        todoListView.snp.makeConstraints {
+        dogetherScrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.width.equalTo(dogetherScrollView)
-            $0.height.equalTo(viewModel.todoListHeight)
         }
         
         todoListStackView.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.verticalEdges.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(viewModel.todoListHeight)
         }
     }
     
@@ -515,6 +500,10 @@ final class MainViewController: BaseViewController {
             self.viewModel.setIsBlockPanGesture(false)
             self.viewModel.updateSheetStatus(status)
         }
+    }
+    
+    @objc private func didTapGroupInfoView() {
+        present(UIActivityViewController(activityItems: [viewModel.groupInfo.joinCode], applicationActivities: nil), animated: true)
     }
     
     @objc private func didTapRankingButton() {

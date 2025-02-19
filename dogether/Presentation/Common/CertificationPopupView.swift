@@ -16,9 +16,11 @@ final class CertificationPopupView: UIView {
     private let certificationMaxLength = 20
     
     // TODO: 추후 수정
+    private var todoInfo: TodoInfo
     private var completeAction: (String) -> Void
     
-    init(completeAction: @escaping (String) -> Void) {
+    init(todoInfo: TodoInfo, completeAction: @escaping (String) -> Void) {
+        self.todoInfo = todoInfo
         self.completeAction = completeAction
         super.init(frame: .zero)
         setUI()
@@ -188,7 +190,7 @@ final class CertificationPopupView: UIView {
         
         closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         todoContentLabel.attributedText = NSAttributedString(
-            string: "일이삼사오육칠팔구십일이삼사오육칠팔구십",
+            string: todoInfo.content,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         

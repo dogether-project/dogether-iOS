@@ -87,7 +87,7 @@ final class DogetherGroupInfo: UIView {
         
         groupNameLabel.text = groupName
         
-        durationDescriptionLabel.text = "총 회차"
+        durationDescriptionLabel.text = "총 기간"
         memberCountDescriptionLabel.text = "그룹원"
         startDayDescriptionLabel.text = "시작일"
         endDayDescriptionLabel.text = "종료일"

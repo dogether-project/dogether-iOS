@@ -241,7 +241,11 @@ final class TodoWriteViewController: BaseViewController {
     }
     
     @objc private func saveButtonClicked() {
-        print("투두 저장 버튼 클릭")
+        // TODO: 추후 viewModel 추가
+        Task { @MainActor in
+            let request = CreateTodosRequest(todos: toDoList)
+            try await NetworkManager.shared.request(TodosRouter.createTodos(createTodosRequest: request))
+        }
     }
     
     @objc private func dismissKeyboard() {

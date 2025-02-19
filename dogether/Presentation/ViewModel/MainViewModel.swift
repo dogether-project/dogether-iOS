@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 final class MainViewModel {
-    private(set) var mainViewStatus: MainViewStatus
+    private(set) var mainViewStatus: MainViewStatus = .emptyList
     private(set) var isBlockPanGesture: Bool = true
     
     // TODO: 추후 수정
@@ -21,17 +21,12 @@ final class MainViewModel {
     private(set) var time: String = "14:59:59"
     private(set) var timeProgress: CGFloat = 0.8
     
-    // TODO: 추후 수정
+    private(set) var dateOffset: Int = 0
     private(set) var currentFilter: FilterTypes = .all
     private(set) var todoList: [TodoInfo] = []
     
     // MARK: - Computed
-    var todoListHeight: Int { 64 * todoList.count + 8 * (todoList.count - 1) }
-    
-    // MARK: - init
-    init(status: MainViewStatus) {
-        self.mainViewStatus = status
-    }
+    var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
         self.isBlockPanGesture = isBlockPanGesture
@@ -43,6 +38,7 @@ final class MainViewModel {
         self.currentFilter = filter
     }
     func setTodoList(_ todoList: [TodoInfo]) {
+        self.mainViewStatus = todoList.isEmpty ? .emptyList : .todoList
         self.todoList = todoList
         self.isBlockPanGesture = self.todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140))
     }
@@ -62,5 +58,12 @@ final class MainViewModel {
             endAt: response.endAt,
             remainingDays: response.remainingDays
         )
+    }
+    
+    func getTodos() async throws {
+        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
+        let status: TodoStatus? = currentFilter == .all ? nil : TodoStatus.allCases.first(where: { $0.tag == currentFilter.tag })
+        let response: GetMyTodosResponse = try await NetworkManager.shared.request(TodosRouter.getMyTodos(date: date, status: status))
+        self.setTodoList(response.todos)
     }
 }

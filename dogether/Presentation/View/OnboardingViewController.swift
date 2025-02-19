@@ -118,14 +118,19 @@ final class OnboardingViewController: BaseViewController {
     }
     
     @objc private func signInButtonClicked() {
-        Task {
-            let response = try await viewModel.signInWithApple()
+        Task { @MainActor in
+            let response = try await viewModel.singInWithApple()
             print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
             
             UserDefaultsManager.shared.userFullName = response.name
             UserDefaultsManager.shared.accessToken = response.accessToken
             
-            NavigationManager.shared.setNavigationController(StartViewController())
+            let IsJoiningResponse: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
+            if IsJoiningResponse.isJoining {
+                NavigationManager.shared.setNavigationController(MainViewController())
+            } else {
+                NavigationManager.shared.setNavigationController(StartViewController())
+            }
         }
     }
     

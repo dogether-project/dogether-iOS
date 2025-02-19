@@ -152,6 +152,6 @@ final class CompleteViewController: BaseViewController {
     
     @objc private func didTapJoinCodeShareButton() {
         // TODO: 추후 수정
-        present(UIActivityViewController(activityItems: ["123456"], applicationActivities: nil), animated: true)
+        present(UIActivityViewController(activityItems: [viewModel.joinCode], applicationActivities: nil), animated: true)
     }
 }
