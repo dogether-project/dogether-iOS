@@ -8,11 +8,24 @@
 import Foundation
 import UIKit
 
-enum TodoStatus {
-    case waitCertificattion
-    case waitExamination
-    case reject
-    case approve
+enum TodoStatus: String, CaseIterable {
+    case waitCertificattion = "CERTIFY_PENDING"
+    case waitExamination = "REVIEW_PENDING"
+    case reject = "REJECT"
+    case approve = "APPROVE"
+    
+    var tag: Int {
+        switch self {
+        case .waitCertificattion:
+            return 0
+        case .waitExamination:
+            return 1
+        case .reject:
+            return 2
+        case .approve:
+            return 3
+        }
+    }
     
     var image: UIImage? {
         switch self {

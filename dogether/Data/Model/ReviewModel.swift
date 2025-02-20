@@ -7,9 +7,10 @@
 
 import Foundation
 
-struct ReviewModel: ReviewInfo, Codable {
+struct ReviewModel: Decodable {
     let id: Int
     let content: String
     let mediaUrls: [String]
     let todoContent: String
+    let doer: String
 }

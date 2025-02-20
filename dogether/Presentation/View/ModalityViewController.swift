@@ -10,6 +10,8 @@ import UIKit
 import SnapKit
 
 final class ModalityViewController: BaseViewController {
+    var viewModel = ModalityViewModel()
+    
     // TODO: 현재는 TodoExamination 단일 종류만 존재하지만 추후 확장
     private let backgroundView = {
         let view = UIView()
@@ -34,32 +36,26 @@ final class ModalityViewController: BaseViewController {
     }
     
     override func configureView() {
-        // TODO: 추후 수정
-        let todoInfos = [
-            TodoInfo(id: 0, content: "인증한 투두", status: .waitExamination, mediaUrl: nil, todoContent: "짧은 인증 내용"),
-            TodoInfo(id: 1, content: "인정 투두 인정 투두 인정 투두 인정 투두", status: .approve, todoContent: ""),
-            TodoInfo(id: 2, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "짧은노인정이유"),
-            TodoInfo(id: 3, content: "노인정투두노인정투두노인정투두노인정투두", status: .reject, mediaUrl: nil, todoContent: "긴인증내용긴인증내용긴인증내용긴인증내용", rejectReason: "노인정이유노인정이유노인정이유노인정이유노인정이유")
-        ]
-        
         closeButton.action = didTapCloseButton
         todoExaminationModalityView = ExaminationModalityView(buttonAction: { type in
             switch type {
             case .reject:
-                // TODO: rejectReason 초기화
+                self.viewModel.setResult(.reject)
+                self.viewModel.setRejectReason()
                 self.closeButton.setButtonStatus(status: .disabled)
                 PopupManager.shared.showPopup(type: .rejectReason, completeAction: { rejectReason in
-                    // TODO: rejectReason 재정의
+                    self.viewModel.setRejectReason(rejectReason)
                     self.closeButton.setButtonStatus(status: .enabled)
                 })
                 
             case .approve:
+                self.viewModel.setResult(.approve)
                 self.closeButton.setButtonStatus(status: .enabled)
                 
             default:
                 return
             }
-        }, todoInfo: todoInfos[0])
+        }, review: viewModel.reviews[viewModel.current])
     }
     
     override func configureHierarchy() {
@@ -89,7 +85,17 @@ final class ModalityViewController: BaseViewController {
     }
     
     private func didTapCloseButton() {
-        // TODO: 끝이 아니라면 다음으로
-        ModalityManager.shared.dismiss()
+        Task { @MainActor in
+            try await viewModel.reviewTodo()
+            // TODO: 검사 할 투두가 여러개일 때 다음 투두로 넘어가는 기능은 추후 구현
+//            viewModel.setCurrent(viewModel.current + 1)
+//            if viewModel.reviews.count == viewModel.current {
+                ModalityManager.shared.dismiss()
+//            } else {
+//                viewModel.setResult()
+//                viewModel.setRejectReason()
+//                configureView() // TODO: 추후 확인
+//            }
+        }
     }
 }

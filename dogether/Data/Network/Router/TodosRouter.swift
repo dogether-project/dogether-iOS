@@ -10,6 +10,7 @@ import Foundation
 enum TodosRouter: NetworkEndpoint {
     case createTodos(createTodosRequest: CreateTodosRequest)
     case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
+    case getMyTodos(date: String, status: TodoStatus?)
     case getMyYesterdayTodos
     
     var path: String {
@@ -18,6 +19,8 @@ enum TodosRouter: NetworkEndpoint {
             return Path.api + Path.todos
         case .certifyTodo(let todoId, _):
             return Path.api + Path.todos + "/\(todoId)/certify"
+        case .getMyTodos:
+            return Path.api + Path.todos + "/my"
         case .getMyYesterdayTodos:
             return Path.api + Path.todos + "/my/yesterday"
         }
@@ -25,7 +28,7 @@ enum TodosRouter: NetworkEndpoint {
     
     var method: NetworkMethod {
         switch self {
-        case .getMyYesterdayTodos:
+        case .getMyTodos, .getMyYesterdayTodos:
             return .get
         case .createTodos, .certifyTodo:
             return .post
@@ -34,6 +37,10 @@ enum TodosRouter: NetworkEndpoint {
     
     var parameters: [URLQueryItem]? {
         switch self {
+        case .getMyTodos(let date, let status):
+            var parameters: [URLQueryItem] = [.init(name: "date", value: date)]
+            if let status { parameters.append(.init(name: "status", value: status.rawValue)) }
+            return parameters
         default:
             return nil
         }

@@ -21,13 +21,6 @@ final class DogetherTodoItem: UIButton {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let dogetherTodoItem = {
-        let button = UIButton()
-        button.backgroundColor = .grey700
-        button.layer.cornerRadius = 8
-        return button
-    }()
-    
     private let todoImageView = UIImageView()
     private let contentLabel = {
         let label = UILabel()
@@ -45,32 +38,32 @@ final class DogetherTodoItem: UIButton {
         return label
     }()
     private func setUI() {
-        dogetherTodoItem.addTarget(self, action: #selector(didTapTodoItem), for: .touchUpInside)
+        backgroundColor = .grey700
+        layer.cornerRadius = 8
+        addTarget(self, action: #selector(didTapTodoItem), for: .touchUpInside)
         updateUI()
         
-        [dogetherTodoItem].forEach { addSubview($0) }
-        [todoImageView, contentLabel, buttonLabel].forEach { dogetherTodoItem.addSubview($0) }
+        [todoImageView, contentLabel, buttonLabel].forEach { addSubview($0) }
         
-        dogetherTodoItem.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.equalToSuperview()
+        self.snp.makeConstraints {
             $0.height.equalTo(64)
         }
         
-        if todo.status != .waitCertificattion {
+        if todo.status != TodoStatus.waitCertificattion.rawValue {
+            let imageSize = todo.status == TodoStatus.waitExamination.rawValue ? 22 : todo.status == TodoStatus.reject.rawValue ? 26 : 28 // MARK: 임의로 사이즈 조정
             todoImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.left.equalToSuperview().offset(16)
-                $0.width.height.equalTo(todo.status == .waitExamination ? 22 : todo.status == .reject ? 26 : 28)    // MARK: 임의로 사이즈 조정
+                $0.width.height.equalTo(imageSize)
             }
         }
         
         contentLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(
-                todo.status == .waitCertificattion ? dogetherTodoItem : todoImageView.snp.right
+                todo.status == TodoStatus.waitCertificattion.rawValue ? self : todoImageView.snp.right
             ).offset(
-                todo.status == .waitCertificattion ? 16 : 8
+                todo.status == TodoStatus.waitCertificattion.rawValue ? 16 : 8
             )
         }
         
@@ -83,25 +76,26 @@ final class DogetherTodoItem: UIButton {
     }
     
     func updateTodoStatus(_ status: TodoStatus) {
-        self.todo.status = status
+        self.todo.status = status.rawValue
         updateUI()
     }
     
     private func updateUI() {
-        todoImageView.image = todo.status.image
-        if todo.status == .waitCertificattion {
+        guard let status = TodoStatus(rawValue: todo.status) else { return }
+        todoImageView.image = status.image
+        if status == .waitCertificattion {
             contentLabel.text = todo.content
         } else {
             let attributes: [NSAttributedString.Key: Any] = [
                 .strikethroughStyle: NSUnderlineStyle.single.rawValue,
-                .strikethroughColor: todo.status.contentColor
+                .strikethroughColor: status.contentColor
             ]
             contentLabel.attributedText = NSAttributedString(string: todo.content, attributes: attributes)
         }
-        contentLabel.textColor = todo.status.contentColor
-        buttonLabel.text = todo.status.buttonText
-        buttonLabel.textColor = todo.status.buttonTextColor
-        buttonLabel.backgroundColor = todo.status.buttonColor
+        contentLabel.textColor = status.contentColor
+        buttonLabel.text = status.buttonText
+        buttonLabel.textColor = status.buttonTextColor
+        buttonLabel.backgroundColor = status.buttonColor
     }
     
     @objc private func didTapTodoItem() {

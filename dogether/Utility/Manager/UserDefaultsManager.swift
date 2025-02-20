@@ -17,6 +17,7 @@ final class UserDefaultsManager {
     enum UserDefaultsKey: String {
         case accessToken
         case userFullName
+        case fcmToken
     }
     
     var accessToken: String? {
@@ -27,5 +28,10 @@ final class UserDefaultsManager {
     var userFullName: String? {
         get { userDefaults.string(forKey: UserDefaultsKey.userFullName.rawValue) }
         set { userDefaults.set(newValue, forKey: UserDefaultsKey.userFullName.rawValue) }
-    }    
+    }
+    
+    var fcmToken: String? {
+        get { userDefaults.string(forKey: UserDefaultsKey.fcmToken.rawValue) }
+        set { userDefaults.set(newValue, forKey: UserDefaultsKey.fcmToken.rawValue) }
+    }
 }

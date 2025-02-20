@@ -15,14 +15,16 @@ final class ModalityManager {
     
     var window: UIWindow?
 
-    func show() {
+    func show(reviews: [ReviewModel]? = nil) {
         guard window == nil else { return }
         
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let newWindow = UIWindow(windowScene: windowScene!)
         newWindow.frame = UIScreen.main.bounds
         newWindow.windowLevel = .alert + 1
-        newWindow.rootViewController = ModalityViewController()
+        let modalityViewController = ModalityViewController()
+        modalityViewController.viewModel.setReviews(reviews)
+        newWindow.rootViewController = modalityViewController
         newWindow.isHidden = false
         self.window = newWindow
     }

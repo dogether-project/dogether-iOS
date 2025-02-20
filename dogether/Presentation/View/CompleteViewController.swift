@@ -12,6 +12,8 @@ import SnapKit
 final class CompleteViewController: BaseViewController {
     private let groupType: GroupTypes
     
+    var viewModel = CompleteViewModel()
+    
     private let firecrackerImageView = {
         let imageView = UIImageView()
         imageView.image = .firecracker
@@ -80,10 +82,17 @@ final class CompleteViewController: BaseViewController {
         // TODO: 추후 수정
         switch groupType {
         case .join:
-            groupInfoView = DogetherGroupInfo(groupName: "groupName", memberCount: 0, duration: .threeDays, startAt: .today)
+            guard let groupInfo = viewModel.joinGroupResponse else { return }
+            groupInfoView = DogetherGroupInfo(
+                groupName: groupInfo.name,
+                memberCount: groupInfo.maximumMemberCount,
+                duration: GroupChallengeDurations(rawValue: groupInfo.durationOption) ?? .threeDays,
+                startAtString: groupInfo.startAt,
+                endAtString: groupInfo.endAt
+            )
         case .create:
             noticeLabel.text = groupType.completeNoticeText
-            joinCodeLabel.text = "123456"
+            joinCodeLabel.text = viewModel.joinCode
             joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
     }
@@ -150,6 +159,6 @@ final class CompleteViewController: BaseViewController {
     
     @objc private func didTapJoinCodeShareButton() {
         // TODO: 추후 수정
-        present(UIActivityViewController(activityItems: ["123456"], applicationActivities: nil), animated: true)
+        present(UIActivityViewController(activityItems: [viewModel.joinCode], applicationActivities: nil), animated: true)
     }
 }

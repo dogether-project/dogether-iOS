@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-enum GroupTypes {
+enum GroupTypes: Int {
     case join
     case create
     
@@ -42,9 +42,9 @@ enum GroupTypes {
     var completeTitleText: String {
         switch self {
         case .join:
-            return "그룹 생성 완료 !\n이제 목표를 실천해보세요"
+            return "그룹 가입 완료 !\n이제 목표를 실천해보세요"
         case .create:
-            return "그룹 가입 완료 !\n팀원들에게 코드를 공유해보세요"
+            return "그룹 생성 완료 !\n팀원들에게 코드를 공유해보세요"
         }
     }
     

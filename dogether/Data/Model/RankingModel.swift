@@ -7,9 +7,8 @@
 
 import Foundation
 
-struct RankingModel: Codable {
+struct RankingModel: Decodable {
     let rank: Int
     let name: String
-    let certificationRate: Int
-    let approvalRate: Int
+    let certificationRate: Double
 }

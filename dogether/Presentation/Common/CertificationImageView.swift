@@ -9,11 +9,11 @@ import Foundation
 import UIKit
 
 final class CertificationImageView: UIImageView {
-    private(set) var todoContent: String
+    private(set) var certificationContent: String
     private(set) var certificator: String
     
-    init(image: UIImage?, todoContent: String = "", certificator: String = "") {
-        self.todoContent = todoContent
+    init(image: UIImage?, certificationContent: String = "", certificator: String = "") {
+        self.certificationContent = certificationContent
         self.certificator = certificator
         
         super.init(image: image)
@@ -39,7 +39,7 @@ final class CertificationImageView: UIImageView {
         return view
     }()
     
-    private let todoContentLabel = {
+    private let certificationContentLabel = {
         let label = UILabel()
         label.textColor = .grey100
         label.font = Fonts.body1R
@@ -63,16 +63,16 @@ final class CertificationImageView: UIImageView {
         layer.cornerRadius = 12
         contentMode = .scaleAspectFit
         
-        todoContentLabel.text = todoContent
+        certificationContentLabel.text = certificationContent
         certificatorLabel.text = certificator
         
-        [gradientView, todoContentLabel, certificatorLabel].forEach { addSubview($0) }
+        [gradientView, certificationContentLabel, certificatorLabel].forEach { addSubview($0) }
         
         gradientView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
-        todoContentLabel.snp.makeConstraints {
+        certificationContentLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalTo(certificatorLabel.snp.top).inset(4)
             $0.height.equalTo(25)

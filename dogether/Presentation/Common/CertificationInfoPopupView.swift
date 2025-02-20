@@ -16,6 +16,12 @@ final class CertificationInfoPopupView: UIView {
         self.todoInfo = todoInfo
         super.init(frame: .zero)
         setUI()
+        
+        Task { @MainActor in
+            guard let mediaUrl = self.todoInfo.certificationMediaUrl, let url = URL(string: mediaUrl) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            imageView.image = UIImage(data: data)
+        }
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -78,14 +84,13 @@ final class CertificationInfoPopupView: UIView {
         // TODO: 추후 수정
         imageView = CertificationImageView(
             image: .logo,
-            todoContent: todoInfo.todoContent ?? "",
+            certificationContent: todoInfo.certificationContent ?? "",
             certificator: UserDefaultsManager.shared.userFullName ?? ""
         )
         
-        statusView = FilterButton(
-            action: { _ in },
-            type: todoInfo.status == .waitExamination ? .wait : todoInfo.status == .reject ? .reject : .approve
-        )
+        guard let status = TodoStatus(rawValue: todoInfo.status),
+              let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
+        statusView = FilterButton(action: { _ in }, type: filterType)
         
         contentLabel.attributedText = NSAttributedString(
             string: todoInfo.content,

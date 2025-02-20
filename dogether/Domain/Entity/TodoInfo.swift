@@ -7,20 +7,27 @@
 
 import Foundation
 
-struct TodoInfo {
+struct TodoInfo: Decodable {
     let id: Int
     let content: String
-    var status: TodoStatus
-    var mediaUrl: String?
-    var todoContent: String?
+    var status: String
+    var certificationContent: String?
+    var certificationMediaUrl: String?
     var rejectReason: String?
     
-    init(id: Int, content: String, status: TodoStatus, mediaUrl: String? = nil, todoContent: String? = nil, rejectReason: String? = nil) {
+    init(
+        id: Int,
+        content: String,
+        status: String,
+        certificationContent: String? = nil,
+        certificationMediaUrl: String? = nil,
+        rejectReason: String? = nil
+    ) {
         self.id = id
         self.content = content
         self.status = status
-        self.mediaUrl = mediaUrl
-        self.todoContent = todoContent
+        self.certificationContent = certificationContent
+        self.certificationMediaUrl = certificationMediaUrl
         self.rejectReason = rejectReason
     }
 }

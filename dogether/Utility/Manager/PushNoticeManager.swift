@@ -17,6 +17,7 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
             try await checkAuthorization()
         }
     }
+    static let pushNotificationReceived = Notification.Name("PushNotificationReceived")
     
     private func setupNotificationDelegate() async {
         await MainActor.run {
@@ -37,14 +38,41 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
+    private func handleNotification(notification: UNNotification) {
+        let userInfo = notification.request.content.userInfo
+        guard let notificationTypeString = userInfo["type"] as? String,
+              let notificationType = PushNoticeTypes(rawValue: notificationTypeString) else { return }
+        switch notificationType {
+        case .certification:
+            // TODO: 이미 모달 화면인 경우를 고려해 pushNotificationReceived로 넘기고 ModalityViewController에서 추후 컨트롤
+            Task { @MainActor in
+                let response: GetReviewsResponse = try await NetworkManager.shared.request(TodoCertificationsRouter.getReviews)
+                if response.dailyTodoCertifications.count > 0 {
+                    Task { @MainActor in
+                        ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+                    }
+                }
+            }
+        case .review:
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: PushNoticeManager.pushNotificationReceived,
+                    object: nil,
+                    userInfo: ["type": notificationType]
+                )
+            }
+        default:
+            return
+        }
+    }
+    
     // MARK: - foreground
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        print("foreground notification: \(notification)")
-        
+        handleNotification(notification: notification)
         completionHandler([.banner, .sound])
     }
     
@@ -54,8 +82,7 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        print("background notification: \(response.notification)")
-        
+        handleNotification(notification: response.notification)
         completionHandler()
     }
 }

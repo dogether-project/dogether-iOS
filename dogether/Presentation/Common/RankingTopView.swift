@@ -65,7 +65,7 @@ final class RankingTopView: UIView {
             rankingImageView.image = ranking.rank == 1 ? .crown1 : ranking.rank == 2 ? .crown2 : .crown3
             profileImageView.image = ranking.rank == 1 ? .profile1 : ranking.rank == 2 ? .profile2 : .profile3
             nameLabel.text = ranking.name
-            certificationLabel.text = "달성률 \(ranking.certificationRate)%"
+            certificationLabel.text = "달성률 \(Int(ranking.certificationRate))%"
             
             [rankingView, rankingImageView].forEach { addSubview($0) }
             [profileImageView, nameLabel, certificationLabel].forEach { rankingView.addSubview($0) }

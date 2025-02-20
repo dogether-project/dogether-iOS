@@ -30,7 +30,10 @@ final class CameraManager: NSObject, UIImagePickerControllerDelegate, UINavigati
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        if let image = info[.originalImage] as? UIImage, let pngData = image.pngData() {
+        if let uiImage = info[.originalImage] as? UIImage,
+           let compressImage = uiImage.compressImage(),
+            let pngData = compressImage.pngData()
+        {
             let pngImage = UIImage(data: pngData)
             completion?(pngImage)
         }

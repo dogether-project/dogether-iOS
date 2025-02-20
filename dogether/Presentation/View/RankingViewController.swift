@@ -60,12 +60,20 @@ final class RankingViewController: BaseViewController {
     private var rankingStackView = UIStackView()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        Task { @MainActor in
+            do {
+                try await viewModel.getTeamSummary()
+            } catch {
+                // TODO: API 실패 시 처리에 대해 추후 논의
+            }
+            
+            super.viewDidLoad()
+        }
     }
     
     override func configureView() {
-        ranking1View = RankingTopView(ranking: viewModel.ranking[0])
-        ranking2View = RankingTopView(ranking: viewModel.ranking[1])
+        ranking1View = RankingTopView(ranking: viewModel.ranking.count > 0 ? viewModel.ranking[0] : nil)
+        ranking2View = RankingTopView(ranking: viewModel.ranking.count > 1 ? viewModel.ranking[1] : nil)
         ranking3View = RankingTopView(ranking: viewModel.ranking.count > 2 ? viewModel.ranking[2] : nil)
         rankingTopStackView = rankingTopStackView(views: [ranking2View, ranking1View, ranking3View])
         descriptionStackView = descriptionStackView(views: [descriptionImageView, descriptionLabel])

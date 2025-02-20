@@ -10,7 +10,7 @@ import UIKit
 
 enum FilterTypes: String, CaseIterable {
     case all = "전체"
-    case wait = "인증 대기"
+    case wait = "검사 대기"
     case reject = "노인정"
     case approve = "인정"
     
@@ -61,6 +61,19 @@ enum FilterTypes: String, CaseIterable {
             return 78
         case .approve:
             return 66
+        }
+    }
+    
+    var emptyDescription: String {
+        switch self {
+        case .wait:
+            return "검사 대기 중인 투두가 없어요"
+        case .reject:
+            return "노인정받은 투두가 없어요"
+        case .approve:
+            return "인정받은 투두가 없어요"
+        default:
+            return ""
         }
     }
 }
