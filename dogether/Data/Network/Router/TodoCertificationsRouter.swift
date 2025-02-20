@@ -10,7 +10,6 @@ import Foundation
 enum TodoCertificationsRouter: NetworkEndpoint {
     case reviewTodo(todoId: String, reviewTodoRequest: ReviewTodoRequest)
     case getReviews
-    case getReview(todoId: String)
     
     var path: String {
         switch self {
@@ -18,14 +17,12 @@ enum TodoCertificationsRouter: NetworkEndpoint {
             return Path.api + Path.todoCertifications + "/\(todoId)/review"
         case .getReviews:
             return Path.api + Path.todoCertifications + "/pending-review"
-        case .getReview(let todoId):
-            return Path.api + Path.todoCertifications + "/\(todoId)"
         }
     }
     
     var method: NetworkMethod {
         switch self {
-        case .getReviews, .getReview:
+        case .getReviews:
             return .get
         case .reviewTodo:
             return .post

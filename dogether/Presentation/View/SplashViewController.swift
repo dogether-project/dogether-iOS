@@ -27,17 +27,19 @@ final class SplashViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: 추후 viewModel로 이동
-        Task { @MainActor in
-            let response: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
-        
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            // TODO: 추후 viewModel로 이동
+            Task { @MainActor in
                 if UserDefaultsManager.shared.accessToken == nil {
                     NavigationManager.shared.setNavigationController(OnboardingViewController())
-                } else if response.isJoining {
-                    NavigationManager.shared.setNavigationController(MainViewController())
                 } else {
-                    NavigationManager.shared.setNavigationController(StartViewController())
+                    let response: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
+                    
+                    if response.isJoining {
+                        NavigationManager.shared.setNavigationController(MainViewController())
+                    } else {
+                        NavigationManager.shared.setNavigationController(StartViewController())
+                    }
                 }
             }
         }

@@ -66,4 +66,11 @@ final class MainViewModel {
         let response: GetMyTodosResponse = try await NetworkManager.shared.request(TodosRouter.getMyTodos(date: date, status: status))
         self.setTodoList(response.todos)
     }
+    
+    func getReviews() async throws {
+        let response: GetReviewsResponse = try await NetworkManager.shared.request(TodoCertificationsRouter.getReviews)
+        if response.dailyTodoCertifications.count > 0 {
+            ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+        }
+    }
 }

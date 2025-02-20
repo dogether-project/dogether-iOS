@@ -11,11 +11,11 @@ import SnapKit
 
 final class ExaminationModalityView: UIView {
     var buttonAction: (FilterTypes) -> Void
-    private var todoInfo: TodoInfo
+    private var review: ReviewModel
     
-    init(buttonAction: @escaping (FilterTypes) -> Void, todoInfo: TodoInfo) {
+    init(buttonAction: @escaping (FilterTypes) -> Void, review: ReviewModel) {
         self.buttonAction = buttonAction
-        self.todoInfo = todoInfo
+        self.review = review
         super.init(frame: .zero)
         setUI()
     }
@@ -81,12 +81,12 @@ final class ExaminationModalityView: UIView {
         // TODO: 추후 수정
         imageView = CertificationImageView(
             image: .logo,
-            certificationContent: todoInfo.certificationContent ?? "",
-            certificator: UserDefaultsManager.shared.userFullName ?? ""
+            certificationContent: review.content,
+            certificator: review.doer
         )
         
         contentLabel.attributedText = NSAttributedString(
-            string: todoInfo.content,
+            string: review.todoContent,
             attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
         )
         
