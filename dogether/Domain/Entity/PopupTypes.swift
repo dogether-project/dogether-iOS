@@ -10,4 +10,5 @@ import Foundation
 enum PopupTypes {
     case certification
     case certificationInfo
+    case rejectReason
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class TodoWriteViewController: BaseViewController {
     
@@ -49,6 +50,11 @@ final class TodoWriteViewController: BaseViewController {
         textField.leftView = paddingView
         textField.leftViewMode = .always
         
+        // 문자 수 제한 오른쪽 여백
+        let rightPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 92, height: textField.frame.height))
+        textField.rightView = rightPaddingView
+        textField.rightViewMode = .always
+        
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         textField.addTarget(self, action: #selector(textFieldDidBegin), for: .editingDidBegin)
         textField.addTarget(self, action: #selector(textFieldDidEnd), for: .editingDidEnd)
@@ -64,12 +70,20 @@ final class TodoWriteViewController: BaseViewController {
         return label
     }()
     
-    // TODO: - 아이콘 변경
     private lazy var addButton = {
         let button = UIButton()
-        button.setImage(.plus, for: .normal)
+        button.backgroundColor = .grey700
+        button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(addTodo), for: .touchUpInside)
         return button
+    }()
+    
+    private let addButtonIcon = {
+        let imageView = UIImageView()
+        imageView.image = .plus.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .grey100
+        imageView.isUserInteractionEnabled = false
+        return imageView
     }()
     
     private let infoView = {
@@ -95,27 +109,17 @@ final class TodoWriteViewController: BaseViewController {
         return label
     }()
     
-    // TODO: - 수정 필요
     private let emptyView = {
-        let view = UIView()
-        let label = UILabel()
-        label.text = "아직 작성된 투두가 없어요"
-        label.textColor = .grey400
-        
-        view.addSubview(label)
-        
-        label.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
+        let view = EmptyView()
         return view
     }()
     
-    // TODO: - 테이블뷰셀 스타일 변경
     private lazy var toDoTableView = {
         let tableView = UITableView()
         tableView.isHidden = true
         tableView.backgroundColor = .clear
-        tableView.register(ToDoTableViewCell.self, forCellReuseIdentifier: ToDoTableViewCell.identifier)
+        tableView.showsVerticalScrollIndicator = false
+        tableView.register(ToDoWirteListTableViewCell.self, forCellReuseIdentifier: ToDoWirteListTableViewCell.identifier)
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
@@ -140,7 +144,7 @@ final class TodoWriteViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dateLabel, toDoTextField, toDoLimitTextCount, addButton, infoView, emptyView, toDoTableView, saveButton].forEach {
+        [dateLabel, toDoTextField, toDoLimitTextCount, addButton, addButtonIcon, infoView, emptyView, toDoTableView, saveButton].forEach {
             view.addSubview($0)
         }
         
@@ -163,13 +167,18 @@ final class TodoWriteViewController: BaseViewController {
         
         toDoLimitTextCount.snp.makeConstraints {
             $0.centerY.equalTo(toDoTextField)
-            $0.trailing.equalTo(addButton.snp.leading).offset(-8)
+            $0.trailing.equalTo(addButton.snp.leading).offset(-5)
         }
         
         addButton.snp.makeConstraints {
             $0.centerY.equalTo(toDoTextField)
             $0.trailing.equalTo(toDoTextField.snp.trailing).offset(-8)
             $0.width.height.equalTo(40)
+        }
+        
+        addButtonIcon.snp.makeConstraints {
+            $0.center.equalTo(addButton)
+            $0.width.height.equalTo(24)
         }
         
         infoView.snp.makeConstraints {
@@ -190,8 +199,7 @@ final class TodoWriteViewController: BaseViewController {
         
         emptyView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.equalToSuperview()
-            $0.height.equalTo(100)
+            $0.width.equalTo(233)
         }
         
         toDoTableView.snp.makeConstraints {
@@ -248,11 +256,17 @@ final class TodoWriteViewController: BaseViewController {
         toDoTextField.text = ""
         toDoLimitTextCount.text = "0/20"
         saveButton.isEnabled = true
+        dismissKeyboard()
         updateSaveButtonState()
     }
     
     // 텍스트필드 입력한 문자 수
     @objc private func textFieldDidChange() {
+        
+        if let text = toDoTextField.text, text.count > 20 {
+            let limitedText = String(text.prefix(20))
+            toDoTextField.text = limitedText
+        }
         toDoLimitTextCount.text = "\(toDoTextField.text?.count ?? 0)/20"
     }
     
@@ -281,9 +295,8 @@ extension TodoWriteViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: ToDoTableViewCell.identifier,
-                                                 for: indexPath) as! ToDoTableViewCell
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: ToDoWirteListTableViewCell.identifier,
+                                                 for: indexPath) as! ToDoWirteListTableViewCell
         
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
@@ -291,12 +304,27 @@ extension TodoWriteViewController: UITableViewDelegate, UITableViewDataSource {
         cell.todoLabel.text = toDoList[indexPath.row]
         cell.deleteButton.tag = indexPath.row
         cell.selectionStyle = .none
+        cell.backgroundColor = .clear
         
+        cell.deleteAction = { [weak self] index in
+            self?.deleteTodo(at: index)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 64
+    }
+    
+    private func deleteTodo(at index: Int) {
+        guard index < toDoList.count else { return }
+        toDoList.remove(at: index)
+        toDoTableView.reloadData()
+        
+        if toDoList.isEmpty {
+            saveButton.isEnabled = false
+            updateSaveButtonState()
+        }
     }
 }
 
@@ -307,22 +335,62 @@ extension TodoWriteViewController: UITextFieldDelegate {
     }
 }
 
-class ModalViewController: UIViewController {
+fileprivate class EmptyView: BaseView {
+    private let icon = {
+        var image = UIImageView()
+        image.image = .comment.withRenderingMode(.alwaysTemplate)
+        image.contentMode = .scaleAspectFit
+        image.tintColor = .grey600
+        return image
+    }()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.backgroundColor = .white
-        
+    private let titleLabel = {
         let label = UILabel()
-        label.text = "modal sheet"
-        label.font = Fonts.body1B
-        label.textColor = .black
-        
-        view.addSubview(label)
-        
-        label.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        label.text = "아직 작성된 투두가 없어요"
+        label.font = Fonts.head2B
+        label.textColor = .grey400
+        return label
+    }()
+    
+    private let subtitleLabel = {
+        let label = UILabel()
+        label.text = "오늘 하루 이루고 싶은 목표를 입력해보세요!"
+        label.font = Fonts.body2R
+        label.textColor = .grey400
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    override func configureHierarchy() {
+        [icon, titleLabel, subtitleLabel].forEach {
+            addSubview($0)
         }
+    }
+    
+    override func configureConstraints() {
+        icon.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(74)
+            $0.height.equalTo(54)
+        }
+        
+        titleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(icon.snp.bottom).offset(17)
+        }
+        
+        subtitleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
+        }
+    }
+    
+    override func configureView() { }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
