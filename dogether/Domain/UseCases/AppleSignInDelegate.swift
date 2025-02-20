@@ -10,10 +10,11 @@ import AuthenticationServices
 
 final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
     
-    private var continuation: CheckedContinuation<(identityToken: String, fullUserName: String), Error>?
+    private var continuation: CheckedContinuation<(identityToken: String, fullUserName: String, authorizationCode: String), Error>?
     
+    // TODO: 회원 탈퇴 부분 임시로 추가, 추후 수정
     // 애플 로그인 결과 비동기 반환
-    var signInResult: (identityToken: String, fullUserName: String)? {
+    var signInResult: (identityToken: String, fullUserName: String, authorizationCode: String)? {
         get async throws {
             return try await withCheckedThrowingContinuation { continuation in
                 self.continuation = continuation
@@ -33,7 +34,8 @@ final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
             
             guard let identityTokenData = appleIDCrendential.identityToken,
                   let identityTokenString = String(data: identityTokenData, encoding: .utf8),
-                  let authrizationCode = appleIDCrendential.authorizationCode else {
+                  let authorizationCode = appleIDCrendential.authorizationCode,
+                  let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) else {
                 continuation?.resume(throwing: NetworkError.unknown)
                 return
             }
@@ -48,11 +50,11 @@ final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {
             print("사용자 ID: \(userIdentifier)")
             print("사용자 이름: \(fullUserName)")
             print("사용자 Token: \(identityTokenString)")
-            print("사용자 authorizationCode: \(authrizationCode)")
+            print("사용자 authorizationCode: \(authorizationCodeString)")
             print("===========================================")
             
             // 비동기 결과 반환
-            continuation?.resume(returning: (identityTokenString, fullUserName))
+            continuation?.resume(returning: (identityTokenString, fullUserName, authorizationCodeString))
             
         // MARK: - 암호 기반 인증에 성공한 경우, 사용자의 인증 정보를 확인하고 필요한 작업을 수행합니다
         case let passwordCredential as ASPasswordCredential:

@@ -119,7 +119,7 @@ final class OnboardingViewController: BaseViewController {
     
     @objc private func signInButtonClicked() {
         Task { @MainActor in
-            let response = try await viewModel.singInWithApple()
+            let response = try await viewModel.signInWithApple()
             print("✅ 로그인 성공: \(response.name), 토큰: \(response.accessToken)")
             
             UserDefaultsManager.shared.userFullName = response.name

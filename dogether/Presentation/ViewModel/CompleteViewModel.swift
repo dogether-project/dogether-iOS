@@ -9,4 +9,5 @@ import Foundation
 
 final class CompleteViewModel {
     var joinCode: String = ""
+    var groupInfo: GroupInfo = GroupInfo()
 }

@@ -177,6 +177,8 @@ final class MyPageViewController: BaseViewController {
     }
     
     private func setupGestureReconizers() {
+        goToButton.addTarget(self, action: #selector(goToDashBoard), for: .touchUpInside)
+        
         let leaveGroupTap = UITapGestureRecognizer(target: self, action: #selector(leaveGroupTapped))
         leaveGroupView.addGestureRecognizer(leaveGroupTap)
         
@@ -185,6 +187,10 @@ final class MyPageViewController: BaseViewController {
         
         let withdrawTap = UITapGestureRecognizer(target: self, action: #selector(withdrawTapped))
         withdrawView.addGestureRecognizer(withdrawTap)
+    }
+    
+    @objc private func goToDashBoard() {
+        NavigationManager.shared.pushViewController(MyDashboardViewController())
     }
     
     @objc private func leaveGroupTapped() {
@@ -226,8 +232,14 @@ final class MyPageViewController: BaseViewController {
                           message: "탈퇴하면 모든 데이터가 삭제되며\n복구할 수 없어요.",
                           okTitle: "탈퇴하기") {
             
-            // 온보딩 화면으로 이동
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            // TODO: 회원 탈퇴 부분 임시로 추가, 추후 수정
+            Task { @MainActor in
+                let viewModel = OnboardingViewModel()
+                try await viewModel.withdraw()
+                
+                UserDefaultsManager.shared.accessToken = nil
+                UserDefaultsManager.shared.userFullName = nil
+                
                 NavigationManager.shared.setNavigationController(OnboardingViewController())
             }
         } cancelAction: { }    }
