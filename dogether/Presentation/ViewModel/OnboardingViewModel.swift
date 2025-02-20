@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseMessaging
 import AuthenticationServices
 
 final class OnboardingViewModel: ObservableObject {
@@ -57,5 +58,17 @@ final class OnboardingViewModel: ObservableObject {
         let withdrawRequst = WithdrawRequest(authorizationCode: authorizationCode)
         
         try await NetworkManager.shared.request(AuthRouter.withdraw(withdrawRequest: withdrawRequst))
+    }
+    
+    func saveNotiToken() {
+        Messaging.messaging().token { token, _ in
+            guard let token else { return }
+            Task { @MainActor in
+                let request = SaveNotiTokenRequest(token: token)
+                try await NetworkManager.shared.request(NotificationsRouter.saveNotiToken(saveNotiTokenRequest: request))
+                
+                UserDefaultsManager.shared.fcmToken = token
+            }
+        }
     }
 }

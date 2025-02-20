@@ -24,31 +24,31 @@ final class MyPageViewController: BaseViewController {
         return label
     }()
     
-    private let myHistory = {
-        let button = UIButton()
-        button.backgroundColor = .grey700
-        button.layer.cornerRadius = 12
-        return button
-    }()
+//    private let myHistory = {
+//        let button = UIButton()
+//        button.backgroundColor = .grey700
+//        button.layer.cornerRadius = 12
+//        return button
+//    }()
     
-    private let checkMyTodosLabel = {
-        let label = UILabel()
-        label.text = "내가 해낸 모든 투두들을 확인해보세요 !"
-        label.font = Fonts.body1S
-        label.textColor = .grey0
-        label.textAlignment = .center
-        return label
-    }()
+//    private let checkMyTodosLabel = {
+//        let label = UILabel()
+//        label.text = "내가 해낸 모든 투두들을 확인해보세요 !"
+//        label.font = Fonts.body1S
+//        label.textColor = .grey0
+//        label.textAlignment = .center
+//        return label
+//    }()
     
-    private let goToButton = {
-        let button = UIButton()
-        button.setTitle("보러가기", for: .normal)
-        button.titleLabel?.font = Fonts.body1B
-        button.setTitleColor(.grey700, for: .normal)
-        button.backgroundColor = .grey0
-        button.layer.cornerRadius = 12
-        return button
-    }()
+//    private let goToButton = {
+//        let button = UIButton()
+//        button.setTitle("보러가기", for: .normal)
+//        button.titleLabel?.font = Fonts.body1B
+//        button.setTitleColor(.grey700, for: .normal)
+//        button.backgroundColor = .grey0
+//        button.layer.cornerRadius = 12
+//        return button
+//    }()
     
     // TODO: 추후 isJoining 값을 가져와 비활성화 하는 부분 추가
     private let leaveGroupView = {
@@ -73,13 +73,14 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [profileImageView, nameLabel, myHistory, leaveGroupView, logoutView, withdrawView].forEach {
+//        [profileImageView, nameLabel, myHistory, leaveGroupView, logoutView, withdrawView].forEach {
+        [profileImageView, nameLabel, leaveGroupView, logoutView, withdrawView].forEach {
             view.addSubview($0)
         }
         
-        [checkMyTodosLabel, goToButton].forEach {
-            myHistory.addSubview($0)
-        }
+//        [checkMyTodosLabel, goToButton].forEach {
+//            myHistory.addSubview($0)
+//        }
     }
     
     override func configureConstraints() {
@@ -94,29 +95,30 @@ final class MyPageViewController: BaseViewController {
             $0.centerX.equalToSuperview()
         }
         
-        myHistory.snp.makeConstraints {
-            $0.top.equalTo(nameLabel.snp.bottom).offset(40)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(131)
-        }
+//        myHistory.snp.makeConstraints {
+//            $0.top.equalTo(nameLabel.snp.bottom).offset(40)
+//            $0.horizontalEdges.equalToSuperview().inset(16)
+//            $0.height.equalTo(131)
+//        }
         
-        checkMyTodosLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-        }
+//        checkMyTodosLabel.snp.makeConstraints {
+//            $0.top.equalToSuperview().offset(20)
+//            $0.horizontalEdges.equalToSuperview().inset(16)
+//        }
         
-        goToButton.snp.makeConstraints {
-            $0.top.equalTo(checkMyTodosLabel.snp.bottom).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
-        }
+//        goToButton.snp.makeConstraints {
+//            $0.top.equalTo(checkMyTodosLabel.snp.bottom).offset(16)
+//            $0.horizontalEdges.equalToSuperview().inset(16)
+//            $0.height.equalTo(50)
+//        }
         
         setUpView(leaveGroupView, iconName: .leaveGroup, text: "그룹탈퇴")
         setUpView(logoutView, iconName: .logout, text: "로그아웃")
         setUpView(withdrawView, iconName: .withdraw, text: "회원탈퇴")
         
         leaveGroupView.snp.makeConstraints {
-            $0.top.equalTo(myHistory.snp.bottom).offset(8)
+//            $0.top.equalTo(myHistory.snp.bottom).offset(8)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
         }
@@ -177,7 +179,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     private func setupGestureReconizers() {
-        goToButton.addTarget(self, action: #selector(goToDashBoard), for: .touchUpInside)
+//        goToButton.addTarget(self, action: #selector(goToDashBoard), for: .touchUpInside)
         
         let leaveGroupTap = UITapGestureRecognizer(target: self, action: #selector(leaveGroupTapped))
         leaveGroupView.addGestureRecognizer(leaveGroupTap)

@@ -125,6 +125,8 @@ final class OnboardingViewController: BaseViewController {
             UserDefaultsManager.shared.userFullName = response.name
             UserDefaultsManager.shared.accessToken = response.accessToken
             
+            viewModel.saveNotiToken()
+            
             let IsJoiningResponse: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
             if IsJoiningResponse.isJoining {
                 NavigationManager.shared.setNavigationController(MainViewController())

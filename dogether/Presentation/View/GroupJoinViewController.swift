@@ -102,11 +102,11 @@ final class GroupJoinViewController: BaseViewController {
             do {
                 let request = JoinGroupRequest(joinCode: enterCode) // "kelly-join-code"
                 // TODO: 추후 이슈 #6 수정되면 response 수정하고 completeViewController로 데이터 넘기는 작업 추가
-                let response: Void = try await NetworkManager.shared.request(GroupsRouter.joinGroup(joinGroupRequest: request))
+                let response: JoinGroupResponse = try await NetworkManager.shared.request(GroupsRouter.joinGroup(joinGroupRequest: request))
                 
-                // 가입 성공 시 다음 화면 이동
-                print("✅ 가입 성공")
-                NavigationManager.shared.setNavigationController(CompleteViewController(type: .join))
+                let completeViewController = CompleteViewController(type: .join)
+                completeViewController.viewModel.joinGroupResponse = response
+                NavigationManager.shared.setNavigationController(completeViewController)
 
             } catch {
                 print("❌ 가입 실패: \(error)")

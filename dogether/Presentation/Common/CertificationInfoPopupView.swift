@@ -16,6 +16,12 @@ final class CertificationInfoPopupView: UIView {
         self.todoInfo = todoInfo
         super.init(frame: .zero)
         setUI()
+        
+        Task { @MainActor in
+            guard let mediaUrl = self.todoInfo.certificationMediaUrl, let url = URL(string: mediaUrl) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            imageView.image = UIImage(data: data)
+        }
     }
     required init?(coder: NSCoder) { fatalError() }
     

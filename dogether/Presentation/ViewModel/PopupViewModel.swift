@@ -18,11 +18,9 @@ final class PopupViewModel {
         }
     }
     
-    func certifyTodo(todoId: Int, certificationContent: String?) {
-        Task { @MainActor in
-            guard let content = certificationContent, let mediaUrl = certificationMediaUrl else { return }
-            let request = CertifyTodoRequest(content: content, mediaUrls: [mediaUrl])
-            try await NetworkManager.shared.request(TodosRouter.certifyTodo(todoId: String(todoId), certifyTodoRequest: request))
-        }
+    func certifyTodo(todoId: Int, certificationContent: String?) async throws {
+        guard let content = certificationContent, let mediaUrl = certificationMediaUrl else { return }
+        let request = CertifyTodoRequest(content: content, mediaUrls: [mediaUrl])
+        try await NetworkManager.shared.request(TodosRouter.certifyTodo(todoId: String(todoId), certifyTodoRequest: request))
     }
 }

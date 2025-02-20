@@ -18,6 +18,12 @@ final class ExaminationModalityView: UIView {
         self.review = review
         super.init(frame: .zero)
         setUI()
+        
+        Task { @MainActor in
+            guard let url = URL(string: self.review.mediaUrls[0]) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            imageView.image = UIImage(data: data)
+        }
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -103,7 +109,7 @@ final class ExaminationModalityView: UIView {
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(303)
+            $0.width.height.equalTo(303)
         }
         
         contentLabel.snp.makeConstraints {

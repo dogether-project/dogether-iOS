@@ -21,13 +21,6 @@ final class DogetherTodoItem: UIButton {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let dogetherTodoItem = {
-        let button = UIButton()
-        button.backgroundColor = .grey700
-        button.layer.cornerRadius = 8
-        return button
-    }()
-    
     private let todoImageView = UIImageView()
     private let contentLabel = {
         let label = UILabel()
@@ -45,15 +38,14 @@ final class DogetherTodoItem: UIButton {
         return label
     }()
     private func setUI() {
-        dogetherTodoItem.addTarget(self, action: #selector(didTapTodoItem), for: .touchUpInside)
+        backgroundColor = .grey700
+        layer.cornerRadius = 8
+        addTarget(self, action: #selector(didTapTodoItem), for: .touchUpInside)
         updateUI()
         
-        [dogetherTodoItem].forEach { addSubview($0) }
-        [todoImageView, contentLabel, buttonLabel].forEach { dogetherTodoItem.addSubview($0) }
+        [todoImageView, contentLabel, buttonLabel].forEach { addSubview($0) }
         
-        dogetherTodoItem.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.equalToSuperview()
+        self.snp.makeConstraints {
             $0.height.equalTo(64)
         }
         
@@ -69,7 +61,7 @@ final class DogetherTodoItem: UIButton {
         contentLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(
-                todo.status == TodoStatus.waitCertificattion.rawValue ? dogetherTodoItem : todoImageView.snp.right
+                todo.status == TodoStatus.waitCertificattion.rawValue ? self : todoImageView.snp.right
             ).offset(
                 todo.status == TodoStatus.waitCertificattion.rawValue ? 16 : 8
             )

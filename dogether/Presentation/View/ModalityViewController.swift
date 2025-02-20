@@ -87,14 +87,15 @@ final class ModalityViewController: BaseViewController {
     private func didTapCloseButton() {
         Task { @MainActor in
             try await viewModel.reviewTodo()
-            viewModel.setCurrent(viewModel.current + 1)
-            if viewModel.reviews.count == viewModel.current {
+            // TODO: 검사 할 투두가 여러개일 때 다음 투두로 넘어가는 기능은 추후 구현
+//            viewModel.setCurrent(viewModel.current + 1)
+//            if viewModel.reviews.count == viewModel.current {
                 ModalityManager.shared.dismiss()
-            } else {
-                viewModel.setResult()
-                viewModel.setRejectReason()
-                configureView() // TODO: 추후 확인
-            }
+//            } else {
+//                viewModel.setResult()
+//                viewModel.setRejectReason()
+//                configureView() // TODO: 추후 확인
+//            }
         }
     }
 }

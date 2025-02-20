@@ -37,8 +37,11 @@ final class PopupViewController: BaseViewController {
         switch popupType {
         case .certification:
             guard let todoInfo else { return }
-            popupView = CertificationPopupView(todoInfo: todoInfo, completeAction: completeAction ?? { certificationContent in
-                self.viewModel.certifyTodo(todoId: self.todoInfo?.id ?? 0, certificationContent: certificationContent)
+            popupView = CertificationPopupView(todoInfo: todoInfo, completeAction: { certificationContent in
+                Task { @MainActor in
+                    try await self.viewModel.certifyTodo(todoId: self.todoInfo?.id ?? 0, certificationContent: certificationContent)
+                    PopupManager.shared.hidePopup()
+                }
             })
             
             cameraManager = CameraManager(viewController: self)

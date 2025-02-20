@@ -292,7 +292,6 @@ final class CertificationPopupView: UIView {
         certificationMaxLengthLabel.text = "/\(certificationMaxLength)"
         certificationButton = DogetherButton(action: {
             self.completeAction(self.certificationTextView.text)
-            PopupManager.shared.hidePopup()
         }, title: "인증하기", status: .enabled)
         
         [

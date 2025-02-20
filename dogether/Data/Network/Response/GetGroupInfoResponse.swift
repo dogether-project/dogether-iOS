@@ -11,6 +11,7 @@ struct GetGroupInfoResponse: Decodable {
     let name: String
     let duration: Int
     let joinCode: String
+    let maximumTodoCount: Int
     let endAt: String
     let remainingDays: Int
 }

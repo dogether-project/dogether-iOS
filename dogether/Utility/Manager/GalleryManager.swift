@@ -33,7 +33,10 @@ final class GalleryManager: NSObject, PHPickerViewControllerDelegate {
         guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
         provider.loadObject(ofClass: UIImage.self) { image, _ in
             DispatchQueue.main.async {
-                if let uiImage = image as? UIImage, let pngData = uiImage.pngData() {
+                if let uiImage = image as? UIImage,
+                   let compressImage = uiImage.compressImage(),
+                   let pngData = compressImage.pngData()
+                {
                     let pngImage = UIImage(data: pngData)
                     self.completion?(pngImage)
                 }

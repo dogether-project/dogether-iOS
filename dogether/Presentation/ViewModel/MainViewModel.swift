@@ -31,16 +31,23 @@ final class MainViewModel {
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
         self.isBlockPanGesture = isBlockPanGesture
     }
+    
     func updateSheetStatus(_ sheetStatus: SheetStatus) {
         self.sheetStatus = sheetStatus
     }
+    
     func updateFilter(_ filter: FilterTypes) {
         self.currentFilter = filter
+        
+        Task { @MainActor in
+            try await self.getTodos()
+        }
     }
+    
     func setTodoList(_ todoList: [TodoInfo]) {
-        self.mainViewStatus = todoList.isEmpty ? .emptyList : .todoList
+        self.mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
         self.todoList = todoList
-        self.isBlockPanGesture = self.todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140))
+        self.isBlockPanGesture = self.todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }
     
     func getGroupStatus() async throws {
@@ -55,6 +62,7 @@ final class MainViewModel {
             name: response.name,
             duration: response.duration,
             joinCode: response.joinCode,
+            maximumTodoCount: response.maximumTodoCount,
             endAt: response.endAt,
             remainingDays: response.remainingDays
         )
@@ -70,7 +78,9 @@ final class MainViewModel {
     func getReviews() async throws {
         let response: GetReviewsResponse = try await NetworkManager.shared.request(TodoCertificationsRouter.getReviews)
         if response.dailyTodoCertifications.count > 0 {
-            ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+            Task { @MainActor in
+                ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+            }
         }
     }
 }

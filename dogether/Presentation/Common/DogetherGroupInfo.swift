@@ -12,7 +12,9 @@ final class DogetherGroupInfo: UIView {
     var groupName: String
     var memberCount: Int
     var duration: GroupChallengeDurations
-    var startAt: GroupStartAts
+    var startAt: GroupStartAts?
+    var startAtString: String?
+    var endAtString: String?
     
     init(
         groupName: String = "",
@@ -24,6 +26,22 @@ final class DogetherGroupInfo: UIView {
         self.memberCount = memberCount
         self.duration = duration
         self.startAt = startAt
+        
+        super.init(frame: .zero)
+        setUI()
+    }
+    init(
+        groupName: String = "",
+        memberCount: Int = 0,
+        duration: GroupChallengeDurations = .threeDays,
+        startAtString: String,
+        endAtString: String
+    ) {
+        self.groupName = groupName
+        self.memberCount = memberCount
+        self.duration = duration
+        self.startAtString = startAtString
+        self.endAtString = endAtString
         
         super.init(frame: .zero)
         setUI()
@@ -94,8 +112,13 @@ final class DogetherGroupInfo: UIView {
         
         durationInfoLabel.text = "\(duration.rawValue)일"
         memberCountInfoLabel.text = "총 \(memberCount)명"
-        startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
-        endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
+        if let startAt {
+            startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
+            endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
+        } else if let startAtString, let endAtString {
+            startDayInfoLabel.text = "\(startAtString)"
+            endDayInfoLabel.text = "\(endAtString)"
+        }
         
         [
             groupInfoView,

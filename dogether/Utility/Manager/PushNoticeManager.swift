@@ -17,6 +17,7 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
             try await checkAuthorization()
         }
     }
+    static let pushNotificationReceived = Notification.Name("PushNotificationReceived")
     
     private func setupNotificationDelegate() async {
         await MainActor.run {
@@ -37,14 +38,26 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
+    private func handleNotification(notification: UNNotification) {
+        let userInfo = notification.request.content.userInfo
+        if let notificationType = userInfo["type"] as? String {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: PushNoticeManager.pushNotificationReceived,
+                    object: nil,
+                    userInfo: ["type": notificationType]
+                )
+            }
+        }
+    }
+    
     // MARK: - foreground
     nonisolated func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        print("foreground notification: \(notification)")
-        
+        handleNotification(notification: notification)
         completionHandler([.banner, .sound])
     }
     
@@ -54,8 +67,7 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        print("background notification: \(response.notification)")
-        
+        handleNotification(notification: response.notification)
         completionHandler()
     }
 }

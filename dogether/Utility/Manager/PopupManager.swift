@@ -26,7 +26,7 @@ final class PopupManager {
         popupViewController.popupType = type
         popupViewController.todoInfo = todoInfo
         popupViewController.completeAction = completeAction
-        popupViewController.modalPresentationStyle = .overFullScreen
+        popupViewController.modalPresentationStyle = .fullScreen
         popupViewController.modalTransitionStyle = .crossDissolve
         currentViewController.present(popupViewController, animated: animated, completion: completion)
     }
