@@ -40,7 +40,20 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
     
     private func handleNotification(notification: UNNotification) {
         let userInfo = notification.request.content.userInfo
-        if let notificationType = userInfo["type"] as? String {
+        guard let notificationTypeString = userInfo["type"] as? String,
+              let notificationType = PushNoticeTypes(rawValue: notificationTypeString) else { return }
+        switch notificationType {
+        case .certification:
+            // TODO: 이미 모달 화면인 경우를 고려해 pushNotificationReceived로 넘기고 ModalityViewController에서 추후 컨트롤
+            Task { @MainActor in
+                let response: GetReviewsResponse = try await NetworkManager.shared.request(TodoCertificationsRouter.getReviews)
+                if response.dailyTodoCertifications.count > 0 {
+                    Task { @MainActor in
+                        ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+                    }
+                }
+            }
+        case .review:
             DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: PushNoticeManager.pushNotificationReceived,
@@ -48,6 +61,8 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
                     userInfo: ["type": notificationType]
                 )
             }
+        default:
+            return
         }
     }
     

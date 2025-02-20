@@ -639,7 +639,6 @@ extension MainViewController: UIScrollViewDelegate {
 extension MainViewController {
     @objc private func handlePushNotification(_ notification: Notification) {
         guard let notificationType = notification.userInfo?["type"] as? String,
-              notificationType == PushNoticeTypes.certification.rawValue ||
                 notificationType == PushNoticeTypes.review.rawValue else { return }
         
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
