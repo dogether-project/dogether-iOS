@@ -10,6 +10,8 @@ import SnapKit
 
 final class MyPageViewController: BaseViewController {
     
+    private let dogetherHeader = NavigationHeader(title: "마이페이지")
+    
     private let profileImageView = {
         let imageView = UIImageView()
         imageView.image = .profile2
@@ -18,7 +20,7 @@ final class MyPageViewController: BaseViewController {
     
     private let nameLabel = {
         let label = UILabel()
-        label.text = "지은"
+        label.text = "\(UserDefaultsManager.shared.userFullName ?? "")"
         label.font = Fonts.head1B
         label.textColor = .grey100
         return label
@@ -74,7 +76,7 @@ final class MyPageViewController: BaseViewController {
     
     override func configureHierarchy() {
 //        [profileImageView, nameLabel, myHistory, leaveGroupView, logoutView, withdrawView].forEach {
-        [profileImageView, nameLabel, leaveGroupView, logoutView, withdrawView].forEach {
+        [dogetherHeader, profileImageView, nameLabel, leaveGroupView, logoutView, withdrawView].forEach {
             view.addSubview($0)
         }
         
@@ -84,8 +86,15 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureConstraints() {
+        
+        dogetherHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(28)
+        }
+
         profileImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(56)
+            $0.top.equalTo(dogetherHeader.snp.bottom).offset(56)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(100)
         }
@@ -136,10 +145,7 @@ final class MyPageViewController: BaseViewController {
         }
     }
     
-    override func configureView() {
-        navigationItem.title = "마이페이지"
-        view.backgroundColor = .red
-    }
+    override func configureView() { }
     
     private func setUpView(_ view: UIView, iconName: UIImage, text: String) {
         view.isUserInteractionEnabled = true
@@ -209,7 +215,8 @@ final class MyPageViewController: BaseViewController {
                     NavigationManager.shared.setNavigationController(StartViewController())
                 }
             }
-        } cancelAction: { }    }
+        } cancelAction: { }
+    }
     
     @objc private func logoutTapped() {
         AlertHelper.alert(on: self,
@@ -244,6 +251,7 @@ final class MyPageViewController: BaseViewController {
                 
                 NavigationManager.shared.setNavigationController(OnboardingViewController())
             }
-        } cancelAction: { }    }
+        } cancelAction: { }
+    }
 }
 
