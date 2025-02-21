@@ -9,6 +9,8 @@ import UIKit
 
 final class GroupJoinViewController: BaseViewController {
     
+    private let dogetherHeader = NavigationHeader(title: "그룹 가입하기")
+    
     private let titleLabel = {
         let label = UILabel()
         label.text = "초대번호 입력"
@@ -62,12 +64,19 @@ final class GroupJoinViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [titleLabel, subtitleLabel, errorLabel, joinButton].forEach {
+        [dogetherHeader, titleLabel, subtitleLabel, errorLabel, joinButton].forEach {
             view.addSubview($0)
         }
     }
     
     override func configureConstraints() {
+        
+        dogetherHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(28)
+        }
+
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
@@ -91,16 +100,13 @@ final class GroupJoinViewController: BaseViewController {
         }
     }
     
-    override func configureView() {
-        
-        navigationItem.title = "그룹 가입하기"
-    }
+    override func configureView() { }
     
     @objc private func joinButtonClicked() {
         
         Task {
             do {
-                let request = JoinGroupRequest(joinCode: enterCode) // "kelly-join-code"
+                let request = JoinGroupRequest(joinCode: enterCode)
                 // TODO: 추후 이슈 #6 수정되면 response 수정하고 completeViewController로 데이터 넘기는 작업 추가
                 let response: JoinGroupResponse = try await NetworkManager.shared.request(GroupsRouter.joinGroup(joinGroupRequest: request))
                 
@@ -166,7 +172,7 @@ extension GroupJoinViewController: UITextFieldDelegate {
             textField.textColor = .grey100
             textField.font = Fonts.head1R
             textField.textAlignment = .center
-            textField.keyboardType = .numberPad // 숫자만 입력 가능(추후 변경 가능)
+            textField.keyboardType = .namePhonePad
             textField.delegate = self
             textField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
             
@@ -191,6 +197,8 @@ extension GroupJoinViewController: UITextFieldDelegate {
         
         // 입력중인 텍스트필드 border 색상 변경
         setTextFieldBorderColor()
+        
+        textField.textColor = .grey0
         
         joinButton.backgroundColor = joinButton.isEnabled ? .blue300 : .grey100
         joinButton.setTitleColor(joinButton.isEnabled ? .grey800 : .grey400, for: .normal)
