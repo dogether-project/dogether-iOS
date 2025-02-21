@@ -10,7 +10,7 @@ import SnapKit
 
 final class TodoWriteViewController: BaseViewController {
     
-    var maximumTodoCount: Int!
+    var maximumTodoCount: Int?
     
     private var toDoList: [String] = [] {
         didSet {
@@ -41,7 +41,7 @@ final class TodoWriteViewController: BaseViewController {
         ]
         
         textField.attributedPlaceholder = NSAttributedString(
-            string: "투두를 입력해주세요 (최대 \(String(maximumTodoCount))개)",
+            string: "투두를 입력해주세요 (최대 \(maximumTodoCount ?? 0)개)",
             attributes: attributes
         )
         
@@ -255,7 +255,7 @@ final class TodoWriteViewController: BaseViewController {
     
     @objc private func addTodo() {
         guard let text = toDoTextField.text, !text.isEmpty, text.count <= 20 else { return }
-        guard toDoList.count < maximumTodoCount else { return }
+        guard toDoList.count < maximumTodoCount ?? 0 else { return }
         
         toDoList.insert(text, at: 0)
         toDoTextField.text = ""
@@ -343,9 +343,7 @@ extension TodoWriteViewController: UITextFieldDelegate {
 fileprivate class EmptyView: BaseView {
     private let icon = {
         var image = UIImageView()
-        image.image = .comment.withRenderingMode(.alwaysTemplate)
-        image.contentMode = .scaleAspectFit
-        image.tintColor = .grey600
+        image.image = .comment
         return image
     }()
     
