@@ -386,10 +386,10 @@ final class MainViewController: BaseViewController {
                 }, todo: todo)
             }
         )
-        todoListStackView.isHidden = viewModel.mainViewStatus != .todoList
+        filterStackView.isHidden = viewModel.mainViewStatus != .todoList
         
         emptyDescriptionView = emptyDescriptionView(type: viewModel.currentFilter)
-        emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
+        emptyDescriptionView.isHidden = viewModel.mainViewStatus != .todoList || (viewModel.mainViewStatus == .todoList && !viewModel.todoList.isEmpty)
     }
     
     override func configureHierarchy() {
@@ -638,8 +638,8 @@ extension MainViewController: UIScrollViewDelegate {
 // MARK: - about push notice
 extension MainViewController {
     @objc private func handlePushNotification(_ notification: Notification) {
-        guard let notificationType = notification.userInfo?["type"] as? String,
-                notificationType == PushNoticeTypes.review.rawValue else { return }
+        guard let notificationType = notification.userInfo?["type"] as? PushNoticeTypes,
+              notificationType == .review else { return }
         
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let window = windowScene.windows.first,
