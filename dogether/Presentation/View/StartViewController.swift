@@ -10,7 +10,10 @@ import UIKit
 import SnapKit
 
 final class StartViewController: BaseViewController {
+    private let viewModel = StartViewModel()
+    
     private let dogetherHeader = DogetherHeader()
+    
     private let titleLabel = {
         let label = UILabel()
         label.attributedText = NSAttributedString(
@@ -21,7 +24,51 @@ final class StartViewController: BaseViewController {
         label.numberOfLines = 0
         return label
     }()
-    // TODO: 추후 descriptionButton 추가
+    
+    private let floatingDescription = {
+        let button = UIButton()
+        button.backgroundColor = .grey50
+        button.layer.cornerRadius = 8
+        button.layer.zPosition = 1
+        
+        let tail = UIImageView(image: .tail)
+        
+        let label = UILabel()
+        label.text = "한 번에 하나의 그룹에서만 활동할 수 있어요"
+        label.textColor = .grey800
+        label.font = Fonts.smallS
+        
+        let icon = UIImageView(image: .close)
+        icon.contentMode = .scaleAspectFit
+        
+        let stackView = UIStackView(arrangedSubviews: [label, icon])
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.isUserInteractionEnabled = false
+        
+        [tail, stackView].forEach { button.addSubview($0) }
+        
+        tail.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(-7)
+            $0.left.equalToSuperview().offset(25)
+            $0.width.height.equalTo(14)
+        }
+        
+        label.snp.makeConstraints {
+            $0.height.equalTo(18)
+        }
+        
+        icon.snp.makeConstraints {
+            $0.width.equalTo(12)
+        }
+        
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(8)
+        }
+        
+        return button
+    }()
+    
     private func startButton(groupType: GroupTypes) -> UIButton {
         let button = UIButton()
         button.backgroundColor = .grey800
@@ -84,13 +131,21 @@ final class StartViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    private func updateView() {
+        floatingDescription.isHidden = !viewModel.isShowFloating
+    }
+    
     override func configureView() {
+        updateView()
+        
+        floatingDescription.addTarget(self, action: #selector(didTapFloatingDescription), for: .touchUpInside)
+        
         createButton = startButton(groupType: .create)
         joinButton = startButton(groupType: .join)
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, titleLabel, createButton, joinButton].forEach { view.addSubview($0) }
+        [dogetherHeader, titleLabel, floatingDescription, createButton, joinButton].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -106,6 +161,11 @@ final class StartViewController: BaseViewController {
             $0.height.equalTo(72)
         }
         
+        floatingDescription.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+            $0.left.equalTo(titleLabel)
+        }
+        
         createButton.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(41)
             $0.horizontalEdges.equalToSuperview().inset(16)
@@ -119,14 +179,13 @@ final class StartViewController: BaseViewController {
         }
     }
     
+    @objc private func didTapFloatingDescription() {
+        viewModel.hideFloating()
+        updateView()
+    }
+    
     @objc private func didTapStartButton(_ sender: UIButton) {
-        guard let groupType = GroupTypes(rawValue: sender.tag) else { return }
-        switch groupType {
-        case .create:
-            NavigationManager.shared.pushViewController(GroupCreateViewController())
-        case .join:
-            NavigationManager.shared.pushViewController(GroupJoinViewController())
-        }
+        viewModel.navigate(destinationTag: sender.tag)
     }
 }
 

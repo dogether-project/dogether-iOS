@@ -12,29 +12,26 @@ import SnapKit
 final class SplashViewController: BaseViewController {
     private let viewModel = SplashViewModel()
     
-    private let logoView: UIView = {
-        let view = UIView()
-        
+    private let logoView: UIStackView = {
         let logoImage = UIImageView(image: .logo)
+        logoImage.contentMode = .scaleAspectFit
         
         let typoImage = UIImageView(image: .logoTypo)
+        typoImage.contentMode = .scaleAspectFit
         
-        [logoImage, typoImage].forEach { view.addSubview($0) }
+        let stackView = UIStackView(arrangedSubviews: [logoImage, typoImage])
+        stackView.axis = .vertical
+        stackView.spacing = 24
         
         logoImage.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview()
-            $0.width.height.equalTo(82)
+            $0.height.equalTo(82)
         }
         
         typoImage.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview()
-            $0.width.equalTo(127)
             $0.height.equalTo(30)
         }
         
-        return view
+        return stackView
     }()
     
     override func viewDidLoad() {
@@ -52,8 +49,6 @@ final class SplashViewController: BaseViewController {
     override func configureConstraints() {
         logoView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.equalTo(127)
-            $0.height.equalTo(136)
         }
     }
 }
