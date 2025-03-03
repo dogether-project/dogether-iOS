@@ -8,7 +8,10 @@
 import Foundation
 
 final class GroupCreateViewModel {
+    private let groupCreateUseCase: GroupCreateUseCase
+    
     let groupNameMaxLength: Int = 12
+    
     private(set) var currentStep: CreateGroupSteps = .one
     private(set) var isDisabledCompleteButton: Bool = true
     private(set) var currentGroupName: String = ""
@@ -17,13 +20,28 @@ final class GroupCreateViewModel {
     private(set) var currentDuration: GroupChallengeDurations = .threeDays
     private(set) var currentStartAt: GroupStartAts = .today
     
+    init() {
+        let groupCreateRepository = GroupCreateRepository()
+        self.groupCreateUseCase = GroupCreateUseCase(repository: groupCreateRepository)
+    }
+    
     func updateStep(step: CreateGroupSteps) async {
         currentStep = step
     }
     
-    func completeAction() async {
-        guard let nextStep = CreateGroupSteps(rawValue: currentStep.rawValue + 1) else { return }
-        await updateStep(step: nextStep)
+    // TODO: 추후 완성
+    func completeAction(updateStepUI: @escaping () -> Void) -> Void {
+        Task { @MainActor in
+            if currentStep == .four {
+                let completeViewController = CompleteViewController(type: .create)
+                completeViewController.viewModel.joinCode = await getJoinCode()
+                NavigationManager.shared.setNavigationController(completeViewController)
+            } else {
+                guard let nextStep = CreateGroupSteps(rawValue: currentStep.rawValue + 1) else { return }
+                await updateStep(step: nextStep)
+                updateStepUI()
+            }
+        }
     }
     
     func getJoinCode() async -> String {
@@ -35,13 +53,13 @@ final class GroupCreateViewModel {
             durationOption: currentDuration,
             maximumTodoCount: todoLimit
         )
-        do {
-            let response: CreateGroupResponse = try await NetworkManager.shared.request(GroupsRouter.createGroup(createGroupRequest: createGroupRequest))
-            
-            return response.joinCode
-        } catch {
-            // TODO: API 실패 시 처리에 대해 추후 논의
-        }
+//        do {
+//            let response: CreateGroupResponse = try await NetworkManager.shared.request(GroupsRouter.createGroup(createGroupRequest: createGroupRequest))
+//            
+//            return response.joinCode
+//        } catch {
+//            // TODO: API 실패 시 처리에 대해 추후 논의
+//        }
         return ""
     }
     
@@ -56,10 +74,10 @@ final class GroupCreateViewModel {
     func updateTodoLimit(count: Int) {
         todoLimit = count
     }
-    func updateDuration(duration: GroupChallengeDurations) async {
+    func updateDuration(duration: GroupChallengeDurations) {
         currentDuration = duration
     }
-    func updateStartAt(startAt: GroupStartAts) async {
+    func updateStartAt(startAt: GroupStartAts) {
         currentStartAt = startAt
     }
 }

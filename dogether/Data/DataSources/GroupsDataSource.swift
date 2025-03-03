@@ -16,4 +16,11 @@ final class GroupsDataSource {
         let response: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
         return response.isJoining
     }
+    
+    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> String {
+        let response: CreateGroupResponse = try await NetworkManager.shared.request(
+            GroupsRouter.createGroup(createGroupRequest: createGroupRequest)
+        )
+        return response.joinCode
+    }
 }

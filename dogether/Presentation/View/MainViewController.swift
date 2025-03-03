@@ -353,7 +353,7 @@ final class MainViewController: BaseViewController {
         
         timerLabel.text = viewModel.time
         
-        todoButton.action = {
+        todoButton.setAction {
             let todoWriteViewController = TodoWriteViewController()
             todoWriteViewController.maximumTodoCount = self.viewModel.groupInfo.maximumTodoCount
             NavigationManager.shared.pushViewController(todoWriteViewController)

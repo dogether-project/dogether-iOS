@@ -10,9 +10,10 @@ import UIKit
 import SnapKit
 
 final class GroupCreateViewController: BaseViewController {
-    private var viewModel = GroupCreateViewModel()
+    private let viewModel = GroupCreateViewModel()
     
     private let dogetherHeader = NavigationHeader(title: "그룹 만들기")
+    
     private func stepLabel(step: CreateGroupSteps) -> UILabel {
         let label = UILabel()
         label.text = String(step.rawValue)
@@ -29,6 +30,7 @@ final class GroupCreateViewController: BaseViewController {
     private var stepTwo = UILabel()
     private var stepThree = UILabel()
     private var stepFour = UILabel()
+    
     private func stepLabelStackView(labels: [UILabel]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: labels)
         stackView.axis = .horizontal
@@ -36,16 +38,17 @@ final class GroupCreateViewController: BaseViewController {
         stackView.distribution = .fillEqually
         return stackView
     }
-    private var stepLabelStack = UIStackView()
-    private func descriptionLabel(step: CreateGroupSteps) -> UILabel {
+    private var stepLabelStackView = UIStackView()
+    
+    private let stepDescriptionLabel = {
         let label = UILabel()
-        label.text = step.description
         label.textColor = .grey0
         label.font = Fonts.head1B
         return label
-    }
-    private var stepDescriptionLabel = UILabel()
+    }()
+    
     private let completeButton = DogetherButton(action: { }, title: "다음", status: .disabled)
+    
     private func stepView(step: CreateGroupSteps) -> UIView {
         let view = UIView()
         view.isHidden = viewModel.currentStep != step
@@ -56,6 +59,7 @@ final class GroupCreateViewController: BaseViewController {
     private var stepTwoView = UIView()
     private var stepThreeView = UIView()
     private var stepFourView = UIView()
+    
     private func componentTitleLabel(componentTitle: String) -> UILabel {
         let label = UILabel()
         label.text = componentTitle
@@ -68,6 +72,7 @@ final class GroupCreateViewController: BaseViewController {
     private var todoLimit = UILabel()
     private var duration = UILabel()
     private var startAt = UILabel()
+    
     // TODO: 추후 공용 컴포넌트로 빼기
     private let groupNameView = {
         let view = UIView()
@@ -101,37 +106,19 @@ final class GroupCreateViewController: BaseViewController {
         label.font = Fonts.smallS
         return label
     }()
+    
     private var memberCountView = UIView()
+    
     private var todoLimitView = UIView()
     
-    // TODO: 추후 durationStackView, startAtStackView 공용 컴포넌트로 빼기
-    private func durationButton(duration: GroupChallengeDurations) -> UIButton {
-        let button = UIButton()
-        button.backgroundColor = .grey800
-        button.layer.cornerRadius = 12
-        button.layer.borderColor = viewModel.currentDuration == duration ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
-        button.layer.borderWidth = 1.5
-        button.tag = duration.rawValue
-        button.addTarget(self, action: #selector(didTapDurationButton(_:)), for: .touchUpInside)
-        return button
-    }
-    private func durationLabel(duration: GroupChallengeDurations) -> UILabel {
-        let label = UILabel()
-        label.text = duration.text
-        label.textColor = viewModel.currentDuration == duration ? .blue300 : .grey0
-        label.font = viewModel.currentDuration == duration ? Fonts.body1B : Fonts.body1S
-        label.textAlignment = .left
-        label.tag = duration.rawValue
-        return label
-    }
-    private var threeDaysButton = UIButton()
-    private var oneWeekButton = UIButton()
-    private var twoWeeksButton = UIButton()
-    private var fourWeeksButton = UIButton()
-    private var threeDaysLabel = UILabel()
-    private var oneWeekLabel = UILabel()
-    private var twoWeeksLabel = UILabel()
-    private var fourWeeksLabel = UILabel()
+    private let threeDaysButton = DurationButton(action: { _ in }, duration: .threeDays)
+    private let oneWeekButton = DurationButton(action: { _ in }, duration: .oneWeek)
+    private let twoWeeksButton = DurationButton(action: { _ in }, duration: .twoWeeks)
+    private let fourWeeksButton = DurationButton(action: { _ in }, duration: .fourWeeks)
+    
+    private let todayButton = StartAtButton(action: { _ in }, startAt: .today)
+    private let tomorrowButton = StartAtButton(action: { _ in }, startAt: .tomorrow)
+    
     private func horizontalStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
         stackView.axis = .horizontal
@@ -139,6 +126,10 @@ final class GroupCreateViewController: BaseViewController {
         stackView.distribution = .fillEqually
         return stackView
     }
+    private var durationRow1 = UIStackView()
+    private var durationRow2 = UIStackView()
+    private var startAtStack = UIStackView()
+    
     private func verticalStackView(stacks: [UIStackView]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: stacks)
         stackView.axis = .vertical
@@ -146,55 +137,8 @@ final class GroupCreateViewController: BaseViewController {
         stackView.distribution = .fillEqually
         return stackView
     }
-    private var durationRow1 = UIStackView()
-    private var durationRow2 = UIStackView()
     private var durationStack = UIStackView()
-    private func startAtButton(startAt: GroupStartAts) -> UIButton {
-        let button = UIButton()
-        button.backgroundColor = .grey800
-        button.layer.cornerRadius = 12
-        button.layer.borderColor = viewModel.currentStartAt == startAt ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
-        button.layer.borderWidth = 1.5
-        button.tag = startAt.daysFromToday
-        button.addTarget(self, action: #selector(didTapStartAtButton(_:)), for: .touchUpInside)
-        return button
-    }
-    private var todayButton = UIButton()
-    private var tomorrowButton = UIButton()
-    private var startAtStack = UIStackView()
-    private func startAtImageView(startAt: GroupStartAts) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.image = .today.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = viewModel.currentStartAt == startAt ? .blue300 : .grey0
-        imageView.isUserInteractionEnabled = false
-        imageView.tag = startAt.daysFromToday
-        return imageView
-    }
-    private var todayImageView = UIImageView()
-    private var tomorrowImageView = UIImageView()
-    private func startAtTextLabel(startAt: GroupStartAts) -> UILabel {
-        let label = UILabel()
-        label.text = startAt.text + "시작"
-        label.textColor = viewModel.currentStartAt == startAt ? .blue300 : .grey0
-        label.font = Fonts.body1B
-        label.tag = startAt.daysFromToday
-        return label
-    }
-    private var todayLabel = UILabel()
-    private var tomorrowLabel = UILabel()
-    private func startAtDescriptionLabel(startAt: GroupStartAts) -> UILabel {
-        let label = UILabel()
-        label.attributedText = NSAttributedString(
-            string: startAt.description,
-            attributes: Fonts.getAttributes(for: Fonts.body2R, textAlignment: .left)
-        )
-        label.textColor = viewModel.currentStartAt == startAt ? .blue300 : .grey0
-        label.numberOfLines = 0
-        label.tag = startAt.daysFromToday
-        return label
-    }
-    private var todayDescriptionLabel = UILabel()
-    private var tomorrowDescriptionLabel = UILabel()
+    
     private let dogetherGroupInfo = DogetherGroupInfo()
     
     override func viewDidLoad() {
@@ -213,22 +157,17 @@ final class GroupCreateViewController: BaseViewController {
         stepTwo = stepLabel(step: .two)
         stepThree = stepLabel(step: .three)
         stepFour = stepLabel(step: .four)
-        stepLabelStack = stepLabelStackView(labels: [stepOne, stepTwo, stepThree, stepFour])
+        stepLabelStackView = stepLabelStackView(labels: [stepOne, stepTwo, stepThree, stepFour])
         
-        stepDescriptionLabel = descriptionLabel(step: viewModel.currentStep)
+        stepDescriptionLabel.text = viewModel.currentStep.description
         
         stepOneView = stepView(step: .one)
         stepTwoView = stepView(step: .two)
         stepThreeView = stepView(step: .three)
         stepFourView = stepView(step: .four)
         
-        completeButton.action = { @MainActor in
-            if self.viewModel.currentStep == .four {
-                let completeViewController = CompleteViewController(type: .create)
-                completeViewController.viewModel.joinCode = await self.viewModel.getJoinCode()
-                NavigationManager.shared.setNavigationController(completeViewController)
-            } else {
-                await self.viewModel.completeAction()
+        completeButton.setAction {
+            self.viewModel.completeAction {
                 self.updateStep()
             }
         }
@@ -237,6 +176,7 @@ final class GroupCreateViewController: BaseViewController {
         groupNameTextField.delegate = self
         groupNameTextField.addTarget(self, action: #selector(didChangeGroupName), for: .editingChanged)
         groupNameMaxLengthLabel.text = "/\(viewModel.groupNameMaxLength)"
+        
         memberCount = componentTitleLabel(componentTitle: "그룹 인원")
         memberCountView = DogetherCountView(changeCountAction: {
             self.viewModel.updateMemberCount(count: $0)
@@ -246,34 +186,27 @@ final class GroupCreateViewController: BaseViewController {
         todoLimitView = DogetherCountView(changeCountAction: {
             self.viewModel.updateTodoLimit(count: $0)
         }, min: 2, max: 10, current: viewModel.todoLimit, unit: "개")
-        duration = componentTitleLabel(componentTitle: "기간")
-        startAt = componentTitleLabel(componentTitle: "시작일")
         
-        threeDaysButton = durationButton(duration: .threeDays)
-        oneWeekButton = durationButton(duration: .oneWeek)
-        twoWeeksButton = durationButton(duration: .twoWeeks)
-        fourWeeksButton = durationButton(duration: .fourWeeks)
-        threeDaysLabel = durationLabel(duration: .threeDays)
-        oneWeekLabel = durationLabel(duration: .oneWeek)
-        twoWeeksLabel = durationLabel(duration: .twoWeeks)
-        fourWeeksLabel = durationLabel(duration: .fourWeeks)
+        duration = componentTitleLabel(componentTitle: "기간")
+        [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach {
+            $0.setAction(action: { self.updateDuration($0) })
+            $0.setColorful(isColorful: viewModel.currentDuration == $0.duration)
+        }
         durationRow1 = horizontalStackView(buttons: [threeDaysButton, oneWeekButton])
         durationRow2 = horizontalStackView(buttons: [twoWeeksButton, fourWeeksButton])
         durationStack = verticalStackView(stacks: [durationRow1, durationRow2])
-        todayButton = startAtButton(startAt: .today)
-        tomorrowButton = startAtButton(startAt: .tomorrow)
+        
+        startAt = componentTitleLabel(componentTitle: "시작일")
+        [todayButton, tomorrowButton].forEach {
+            $0.setAction(action: { self.updateStartAt($0) })
+            $0.setColorful(isColorful: viewModel.currentStartAt == $0.startAt)
+        }
         startAtStack = horizontalStackView(buttons: [todayButton, tomorrowButton])
-        todayImageView = startAtImageView(startAt: .today)
-        tomorrowImageView = startAtImageView(startAt: .tomorrow)
-        todayLabel = startAtTextLabel(startAt: .today)
-        tomorrowLabel = startAtTextLabel(startAt: .tomorrow)
-        todayDescriptionLabel = startAtDescriptionLabel(startAt: .today)
-        tomorrowDescriptionLabel = startAtDescriptionLabel(startAt: .tomorrow)
     }
     
     override func configureHierarchy() {
         [
-            dogetherHeader, stepLabelStack, stepDescriptionLabel, completeButton,
+            dogetherHeader, stepLabelStackView, stepDescriptionLabel, completeButton,
             stepOneView, stepTwoView, stepThreeView, stepFourView
         ].forEach { view.addSubview($0) }
         
@@ -284,11 +217,7 @@ final class GroupCreateViewController: BaseViewController {
         
         [todoLimit, todoLimitView].forEach { stepTwoView.addSubview($0) }
         
-        [
-            duration, durationStack, threeDaysLabel, oneWeekLabel, twoWeeksLabel, fourWeeksLabel,
-            startAt, startAtStack,
-            todayImageView, tomorrowImageView, todayLabel, tomorrowLabel, todayDescriptionLabel, tomorrowDescriptionLabel
-        ].forEach { stepThreeView.addSubview($0) }
+        [duration, durationStack, startAt, startAtStack].forEach { stepThreeView.addSubview($0) }
         
         [dogetherGroupInfo].forEach { stepFourView.addSubview($0) }
     }
@@ -300,7 +229,7 @@ final class GroupCreateViewController: BaseViewController {
             $0.height.equalTo(28)
         }
         
-        stepLabelStack.snp.makeConstraints {
+        stepLabelStackView.snp.makeConstraints {
             $0.top.equalTo(dogetherHeader.snp.bottom).offset(56)
             $0.left.equalToSuperview().inset(16)
             $0.width.equalTo(24 * 4 + 8 * 3)
@@ -382,62 +311,16 @@ final class GroupCreateViewController: BaseViewController {
         }
         durationStack.snp.makeConstraints {
             $0.top.equalTo(duration.snp.bottom).offset(8)
-            $0.width.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(108)
-        }
-        threeDaysLabel.snp.makeConstraints {
-            $0.centerY.equalTo(threeDaysButton)
-            $0.left.equalTo(threeDaysButton).inset(16)
-        }
-        oneWeekLabel.snp.makeConstraints {
-            $0.centerY.equalTo(oneWeekButton)
-            $0.left.equalTo(oneWeekButton).inset(16)
-        }
-        twoWeeksLabel.snp.makeConstraints {
-            $0.centerY.equalTo(twoWeeksButton)
-            $0.left.equalTo(twoWeeksButton).inset(16)
-        }
-        fourWeeksLabel.snp.makeConstraints {
-            $0.centerY.equalTo(fourWeeksButton)
-            $0.left.equalTo(fourWeeksButton).inset(16)
         }
         startAt.snp.makeConstraints {
             $0.top.equalTo(durationStack.snp.bottom).offset(30)
         }
         startAtStack.snp.makeConstraints {
             $0.top.equalTo(startAt.snp.bottom).offset(8)
-            $0.width.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(166)
-        }
-        todayImageView.snp.makeConstraints {
-            $0.top.equalTo(todayButton).offset(26)
-            $0.left.equalTo(todayButton).inset(20)
-            $0.width.height.equalTo(24)
-        }
-        tomorrowImageView.snp.makeConstraints {
-            $0.top.equalTo(tomorrowButton).offset(26)
-            $0.left.equalTo(tomorrowButton).inset(20)
-            $0.width.height.equalTo(24)
-        }
-        todayLabel.snp.makeConstraints {
-            $0.top.equalTo(todayImageView.snp.bottom).offset(10)
-            $0.horizontalEdges.equalTo(todayButton).inset(20)
-            $0.height.equalTo(25)
-        }
-        tomorrowLabel.snp.makeConstraints {
-            $0.top.equalTo(tomorrowImageView.snp.bottom).offset(10)
-            $0.horizontalEdges.equalTo(tomorrowButton).inset(20)
-            $0.height.equalTo(25)
-        }
-        todayDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(todayLabel.snp.bottom).offset(12)
-            $0.bottom.equalTo(todayButton).inset(27)
-            $0.horizontalEdges.equalTo(todayButton).inset(20)
-        }
-        tomorrowDescriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(tomorrowLabel.snp.bottom).offset(12)
-            $0.bottom.equalTo(tomorrowButton).inset(27)
-            $0.horizontalEdges.equalTo(tomorrowButton).inset(20)
         }
 
         // MARK: - stepFour
@@ -491,48 +374,19 @@ final class GroupCreateViewController: BaseViewController {
         }
     }
     
-    @objc private func didTapDurationButton(_ sender: UIButton) {
-        guard let duration = GroupChallengeDurations(rawValue: sender.tag) else { return }
+    private func updateDuration(_ duration: GroupChallengeDurations) {
+        viewModel.updateDuration(duration: duration)
         
-        Task { @MainActor in
-            await viewModel.updateDuration(duration: duration)
-            updateDuration()
-        }
-    }
-    
-    private func updateDuration() {
         [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach {
-            guard let duration = GroupChallengeDurations(rawValue: $0.tag) else { return }
-            $0.layer.borderColor = viewModel.currentDuration == duration ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
-        }
-        [threeDaysLabel, oneWeekLabel, twoWeeksLabel, fourWeeksLabel].forEach {
-            guard let duration = GroupChallengeDurations(rawValue: $0.tag) else { return }
-            $0.textColor = viewModel.currentDuration == duration ? .blue300 : .grey0
-            $0.font = viewModel.currentDuration == duration ? Fonts.body1B : Fonts.body1S
+            $0.setColorful(isColorful: viewModel.currentDuration == $0.duration)
         }
     }
     
-    @objc private func didTapStartAtButton(_ sender: UIButton) {
-        guard let startAt = GroupStartAts.allCases.first(where: { $0.daysFromToday == sender.tag }) else { return }
+    private func updateStartAt(_ startAt: GroupStartAts) {
+        viewModel.updateStartAt(startAt: startAt)
         
-        Task { @MainActor in
-            await viewModel.updateStartAt(startAt: startAt)
-            updateStartAt()
-        }
-    }
-    
-    private func updateStartAt() {
-        [todayButton, tomorrowButton].forEach { button in
-            guard let startAt = GroupStartAts.allCases.first(where: { $0.daysFromToday == button.tag }) else { return }
-            button.layer.borderColor = viewModel.currentStartAt == startAt ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
-        }
-        [todayImageView, tomorrowImageView].forEach { imageView in
-            guard let startAt = GroupStartAts.allCases.first(where: { $0.daysFromToday == imageView.tag }) else { return }
-            imageView.tintColor = viewModel.currentStartAt == startAt ? .blue300 : .grey0
-        }
-        [todayLabel, tomorrowLabel, todayDescriptionLabel, tomorrowDescriptionLabel].forEach { label in
-            guard let startAt = GroupStartAts.allCases.first(where: { $0.daysFromToday == label.tag }) else { return }
-            label.textColor = viewModel.currentStartAt == startAt ? .blue300 : .grey0
+        [todayButton, tomorrowButton].forEach {
+            $0.setColorful(isColorful: viewModel.currentStartAt == $0.startAt)
         }
     }
 }

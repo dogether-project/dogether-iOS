@@ -6,10 +6,20 @@
 //
 
 import Foundation
+import UIKit
 
 enum GroupStartAts: String, CaseIterable {
     case today = "TODAY"
     case tomorrow = "TOMORROW"
+    
+    var image: UIImage {
+        switch self {
+        case .today:
+            return .today
+        case .tomorrow:
+            return .tomorrow
+        }
+    }
     
     var text: String {
         switch self {
