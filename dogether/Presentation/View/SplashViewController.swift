@@ -37,7 +37,7 @@ final class SplashViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.loadApp()
+        viewModel.launchApp()
     }
     
     override func configureView() { }

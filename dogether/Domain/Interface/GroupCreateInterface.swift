@@ -8,5 +8,5 @@
 import Foundation
 
 protocol GroupCreateInterface {
-    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> String
+    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse
 }

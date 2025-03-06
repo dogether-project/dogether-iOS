@@ -8,7 +8,7 @@
 import Foundation
 
 final class GroupCreateRepository: GroupCreateInterface {
-    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> String {
+    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
         try await GroupsDataSource.shared.createGroup(createGroupRequest: createGroupRequest)
     }
 }

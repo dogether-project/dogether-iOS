@@ -8,5 +8,5 @@
 import Foundation
 
 protocol AppLaunchInterface {
-    func getIsJoining() async throws -> Bool
+    func getIsJoining() async throws -> GetIsJoiningResponse
 }

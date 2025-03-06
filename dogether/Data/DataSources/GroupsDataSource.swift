@@ -12,15 +12,13 @@ final class GroupsDataSource {
     
     private init() { }
     
-    func getIsJoining() async throws -> Bool {
-        let response: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
-        return response.isJoining
+    func getIsJoining() async throws -> GetIsJoiningResponse {
+        return try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
     }
     
-    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> String {
-        let response: CreateGroupResponse = try await NetworkManager.shared.request(
+    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
+        return try await NetworkManager.shared.request(
             GroupsRouter.createGroup(createGroupRequest: createGroupRequest)
         )
-        return response.joinCode
     }
 }
