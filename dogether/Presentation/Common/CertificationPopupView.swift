@@ -385,15 +385,13 @@ extension CertificationPopupView: UITextViewDelegate {
     
     // MARK: - UITextFieldDelegate
     @objc private func keyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect,
-                 let superview = self.superview else { return }
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
         self.snp.updateConstraints { $0.centerY.equalToSuperview().offset(-keyboardHeight / 2) }
         UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
     }
     
     @objc private func keyboardWillHide(_ notification: Notification) {
-        guard let superview = self.superview else { return }
         self.snp.updateConstraints { $0.centerY.equalToSuperview() }
         UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
     }

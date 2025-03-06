@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 final class DogetherButton: UIButton {
-    var action: () async -> Void    // TODO: 추후 개선
+    private(set) var action: () async -> Void
     private(set) var title: String
     private(set) var status: ButtonStatus
     
@@ -48,6 +48,10 @@ final class DogetherButton: UIButton {
             $0.width.equalToSuperview()
             $0.height.equalTo(50)
         }
+    }
+    
+    func setAction(_ action: @escaping () -> Void) {
+        self.action = action
     }
     
     func setTitle(_ title: String) {

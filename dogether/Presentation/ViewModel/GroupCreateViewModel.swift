@@ -8,7 +8,10 @@
 import Foundation
 
 final class GroupCreateViewModel {
+    private let groupCreateUseCase: GroupCreateUseCase
+    
     let groupNameMaxLength: Int = 12
+    
     private(set) var currentStep: CreateGroupSteps = .one
     private(set) var isDisabledCompleteButton: Bool = true
     private(set) var currentGroupName: String = ""
@@ -17,49 +20,50 @@ final class GroupCreateViewModel {
     private(set) var currentDuration: GroupChallengeDurations = .threeDays
     private(set) var currentStartAt: GroupStartAts = .today
     
-    func updateStep(step: CreateGroupSteps) async {
+    init() {
+        let groupCreateRepository = GroupCreateRepository()
+        self.groupCreateUseCase = GroupCreateUseCase(repository: groupCreateRepository)
+    }
+    
+    func updateStep(step: CreateGroupSteps) {
         currentStep = step
     }
     
-    func completeAction() async {
-        guard let nextStep = CreateGroupSteps(rawValue: currentStep.rawValue + 1) else { return }
-        await updateStep(step: nextStep)
-    }
-    
-    func getJoinCode() async -> String {
-        // TODO: 추후 UseCase 추가
-        let createGroupRequest = CreateGroupRequest(
-            name: currentGroupName,
-            maximumMemberCount: memberCount,
-            startAt: currentStartAt,
-            durationOption: currentDuration,
-            maximumTodoCount: todoLimit
-        )
-        do {
-            let response: CreateGroupResponse = try await NetworkManager.shared.request(GroupsRouter.createGroup(createGroupRequest: createGroupRequest))
-            
-            return response.joinCode
-        } catch {
-            // TODO: API 실패 시 처리에 대해 추후 논의
+    func completeAction(updateStepUI: @escaping () -> Void) {
+        if currentStep == .four {
+            let createGroupRequest = CreateGroupRequest(
+                name: currentGroupName,
+                maximumMemberCount: memberCount,
+                startAt: currentStartAt,
+                durationOption: currentDuration,
+                maximumTodoCount: todoLimit
+            )
+            groupCreateUseCase.navigateToCompleteView(createGroupRequest: createGroupRequest)
+        } else {
+            guard let nextStep = CreateGroupSteps(rawValue: currentStep.rawValue + 1) else { return }
+            updateStep(step: nextStep)
+            updateStepUI()
         }
-        return ""
     }
     
     func updateGroupName(groupName: String?) async -> (String, ButtonStatus) {
         currentGroupName = groupName ?? ""
-        let buttonStatus: ButtonStatus = currentStep == .one && currentGroupName.count > 0 ? .enabled : .disabled
-        return (currentGroupName, buttonStatus)
+        return (currentGroupName, currentStep == .one && currentGroupName.count > 0 ? .enabled : .disabled)
     }
+    
     func updateMemberCount(count: Int) {
         memberCount = count
     }
+    
     func updateTodoLimit(count: Int) {
         todoLimit = count
     }
-    func updateDuration(duration: GroupChallengeDurations) async {
+    
+    func updateDuration(duration: GroupChallengeDurations) {
         currentDuration = duration
     }
-    func updateStartAt(startAt: GroupStartAts) async {
+    
+    func updateStartAt(startAt: GroupStartAts) {
         currentStartAt = startAt
     }
 }

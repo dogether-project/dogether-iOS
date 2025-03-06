@@ -56,4 +56,13 @@ enum GroupTypes: Int {
             return ""
         }
     }
+    
+    var destination: UIViewController {
+        switch self {
+        case .create:
+            return GroupCreateViewController()
+        case .join:
+            return GroupJoinViewController()
+        }
+    }
 }

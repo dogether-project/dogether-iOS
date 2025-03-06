@@ -1,5 +1,5 @@
 //
-//  S3.swift
+//  S3Router.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/12/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum S3: NetworkEndpoint {
+enum S3Router: NetworkEndpoint {
     case presignedUrls(presignedUrlRequest: PresignedUrlRequest)
     
     var path: String {

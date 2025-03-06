@@ -36,7 +36,7 @@ final class ModalityViewController: BaseViewController {
     }
     
     override func configureView() {
-        closeButton.action = didTapCloseButton
+        closeButton.setAction(didTapCloseButton)
         todoExaminationModalityView = ExaminationModalityView(buttonAction: { type in
             switch type {
             case .reject:

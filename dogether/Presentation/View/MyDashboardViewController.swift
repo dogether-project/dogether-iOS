@@ -435,7 +435,6 @@ extension MyDashboardViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         if collectionView == myDataCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MyDashboardCollectionViewCell.identifier, for: indexPath) as! MyDashboardCollectionViewCell
             
@@ -454,7 +453,6 @@ extension MyDashboardViewController: UICollectionViewDelegate, UICollectionViewD
             
             return cell
         }
-        return UICollectionViewCell()
     }
     
     private func updateCollectionViewData(mySummary: GetMySummaryResponse) {
