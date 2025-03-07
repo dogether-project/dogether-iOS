@@ -11,6 +11,7 @@ import SnapKit
 
 final class MainViewController: BaseViewController {
     private var viewModel = MainViewModel()
+    
     private var dogetherPanGesture: UIPanGestureRecognizer!
     private var dogetherSheetTopConstraint: Constraint?
     
@@ -128,6 +129,7 @@ final class MainViewController: BaseViewController {
         
         return button
     }()
+    
     private let dogetherSheet = {
         let view = UIView()
         view.backgroundColor = .grey800
@@ -136,96 +138,161 @@ final class MainViewController: BaseViewController {
         view.isUserInteractionEnabled = true
         return view
     }()
+    
     private let dogetherSheetHeaderLabel = {
         let label = UILabel()
         label.textColor = .grey0
         label.font = Fonts.head2B
         return label
     }()
+    
     private func dogetherContentView(status: MainViewStatus) -> UIView {
         let view = UIView()
         view.tag = status.rawValue
         view.isHidden = viewModel.mainViewStatus != status
         return view
     }
-    private let dogetherScrollView = UIScrollView()
     private var beforeStartView = UIView()
     private var emptyListView = UIView()
     private var todoListView = UIView()
+    
     private let timerView = {
         let view = UIView()
         view.backgroundColor = .grey700
         view.layer.cornerRadius = 142 / 2
+        
+        let imageView = UIImageView()
+        imageView.image = .wait.withRenderingMode(.alwaysTemplate)
+        imageView.tintColor = .blue300
+        
+        [imageView].forEach { view.addSubview($0) }
+        
+        imageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-20)
+            $0.width.height.equalTo(20)
+        }
+        
         return view
     }()
-    private let timerInfoView = UIView()
-    private var timeProgress = UIView()
-    private let timeProgressLayer = {
+    
+    private let timeProgress = {
+        let view = UIView()
+        
         let shapeLayer = CAShapeLayer()
         shapeLayer.strokeColor = UIColor.blue300.cgColor
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.lineWidth = 6
-        return shapeLayer
+        
+        let viewSize: CGFloat = 142
+        let circlePath = UIBezierPath(
+            arcCenter: CGPoint(x: viewSize / 2, y: viewSize / 2),
+            radius: (viewSize - 6) / 2,
+            startAngle: -CGFloat.pi / 2,
+            endAngle: 1.5 * CGFloat.pi,
+            clockwise: true
+        )
+        
+        shapeLayer.path = circlePath.cgPath
+        view.layer.addSublayer(shapeLayer)
+            
+        return view
     }()
-    private let timerImageView = {
-        let imageView = UIImageView()
-        imageView.image = .wait.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .blue300
-        return imageView
-    }()
+    
     private let timerLabel = {
         let label = UILabel()
         label.textColor = .grey0
         label.font = Fonts.head1B
         return label
     }()
-    private let beforeStartTitleLabel = {
-        let label = UILabel()
-        label.text = "내일부터 투두를 시작할 수 있어요!"
-        label.textColor = .grey0
-        label.font = Fonts.head2B
-        return label
+    
+    private let timerDescription = {
+        let title = UILabel()
+        title.text = "내일부터 투두를 시작할 수 있어요!"
+        title.textColor = .grey0
+        title.font = Fonts.head2B
+        
+        let subTitle = UILabel()
+        subTitle.text = "오늘은 계획을 세우고, 내일부터 실천해보세요!"
+        subTitle.textColor = .grey300
+        subTitle.font = Fonts.body2R
+        
+        let stackView = UIStackView(arrangedSubviews: [title, subTitle])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 4
+        
+        title.snp.makeConstraints {
+            $0.height.equalTo(28)
+        }
+        
+        subTitle.snp.makeConstraints {
+            $0.height.equalTo(21)
+        }
+        
+        return stackView
     }()
-    private let beforeStartSubTitleLabel = {
-        let label = UILabel()
-        label.text = "오늘은 계획을 세우고, 내일부터 실천해보세요!"
-        label.textColor = .grey300
-        label.font = Fonts.body2R
-        return label
+    
+    private let todoView = {
+        let imageView = UIImageView(image: .todo)
+        imageView.contentMode = .scaleAspectFit
+        
+        let title = UILabel()
+        title.text = "오늘의 투두를 작성해보세요"
+        title.textColor = .grey0
+        title.font = Fonts.head2B
+        
+        let subTitle = UILabel()
+        subTitle.text = "매일 자정부터 새로운 투두를 입력해요"
+        subTitle.textColor = .grey300
+        subTitle.font = Fonts.body2R
+        
+        let stackView = UIStackView(arrangedSubviews: [imageView, title, subTitle])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 0
+        stackView.setCustomSpacing(10, after: imageView)
+        stackView.setCustomSpacing(4, after: title)
+        
+        imageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(UIScreen.main.bounds.width * 0.53)
+            if let image = imageView.image {
+                $0.height.equalTo(imageView.snp.width).multipliedBy(image.size.height / image.size.width)
+            }
+        }
+        
+        title.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(28)
+        }
+        
+        subTitle.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(21)
+        }
+        
+        return stackView
     }()
-    private let todoImageView = {
-        let imageView = UIImageView()
-        imageView.image = .todo
-        return imageView
-    }()
-    private let todoTitleLabel = {
-        let label = UILabel()
-        label.text = "오늘의 투두를 작성해보세요"
-        label.textColor = .grey0
-        label.font = Fonts.head2B
-        return label
-    }()
-    private let todoSubTitleLabel = {
-        let label = UILabel()
-        label.text = "매일 자정부터 새로운 투두를 입력해요"
-        label.textColor = .grey300
-        label.font = Fonts.body2R
-        return label
-    }()
+    
     private let todoButton = DogetherButton(action: { }, title: "투두 작성하기", status: .enabled)
     
     private var allButton = FilterButton(action: { _ in }, type: .all)
     private var waitButton = FilterButton(action: { _ in }, type: .wait)
     private var rejectButton = FilterButton(action: { _ in }, type: .reject)
     private var approveButton = FilterButton(action: { _ in }, type: .approve)
-    private func filterButtonStackView(buttons: [UIButton]) -> UIStackView {
+    
+    private func filterStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
         stackView.axis = .horizontal
         stackView.spacing = 8
         return stackView
     }
     private var filterStackView = UIStackView()
-    private func todoItemStackView(items: [DogetherTodoItem]) -> UIStackView {
+    
+    private let todoScrollView = UIScrollView()
+    
+    private func todoListStackView(items: [DogetherTodoItem]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: items)
         stackView.axis = .vertical
         stackView.spacing = 8
@@ -278,24 +345,6 @@ final class MainViewController: BaseViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        timeProgress.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-        
-        let circlePath = UIBezierPath(
-            arcCenter: CGPoint(x: timeProgress.bounds.width / 2, y: timeProgress.bounds.height / 2),
-            radius: (timeProgress.bounds.width - 6) / 2,
-            startAngle: -CGFloat.pi / 2,
-            endAngle: 1.5 * CGFloat.pi,
-            clockwise: true
-        )
-        
-        timeProgressLayer.path = circlePath.cgPath
-        timeProgressLayer.strokeEnd = viewModel.timeProgress
-        timeProgress.layer.addSublayer(timeProgressLayer)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         // TODO: 임시로 모두 지웠다 다시 그리도록 구현, 추후 수정
         super.viewWillAppear(animated)
@@ -313,15 +362,12 @@ final class MainViewController: BaseViewController {
             }
             [dogetherHeader, groupInfoView, rankingButton, dogetherSheet].forEach { $0.removeFromSuperview() }
             
-            [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView, filterStackView, emptyDescriptionView].forEach { $0.removeFromSuperview() }
-            [
-                timerView, timerInfoView, timeProgress, timerImageView, timerLabel,
-                beforeStartTitleLabel, beforeStartSubTitleLabel
-            ].forEach { $0.removeFromSuperview() }
+            [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView].forEach { $0.removeFromSuperview() }
+            [timerView, timeProgress, timerLabel, timerDescription].forEach { $0.removeFromSuperview() }
             
-            [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { $0.removeFromSuperview() }
+            [todoView, todoButton].forEach { $0.removeFromSuperview() }
             
-            [dogetherScrollView].forEach { $0.removeFromSuperview() }
+            [todoScrollView, filterStackView, emptyDescriptionView].forEach { $0.removeFromSuperview() }
             [todoListStackView].forEach { $0.removeFromSuperview() }
             
             configureView()
@@ -329,7 +375,6 @@ final class MainViewController: BaseViewController {
             configureConstraints()
         }
     }
-    
     
     override func configureView() {
         groupInfoView = groupInfoView(groupInfo: viewModel.groupInfo)
@@ -343,15 +388,17 @@ final class MainViewController: BaseViewController {
         
         dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
         
-        dogetherScrollView.delegate = self
-        dogetherScrollView.bounces = false
-        dogetherScrollView.showsVerticalScrollIndicator = false
+        todoScrollView.delegate = self
+        todoScrollView.bounces = false
+        todoScrollView.showsVerticalScrollIndicator = false
         
         beforeStartView = dogetherContentView(status: .beforeStart)
         emptyListView = dogetherContentView(status: .emptyList)
         todoListView = dogetherContentView(status: .todoList)
         
         timerLabel.text = viewModel.time
+        let timeProgress = timeProgress.layer.sublayers?.first as? CAShapeLayer
+        timeProgress?.strokeEnd = viewModel.timeProgress
         
         todoButton.setAction {
             let todoWriteViewController = TodoWriteViewController()
@@ -372,8 +419,8 @@ final class MainViewController: BaseViewController {
             self.updateTodoList(type: $0)
         }, type: .approve, isColorful: viewModel.currentFilter == .approve)
         
-        filterStackView = filterButtonStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
-        todoListStackView = todoItemStackView(
+        filterStackView = filterStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
+        todoListStackView = todoListStackView(
             items: viewModel.todoList.map { todo in
                 DogetherTodoItem(action: {
                     if TodoStatus(rawValue: todo.status) == .waitCertificattion {
@@ -395,16 +442,14 @@ final class MainViewController: BaseViewController {
     override func configureHierarchy() {
         [dogetherHeader, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
-        [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView, filterStackView, emptyDescriptionView].forEach { dogetherSheet.addSubview($0) }
-        [
-            timerView, timerInfoView, timeProgress, timerImageView, timerLabel,
-            beforeStartTitleLabel, beforeStartSubTitleLabel
-        ].forEach { beforeStartView.addSubview($0) }
+        [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView].forEach { dogetherSheet.addSubview($0) }
         
-        [todoImageView, todoTitleLabel, todoSubTitleLabel, todoButton].forEach { emptyListView.addSubview($0) }
+        [timerView, timeProgress, timerLabel, timerDescription,].forEach { beforeStartView.addSubview($0) }
         
-        [dogetherScrollView].forEach { todoListView.addSubview($0) }
-        [todoListStackView].forEach { dogetherScrollView.addSubview($0) }
+        [todoView, todoButton].forEach { emptyListView.addSubview($0) }
+        
+        [todoScrollView, filterStackView, emptyDescriptionView].forEach { todoListView.addSubview($0) }
+        [todoListStackView].forEach { todoScrollView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -428,8 +473,7 @@ final class MainViewController: BaseViewController {
         
         dogetherSheet.snp.makeConstraints {
             dogetherSheetTopConstraint = $0.top.equalTo(view.safeAreaLayoutGuide).offset(SheetStatus.normal.offset).constraint
-            $0.bottom.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.left.right.equalToSuperview()
         }
         
         dogetherSheetHeaderLabel.snp.makeConstraints {
@@ -454,58 +498,26 @@ final class MainViewController: BaseViewController {
             $0.edges.equalTo(timerView)
         }
         
-        timerInfoView.snp.makeConstraints {
-            $0.center.equalTo(timerView)
-            $0.height.equalTo(58)
-        }
-        
-        timerImageView.snp.makeConstraints {
-            $0.centerX.equalTo(timerInfoView)
-            $0.top.equalTo(timerInfoView)
-            $0.width.height.equalTo(20)
-        }
-        
         timerLabel.snp.makeConstraints {
-            $0.centerX.equalTo(timerInfoView)
-            $0.bottom.equalTo(timerInfoView)
+            $0.centerX.equalTo(timerView)
+            $0.centerY.equalTo(timerView).offset(11)
             $0.height.equalTo(36)
         }
         
-        beforeStartTitleLabel.snp.makeConstraints {
+        timerDescription.snp.makeConstraints {
             $0.top.equalTo(timerView.snp.bottom).offset(24)
             $0.centerX.equalToSuperview()
-            $0.height.equalTo(28)
-        }
-        
-        beforeStartSubTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(beforeStartTitleLabel.snp.bottom).offset(4)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(21)
         }
         
         // MARK: - emptyList
         emptyListView.snp.makeConstraints {
-            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
-            $0.left.right.bottom.equalToSuperview()
+            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom)
+            $0.bottom.left.right.equalToSuperview()
         }
         
-        todoImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(40)
+        todoView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.width.equalTo(202)
-            $0.height.equalTo(131)
-        }
-        
-        todoTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(todoImageView.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(28)
-        }
-        
-        todoSubTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(todoTitleLabel.snp.bottom).offset(4)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(21)
+            $0.centerY.equalToSuperview().offset(-49)
         }
         
         todoButton.snp.makeConstraints {
@@ -515,28 +527,29 @@ final class MainViewController: BaseViewController {
         }
         
         // MARK: - todoList
+        todoListView.snp.makeConstraints {
+            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom)
+            $0.bottom.left.right.equalToSuperview()
+        }
+        
         filterStackView.snp.makeConstraints {
-            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
+            $0.top.equalToSuperview().offset(24)
             $0.left.equalToSuperview().offset(16)
         }
         
-        todoListView.snp.makeConstraints {
+        todoScrollView.snp.makeConstraints {
             $0.top.equalTo(filterStackView.snp.bottom).offset(28)
-            $0.width.equalToSuperview()
-            $0.height.equalTo(viewModel.todoListHeight)
-        }
-        
-        dogetherScrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
         }
         
         todoListStackView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.equalToSuperview().inset(16)
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview() // MARK: item 대신 stackView에서 너비 지정
         }
         
         emptyDescriptionView.snp.makeConstraints {
-            $0.centerX.equalTo(todoListView)
+            $0.centerX.equalToSuperview()
             $0.top.equalTo(filterStackView.snp.bottom).offset(125)
             $0.width.equalTo(233)
             $0.height.equalTo(98)
@@ -620,7 +633,7 @@ extension MainViewController: UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        if viewModel.sheetStatus == .expand && dogetherScrollView.contentOffset.y > 0 { return false }
+        if viewModel.sheetStatus == .expand && todoScrollView.contentOffset.y > 0 { return false }
         return true
     }
 }

@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 final class MainViewModel {
+    private let mainUseCase: MainUseCase
+    
     private(set) var mainViewStatus: MainViewStatus = .emptyList
     private(set) var isBlockPanGesture: Bool = true
     
@@ -27,6 +29,11 @@ final class MainViewModel {
     
     // MARK: - Computed
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
+    
+    init() {
+        let mainRepository = MainRepository()
+        self.mainUseCase = MainUseCase(repository: mainRepository)
+    }
     
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
         self.isBlockPanGesture = isBlockPanGesture
