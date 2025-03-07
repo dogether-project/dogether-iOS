@@ -593,7 +593,14 @@ final class MainViewController: BaseViewController {
     }
     
     @objc private func didTapRankingButton() {
-        NavigationManager.shared.pushViewController(RankingViewController())
+        Task {
+            let response: GetTeamSummaryResponse = try await NetworkManager.shared.request(GroupsRouter.getTeamSummary)
+            await MainActor.run {
+                let rankingViewController = RankingViewController()
+                rankingViewController.rankings = response.ranking
+                NavigationManager.shared.pushViewController(rankingViewController)
+            }
+        }
     }
     
     private func updateTodoList(type: FilterTypes) {
