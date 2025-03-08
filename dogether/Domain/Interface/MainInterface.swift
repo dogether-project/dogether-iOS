@@ -8,5 +8,8 @@
 import Foundation
 
 protocol MainInterface {
+    func getGroupStatus() async throws -> GetGroupStatusResponse
+    func getGroupInfo() async throws -> GetGroupInfoResponse
     
+    func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse
 }

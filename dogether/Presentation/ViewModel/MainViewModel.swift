@@ -35,6 +35,29 @@ final class MainViewModel {
         self.mainUseCase = MainUseCase(repository: mainRepository)
     }
     
+    func loadMainView(completeAction: @escaping () -> Void) {
+        Task {
+            mainViewStatus = try await mainUseCase.getMainViewStatus()
+            groupInfo = try await mainUseCase.getGroupInfo()
+            try await updateListInfo()
+            await MainActor.run { completeAction() }
+        }
+    }
+    
+    func navigateToTodoWriteView() {
+        mainUseCase.navigateToTodoWriteView(maximumTodoCount: groupInfo.maximumTodoCount)
+    }
+    
+    func didTapTodoItem(todo: TodoInfo) {
+        if TodoStatus(rawValue: todo.status) == .waitCertificattion {
+            PopupManager.shared.showPopup(type: .certification, completion: {
+                // TODO: 추후에 인증을 성공했을 때 UI 업데이트 등 추가
+            }, todoInfo: todo)
+        } else {
+            PopupManager.shared.showPopup(type: .certificationInfo, todoInfo: todo)
+        }
+    }
+    
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
         self.isBlockPanGesture = isBlockPanGesture
     }
@@ -43,51 +66,20 @@ final class MainViewModel {
         self.sheetStatus = sheetStatus
     }
     
-    func updateFilter(_ filter: FilterTypes) {
+    func updateFilter(filter: FilterTypes, completeAction: @escaping () -> Void) {
         self.currentFilter = filter
         
-        Task { @MainActor in
-            try await self.getTodos()
+        Task {
+            try await updateListInfo()
+            await MainActor.run { completeAction() }
         }
     }
     
-    func setTodoList(_ todoList: [TodoInfo]) {
-        self.mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
-        self.todoList = todoList
-        self.isBlockPanGesture = self.todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
-    }
-    
-    func getGroupStatus() async throws {
-        let response: GetGroupStatusResponse = try await NetworkManager.shared.request(GroupsRouter.getGroupStatus)
-        // TODO: 추후 수정 (FINISHED에 대한 정의가 제대로 나오면 MainViewStatus와 결합하며 enum으로 수정)
-        mainViewStatus = response.status == "READY" ? .beforeStart : .emptyList
-    }
-    
-    func getGroupInfo() async throws {
-        let response: GetGroupInfoResponse = try await NetworkManager.shared.request(GroupsRouter.getGroupInfo)
-        self.groupInfo = GroupInfo(
-            name: response.name,
-            duration: response.duration,
-            joinCode: response.joinCode,
-            maximumTodoCount: response.maximumTodoCount,
-            endAt: response.endAt,
-            remainingDays: response.remainingDays
-        )
-    }
-    
-    func getTodos() async throws {
-        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
-        let status: TodoStatus? = currentFilter == .all ? nil : TodoStatus.allCases.first(where: { $0.tag == currentFilter.tag })
-        let response: GetMyTodosResponse = try await NetworkManager.shared.request(TodosRouter.getMyTodos(date: date, status: status))
-        self.setTodoList(response.todos)
-    }
-    
-    func getReviews() async throws {
-        let response: GetReviewsResponse = try await NetworkManager.shared.request(TodoCertificationsRouter.getReviews)
-        if response.dailyTodoCertifications.count > 0 {
-            Task { @MainActor in
-                ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
-            }
-        }
+    private func updateListInfo() async throws {
+        if mainViewStatus == .beforeStart { return }
+        
+        todoList = try await mainUseCase.getTodoList(dateOffset: dateOffset, currentFilter: currentFilter)
+        mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
+        isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }
 }

@@ -17,75 +17,7 @@ final class MainViewController: BaseViewController {
     
     private let dogetherHeader = DogetherHeader()
     
-    private func groupInfoView(groupInfo: GroupInfo) -> UIView {
-        let view = UIView()
-        view.isUserInteractionEnabled = true
-        
-        let nameLabel = UILabel()
-        nameLabel.text = groupInfo.name
-        nameLabel.textColor = .blue300
-        nameLabel.font = Fonts.emphasis2B
-        
-        func descriptionLabel(text: String) -> UILabel {
-            let label = UILabel()
-            label.attributedText = NSAttributedString(
-                string: text,
-                attributes: Fonts.getAttributes(for: Fonts.body2S, textAlignment: .left)
-            )
-            label.textColor = .grey300
-            return label
-        }
-        
-        func infoLabel(text: String) -> UILabel {
-            let label = UILabel()
-            label.attributedText = NSAttributedString(
-                string: text,
-                attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-            )
-            label.textColor = .grey0
-            return label
-        }
-        
-        let durationDescriptionLabel = descriptionLabel(text: "총 기간")
-        let durationInfoLabel = infoLabel(text: "\(groupInfo.duration)일")
-        
-        let joinCodeDescriptionLabel = descriptionLabel(text: "초대코드")
-        let joinCodeInfoLabel = infoLabel(text: groupInfo.joinCode)
-        
-        let endDateDescriptionLabel = descriptionLabel(text: "종료일")
-        let endDateInfoLabel = infoLabel(
-            text: "\(groupInfo.endAt)(D-\(groupInfo.remainingDays))"
-        )
-        
-        func infoStackView(labels: [UILabel]) -> UIStackView {
-            let stackView = UIStackView(arrangedSubviews: labels)
-            stackView.axis = .vertical
-            return stackView
-        }
-        
-        let durationStackView = infoStackView(labels: [durationDescriptionLabel, durationInfoLabel])
-        let joinCodeStackView = infoStackView(labels: [joinCodeDescriptionLabel, joinCodeInfoLabel])
-        let endDateStackView = infoStackView(labels: [endDateDescriptionLabel, endDateInfoLabel])
-        
-        let groupInfoStackView = UIStackView(arrangedSubviews: [durationStackView, joinCodeStackView, endDateStackView])
-        groupInfoStackView.axis = .horizontal
-        groupInfoStackView.spacing = 28
-        
-        [nameLabel, groupInfoStackView].forEach { view.addSubview($0) }
-        
-        nameLabel.snp.makeConstraints {
-            $0.top.left.equalToSuperview()
-            $0.height.equalTo(36)
-        }
-        
-        groupInfoStackView.snp.makeConstraints {
-            $0.top.equalTo(nameLabel.snp.bottom).offset(16)
-            $0.left.equalToSuperview()
-        }
-        
-        return view
-    }
-    private var groupInfoView = UIView()
+    private let groupInfoView = GroupInfoView()
     
     private let rankingButton = {
         let button = UIButton()
@@ -146,15 +78,9 @@ final class MainViewController: BaseViewController {
         return label
     }()
     
-    private func dogetherContentView(status: MainViewStatus) -> UIView {
-        let view = UIView()
-        view.tag = status.rawValue
-        view.isHidden = viewModel.mainViewStatus != status
-        return view
-    }
-    private var beforeStartView = UIView()
-    private var emptyListView = UIView()
-    private var todoListView = UIView()
+    private let beforeStartView = UIView()
+    private let emptyListView = UIView()
+    private let todoListView = UIView()
     
     private let timerView = {
         let view = UIView()
@@ -277,10 +203,10 @@ final class MainViewController: BaseViewController {
     
     private let todoButton = DogetherButton(action: { }, title: "투두 작성하기", status: .enabled)
     
-    private var allButton = FilterButton(action: { _ in }, type: .all)
-    private var waitButton = FilterButton(action: { _ in }, type: .wait)
-    private var rejectButton = FilterButton(action: { _ in }, type: .reject)
-    private var approveButton = FilterButton(action: { _ in }, type: .approve)
+    private let allButton = FilterButton(action: { _ in }, type: .all)
+    private let waitButton = FilterButton(action: { _ in }, type: .wait)
+    private let rejectButton = FilterButton(action: { _ in }, type: .reject)
+    private let approveButton = FilterButton(action: { _ in }, type: .approve)
     
     private func filterStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
@@ -330,6 +256,10 @@ final class MainViewController: BaseViewController {
     }
     private var emptyDescriptionView = UIView()
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -341,102 +271,31 @@ final class MainViewController: BaseViewController {
         )
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
-        // TODO: 임시로 모두 지웠다 다시 그리도록 구현, 추후 수정
         super.viewWillAppear(animated)
-        Task { @MainActor in
-            do {
-                try await viewModel.getGroupStatus()
-                try await viewModel.getGroupInfo()
-                if viewModel.mainViewStatus != .beforeStart {
-                    try await viewModel.getTodos()
-                }
-                
-                try await viewModel.getReviews()
-            } catch {
-                // TODO: API 실패 시 처리에 대해 추후 논의
-            }
-            [dogetherHeader, groupInfoView, rankingButton, dogetherSheet].forEach { $0.removeFromSuperview() }
-            
-            [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView].forEach { $0.removeFromSuperview() }
-            [timerView, timeProgress, timerLabel, timerDescription].forEach { $0.removeFromSuperview() }
-            
-            [todoView, todoButton].forEach { $0.removeFromSuperview() }
-            
-            [todoScrollView, filterStackView, emptyDescriptionView].forEach { $0.removeFromSuperview() }
-            [todoListStackView].forEach { $0.removeFromSuperview() }
-            
-            configureView()
-            configureHierarchy()
-            configureConstraints()
-        }
+        
+        viewModel.loadMainView(completeAction: updateView)
     }
     
     override func configureView() {
-        groupInfoView = groupInfoView(groupInfo: viewModel.groupInfo)
-        groupInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapGroupInfoView)))
-        
         rankingButton.addTarget(self, action: #selector(didTapRankingButton), for: .touchUpInside)
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
         
-        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
-        
         todoScrollView.delegate = self
         todoScrollView.bounces = false
         todoScrollView.showsVerticalScrollIndicator = false
         
-        beforeStartView = dogetherContentView(status: .beforeStart)
-        emptyListView = dogetherContentView(status: .emptyList)
-        todoListView = dogetherContentView(status: .todoList)
+        todoButton.setAction(viewModel.navigateToTodoWriteView)
         
-        timerLabel.text = viewModel.time
-        let timeProgress = timeProgress.layer.sublayers?.first as? CAShapeLayer
-        timeProgress?.strokeEnd = viewModel.timeProgress
-        
-        todoButton.setAction {
-            let todoWriteViewController = TodoWriteViewController()
-            todoWriteViewController.maximumTodoCount = self.viewModel.groupInfo.maximumTodoCount
-            NavigationManager.shared.pushViewController(todoWriteViewController)
-        }
-        
-        allButton = FilterButton(action: {
-            self.updateTodoList(type: $0)
-        }, type: .all, isColorful: viewModel.currentFilter == .all)
-        waitButton = FilterButton(action: {
-            self.updateTodoList(type: $0)
-        }, type: .wait, isColorful: viewModel.currentFilter == .wait)
-        rejectButton = FilterButton(action: {
-            self.updateTodoList(type: $0)
-        }, type: .reject, isColorful: viewModel.currentFilter == .reject)
-        approveButton = FilterButton(action: {
-            self.updateTodoList(type: $0)
-        }, type: .approve, isColorful: viewModel.currentFilter == .approve)
+        allButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
+        waitButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
+        rejectButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
+        approveButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
         
         filterStackView = filterStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
-        todoListStackView = todoListStackView(
-            items: viewModel.todoList.map { todo in
-                DogetherTodoItem(action: {
-                    if TodoStatus(rawValue: todo.status) == .waitCertificattion {
-                        PopupManager.shared.showPopup(type: .certification, completion: {
-                            // TODO: 추후에 인증을 성공했을 때 UI 업데이트 등 추가
-                        }, todoInfo: todo)
-                    } else {
-                        PopupManager.shared.showPopup(type: .certificationInfo, todoInfo: todo)
-                    }
-                }, todo: todo)
-            }
-        )
-        filterStackView.isHidden = viewModel.mainViewStatus != .todoList
-        
-        emptyDescriptionView = emptyDescriptionView(type: viewModel.currentFilter)
-        emptyDescriptionView.isHidden = viewModel.mainViewStatus != .todoList || (viewModel.mainViewStatus == .todoList && !viewModel.todoList.isEmpty)
     }
     
     override func configureHierarchy() {
@@ -590,21 +449,6 @@ final class MainViewController: BaseViewController {
         }
     }
     
-    private func updateSheetStatus(to status: SheetStatus) {
-        viewModel.setIsBlockPanGesture(true)
-        UIView.animate(withDuration: 0.3) {
-            self.dogetherSheetTopConstraint?.update(offset: status.offset)
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.viewModel.setIsBlockPanGesture(false)
-            self.viewModel.updateSheetStatus(status)
-        }
-    }
-    
-    @objc private func didTapGroupInfoView() {
-        present(UIActivityViewController(activityItems: [viewModel.groupInfo.joinCode], applicationActivities: nil), animated: true)
-    }
-    
     @objc private func didTapRankingButton() {
         Task {
             let response: GetTeamSummaryResponse = try await NetworkManager.shared.request(GroupsRouter.getTeamSummary)
@@ -615,15 +459,54 @@ final class MainViewController: BaseViewController {
             }
         }
     }
-    
-    private func updateTodoList(type: FilterTypes) {
-        viewModel.updateFilter(type)
-        allButton.setIsColorful(type == .all)
-        waitButton.setIsColorful(type == .wait)
-        rejectButton.setIsColorful(type == .reject)
-        approveButton.setIsColorful(type == .approve)
+}
+
+// MARK: - update UI
+extension MainViewController {
+    private func updateView() {
+        groupInfoView.setGroupInfo(groupInfo: viewModel.groupInfo)
         
-        viewWillAppear(true)
+        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
+        
+        beforeStartView.isHidden = viewModel.mainViewStatus != .beforeStart
+        emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
+        todoListView.isHidden = viewModel.mainViewStatus != .todoList
+        
+        timerLabel.text = viewModel.time
+        let timeProgress = timeProgress.layer.sublayers?.first as? CAShapeLayer
+        timeProgress?.strokeEnd = viewModel.timeProgress
+        
+        allButton.setIsColorful(viewModel.currentFilter == .all)
+        waitButton.setIsColorful(viewModel.currentFilter == .wait)
+        rejectButton.setIsColorful(viewModel.currentFilter == .reject)
+        approveButton.setIsColorful(viewModel.currentFilter == .approve)
+        
+        updateList()
+    }
+    
+    // TODO: 추후 구현
+    private func updateList() {
+        filterStackView.isHidden = viewModel.mainViewStatus != .todoList
+        
+        todoListStackView = todoListStackView(
+            items: viewModel.todoList.map { todo in
+                DogetherTodoItem(action: { self.viewModel.didTapTodoItem(todo: todo) }, todo: todo)
+            }
+        )
+        
+        emptyDescriptionView = emptyDescriptionView(type: viewModel.currentFilter)
+        emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
+    }
+    
+    private func updateSheetStatus(to status: SheetStatus) {
+        viewModel.setIsBlockPanGesture(true)
+        UIView.animate(withDuration: 0.3) {
+            self.dogetherSheetTopConstraint?.update(offset: status.offset)
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.viewModel.setIsBlockPanGesture(false)
+            self.viewModel.updateSheetStatus(status)
+        }
     }
 }
 
