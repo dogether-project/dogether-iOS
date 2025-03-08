@@ -44,10 +44,6 @@ final class MainViewModel {
         }
     }
     
-    func navigateToTodoWriteView() {
-        mainUseCase.navigateToTodoWriteView(maximumTodoCount: groupInfo.maximumTodoCount)
-    }
-    
     func didTapTodoItem(todo: TodoInfo) {
         if TodoStatus(rawValue: todo.status) == .waitCertificattion {
             PopupManager.shared.showPopup(type: .certification, completion: {
@@ -81,5 +77,16 @@ final class MainViewModel {
         todoList = try await mainUseCase.getTodoList(dateOffset: dateOffset, currentFilter: currentFilter)
         mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
         isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
+    }
+}
+
+// MARK: navigate
+extension MainViewModel {
+    func navigateToTodoWriteView() {
+        mainUseCase.navigateToTodoWriteView(maximumTodoCount: groupInfo.maximumTodoCount)
+    }
+    
+    func navigateToRankingView() {
+        mainUseCase.navigateToRankingView()
     }
 }

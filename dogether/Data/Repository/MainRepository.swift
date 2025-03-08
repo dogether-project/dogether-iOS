@@ -16,6 +16,10 @@ final class MainRepository: MainInterface {
         try await GroupsDataSource.shared.getGroupInfo()
     }
     
+    func getTeamSummary() async throws -> GetTeamSummaryResponse {
+        try await GroupsDataSource.shared.getTeamSummary()
+    }
+    
     func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse {
         try await TodosDataSource.shared.getMyTodos(date: date, status: status)
     }

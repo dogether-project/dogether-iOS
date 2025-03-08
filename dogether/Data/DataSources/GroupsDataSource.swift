@@ -29,4 +29,8 @@ final class GroupsDataSource {
     func getGroupInfo() async throws -> GetGroupInfoResponse {
         try await NetworkManager.shared.request(GroupsRouter.getGroupInfo)
     }
+    
+    func getTeamSummary() async throws -> GetTeamSummaryResponse {
+        try await NetworkManager.shared.request(GroupsRouter.getTeamSummary)
+    }
 }

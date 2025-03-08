@@ -218,43 +218,62 @@ final class MainViewController: BaseViewController {
     
     private let todoScrollView = UIScrollView()
     
-    private func todoListStackView(items: [DogetherTodoItem]) -> UIStackView {
-        let stackView = UIStackView(arrangedSubviews: items)
+    private let todoListStackView = {
+        let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 8
         stackView.distribution = .fillEqually
         return stackView
-    }
-    private var todoListStackView = UIStackView()
+    }()
     
-    private func emptyDescriptionView(type: FilterTypes) -> UIView {
-        let view = UIView()
+    final class EmptyDescriptionView: UIView {
+        private(set) var type: FilterTypes = .all
         
-        let imageView = UIImageView(image: .comment)
+        private let imageView = UIImageView(image: .comment)
         
-        let label = UILabel()
-        label.text = type.emptyDescription
-        label.textColor = .grey400
-        label.font = Fonts.head2B
+        private let label = UILabel()
         
-        [imageView, label].forEach { view.addSubview($0) }
-        
-        imageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview()
-            $0.width.equalTo(74)
-            $0.height.equalTo(54)
+        init() {
+            super.init(frame: .zero)
+            
+            setUI()
         }
         
-        label.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview()
-            $0.height.equalTo(28)
+        required init?(coder: NSCoder) { fatalError() }
+        
+        private func updateUI() {
+            label.text = type.emptyDescription
         }
         
-        return view
+        private func setUI() {
+            updateUI()
+            
+            label.textColor = .grey400
+            label.font = Fonts.head2B
+            
+            [imageView, label].forEach { self.addSubview($0) }
+            
+            imageView.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.top.equalToSuperview()
+                $0.width.equalTo(74)
+                $0.height.equalTo(54)
+            }
+            
+            label.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.bottom.equalToSuperview()
+                $0.height.equalTo(28)
+            }
+        }
+        
+        func setType(_ type: FilterTypes) {
+            self.type = type
+            
+            updateUI()
+        }
     }
-    private var emptyDescriptionView = UIView()
+    private var emptyDescriptionView = EmptyDescriptionView()
     
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -262,13 +281,6 @@ final class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handlePushNotification(_:)),
-            name: PushNoticeManager.pushNotificationReceived,
-            object: nil
-        )
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -415,6 +427,61 @@ final class MainViewController: BaseViewController {
         }
     }
     
+    @objc private func didTapRankingButton() {
+        viewModel.navigateToRankingView()
+    }
+}
+
+// MARK: - update UI
+extension MainViewController {
+    private func updateView() {
+        groupInfoView.setGroupInfo(groupInfo: viewModel.groupInfo)
+        
+        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
+        
+        beforeStartView.isHidden = viewModel.mainViewStatus != .beforeStart
+        emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
+        todoListView.isHidden = viewModel.mainViewStatus != .todoList
+        
+        timerLabel.text = viewModel.time
+        let timeProgress = timeProgress.layer.sublayers?.first as? CAShapeLayer
+        timeProgress?.strokeEnd = viewModel.timeProgress
+        
+        updateList()
+    }
+    
+    private func updateList() {
+        allButton.setIsColorful(viewModel.currentFilter == .all)
+        waitButton.setIsColorful(viewModel.currentFilter == .wait)
+        rejectButton.setIsColorful(viewModel.currentFilter == .reject)
+        approveButton.setIsColorful(viewModel.currentFilter == .approve)
+        
+        filterStackView.isHidden = viewModel.mainViewStatus != .todoList
+        
+        todoListStackView.isHidden = viewModel.todoList.isEmpty
+        todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
+        viewModel.todoList
+            .map { todo in DogetherTodoItem(action: { self.viewModel.didTapTodoItem(todo: todo) }, todo: todo) }
+            .forEach { todoListStackView.addArrangedSubview($0) }
+        
+        emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
+        emptyDescriptionView.setType(viewModel.currentFilter)
+    }
+    
+    private func updateSheetStatus(to status: SheetStatus) {
+        viewModel.setIsBlockPanGesture(true)
+        UIView.animate(withDuration: 0.3) {
+            self.dogetherSheetTopConstraint?.update(offset: status.offset)
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.viewModel.setIsBlockPanGesture(false)
+            self.viewModel.updateSheetStatus(status)
+        }
+    }
+}
+
+// MARK: - about pan gesture
+extension MainViewController: UIGestureRecognizerDelegate {
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
         if viewModel.isBlockPanGesture { return }
         let translation = gesture.translation(in: view)
@@ -449,69 +516,6 @@ final class MainViewController: BaseViewController {
         }
     }
     
-    @objc private func didTapRankingButton() {
-        Task {
-            let response: GetTeamSummaryResponse = try await NetworkManager.shared.request(GroupsRouter.getTeamSummary)
-            await MainActor.run {
-                let rankingViewController = RankingViewController()
-                rankingViewController.rankings = response.ranking
-                NavigationManager.shared.pushViewController(rankingViewController)
-            }
-        }
-    }
-}
-
-// MARK: - update UI
-extension MainViewController {
-    private func updateView() {
-        groupInfoView.setGroupInfo(groupInfo: viewModel.groupInfo)
-        
-        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
-        
-        beforeStartView.isHidden = viewModel.mainViewStatus != .beforeStart
-        emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
-        todoListView.isHidden = viewModel.mainViewStatus != .todoList
-        
-        timerLabel.text = viewModel.time
-        let timeProgress = timeProgress.layer.sublayers?.first as? CAShapeLayer
-        timeProgress?.strokeEnd = viewModel.timeProgress
-        
-        allButton.setIsColorful(viewModel.currentFilter == .all)
-        waitButton.setIsColorful(viewModel.currentFilter == .wait)
-        rejectButton.setIsColorful(viewModel.currentFilter == .reject)
-        approveButton.setIsColorful(viewModel.currentFilter == .approve)
-        
-        updateList()
-    }
-    
-    // TODO: 추후 구현
-    private func updateList() {
-        filterStackView.isHidden = viewModel.mainViewStatus != .todoList
-        
-        todoListStackView = todoListStackView(
-            items: viewModel.todoList.map { todo in
-                DogetherTodoItem(action: { self.viewModel.didTapTodoItem(todo: todo) }, todo: todo)
-            }
-        )
-        
-        emptyDescriptionView = emptyDescriptionView(type: viewModel.currentFilter)
-        emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
-    }
-    
-    private func updateSheetStatus(to status: SheetStatus) {
-        viewModel.setIsBlockPanGesture(true)
-        UIView.animate(withDuration: 0.3) {
-            self.dogetherSheetTopConstraint?.update(offset: status.offset)
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.viewModel.setIsBlockPanGesture(false)
-            self.viewModel.updateSheetStatus(status)
-        }
-    }
-}
-
-// MARK: - about pan gesture
-extension MainViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
@@ -535,39 +539,5 @@ extension MainViewController: UIScrollViewDelegate {
             scrollView.contentOffset.y = 0
             return
         }
-    }
-}
-
-// MARK: - about push notice
-extension MainViewController {
-    @objc private func handlePushNotification(_ notification: Notification) {
-        guard let notificationType = notification.userInfo?["type"] as? PushNoticeTypes,
-              notificationType == .review else { return }
-        
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first,
-           let topViewController = window.rootViewController?.topMostViewController(),
-           topViewController is MainViewController {
-            viewWillAppear(true)
-        }
-    }
-}
-
-// TODO: 추후 수정 또는 삭제
-extension UIViewController {
-    func topMostViewController() -> UIViewController {
-        if let presented = presentedViewController {
-            return presented.topMostViewController()
-        }
-        
-        if let navigation = self as? UINavigationController {
-            return navigation.visibleViewController?.topMostViewController() ?? navigation
-        }
-        
-        if let tab = self as? UITabBarController {
-            return tab.selectedViewController?.topMostViewController() ?? tab
-        }
-        
-        return self
     }
 }

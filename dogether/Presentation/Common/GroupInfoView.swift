@@ -33,7 +33,7 @@ final class GroupInfoView: UIView {
     }
     
     final class InfoLabel: UILabel {
-        var infoText: String = ""
+        private(set) var infoText: String = ""
         
         init() {
             super.init(frame: .zero)
