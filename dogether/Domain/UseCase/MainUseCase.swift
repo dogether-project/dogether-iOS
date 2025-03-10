@@ -31,6 +31,7 @@ final class MainUseCase {
             remainingDays: response.remainingDays
         )
     }
+    
     func getTodoList(dateOffset: Int, currentFilter: FilterTypes) async throws -> [TodoInfo] {
         let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
         let status: TodoStatus? = currentFilter == .all ? nil : TodoStatus.allCases.first(where: { $0.tag == currentFilter.tag })
@@ -56,5 +57,9 @@ final class MainUseCase {
                 NavigationManager.shared.pushViewController(rankingViewController)
             }
         }
+    }
+    
+    func showPopup(type: PopupTypes, todoInfo: TodoInfo) {
+        PopupManager.shared.showPopup(type: type, todoInfo: todoInfo)
     }
 }

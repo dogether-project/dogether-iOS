@@ -468,14 +468,13 @@ extension MainViewController {
         emptyDescriptionView.setType(viewModel.currentFilter)
     }
     
-    private func updateSheetStatus(to status: SheetStatus) {
+    private func updateSheetStatus(_ status: SheetStatus) {
         viewModel.setIsBlockPanGesture(true)
         UIView.animate(withDuration: 0.3) {
             self.dogetherSheetTopConstraint?.update(offset: status.offset)
             self.view.layoutIfNeeded()
         } completion: { _ in
             self.viewModel.setIsBlockPanGesture(false)
-            self.viewModel.updateSheetStatus(status)
         }
     }
 }
@@ -488,28 +487,15 @@ extension MainViewController: UIGestureRecognizerDelegate {
         
         switch gesture.state {
         case .changed:
-            switch viewModel.sheetStatus {
-            case .expand:
-                if translation.y > 0 {
-                    dogetherSheetTopConstraint?.update(offset: min(SheetStatus.normal.offset, translation.y))
-                    view.layoutIfNeeded()
-                }
-            case .normal:
-                if translation.y < 0 {
-                    dogetherSheetTopConstraint?.update(offset: max(0, SheetStatus.normal.offset + translation.y))
-                    view.layoutIfNeeded()
-                }
-            }
+            let newOffset = viewModel.getNewOffset(
+                from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
+                with: translation.y
+            )
+            dogetherSheetTopConstraint?.update(offset: newOffset)
+            view.layoutIfNeeded()
             
         case .ended:
-            switch viewModel.sheetStatus {
-            case .expand:
-                if translation.y > 100 { updateSheetStatus(to: .normal) }
-                else { updateSheetStatus(to: .expand) }
-            case .normal:
-                if translation.y < -100 { updateSheetStatus(to: .expand) }
-                else { updateSheetStatus(to: .normal) }
-            }
+            viewModel.updateSheetStatus(with: translation.y, completeAction: updateSheetStatus)
             
         default:
             break

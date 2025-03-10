@@ -12,12 +12,11 @@ final class MainViewModel {
     private let mainUseCase: MainUseCase
     
     private(set) var mainViewStatus: MainViewStatus = .emptyList
-    private(set) var isBlockPanGesture: Bool = true
     
-    // TODO: 추후 수정
     private(set) var groupInfo: GroupInfo = GroupInfo()
     
     private(set) var sheetStatus: SheetStatus = .normal
+    private(set) var isBlockPanGesture: Bool = true
     
     // TODO: 추후 구현
     private(set) var time: String = "14:59:59"
@@ -45,21 +44,12 @@ final class MainViewModel {
     }
     
     func didTapTodoItem(todo: TodoInfo) {
-        if TodoStatus(rawValue: todo.status) == .waitCertificattion {
-            PopupManager.shared.showPopup(type: .certification, completion: {
-                // TODO: 추후에 인증을 성공했을 때 UI 업데이트 등 추가
-            }, todoInfo: todo)
-        } else {
-            PopupManager.shared.showPopup(type: .certificationInfo, todoInfo: todo)
-        }
+        let popupType: PopupTypes = TodoStatus(rawValue: todo.status) == .waitCertificattion ? .certification : .certificationInfo
+        mainUseCase.showPopup(type: popupType, todoInfo: todo)
     }
     
     func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
         self.isBlockPanGesture = isBlockPanGesture
-    }
-    
-    func updateSheetStatus(_ sheetStatus: SheetStatus) {
-        self.sheetStatus = sheetStatus
     }
     
     func updateFilter(filter: FilterTypes, completeAction: @escaping () -> Void) {
@@ -77,6 +67,28 @@ final class MainViewModel {
         todoList = try await mainUseCase.getTodoList(dateOffset: dateOffset, currentFilter: currentFilter)
         mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
         isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
+    }
+    
+    func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
+        switch sheetStatus {
+        case .expand:
+            if translation > 0 { return min(SheetStatus.normal.offset, translation) }
+            return currentOffset
+        case .normal:
+            if translation < 0 { return max(0, SheetStatus.normal.offset + translation) }
+            return currentOffset
+        }
+    }
+    
+    func updateSheetStatus(with translation: CGFloat, completeAction: @escaping (SheetStatus) -> Void) {
+        switch sheetStatus {
+        case .expand:
+            sheetStatus = translation > 100 ? .normal : .expand
+        case .normal:
+            sheetStatus = translation < -100 ? .expand : .normal
+        }
+        
+        completeAction(sheetStatus)
     }
 }
 
