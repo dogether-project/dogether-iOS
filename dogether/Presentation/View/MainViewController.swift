@@ -286,7 +286,7 @@ final class MainViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.loadMainView(completeAction: updateView)
+        viewModel.loadMainView(updateView: updateView, updateTimer: updateTimer, updateList: updateList)
     }
     
     override func configureView() {
@@ -434,6 +434,16 @@ final class MainViewController: BaseViewController {
 
 // MARK: - update UI
 extension MainViewController {
+    private func updateSheet(_ status: SheetStatus) {
+        viewModel.setIsBlockPanGesture(true)
+        UIView.animate(withDuration: 0.3) {
+            self.dogetherSheetTopConstraint?.update(offset: status.offset)
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.viewModel.setIsBlockPanGesture(false)
+        }
+    }
+    
     private func updateView() {
         groupInfoView.setGroupInfo(groupInfo: viewModel.groupInfo)
         
@@ -442,12 +452,11 @@ extension MainViewController {
         beforeStartView.isHidden = viewModel.mainViewStatus != .beforeStart
         emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
         todoListView.isHidden = viewModel.mainViewStatus != .todoList
-        
+    }
+    
+    private func updateTimer() {
         timerLabel.text = viewModel.time
-        let timeProgress = timeProgress.layer.sublayers?.first as? CAShapeLayer
-        timeProgress?.strokeEnd = viewModel.timeProgress
-        
-        updateList()
+        (timeProgress.layer.sublayers?.first as? CAShapeLayer)?.strokeEnd = viewModel.timeProgress
     }
     
     private func updateList() {
@@ -467,16 +476,6 @@ extension MainViewController {
         emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
         emptyDescriptionView.setType(viewModel.currentFilter)
     }
-    
-    private func updateSheetStatus(_ status: SheetStatus) {
-        viewModel.setIsBlockPanGesture(true)
-        UIView.animate(withDuration: 0.3) {
-            self.dogetherSheetTopConstraint?.update(offset: status.offset)
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.viewModel.setIsBlockPanGesture(false)
-        }
-    }
 }
 
 // MARK: - about pan gesture
@@ -487,15 +486,16 @@ extension MainViewController: UIGestureRecognizerDelegate {
         
         switch gesture.state {
         case .changed:
-            let newOffset = viewModel.getNewOffset(
-                from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
-                with: translation.y
+            dogetherSheetTopConstraint?.update(
+                offset: viewModel.getNewOffset(
+                    from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
+                    with: translation.y
+                )
             )
-            dogetherSheetTopConstraint?.update(offset: newOffset)
             view.layoutIfNeeded()
             
         case .ended:
-            viewModel.updateSheetStatus(with: translation.y, completeAction: updateSheetStatus)
+            viewModel.updateSheetStatus(with: translation.y, completeAction: updateSheet)
             
         default:
             break
