@@ -9,16 +9,10 @@ import Foundation
 import UIKit
 
 final class DogetherButton: UIButton {
-    private(set) var action: () async -> Void
     private(set) var title: String
     private(set) var status: ButtonStatus
     
-    init(
-        action: @escaping () -> Void,
-        title: String,
-        status: ButtonStatus
-    ) {
-        self.action = action
+    init(title: String, status: ButtonStatus) {
         self.title = title
         self.status = status
         
@@ -27,48 +21,31 @@ final class DogetherButton: UIButton {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let dogetherButton = {
-        let button = UIButton()
-        button.titleLabel?.font = Fonts.body1B
-        button.layer.cornerRadius = 12
-        return button
-    }()
+    private func updateUI() {
+        setTitleColor(status.textColor, for: .normal)
+        backgroundColor = status.backgroundColor
+        isEnabled = status == .enabled
+    }
     
     private func setUI() {
-        dogetherButton.setTitle(title, for: .normal)
-        dogetherButton.setTitleColor(status.textColor, for: .normal)
-        dogetherButton.backgroundColor = status.backgroundColor
-        dogetherButton.isEnabled = status == .enabled
-        dogetherButton.addTarget(self, action: #selector(didTapDogetherButton), for: .touchUpInside)
+        updateUI()
         
-        [dogetherButton].forEach { addSubview($0) }
+        setTitle(title, for: .normal)
+        titleLabel?.font = Fonts.body1B
+        layer.cornerRadius = 12
         
-        dogetherButton.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.equalToSuperview()
+        self.snp.makeConstraints {
             $0.height.equalTo(50)
         }
     }
     
-    func setAction(_ action: @escaping () -> Void) {
-        self.action = action
-    }
-    
     func setTitle(_ title: String) {
         self.title = title
-        dogetherButton.setTitle(self.title, for: .normal)
     }
     
     func setButtonStatus(status: ButtonStatus) {
         self.status = status
-        dogetherButton.setTitleColor(status.textColor, for: .normal)
-        dogetherButton.backgroundColor = status.backgroundColor
-        dogetherButton.isEnabled = status == .enabled
-    }
-    
-    @objc private func didTapDogetherButton() {
-        Task { @MainActor in
-            await action()
-        }
+        
+        updateUI()
     }
 }

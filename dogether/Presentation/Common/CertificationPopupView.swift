@@ -198,7 +198,8 @@ final class CertificationPopupView: UIView {
         shootButton = certificationButton(certificationMethod: .shoot)
         certificationStackView = certificationStackView(views: [selectButton, shootButton])
         
-        nextButton = DogetherButton(action: updatePopup, title: "다음", status: .enabled)
+        nextButton = DogetherButton(title: "다음", status: .enabled)
+        nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
         
         [titleLabel, closeButton, todoContentLabel, certificationStackView].forEach { addSubview($0) }
         
@@ -235,6 +236,10 @@ final class CertificationPopupView: UIView {
         PopupManager.shared.hidePopup()
     }
     
+    @objc private func didTapNextButton() {
+        updatePopup()
+    }
+    
     @objc private func didTapCertificationButton(_ sender: UIButton) {
         guard let certificationMethod = CertificationMethods(rawValue: sender.tag) else { return }
         switch certificationMethod {
@@ -243,6 +248,10 @@ final class CertificationPopupView: UIView {
         case .shoot:
             cameraManager.openCamera()
         }
+    }
+    
+    @objc private func didTapCompleteButton() {
+        completeAction(self.certificationTextView.text)
     }
     
     func uploadImage(image: UIImage) {
@@ -290,9 +299,8 @@ final class CertificationPopupView: UIView {
         certificationTextView = certificationTextView()
         certificationTextView.becomeFirstResponder()
         certificationMaxLengthLabel.text = "/\(certificationMaxLength)"
-        certificationButton = DogetherButton(action: {
-            self.completeAction(self.certificationTextView.text)
-        }, title: "인증하기", status: .enabled)
+        certificationButton = DogetherButton(title: "인증하기", status: .enabled)
+        certificationButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
         
         [
             descriptionLabel, descriptionView,

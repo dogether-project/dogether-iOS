@@ -115,7 +115,7 @@ final class RejectReasonPopupView: UIView {
         return label
     }()
     
-    private var rejectReasonButton = DogetherButton(action: { }, title: "등록하기", status: .disabled)
+    private var rejectReasonButton = DogetherButton(title: "등록하기", status: .disabled)
     
     private func setUI() {
         backgroundColor = .grey700
@@ -131,10 +131,7 @@ final class RejectReasonPopupView: UIView {
         rejectReasonTextView = rejectReasonTextView()
         rejectReasonTextView.becomeFirstResponder()
         rejectReasonMaxLengthLabel.text = "/\(rejectReasonMaxLength)"
-        rejectReasonButton = DogetherButton(action: {
-            self.completeAction(self.rejectReasonTextView.text)
-            PopupManager.shared.hidePopup()
-        }, title: "등록하기", status: .disabled)
+        rejectReasonButton.addTarget(self, action: #selector(didTapRejectReasonButton), for: .touchUpInside)
         
         [
             closeButton, descriptionLabel, descriptionView,
@@ -204,6 +201,11 @@ final class RejectReasonPopupView: UIView {
     }
     
     @objc private func didTapCloseButton() {
+        PopupManager.shared.hidePopup()
+    }
+    
+    @objc private func didTapRejectReasonButton() {
+        self.completeAction(self.rejectReasonTextView.text)
         PopupManager.shared.hidePopup()
     }
 }

@@ -47,7 +47,7 @@ final class GroupCreateViewController: BaseViewController {
         return label
     }()
     
-    private let completeButton = DogetherButton(action: { }, title: "다음", status: .disabled)
+    private let completeButton = DogetherButton(title: "다음", status: .disabled)
     
     private func stepView(step: CreateGroupSteps) -> UIView {
         let view = UIView()
@@ -111,13 +111,13 @@ final class GroupCreateViewController: BaseViewController {
     
     private var todoLimitView = UIView()
     
-    private let threeDaysButton = DurationButton(action: { _ in }, duration: .threeDays)
-    private let oneWeekButton = DurationButton(action: { _ in }, duration: .oneWeek)
-    private let twoWeeksButton = DurationButton(action: { _ in }, duration: .twoWeeks)
-    private let fourWeeksButton = DurationButton(action: { _ in }, duration: .fourWeeks)
+    private let threeDaysButton = DurationButton(duration: .threeDays)
+    private let oneWeekButton = DurationButton(duration: .oneWeek)
+    private let twoWeeksButton = DurationButton(duration: .twoWeeks)
+    private let fourWeeksButton = DurationButton(duration: .fourWeeks)
     
-    private let todayButton = StartAtButton(action: { _ in }, startAt: .today)
-    private let tomorrowButton = StartAtButton(action: { _ in }, startAt: .tomorrow)
+    private let todayButton = StartAtButton(startAt: .today)
+    private let tomorrowButton = StartAtButton(startAt: .tomorrow)
     
     private func horizontalStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
@@ -166,11 +166,7 @@ final class GroupCreateViewController: BaseViewController {
         stepThreeView = stepView(step: .three)
         stepFourView = stepView(step: .four)
         
-        completeButton.setAction {
-            self.viewModel.completeAction {
-                self.updateStep()
-            }
-        }
+        completeButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
         
         groupName = componentTitleLabel(componentTitle: "그룹명")
         groupNameTextField.delegate = self
@@ -322,7 +318,7 @@ final class GroupCreateViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(166)
         }
-
+        
         // MARK: - stepFour
         stepFourView.snp.makeConstraints {
             $0.top.equalTo(stepDescriptionLabel.snp.bottom).offset(34)
@@ -336,6 +332,28 @@ final class GroupCreateViewController: BaseViewController {
         }
     }
     
+    @objc private func didTapCompleteButton() {
+        self.viewModel.completeAction {
+            self.updateStep()
+        }
+    }
+    
+    @objc private func didChangeGroupName() {
+        if let text = groupNameTextField.text, text.count > viewModel.groupNameMaxLength {
+            groupNameTextField.text = String(text.prefix(viewModel.groupNameMaxLength))
+        }
+        
+        Task { @MainActor in
+            let (groupName, buttonStatus) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
+            groupNameTextField.text = groupName
+            groupNameCountLabel.text = String(groupName.count)
+            completeButton.setButtonStatus(status: buttonStatus)
+        }
+    }
+}
+
+// MARK: - update UI
+extension GroupCreateViewController {
     private func updateStep() {
         [stepOne, stepTwo, stepThree, stepFour].forEach {
             guard let step = CreateGroupSteps(rawValue: $0.tag) else { return }
@@ -358,19 +376,6 @@ final class GroupCreateViewController: BaseViewController {
                 duration: viewModel.currentDuration,
                 startAt: viewModel.currentStartAt
             )
-        }
-    }
-    
-    @objc private func didChangeGroupName() {
-        if let text = groupNameTextField.text, text.count > viewModel.groupNameMaxLength {
-            groupNameTextField.text = String(text.prefix(viewModel.groupNameMaxLength))
-        }
-        
-        Task { @MainActor in
-            let (groupName, buttonStatus) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
-            groupNameTextField.text = groupName
-            groupNameCountLabel.text = String(groupName.count)
-            completeButton.setButtonStatus(status: buttonStatus)
         }
     }
     

@@ -42,7 +42,7 @@ final class CertificationInfoPopupView: UIView {
     
     private var imageView = UIImageView()
     
-    private var statusView = FilterButton(action: { _ in }, type: .all)
+    private var statusView = FilterButton(type: .all)
     
     private let contentLabel = {
         let label = UILabel()
@@ -90,7 +90,7 @@ final class CertificationInfoPopupView: UIView {
         
         guard let status = TodoStatus(rawValue: todoInfo.status),
               let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
-        statusView = FilterButton(action: { _ in }, type: filterType)
+        statusView = FilterButton(type: filterType)
         
         contentLabel.attributedText = NSAttributedString(
             string: todoInfo.content,

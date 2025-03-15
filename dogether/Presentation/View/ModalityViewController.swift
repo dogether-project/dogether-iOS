@@ -29,14 +29,14 @@ final class ModalityViewController: BaseViewController {
     
     private var todoExaminationModalityView = UIView()
     
-    private var closeButton = DogetherButton(action: { }, title: "보내기", status: .disabled)
+    private var closeButton = DogetherButton(title: "보내기", status: .disabled)
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func configureView() {
-        closeButton.setAction(didTapCloseButton)
+        closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
         todoExaminationModalityView = ExaminationModalityView(buttonAction: { type in
             switch type {
             case .reject:
@@ -84,7 +84,7 @@ final class ModalityViewController: BaseViewController {
         }
     }
     
-    private func didTapCloseButton() {
+    @objc private func didTapCloseButton() {
         Task { @MainActor in
             try await viewModel.reviewTodo()
             // TODO: 검사 할 투두가 여러개일 때 다음 투두로 넘어가는 기능은 추후 구현
