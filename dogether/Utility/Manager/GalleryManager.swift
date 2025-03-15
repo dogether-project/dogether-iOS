@@ -5,9 +5,9 @@
 //  Created by seungyooooong on 2/12/25.
 //
 
-import Foundation
-import PhotosUI
 import UIKit
+
+import PhotosUI
 
 final class GalleryManager: NSObject, PHPickerViewControllerDelegate {
     private weak var viewController: UIViewController?

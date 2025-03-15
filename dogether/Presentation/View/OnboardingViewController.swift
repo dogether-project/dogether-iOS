@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import AuthenticationServices
 import SnapKit
+
+import AuthenticationServices
 
 final class OnboardingViewController: BaseViewController {
     

@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 2/17/25.
 //
 
-import Foundation
 import UIKit
 
 final class CertificationImageView: UIImageView {

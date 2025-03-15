@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 2/14/25.
 //
 
-import Foundation
 import UIKit
 
 enum TodoStatus: String, CaseIterable {

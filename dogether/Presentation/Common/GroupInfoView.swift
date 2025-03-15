@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 3/8/25.
 //
 
-import Foundation
 import UIKit
 
 final class GroupInfoView: UIView {

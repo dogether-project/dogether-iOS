@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import FirebaseMessaging
+
 import AuthenticationServices
+import FirebaseMessaging
 
 final class OnboardingViewModel: ObservableObject {
     

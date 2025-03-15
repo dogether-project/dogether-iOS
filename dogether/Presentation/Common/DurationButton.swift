@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 3/2/25.
 //
 
-import Foundation
 import UIKit
 
 final class DurationButton: UIButton {
