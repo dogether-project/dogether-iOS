@@ -9,14 +9,14 @@ import Foundation
 import UIKit
 
 final class DurationButton: UIButton {
-    private(set) var action: (GroupChallengeDurations) -> Void
     private(set) var duration: GroupChallengeDurations
     private(set) var isColorful: Bool
+    private(set) var action: (GroupChallengeDurations) -> Void
     
-    init(action: @escaping (GroupChallengeDurations) -> Void, duration: GroupChallengeDurations, isColorful: Bool = false) {
-        self.action = action
+    init(duration: GroupChallengeDurations, isColorful: Bool = false, action: @escaping (GroupChallengeDurations) -> Void = { _ in }) {
         self.duration = duration
         self.isColorful = isColorful
+        self.action = action
         
         super.init(frame: .zero)
         setUI()

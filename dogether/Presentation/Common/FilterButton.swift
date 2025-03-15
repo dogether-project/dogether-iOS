@@ -10,13 +10,13 @@ import UIKit
 
 final class FilterButton: UIButton {
     let type: FilterTypes
-    private(set) var action: (FilterTypes) -> Void
     private(set) var isColorful: Bool
+    private(set) var action: (FilterTypes) -> Void
     
-    init(action: @escaping (FilterTypes) -> Void, type: FilterTypes, isColorful: Bool = true) {
-        self.action = action
+    init(type: FilterTypes, isColorful: Bool = true, action: @escaping (FilterTypes) -> Void = { _ in }) {
         self.type = type
         self.isColorful = isColorful
+        self.action = action
         
         super.init(frame: .zero)
         setUI()

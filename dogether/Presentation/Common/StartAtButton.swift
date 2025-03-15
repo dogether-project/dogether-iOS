@@ -9,14 +9,14 @@ import Foundation
 import UIKit
 
 final class StartAtButton: UIButton {
-    private(set) var action: (GroupStartAts) -> Void
     private(set) var startAt: GroupStartAts
     private(set) var isColorful: Bool
+    private(set) var action: (GroupStartAts) -> Void
     
-    init(action: @escaping (GroupStartAts) -> Void, startAt: GroupStartAts, isColorful: Bool = false) {
-        self.action = action
+    init(startAt: GroupStartAts, isColorful: Bool = false, action: @escaping (GroupStartAts) -> Void = { _ in }) {
         self.startAt = startAt
         self.isColorful = isColorful
+        self.action = action
         
         super.init(frame: .zero)
         setUI()

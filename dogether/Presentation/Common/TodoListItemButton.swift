@@ -10,12 +10,12 @@ import UIKit
 import SnapKit
 
 final class TodoListItemButton: UIButton {
-    private(set) var action: () async -> Void
     private(set) var todo: TodoInfo
+    private(set) var action: (TodoInfo) async -> Void
     
-    init(action: @escaping () -> Void, todo: TodoInfo) {
-        self.action = action
+    init(todo: TodoInfo, action: @escaping (TodoInfo) -> Void) {
         self.todo = todo
+        self.action = action
         super.init(frame: .zero)
         
         setUI()
@@ -110,7 +110,7 @@ final class TodoListItemButton: UIButton {
     
     @objc private func didTapTodoItem() {
         Task { @MainActor in
-            await action()
+            await action(self.todo)
         }
     }
 }

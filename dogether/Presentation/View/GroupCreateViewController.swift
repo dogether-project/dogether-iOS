@@ -111,13 +111,13 @@ final class GroupCreateViewController: BaseViewController {
     
     private var todoLimitView = UIView()
     
-    private let threeDaysButton = DurationButton(action: { _ in }, duration: .threeDays)
-    private let oneWeekButton = DurationButton(action: { _ in }, duration: .oneWeek)
-    private let twoWeeksButton = DurationButton(action: { _ in }, duration: .twoWeeks)
-    private let fourWeeksButton = DurationButton(action: { _ in }, duration: .fourWeeks)
+    private let threeDaysButton = DurationButton(duration: .threeDays)
+    private let oneWeekButton = DurationButton(duration: .oneWeek)
+    private let twoWeeksButton = DurationButton(duration: .twoWeeks)
+    private let fourWeeksButton = DurationButton(duration: .fourWeeks)
     
-    private let todayButton = StartAtButton(action: { _ in }, startAt: .today)
-    private let tomorrowButton = StartAtButton(action: { _ in }, startAt: .tomorrow)
+    private let todayButton = StartAtButton(startAt: .today)
+    private let tomorrowButton = StartAtButton(startAt: .tomorrow)
     
     private func horizontalStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)

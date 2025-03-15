@@ -203,10 +203,10 @@ final class MainViewController: BaseViewController {
     
     private let todoButton = DogetherButton(title: "투두 작성하기", status: .enabled)
     
-    private let allButton = FilterButton(action: { _ in }, type: .all)
-    private let waitButton = FilterButton(action: { _ in }, type: .wait)
-    private let rejectButton = FilterButton(action: { _ in }, type: .reject)
-    private let approveButton = FilterButton(action: { _ in }, type: .approve)
+    private let allButton = FilterButton(type: .all)
+    private let waitButton = FilterButton(type: .wait)
+    private let rejectButton = FilterButton(type: .reject)
+    private let approveButton = FilterButton(type: .approve)
     
     private func filterStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
@@ -478,7 +478,7 @@ extension MainViewController {
         todoListStackView.isHidden = viewModel.todoList.isEmpty
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
         viewModel.todoList
-            .map { todo in TodoListItemButton(action: { self.viewModel.didTapTodoItem(todo: todo) }, todo: todo) }
+            .map { todo in TodoListItemButton(todo: todo) { self.viewModel.didTapTodoItem(todo: $0) } }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
         emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
