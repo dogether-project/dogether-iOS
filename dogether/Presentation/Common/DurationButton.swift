@@ -27,7 +27,7 @@ final class DurationButton: UIButton {
     private let label = UILabel()
     
     private func updateUI() {
-        self.layer.borderColor = isColorful ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
+        layer.borderColor = isColorful ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
         
         label.textColor = isColorful ? .blue300 : .grey0
         label.font = isColorful ? Fonts.body1B : Fonts.body1S
@@ -36,10 +36,10 @@ final class DurationButton: UIButton {
     private func setUI() {
         updateUI()
         
-        self.backgroundColor = .grey800
-        self.layer.cornerRadius = 12
-        self.layer.borderWidth = 1.5
-        self.addTarget(self, action: #selector(didTapDurationButton), for: .touchUpInside)
+        backgroundColor = .grey800
+        layer.cornerRadius = 12
+        layer.borderWidth = 1.5
+        addTarget(self, action: #selector(didTapDurationButton), for: .touchUpInside)
         
         label.text = duration.text
         

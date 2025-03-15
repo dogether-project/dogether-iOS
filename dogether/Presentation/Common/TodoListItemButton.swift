@@ -1,5 +1,5 @@
 //
-//  DogetherTodoItem.swift
+//  TodoListItemButton.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/14/25.
@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SnapKit
 
-final class DogetherTodoItem: UIButton {
+final class TodoListItemButton: UIButton {
     private(set) var action: () async -> Void
     private(set) var todo: TodoInfo
     

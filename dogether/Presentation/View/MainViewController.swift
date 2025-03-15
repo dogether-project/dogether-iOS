@@ -201,7 +201,7 @@ final class MainViewController: BaseViewController {
         return stackView
     }()
     
-    private let todoButton = DogetherButton(action: { }, title: "투두 작성하기", status: .enabled)
+    private let todoButton = DogetherButton(title: "투두 작성하기", status: .enabled)
     
     private let allButton = FilterButton(action: { _ in }, type: .all)
     private let waitButton = FilterButton(action: { _ in }, type: .wait)
@@ -300,7 +300,7 @@ final class MainViewController: BaseViewController {
         todoScrollView.bounces = false
         todoScrollView.showsVerticalScrollIndicator = false
         
-        todoButton.setAction(viewModel.navigateToTodoWriteView)
+        todoButton.addTarget(self, action: #selector(didTapTodoButton), for: .touchUpInside)
         
         allButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
         waitButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
@@ -430,6 +430,10 @@ final class MainViewController: BaseViewController {
     @objc private func didTapRankingButton() {
         viewModel.navigateToRankingView()
     }
+    
+    @objc private func didTapTodoButton() {
+        viewModel.navigateToTodoWriteView()
+    }
 }
 
 // MARK: - update UI
@@ -460,6 +464,10 @@ extension MainViewController {
     }
     
     private func updateList() {
+        // TODO: 추후 MainViewStatus와 GroupStatus를 통합할 때 개선 필요
+        emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
+        todoListView.isHidden = viewModel.mainViewStatus != .todoList
+        
         allButton.setIsColorful(viewModel.currentFilter == .all)
         waitButton.setIsColorful(viewModel.currentFilter == .wait)
         rejectButton.setIsColorful(viewModel.currentFilter == .reject)
@@ -470,7 +478,7 @@ extension MainViewController {
         todoListStackView.isHidden = viewModel.todoList.isEmpty
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
         viewModel.todoList
-            .map { todo in DogetherTodoItem(action: { self.viewModel.didTapTodoItem(todo: todo) }, todo: todo) }
+            .map { todo in TodoListItemButton(action: { self.viewModel.didTapTodoItem(todo: todo) }, todo: todo) }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
         emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)

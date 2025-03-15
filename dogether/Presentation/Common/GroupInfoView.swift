@@ -32,38 +32,9 @@ final class GroupInfoView: UIView {
         return label
     }
     
-    final class InfoLabel: UILabel {
-        private(set) var infoText: String = ""
-        
-        init() {
-            super.init(frame: .zero)
-            setUI()
-        }
-        
-        required init?(coder: NSCoder) { fatalError() }
-        
-        private func updateUI() {
-            attributedText = NSAttributedString(
-                string: infoText,
-                attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-            )
-        }
-        
-        private func setUI() {
-            updateUI()
-            
-            textColor = .grey0
-        }
-        
-        func updateText(_ text: String) {
-            self.infoText = text
-            
-            updateUI()
-        }
-    }
-    private let durationInfoLabel = InfoLabel()
-    private let joinCodeInfoLabel = InfoLabel()
-    private let endDateInfoLabel = InfoLabel()
+    private let durationInfoLabel = UILabel()
+    private let joinCodeInfoLabel = UILabel()
+    private let endDateInfoLabel = UILabel()
     
     
     private func infoStackView(labels: [UILabel]) -> UIStackView {
@@ -75,9 +46,18 @@ final class GroupInfoView: UIView {
     private func updateUI() {
         nameLabel.text = groupInfo.name
         
-        durationInfoLabel.updateText("\(groupInfo.duration)일")
-        joinCodeInfoLabel.updateText(groupInfo.joinCode)
-        endDateInfoLabel.updateText("\(groupInfo.endAt)(D-\(groupInfo.remainingDays))")
+        durationInfoLabel.attributedText = NSAttributedString(
+            string: "\(groupInfo.duration)일",
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+        )
+        joinCodeInfoLabel.attributedText = NSAttributedString(
+            string: groupInfo.joinCode,
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+        )
+        endDateInfoLabel.attributedText = NSAttributedString(
+            string: "\(groupInfo.endAt)(D-\(groupInfo.remainingDays))",
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+        )
     }
     
     private func setUI() {
@@ -89,6 +69,10 @@ final class GroupInfoView: UIView {
         let durationDescriptionLabel = descriptionLabel(text: "총 기간")
         let joinCodeDescriptionLabel = descriptionLabel(text: "초대코드")
         let endDateDescriptionLabel = descriptionLabel(text: "종료일")
+        
+        durationInfoLabel.textColor = .grey0
+        joinCodeInfoLabel.textColor = .grey0
+        endDateInfoLabel.textColor = .grey0
         
         let durationStackView = infoStackView(labels: [durationDescriptionLabel, durationInfoLabel])
         let joinCodeStackView = infoStackView(labels: [joinCodeDescriptionLabel, joinCodeInfoLabel])

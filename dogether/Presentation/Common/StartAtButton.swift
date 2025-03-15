@@ -31,7 +31,7 @@ final class StartAtButton: UIButton {
     private let descriptionLabel = UILabel()
     
     private func updateUI() {
-        self.layer.borderColor = isColorful ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
+        layer.borderColor = isColorful ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
         
         icon.tintColor = isColorful ? .blue300 : .grey0
         
@@ -43,10 +43,10 @@ final class StartAtButton: UIButton {
     private func setUI() {
         updateUI()
         
-        self.backgroundColor = .grey800
-        self.layer.cornerRadius = 12
-        self.layer.borderWidth = 1.5
-        self.addTarget(self, action: #selector(didTapStartAtButton), for: .touchUpInside)
+        backgroundColor = .grey800
+        layer.cornerRadius = 12
+        layer.borderWidth = 1.5
+        addTarget(self, action: #selector(didTapStartAtButton), for: .touchUpInside)
         
         icon.image = startAt.image.withRenderingMode(.alwaysTemplate)
         
