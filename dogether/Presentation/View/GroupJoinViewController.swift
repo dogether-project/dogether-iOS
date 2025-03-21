@@ -110,7 +110,8 @@ final class GroupJoinViewController: BaseViewController {
                 // TODO: 추후 이슈 #6 수정되면 response 수정하고 completeViewController로 데이터 넘기는 작업 추가
                 let response: JoinGroupResponse = try await NetworkManager.shared.request(GroupsRouter.joinGroup(joinGroupRequest: request))
                 
-                let completeViewController = CompleteViewController(type: .join)
+                let completeViewController = CompleteViewController()
+                completeViewController.viewModel.groupType = .join
                 completeViewController.viewModel.joinGroupResponse = response
                 NavigationManager.shared.setNavigationController(completeViewController)
 

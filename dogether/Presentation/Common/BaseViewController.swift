@@ -8,12 +8,6 @@
 import UIKit
 
 class BaseViewController: UIViewController {
-    
-    init(type: GroupTypes = .create) {
-        super.init(nibName: nil, bundle: nil)
-    }
-    required init?(coder: NSCoder) { fatalError() }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

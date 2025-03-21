@@ -10,8 +10,6 @@ import UIKit
 import SnapKit
 
 final class CompleteViewController: BaseViewController {
-    private let groupType: GroupTypes
-    
     var viewModel = CompleteViewModel()
     
     private let firecrackerImageView = {
@@ -60,13 +58,6 @@ final class CompleteViewController: BaseViewController {
         imageView.image = .notice
         return imageView
     }()
-
-    // TODO: 추후 초대 코드 또는 그룹 정보를 포함하도록 수정
-    override init(type: GroupTypes) {
-        self.groupType = type
-        super.init()
-    }
-    required init?(coder: NSCoder) { fatalError() }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,12 +65,12 @@ final class CompleteViewController: BaseViewController {
     
     override func configureView() {
         titleLabel.attributedText = NSAttributedString(
-            string: groupType.completeTitleText,
+            string: viewModel.groupType.completeTitleText,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         completeButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
         // TODO: 추후 수정
-        switch groupType {
+        switch viewModel.groupType {
         case .join:
             guard let groupInfo = viewModel.joinGroupResponse else { return }
             groupInfoView = DogetherGroupInfo(
@@ -90,7 +81,7 @@ final class CompleteViewController: BaseViewController {
                 endAtString: groupInfo.endAt
             )
         case .create:
-            noticeLabel.text = groupType.completeNoticeText
+            noticeLabel.text = viewModel.groupType.completeNoticeText
             joinCodeLabel.text = viewModel.joinCode
             joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
         }
@@ -98,7 +89,7 @@ final class CompleteViewController: BaseViewController {
     
     override func configureHierarchy() {
         [firecrackerImageView, titleLabel, completeButton].forEach { view.addSubview($0) }
-        switch groupType {
+        switch viewModel.groupType {
         case .join:
             [groupInfoView].forEach { view.addSubview($0) }
         case .create:
@@ -121,7 +112,7 @@ final class CompleteViewController: BaseViewController {
             $0.bottom.equalToSuperview().inset(48)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-        switch groupType {
+        switch viewModel.groupType {
         case .join:
             groupInfoView.snp.makeConstraints {
                 $0.top.equalTo(titleLabel.snp.bottom).offset(40)

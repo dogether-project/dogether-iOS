@@ -18,7 +18,8 @@ final class GroupCreateUseCase {
         Task {
             let joinCode = try await getJoinCode(createGroupRequest: createGroupRequest)
             await MainActor.run {
-                let completeViewController = CompleteViewController(type: .create)
+                let completeViewController = CompleteViewController()
+                completeViewController.viewModel.groupType = .create
                 completeViewController.viewModel.joinCode = joinCode
                 NavigationManager.shared.setNavigationController(completeViewController)
             }
