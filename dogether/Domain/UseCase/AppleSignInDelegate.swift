@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 import AuthenticationServices
 
 final class AppleSignInDelegate: NSObject, ASAuthorizationControllerDelegate {

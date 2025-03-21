@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 2/3/25.
 //
 
-import Foundation
 import UIKit
 
 struct SystemManager {

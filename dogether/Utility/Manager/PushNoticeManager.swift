@@ -5,8 +5,8 @@
 //  Created by seungyooooong on 2/1/25.
 //
 
-import UserNotifications
 import FirebaseMessaging
+import UserNotifications
 
 final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
     static let shared = PushNoticeManager()

@@ -5,7 +5,6 @@
 //  Created by seungyooooong on 2/13/25.
 //
 
-import Foundation
 import UIKit
 
 enum ButtonStatus {
