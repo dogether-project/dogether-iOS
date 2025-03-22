@@ -14,9 +14,4 @@ final class StartViewModel {
         isShowFloating = false
         completeAction()
     }
-    
-    func navigate(destinationTag: Int) {
-        guard let groupType = GroupTypes(rawValue: destinationTag) else { return }
-        NavigationManager.shared.pushViewController(groupType.destination)
-    }
 }

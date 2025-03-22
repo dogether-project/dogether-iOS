@@ -36,7 +36,13 @@ final class SplashViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.launchApp()
+        Task {
+            try await viewModel.launchApp()
+            guard let destination = viewModel.destination else { return }
+            await MainActor.run {
+                coordinator?.setNavigationController(destination)
+            }
+        }
     }
     
     override func configureView() { }

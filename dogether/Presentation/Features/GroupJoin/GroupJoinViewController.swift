@@ -100,7 +100,9 @@ final class GroupJoinViewController: BaseViewController {
         }
     }
     
-    override func configureView() { }
+    override func configureView() {
+        dogetherHeader.delegate = self
+    }
     
     @objc private func joinButtonClicked() {
         
@@ -113,7 +115,7 @@ final class GroupJoinViewController: BaseViewController {
                 let completeViewController = CompleteViewController()
                 completeViewController.viewModel.groupType = .join
                 completeViewController.viewModel.joinGroupResponse = response
-                NavigationManager.shared.setNavigationController(completeViewController)
+                coordinator?.setNavigationController(completeViewController)
 
             } catch {
                 print("❌ 가입 실패: \(error)")

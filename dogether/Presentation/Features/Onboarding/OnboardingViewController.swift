@@ -130,9 +130,9 @@ final class OnboardingViewController: BaseViewController {
             
             let IsJoiningResponse: GetIsJoiningResponse = try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
             if IsJoiningResponse.isJoining {
-                NavigationManager.shared.setNavigationController(MainViewController())
+                coordinator?.setNavigationController(MainViewController())
             } else {
-                NavigationManager.shared.setNavigationController(StartViewController())
+                coordinator?.setNavigationController(StartViewController())
             }
         }
     }

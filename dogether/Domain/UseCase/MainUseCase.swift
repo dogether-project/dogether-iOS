@@ -40,23 +40,8 @@ final class MainUseCase {
         return response.todos
     }
     
-    func navigateToTodoWriteView(maximumTodoCount: Int) {
-        Task { @MainActor in
-            let todoWriteViewController = TodoWriteViewController()
-            todoWriteViewController.maximumTodoCount = maximumTodoCount
-            NavigationManager.shared.pushViewController(todoWriteViewController)
-        }
-    }
-    
-    func navigateToRankingView() {
-        Task {
-            let response = try await repository.getTeamSummary()
-            await MainActor.run {
-                let rankingViewController = RankingViewController()
-                rankingViewController.rankings = response.ranking
-                NavigationManager.shared.pushViewController(rankingViewController)
-            }
-        }
+    func getTeamSummary() async throws -> GetTeamSummaryResponse {
+        try await repository.getTeamSummary()
     }
     
     func showPopup(type: PopupTypes, todoInfo: TodoInfo) {

@@ -56,7 +56,7 @@ enum GroupTypes: Int {
         }
     }
     
-    var destination: UIViewController {
+    var destination: BaseViewController {
         switch self {
         case .create:
             return GroupCreateViewController()

@@ -152,6 +152,8 @@ final class GroupCreateViewController: BaseViewController {
     }
     
     override func configureView() {
+        dogetherHeader.delegate = self
+        
         stepOne = stepLabel(step: .one)
         stepTwo = stepLabel(step: .two)
         stepThree = stepLabel(step: .three)
@@ -332,22 +334,29 @@ final class GroupCreateViewController: BaseViewController {
     }
     
     @objc private func didTapCompleteButton() {
-        self.viewModel.completeAction {
-            self.updateStep()
+        if viewModel.currentStep == .four {
+            Task {
+                try await viewModel.createGroup()
+                guard let joinCode = viewModel.joinCode else { return }
+                await MainActor.run {
+                    let completeViewController = CompleteViewController()
+                    completeViewController.viewModel.groupType = .create
+                    completeViewController.viewModel.joinCode = joinCode
+                    coordinator?.setNavigationController(completeViewController)
+                }
+            }
+        } else {
+            guard let nextStep = CreateGroupSteps(rawValue: viewModel.currentStep.rawValue + 1) else { return }
+            viewModel.updateStep(step: nextStep)
+            updateStep()
         }
     }
     
     @objc private func didChangeGroupName() {
-        if let text = groupNameTextField.text, text.count > viewModel.groupNameMaxLength {
-            groupNameTextField.text = String(text.prefix(viewModel.groupNameMaxLength))
-        }
-        
-        Task { @MainActor in
-            let (groupName, buttonStatus) = await viewModel.updateGroupName(groupName: groupNameTextField.text)
-            groupNameTextField.text = groupName
-            groupNameCountLabel.text = String(groupName.count)
-            completeButton.setButtonStatus(status: buttonStatus)
-        }
+        viewModel.updateGroupName(groupName: groupNameTextField.text)
+        groupNameTextField.text = viewModel.currentGroupName
+        groupNameCountLabel.text = String(viewModel.currentGroupName.count)
+        completeButton.setButtonStatus(status: viewModel.currentStep == .one && viewModel.currentGroupName.count > 0 ? .enabled : .disabled)
     }
 }
 

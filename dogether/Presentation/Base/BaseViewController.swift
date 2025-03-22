@@ -7,7 +7,9 @@
 
 import UIKit
 
-class BaseViewController: UIViewController {
+class BaseViewController: UIViewController, CoordinatorDelegate {
+    weak var coordinator: NavigationCoordinator?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -5,7 +5,7 @@
 //  Created by seungyooooong on 3/1/25.
 //
 
-import UIKit
+import Foundation
 
 final class AppLaunchUseCase {
     private let repository: AppLaunchInterface
@@ -14,16 +14,11 @@ final class AppLaunchUseCase {
         self.repository = repository
     }
     
-    func launchApp() {
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-
-            let destination = try await getDestination()
-            await MainActor.run { NavigationManager.shared.setNavigationController(destination) }
-        }
+    func launchApp() async throws {
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
     }
     
-    func getDestination() async throws -> UIViewController {
+    func getDestination() async throws -> BaseViewController {
         let needLogin = UserDefaultsManager.shared.accessToken == nil
         if needLogin { return await OnboardingViewController()}
         

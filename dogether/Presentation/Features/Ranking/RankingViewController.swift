@@ -70,6 +70,8 @@ final class RankingViewController: BaseViewController {
     }
     
     override func configureView() {
+        navigationHeader.delegate = self
+        
         guard let rankings else { return }
         ranking1View = RankingTopView(ranking: rankings.count > 0 ? rankings[0] : nil)
         ranking2View = RankingTopView(ranking: rankings.count > 1 ? rankings[1] : nil)

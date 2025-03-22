@@ -131,6 +131,8 @@ final class StartViewController: BaseViewController {
     }
     
     override func configureView() {
+        dogetherHeader.delegate = self
+        
         floatingDescription.addTarget(self, action: #selector(didTapFloatingDescription), for: .touchUpInside)
         
         createButton = startButton(groupType: .create)
@@ -177,7 +179,8 @@ final class StartViewController: BaseViewController {
     }
     
     @objc private func didTapStartButton(_ sender: UIButton) {
-        viewModel.navigate(destinationTag: sender.tag)
+        guard let groupType = GroupTypes(rawValue: sender.tag) else { return }
+        coordinator?.pushViewController(groupType.destination)
     }
 }
 

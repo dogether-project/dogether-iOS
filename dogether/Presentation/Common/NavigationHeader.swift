@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 
 final class NavigationHeader: UIView {
+    weak var delegate: CoordinatorDelegate?
+    
     private var title: String
     
     init(title: String) {
@@ -51,6 +53,6 @@ final class NavigationHeader: UIView {
     }
     
     @objc private func didTapPrevButton() {
-        NavigationManager.shared.popViewController()
+        delegate?.coordinator?.popViewController()
     }
 }

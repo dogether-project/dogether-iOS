@@ -147,7 +147,7 @@ final class CompleteViewController: BaseViewController {
     }
     
     @objc private func didTapCompleteButton() {
-        NavigationManager.shared.setNavigationController(MainViewController())
+        coordinator?.setNavigationController(MainViewController())
     }
     
     @objc private func didTapJoinCodeShareButton() {

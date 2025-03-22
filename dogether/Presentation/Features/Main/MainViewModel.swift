@@ -10,6 +10,8 @@ import UIKit
 final class MainViewModel {
     private let mainUseCase: MainUseCase
     
+    private(set) var rankings: [RankingModel]?
+    
     private(set) var mainViewStatus: MainViewStatus = .emptyList
     
     private(set) var groupInfo: GroupInfo = GroupInfo()
@@ -141,13 +143,10 @@ extension MainViewModel {
     }
 }
 
-// MARK: - navigate
+// MARK: - ranking
 extension MainViewModel {
-    func navigateToTodoWriteView() {
-        mainUseCase.navigateToTodoWriteView(maximumTodoCount: groupInfo.maximumTodoCount)
-    }
-    
-    func navigateToRankingView() {
-        mainUseCase.navigateToRankingView()
+    func getRankings() async throws {
+        let response = try await mainUseCase.getTeamSummary()
+        rankings = response.ranking
     }
 }

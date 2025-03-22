@@ -289,6 +289,8 @@ final class MainViewController: BaseViewController {
     }
     
     override func configureView() {
+        dogetherHeader.delegate = self
+        
         rankingButton.addTarget(self, action: #selector(didTapRankingButton), for: .touchUpInside)
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
@@ -427,11 +429,19 @@ final class MainViewController: BaseViewController {
     }
     
     @objc private func didTapRankingButton() {
-        viewModel.navigateToRankingView()
+        Task {
+            try await viewModel.getRankings()
+            guard let rankings = viewModel.rankings else { return }
+            await MainActor.run {
+                let rankingViewController = RankingViewController()
+                rankingViewController.rankings = rankings
+                coordinator?.pushViewController(rankingViewController)
+            }
+        }
     }
     
     @objc private func didTapTodoButton() {
-        viewModel.navigateToTodoWriteView()
+        coordinator?.pushViewController(TodoWriteViewController())
     }
 }
 

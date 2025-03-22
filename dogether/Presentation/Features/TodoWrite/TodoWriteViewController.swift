@@ -10,7 +10,7 @@ import SnapKit
 
 final class TodoWriteViewController: BaseViewController {
     
-    var maximumTodoCount: Int?
+    var maximumTodoCount: Int = 10
     
     private var toDoList: [String] = [] {
         didSet {
@@ -41,7 +41,7 @@ final class TodoWriteViewController: BaseViewController {
         ]
         
         textField.attributedPlaceholder = NSAttributedString(
-            string: "투두를 입력해주세요 (최대 \(maximumTodoCount ?? 0)개)",
+            string: "투두를 입력해주세요 (최대 \(maximumTodoCount)개)",
             attributes: attributes
         )
         
@@ -245,7 +245,7 @@ final class TodoWriteViewController: BaseViewController {
         Task { @MainActor in
             let request = CreateTodosRequest(todos: toDoList)
             try await NetworkManager.shared.request(TodosRouter.createTodos(createTodosRequest: request))
-            NavigationManager.shared.popViewController()
+            coordinator?.popViewController()
         }
     }
     
@@ -255,7 +255,7 @@ final class TodoWriteViewController: BaseViewController {
     
     @objc private func addTodo() {
         guard let text = toDoTextField.text, !text.isEmpty, text.count <= 20 else { return }
-        guard toDoList.count < maximumTodoCount ?? 0 else { return }
+        guard toDoList.count < maximumTodoCount else { return }
         
         toDoList.insert(text, at: 0)
         toDoTextField.text = ""

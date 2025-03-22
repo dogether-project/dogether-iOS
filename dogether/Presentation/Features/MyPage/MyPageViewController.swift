@@ -145,7 +145,9 @@ final class MyPageViewController: BaseViewController {
         }
     }
     
-    override func configureView() { }
+    override func configureView() {
+        dogetherHeader.delegate = self
+    }
     
     private func setUpView(_ view: UIView, iconName: UIImage, text: String) {
         view.isUserInteractionEnabled = true
@@ -198,7 +200,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     @objc private func goToDashBoard() {
-        NavigationManager.shared.pushViewController(MyDashboardViewController())
+        coordinator?.pushViewController(MyDashboardViewController())
     }
     
     @objc private func leaveGroupTapped() {
@@ -211,8 +213,8 @@ final class MyPageViewController: BaseViewController {
             Task { @MainActor in
                 try await NetworkManager.shared.request(GroupsRouter.leaveGroup)
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    NavigationManager.shared.setNavigationController(StartViewController())
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                    self?.coordinator?.setNavigationController(StartViewController())
                 }
             }
         } cancelAction: { }
@@ -228,8 +230,8 @@ final class MyPageViewController: BaseViewController {
             UserDefaultsManager.shared.userFullName = nil
             
             // 온보딩 화면으로 이동
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                NavigationManager.shared.setNavigationController(OnboardingViewController())
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.coordinator?.setNavigationController(OnboardingViewController())
             }
         } cancelAction: { }
     }
@@ -249,7 +251,7 @@ final class MyPageViewController: BaseViewController {
                 UserDefaultsManager.shared.accessToken = nil
                 UserDefaultsManager.shared.userFullName = nil
                 
-                NavigationManager.shared.setNavigationController(OnboardingViewController())
+                self.coordinator?.setNavigationController(OnboardingViewController())
             }
         } cancelAction: { }
     }
