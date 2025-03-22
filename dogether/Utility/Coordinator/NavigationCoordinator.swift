@@ -19,8 +19,12 @@ final class NavigationCoordinator: NSObject {
         self.navigationController = navigationController
     }
     
+}
+
+// MARK: view
+extension NavigationCoordinator {
     // ???: 데이터를 더 안전하게 (coordinator를 통해) 전달하는 방식을 찾아보자
-    
+
     func setNavigationController(_ viewController: BaseViewController, animated: Bool = true) {
         viewController.coordinator = self
         navigationController.setViewControllers([viewController], animated: animated)
@@ -34,6 +38,31 @@ final class NavigationCoordinator: NSObject {
     
     func popViewController(animated: Bool = true) {
         navigationController.popViewController(animated: animated)
+    }
+}
+
+// MARK: popup
+extension NavigationCoordinator {
+    func showPopup(
+        _ viewController: BaseViewController,
+        type: PopupTypes,
+        todoInfo: TodoInfo? = nil,
+        rejectPopupCompletion: ((String) -> Void)? = nil,
+        animated: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
+        let popupViewController = PopupViewController()
+        popupViewController.coordinator = self
+        popupViewController.popupType = type
+        popupViewController.todoInfo = todoInfo
+        popupViewController.rejectPopupCompletion = rejectPopupCompletion
+        popupViewController.modalPresentationStyle = .overFullScreen
+        popupViewController.modalTransitionStyle = .crossDissolve
+        viewController.present(popupViewController, animated: animated, completion: completion)
+    }
+    
+    func hidePopup(animated: Bool = true) {
+        navigationController.viewControllers.last?.dismiss(animated: animated)
     }
 }
 

@@ -487,7 +487,12 @@ extension MainViewController {
         todoListStackView.isHidden = viewModel.todoList.isEmpty
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
         viewModel.todoList
-            .map { todo in TodoListItemButton(todo: todo) { self.viewModel.didTapTodoItem(todo: $0) } }
+            .map {
+                TodoListItemButton(todo: $0) {
+                    let popupType: PopupTypes = TodoStatus(rawValue: $0.status) == .waitCertificattion ? .certification : .certificationInfo
+                    self.coordinator?.showPopup(self, type: popupType, todoInfo: $0)
+                }
+            }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
         emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)

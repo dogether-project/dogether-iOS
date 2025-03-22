@@ -42,8 +42,8 @@ final class ModalityViewController: BaseViewController {
                 self.viewModel.setResult(.reject)
                 self.viewModel.setRejectReason()
                 self.closeButton.setButtonStatus(status: .disabled)
-                PopupManager.shared.showPopup(type: .rejectReason, completeAction: { rejectReason in
-                    self.viewModel.setRejectReason(rejectReason)
+                self.coordinator?.showPopup(self, type: .rejectReason, rejectPopupCompletion: {
+                    self.viewModel.setRejectReason($0)
                     self.closeButton.setButtonStatus(status: .enabled)
                 })
                 

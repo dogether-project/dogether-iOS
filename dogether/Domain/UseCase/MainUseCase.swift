@@ -43,8 +43,4 @@ final class MainUseCase {
     func getTeamSummary() async throws -> GetTeamSummaryResponse {
         try await repository.getTeamSummary()
     }
-    
-    func showPopup(type: PopupTypes, todoInfo: TodoInfo) {
-        PopupManager.shared.showPopup(type: type, todoInfo: todoInfo)
-    }
 }
