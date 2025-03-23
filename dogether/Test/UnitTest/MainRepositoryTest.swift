@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MainRepositoryTest: MainInterface {
+final class MainRepositoryTest: MainProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse {
         return GetGroupStatusResponse(status: "READY")
 //        return GetGroupStatusResponse(status: "RUNNING")

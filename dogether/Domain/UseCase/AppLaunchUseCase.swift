@@ -8,9 +8,9 @@
 import Foundation
 
 final class AppLaunchUseCase {
-    private let repository: AppLaunchInterface
+    private let repository: AppLaunchProtocol
     
-    init(repository: AppLaunchInterface) {
+    init(repository: AppLaunchProtocol) {
         self.repository = repository
     }
     

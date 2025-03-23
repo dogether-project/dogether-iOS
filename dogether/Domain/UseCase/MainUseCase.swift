@@ -8,9 +8,9 @@
 import Foundation
 
 final class MainUseCase {
-    private let repository: MainInterface
+    private let repository: MainProtocol
     
-    init(repository: MainInterface) {
+    init(repository: MainProtocol) {
         self.repository = repository
     }
     

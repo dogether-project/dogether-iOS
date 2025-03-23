@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MainRepository: MainInterface {
+final class MainRepository: MainProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse {
         try await GroupsDataSource.shared.getGroupStatus()
     }

@@ -1,5 +1,5 @@
 //
-//  MainInterface.swift
+//  MainProtocol.swift
 //  dogether
 //
 //  Created by seungyooooong on 3/7/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol MainInterface {
+protocol MainProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse
     func getGroupInfo() async throws -> GetGroupInfoResponse
     func getTeamSummary() async throws -> GetTeamSummaryResponse

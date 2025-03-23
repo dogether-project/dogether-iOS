@@ -8,9 +8,9 @@
 import Foundation
 
 final class GroupCreateUseCase {
-    private let repository: GroupCreateInterface
+    private let repository: GroupCreateProtocol
     
-    init(repository: GroupCreateInterface) {
+    init(repository: GroupCreateProtocol) {
         self.repository = repository
     }
     

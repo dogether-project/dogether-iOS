@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class AppLaunchRepository: AppLaunchInterface {
+final class AppLaunchRepository: AppLaunchProtocol {
     func getIsJoining() async throws -> GetIsJoiningResponse {
         try await GroupsDataSource.shared.getIsJoining()
     }
