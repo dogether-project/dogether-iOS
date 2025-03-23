@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 final class StartViewController: BaseViewController {
-    private let viewModel = StartViewModel()
-    
     private let dogetherHeader = DogetherHeader()
     
     private let titleLabel = {
@@ -73,7 +71,12 @@ final class StartViewController: BaseViewController {
         button.backgroundColor = .grey800
         button.layer.cornerRadius = 12
         button.tag = groupType.rawValue
-        button.addTarget(self, action: #selector(didTapStartButton(_:)), for: .touchUpInside)
+        button.addAction(
+            UIAction { [weak self, weak button] _ in
+                guard let self, let button, let groupType = GroupTypes(rawValue: button.tag) else { return }
+                coordinator?.pushViewController(groupType.destination)
+            }, for: .touchUpInside
+        )
         
         let imageView = UIImageView(image: groupType.image)
         imageView.isUserInteractionEnabled = false
@@ -133,7 +136,12 @@ final class StartViewController: BaseViewController {
     override func configureView() {
         dogetherHeader.delegate = self
         
-        floatingDescription.addTarget(self, action: #selector(didTapFloatingDescription), for: .touchUpInside)
+        floatingDescription.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                hideFloating()
+            }, for: .touchUpInside
+        )
         
         createButton = startButton(groupType: .create)
         joinButton = startButton(groupType: .join)
@@ -173,20 +181,11 @@ final class StartViewController: BaseViewController {
             $0.height.equalTo(100)
         }
     }
-    
-    @objc private func didTapFloatingDescription() {
-        viewModel.hideFloating(completeAction: updateView)
-    }
-    
-    @objc private func didTapStartButton(_ sender: UIButton) {
-        guard let groupType = GroupTypes(rawValue: sender.tag) else { return }
-        coordinator?.pushViewController(groupType.destination)
-    }
 }
 
 // MARK: - update UI
 extension StartViewController {
-    private func updateView() {
-        floatingDescription.isHidden = !viewModel.isShowFloating
+    private func hideFloating() {
+        floatingDescription.isHidden = false
     }
 }
