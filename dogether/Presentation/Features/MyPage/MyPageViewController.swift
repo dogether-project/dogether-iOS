@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 
 final class MyPageViewController: BaseViewController {
+    private let viewModel = MyPageViewModel()
     
     private let dogetherHeader = NavigationHeader(title: "마이페이지")
     
@@ -245,8 +246,7 @@ final class MyPageViewController: BaseViewController {
             
             // TODO: 회원 탈퇴 부분 임시로 추가, 추후 수정
             Task { @MainActor in
-                let viewModel = OnboardingViewModel()
-                try await viewModel.withdraw()
+                try await self.viewModel.withdraw()
                 
                 UserDefaultsManager.shared.accessToken = nil
                 UserDefaultsManager.shared.userFullName = nil

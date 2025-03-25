@@ -30,6 +30,15 @@ extension DIManager {
         }
     }
     
+    func getAuthRepository(buildMode: BuildMode? = nil) -> AuthProtocol {
+        switch buildMode ?? defualtBuildMode {
+        case .debug:
+            return AuthRepositoryTest()
+        case .live:
+            return AuthRepository()
+        }
+    }
+    
     func getMainRepository(buildMode: BuildMode? = nil) -> MainProtocol {
         switch buildMode ?? defualtBuildMode {
         case .debug:

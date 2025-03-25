@@ -20,7 +20,7 @@ final class AppLaunchUseCase {
     
     func getDestination() async throws -> BaseViewController {
         let needLogin = UserDefaultsManager.shared.accessToken == nil
-        if needLogin { return await OnboardingViewController()}
+        if needLogin { return await OnboardingViewController() }
         
         let response = try await repository.getIsJoining()
         if response.isJoining {
