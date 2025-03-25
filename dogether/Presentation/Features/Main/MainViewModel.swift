@@ -31,7 +31,7 @@ final class MainViewModel {
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     
     init() {
-        let mainRepository = MainRepository()
+        let mainRepository = DIManager.shared.getMainRepository()
         self.mainUseCase = MainUseCase(repository: mainRepository)
     }
 }

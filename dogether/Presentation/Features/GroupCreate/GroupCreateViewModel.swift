@@ -22,7 +22,7 @@ final class GroupCreateViewModel {
     private(set) var currentStartAt: GroupStartAts = .today
     
     init() {
-        let groupCreateRepository = GroupCreateRepository()
+        let groupCreateRepository = DIManager.shared.getGroupCreateRepository()
         self.groupCreateUseCase = GroupCreateUseCase(repository: groupCreateRepository)
     }
 }
