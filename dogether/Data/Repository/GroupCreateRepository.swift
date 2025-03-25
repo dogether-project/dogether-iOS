@@ -8,7 +8,13 @@
 import Foundation
 
 final class GroupCreateRepository: GroupCreateProtocol {
+    private let groupsDataSource: GroupsDataSource
+    
+    init(groupsDataSource: GroupsDataSource = .shared) {
+        self.groupsDataSource = groupsDataSource
+    }
+    
     func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
-        try await GroupsDataSource.shared.createGroup(createGroupRequest: createGroupRequest)
+        try await groupsDataSource.createGroup(createGroupRequest: createGroupRequest)
     }
 }

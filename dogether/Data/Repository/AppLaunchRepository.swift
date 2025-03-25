@@ -8,7 +8,13 @@
 import Foundation
 
 final class AppLaunchRepository: AppLaunchProtocol {
+    private let grouspDataSource: GroupsDataSource
+    
+    init(grouspDataSource: GroupsDataSource = .shared) {
+        self.grouspDataSource = grouspDataSource
+    }
+    
     func getIsJoining() async throws -> GetIsJoiningResponse {
-        try await GroupsDataSource.shared.getIsJoining()
+        try await grouspDataSource.getIsJoining()
     }
 }
