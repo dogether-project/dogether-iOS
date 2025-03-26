@@ -10,12 +10,10 @@ import UIKit
 final class DurationButton: UIButton {
     private(set) var duration: GroupChallengeDurations
     private(set) var isColorful: Bool
-    private(set) var action: (GroupChallengeDurations) -> Void
     
-    init(duration: GroupChallengeDurations, isColorful: Bool = false, action: @escaping (GroupChallengeDurations) -> Void = { _ in }) {
+    init(duration: GroupChallengeDurations, isColorful: Bool = false) {
         self.duration = duration
         self.isColorful = isColorful
-        self.action = action
         
         super.init(frame: .zero)
         setUI()
@@ -38,7 +36,6 @@ final class DurationButton: UIButton {
         backgroundColor = .grey800
         layer.cornerRadius = 12
         layer.borderWidth = 1.5
-        addTarget(self, action: #selector(didTapDurationButton), for: .touchUpInside)
         
         label.text = duration.text
         
@@ -50,17 +47,9 @@ final class DurationButton: UIButton {
         }
     }
     
-    func setAction(action: @escaping (GroupChallengeDurations) -> Void) {
-        self.action = action
-    }
-    
     func setColorful(isColorful: Bool) {
         self.isColorful = isColorful
         
         updateUI()
-    }
-    
-    @objc private func didTapDurationButton() {
-        action(duration)
     }
 }

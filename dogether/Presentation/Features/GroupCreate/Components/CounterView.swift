@@ -1,5 +1,5 @@
 //
-//  DogetherCountView.swift
+//  CounterView.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/10/25.
@@ -7,19 +7,19 @@
 
 import UIKit
 
-final class DogetherCountView: UIView {
+final class CounterView: UIView {
     let min: Int
     let max: Int
     let unit: String
-    private var changeCountAction: (Int) async -> Void
+    let changeCountAction: (Int) -> Void
     private(set) var current: Int
     
-    init(changeCountAction: @escaping (Int) async -> Void, min: Int = 2, max: Int = 10, current: Int, unit: String) {
-        self.changeCountAction = changeCountAction
+    init(min: Int = 2, max: Int = 10, current: Int, unit: String, changeCountAction: @escaping (Int) -> Void) {
         self.min = min
         self.max = max
         self.current = current
         self.unit = unit
+        self.changeCountAction = changeCountAction
         
         super.init(frame: .zero)
         setUI()
@@ -87,8 +87,15 @@ final class DogetherCountView: UIView {
     }()
     
     private func setUI() {
-        minusButton.addTarget(self, action: #selector(didTapCountButton(_:)), for: .touchUpInside)
-        plusButton.addTarget(self, action: #selector(didTapCountButton(_:)), for: .touchUpInside)
+        [minusButton, plusButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self, weak button] _ in
+                    guard let self, let button else { return }
+                    changeCount(tag: button.tag)
+                }, for: .touchUpInside
+            )
+        }
+        
         currentLabel.text = "\(current)\(unit)"
         minLabel.text = "\(min)\(unit)"
         maxLabel.text = "\(max)\(unit)"
@@ -139,13 +146,11 @@ final class DogetherCountView: UIView {
         }
     }
     
-    @objc private func didTapCountButton(_ sender: UIButton) {
-        let after = current + sender.tag
+    private func changeCount(tag direction: Int) {
+        let after = current + direction
         if min <= after && after <= max {
             self.setCurrent(after)
-            Task { @MainActor in
-                await changeCountAction(current)
-            }
+            changeCountAction(current)
         }
     }
     

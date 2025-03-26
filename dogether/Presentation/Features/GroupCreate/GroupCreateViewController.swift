@@ -146,12 +146,13 @@ final class GroupCreateViewController: BaseViewController {
         setupKeyboardHandling()
     }
     
-    // TODO: 추후 확인 필요 (하도 헤메다가 추가한 부분이라.. 무슨 의미를 갖는지 모르겠네요)
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
+    // MARK: about keyboardOserver
+    deinit { NotificationCenter.default.removeObserver(self) }
     
     override func configureView() {
+        updateDuration()
+        updateStartAt()
+        
         dogetherHeader.delegate = self
         
         stepOne = stepLabel(step: .one)
@@ -167,49 +168,83 @@ final class GroupCreateViewController: BaseViewController {
         stepThreeView = stepView(step: .three)
         stepFourView = stepView(step: .four)
         
-        completeButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
+        completeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                if viewModel.currentStep == .four {
+                    Task {
+                        try await self.viewModel.createGroup()
+                        guard let joinCode = self.viewModel.joinCode else { return }
+                        await MainActor.run {
+                            let completeViewController = CompleteViewController()
+                            completeViewController.viewModel.groupType = .create
+                            completeViewController.viewModel.joinCode = joinCode
+                            self.coordinator?.setNavigationController(completeViewController)
+                        }
+                    }
+                } else {
+                    guard let nextStep = CreateGroupSteps(rawValue: viewModel.currentStep.rawValue + 1) else { return }
+                    viewModel.updateStep(step: nextStep)
+                    updateStep()
+                }
+            }, for: .touchUpInside
+        )
         
         groupName = componentTitleLabel(componentTitle: "그룹명")
         groupNameTextField.delegate = self
-        groupNameTextField.addTarget(self, action: #selector(didChangeGroupName), for: .editingChanged)
+        groupNameTextField.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                viewModel.updateGroupName(groupName: groupNameTextField.text)
+                groupNameTextField.text = viewModel.currentGroupName
+                groupNameCountLabel.text = String(viewModel.currentGroupName.count)
+                completeButton.setButtonStatus(status: viewModel.currentStep == .one && viewModel.currentGroupName.count > 0 ? .enabled : .disabled)
+            }, for: .editingChanged
+        )
         groupNameMaxLengthLabel.text = "/\(viewModel.groupNameMaxLength)"
         
         memberCount = componentTitleLabel(componentTitle: "그룹 인원")
-        memberCountView = DogetherCountView(changeCountAction: {
-            self.viewModel.updateMemberCount(count: $0)
-        }, min: 2, max: 20, current: viewModel.memberCount, unit: "명")
+        memberCountView = CounterView(min: 2, max: 20, current: viewModel.memberCount, unit: "명") { [weak self] in
+            self?.viewModel.updateMemberCount(count: $0)
+        }
         
         todoLimit = componentTitleLabel(componentTitle: "투두 개수")
-        todoLimitView = DogetherCountView(changeCountAction: {
-            self.viewModel.updateTodoLimit(count: $0)
-        }, min: 2, max: 10, current: viewModel.todoLimit, unit: "개")
+        todoLimitView = CounterView(min: 2, max: 10, current: viewModel.todoLimit, unit: "개") { [weak self] in
+            self?.viewModel.updateTodoLimit(count: $0)
+        }
         
         duration = componentTitleLabel(componentTitle: "기간")
-        [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach {
-            $0.setAction(action: { self.updateDuration($0) })
-            $0.setColorful(isColorful: viewModel.currentDuration == $0.duration)
+        [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self, weak button] _ in
+                    guard let self, let button else { return }
+                    updateDuration(button.duration)
+                }, for: .touchUpInside
+            )
         }
         durationRow1 = horizontalStackView(buttons: [threeDaysButton, oneWeekButton])
         durationRow2 = horizontalStackView(buttons: [twoWeeksButton, fourWeeksButton])
         durationStack = verticalStackView(stacks: [durationRow1, durationRow2])
         
         startAt = componentTitleLabel(componentTitle: "시작일")
-        [todayButton, tomorrowButton].forEach {
-            $0.setAction(action: { self.updateStartAt($0) })
-            $0.setColorful(isColorful: viewModel.currentStartAt == $0.startAt)
+        [todayButton, tomorrowButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self, weak button] _ in
+                    guard let self, let button else { return }
+                    updateStartAt(button.startAt)
+                }, for: .touchUpInside
+            )
         }
         startAtStack = horizontalStackView(buttons: [todayButton, tomorrowButton])
     }
     
     override func configureHierarchy() {
-        [
-            dogetherHeader, stepLabelStackView, stepDescriptionLabel, completeButton,
-            stepOneView, stepTwoView, stepThreeView, stepFourView
+        [ dogetherHeader, stepLabelStackView, stepDescriptionLabel, completeButton,
+          stepOneView, stepTwoView, stepThreeView, stepFourView
         ].forEach { view.addSubview($0) }
         
-        [
-            groupName, groupNameView, groupNameTextField, groupNameCountLabel, groupNameMaxLengthLabel,
-            memberCount, memberCountView
+        [ groupName, groupNameView, groupNameTextField, groupNameCountLabel, groupNameMaxLengthLabel,
+          memberCount, memberCountView
         ].forEach { stepOneView.addSubview($0) }
         
         [todoLimit, todoLimitView].forEach { stepTwoView.addSubview($0) }
@@ -239,7 +274,7 @@ final class GroupCreateViewController: BaseViewController {
         }
         
         completeButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(48)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
@@ -332,32 +367,6 @@ final class GroupCreateViewController: BaseViewController {
             $0.height.equalTo(267)
         }
     }
-    
-    @objc private func didTapCompleteButton() {
-        if viewModel.currentStep == .four {
-            Task {
-                try await viewModel.createGroup()
-                guard let joinCode = viewModel.joinCode else { return }
-                await MainActor.run {
-                    let completeViewController = CompleteViewController()
-                    completeViewController.viewModel.groupType = .create
-                    completeViewController.viewModel.joinCode = joinCode
-                    coordinator?.setNavigationController(completeViewController)
-                }
-            }
-        } else {
-            guard let nextStep = CreateGroupSteps(rawValue: viewModel.currentStep.rawValue + 1) else { return }
-            viewModel.updateStep(step: nextStep)
-            updateStep()
-        }
-    }
-    
-    @objc private func didChangeGroupName() {
-        viewModel.updateGroupName(groupName: groupNameTextField.text)
-        groupNameTextField.text = viewModel.currentGroupName
-        groupNameCountLabel.text = String(viewModel.currentGroupName.count)
-        completeButton.setButtonStatus(status: viewModel.currentStep == .one && viewModel.currentGroupName.count > 0 ? .enabled : .disabled)
-    }
 }
 
 // MARK: - update UI
@@ -387,7 +396,7 @@ extension GroupCreateViewController {
         }
     }
     
-    private func updateDuration(_ duration: GroupChallengeDurations) {
+    private func updateDuration(_ duration: GroupChallengeDurations = .threeDays) {
         viewModel.updateDuration(duration: duration)
         
         [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach {
@@ -395,7 +404,7 @@ extension GroupCreateViewController {
         }
     }
     
-    private func updateStartAt(_ startAt: GroupStartAts) {
+    private func updateStartAt(_ startAt: GroupStartAts = .today) {
         viewModel.updateStartAt(startAt: startAt)
         
         [todayButton, tomorrowButton].forEach {
@@ -429,22 +438,13 @@ extension GroupCreateViewController: UITextFieldDelegate {
     }
     
     @objc private func keyboardWillShow(_ notification: NSNotification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         groupNameView.layer.borderColor = UIColor.blue300.cgColor
         groupNameCountLabel.textColor = .blue300
-        completeButton.snp.updateConstraints {
-            $0.bottom.equalToSuperview().inset(keyboardFrame.cgRectValue.height + 16)
-        }
-        self.view.layoutIfNeeded()
     }
     
     @objc private func keyboardWillHide(_ notification: NSNotification) {
         groupNameView.layer.borderColor = UIColor.grey800.cgColor
         groupNameCountLabel.textColor = .grey300
-        completeButton.snp.updateConstraints {
-            $0.bottom.equalToSuperview().inset(48)
-        }
-        self.view.layoutIfNeeded()
     }
     
     @objc private func dismissKeyboard() { view.endEditing(true) }
