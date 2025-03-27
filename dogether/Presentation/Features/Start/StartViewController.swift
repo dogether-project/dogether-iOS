@@ -186,6 +186,6 @@ final class StartViewController: BaseViewController {
 // MARK: - update UI
 extension StartViewController {
     private func hideFloating() {
-        floatingDescription.isHidden = false
+        floatingDescription.isHidden = true
     }
 }

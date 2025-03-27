@@ -35,7 +35,12 @@ final class NavigationHeader: UIView {
     }()
     
     private func setUI() {
-        prevButton.addTarget(self, action: #selector(didTapPrevButton), for: .touchUpInside)
+        prevButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.coordinator?.popViewController()
+            }, for: .touchUpInside
+        )
         titleLabel.text = title
         
         [prevButton, titleLabel].forEach { addSubview($0) }
@@ -50,9 +55,5 @@ final class NavigationHeader: UIView {
             $0.center.equalToSuperview()
             $0.height.equalTo(28)
         }
-    }
-    
-    @objc private func didTapPrevButton() {
-        delegate?.coordinator?.popViewController()
     }
 }

@@ -11,6 +11,8 @@ final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let appLaunchUseCase: AppLaunchUseCase
     
+    let onboardingStep: Int = 3
+    
     private(set) var destination: BaseViewController?
     
     init() {

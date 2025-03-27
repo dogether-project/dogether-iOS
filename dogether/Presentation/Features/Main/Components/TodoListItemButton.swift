@@ -10,11 +10,9 @@ import SnapKit
 
 final class TodoListItemButton: UIButton {
     private(set) var todo: TodoInfo
-    private(set) var action: (TodoInfo) async -> Void
     
-    init(todo: TodoInfo, action: @escaping (TodoInfo) -> Void) {
+    init(todo: TodoInfo) {
         self.todo = todo
-        self.action = action
         super.init(frame: .zero)
         
         setUI()
@@ -46,7 +44,7 @@ final class TodoListItemButton: UIButton {
         
         todoImageView.image = status.image
         
-        if status == .waitCertificattion {
+        if status == .waitCertification {
             contentLabel.text = todo.content
         } else {
             let attributes: [NSAttributedString.Key: Any] = [
@@ -67,7 +65,6 @@ final class TodoListItemButton: UIButton {
         
         backgroundColor = .grey700
         layer.cornerRadius = 8
-        addTarget(self, action: #selector(didTapTodoItem), for: .touchUpInside)
         
         [todoImageView, contentLabel, buttonLabel].forEach { addSubview($0) }
         
@@ -75,7 +72,7 @@ final class TodoListItemButton: UIButton {
             $0.height.equalTo(64)
         }
         
-        if todo.status != TodoStatus.waitCertificattion.rawValue {
+        if todo.status != TodoStatus.waitCertification.rawValue {
             let imageSize = todo.status == TodoStatus.waitExamination.rawValue ? 22 : todo.status == TodoStatus.reject.rawValue ? 26 : 28 // MARK: 임의로 사이즈 조정
             todoImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
@@ -87,9 +84,9 @@ final class TodoListItemButton: UIButton {
         contentLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(
-                todo.status == TodoStatus.waitCertificattion.rawValue ? self : todoImageView.snp.right
+                todo.status == TodoStatus.waitCertification.rawValue ? self : todoImageView.snp.right
             ).offset(
-                todo.status == TodoStatus.waitCertificattion.rawValue ? 16 : 8
+                todo.status == TodoStatus.waitCertification.rawValue ? 16 : 8
             )
         }
         
@@ -105,11 +102,5 @@ final class TodoListItemButton: UIButton {
         self.todo.status = status.rawValue
         
         updateUI()
-    }
-    
-    @objc private func didTapTodoItem() {
-        Task { @MainActor in
-            await action(self.todo)
-        }
     }
 }

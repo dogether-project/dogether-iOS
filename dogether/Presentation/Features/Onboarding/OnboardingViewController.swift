@@ -21,22 +21,14 @@ final class OnboardingViewController: BaseViewController {
         return scrollView
     }()
     
-    private let pageControl = {
-        let pageControl = UIPageControl()
-        pageControl.numberOfPages = 3
-        return pageControl
-    }()
-    
-    private let contentView = {
+    private let onboardingStackView = {
         let view = UIStackView()
         view.axis = .horizontal
         view.distribution = .fillEqually
         return view
     }()
     
-    private func pageView(step: OnboardingSteps) -> UIView {
-        let view = UIView()
-        
+    private func onboardingStepStackView(step: OnboardingSteps) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.attributedText = NSAttributedString(
             string: step.title,
@@ -53,30 +45,24 @@ final class OnboardingViewController: BaseViewController {
         subTitleLabel.textColor = .grey200
         subTitleLabel.numberOfLines = 0
 
+        let imageView = UIImageView(image: step.image)
+        let aspectRatio = imageView.frame.height / imageView.frame.width
         
-        let imageView = UIImageView()
-        imageView.image = step.image
-        
-        [titleLabel, subTitleLabel, imageView].forEach { view.addSubview($0) }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview()
-        }
-        
-        subTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom).offset(8)
-        }
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel, imageView])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.setCustomSpacing(8, after: titleLabel)
         
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(36)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(340)
+            $0.height.equalTo(imageView.snp.width).multipliedBy(aspectRatio)
         }
-        return view
+        
+        return stackView
     }
+    
+    private let pageControl = UIPageControl()
     
     private let nextButton = DogetherButton(title: "다음", status: .enabled)
 
@@ -92,11 +78,17 @@ final class OnboardingViewController: BaseViewController {
     
     override func configureView() {
         scrollView.delegate = self
+        scrollView.contentSize = CGSize(
+            width: view.frame.width * CGFloat(viewModel.onboardingStep),
+            height: scrollView.frame.height
+        )
         
-        for pageIndex in 0 ..< pageControl.numberOfPages {
+        for pageIndex in 0 ..< viewModel.onboardingStep {
             guard let onboardingStep = OnboardingSteps(rawValue: pageIndex + 1) else { return }
-            contentView.addArrangedSubview(pageView(step: onboardingStep))
+            onboardingStackView.addArrangedSubview(onboardingStepStackView(step: onboardingStep))
         }
+        
+        pageControl.numberOfPages = viewModel.onboardingStep
         
         nextButton.addAction(
             UIAction { [weak self] _ in
@@ -126,38 +118,32 @@ final class OnboardingViewController: BaseViewController {
     override func configureHierarchy() {
         [scrollView, pageControl, nextButton, signInButton].forEach { view.addSubview($0) }
         
-        scrollView.addSubview(contentView)
+        [onboardingStackView].forEach { scrollView.addSubview($0) }
     }
     
     override func configureConstraints() {
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
-            $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(470)
+            $0.edges.equalToSuperview()
         }
         
-        contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalToSuperview()
-            $0.width.equalTo(view.frame.width * CGFloat(pageControl.numberOfPages)) // 페이지 개수만큼 너비 설정
+        onboardingStackView.snp.makeConstraints {
+            // FIXME: 26 -> pageControl.height, 16 -> buttonBottomPadding, 50 -> button.height
+            $0.centerY.equalTo(view.safeAreaLayoutGuide).offset(-(26 + 16 + 50) / 2)
+            $0.width.equalTo(view.frame.width * CGFloat(viewModel.onboardingStep))
         }
         
         pageControl.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(scrollView.snp.bottom).offset(24)
+            $0.top.equalTo(onboardingStackView.snp.bottom)
         }
         
         nextButton.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(pageControl.snp.bottom).offset(64)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
 
         signInButton.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(pageControl.snp.bottom).offset(64)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(50)

@@ -488,10 +488,16 @@ extension MainViewController {
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
         viewModel.todoList
             .map {
-                TodoListItemButton(todo: $0) {
-                    let popupType: PopupTypes = TodoStatus(rawValue: $0.status) == .waitCertificattion ? .certification : .certificationInfo
-                    self.coordinator?.showPopup(self, type: popupType, todoInfo: $0)
-                }
+                let todoListItemButton = TodoListItemButton(todo: $0)
+                todoListItemButton.addAction(
+                    UIAction { [weak self, weak todoListItemButton] _ in
+                        guard let self, let button = todoListItemButton else { return }
+                        let isWaitCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification
+                        let popupType: PopupTypes = isWaitCertification ? .certification : .certificationInfo
+                        coordinator?.showPopup(self, type: popupType, todoInfo: button.todo)
+                    }, for: .touchUpInside
+                )
+                return todoListItemButton
             }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
