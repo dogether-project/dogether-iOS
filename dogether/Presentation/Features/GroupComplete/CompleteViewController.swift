@@ -71,13 +71,13 @@ final class CompleteViewController: BaseViewController {
         // TODO: 추후 수정
         switch viewModel.groupType {
         case .join:
-            guard let groupInfo = viewModel.joinGroupResponse else { return }
+            // FIXME: API 수정 후 내용 반영
             groupInfoView = DogetherGroupInfo(
-                groupName: groupInfo.name,
-                memberCount: groupInfo.maximumMemberCount,
-                duration: GroupChallengeDurations(rawValue: groupInfo.durationOption) ?? .threeDays,
-                startAtString: groupInfo.startAt,
-                endAtString: groupInfo.endAt
+                groupName: viewModel.groupInfo.name,
+                memberCount: 10,
+                duration: GroupChallengeDurations(rawValue: viewModel.groupInfo.duration) ?? .threeDays,
+                startAtString: "2025-01-01",
+                endAtString: viewModel.groupInfo.endAt
             )
         case .create:
             noticeLabel.text = viewModel.groupType.completeNoticeText

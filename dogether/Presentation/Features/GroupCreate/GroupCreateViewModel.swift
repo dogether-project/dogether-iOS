@@ -8,7 +8,7 @@
 import Foundation
 
 final class GroupCreateViewModel {
-    private let groupCreateUseCase: GroupCreateUseCase
+    private let groupUseCase: GroupUseCase
     
     let groupNameMaxLength: Int = 12
     
@@ -22,8 +22,8 @@ final class GroupCreateViewModel {
     private(set) var currentStartAt: GroupStartAts = .today
     
     init() {
-        let groupCreateRepository = DIManager.shared.getGroupCreateRepository()
-        self.groupCreateUseCase = GroupCreateUseCase(repository: groupCreateRepository)
+        let groupRepository = DIManager.shared.getGroupRepository()
+        self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
 }
 
@@ -66,6 +66,6 @@ extension GroupCreateViewModel {
             durationOption: currentDuration,
             maximumTodoCount: todoLimit
         )
-        joinCode = try await groupCreateUseCase.createGroup(createGroupRequest: createGroupRequest)
+        joinCode = try await groupUseCase.createGroup(createGroupRequest: createGroupRequest)
     }
 }

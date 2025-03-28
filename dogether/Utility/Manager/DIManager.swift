@@ -48,12 +48,12 @@ extension DIManager {
         }
     }
     
-    func getGroupCreateRepository(buildMode: BuildMode? = nil) -> GroupCreateProtocol {
+    func getGroupRepository(buildMode: BuildMode? = nil) -> GroupProtocol {
         switch buildMode ?? defualtBuildMode {
         case .debug:
-            return GroupCreateRepositoryTest()
+            return GroupRepositoryTest()
         case .live:
-            return GroupCreateRepository()
+            return GroupRepository()
         }
     }
 }

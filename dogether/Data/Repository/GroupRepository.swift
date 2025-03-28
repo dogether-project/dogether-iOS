@@ -1,5 +1,5 @@
 //
-//  GroupCreateRepository.swift
+//  GroupRepository.swift
 //  dogether
 //
 //  Created by seungyooooong on 3/2/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class GroupCreateRepository: GroupCreateProtocol {
+final class GroupRepository: GroupProtocol {
     private let groupsDataSource: GroupsDataSource
     
     init(groupsDataSource: GroupsDataSource = .shared) {
@@ -16,5 +16,9 @@ final class GroupCreateRepository: GroupCreateProtocol {
     
     func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
         try await groupsDataSource.createGroup(createGroupRequest: createGroupRequest)
+    }
+    
+    func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse {
+        try await groupsDataSource.joinGroup(joinGroupRequest: joinGroupRequest)
     }
 }
