@@ -16,6 +16,7 @@ final class CompleteViewController: BaseViewController {
         imageView.image = .firecracker
         return imageView
     }()
+    
     private let titleLabel = {
         let label = UILabel()
         label.textColor = .grey0
@@ -23,39 +24,62 @@ final class CompleteViewController: BaseViewController {
         label.numberOfLines = 0
         return label
     }()
+    
     private let completeButton = DogetherButton(title: "홈으로 가기", status: .enabled)
+    
     private var groupInfoView = UIView()
-    private let joinCodeShareButton = {
+    
+    private func joinCodeShareButton(joinCode: String) -> UIButton {
         let button = UIButton()
         button.backgroundColor = .grey700
         button.layer.cornerRadius = 12
-        return button
-    }()
-    private let joinCodeLabel = {
+        
         let label = UILabel()
+        label.text = joinCode
         label.textColor = .grey0
         label.font = Fonts.head1B
         label.isUserInteractionEnabled = false
-        return label
-    }()
-    private let joinCodeImageView = {
+        
         let imageView = UIImageView()
         imageView.image = .share.withRenderingMode(.alwaysTemplate)
         imageView.tintColor = .grey400
         imageView.isUserInteractionEnabled = false
-        return imageView
-    }()
-    private let noticeLabel = {
+        
+        let stackView = UIStackView(arrangedSubviews: [label, imageView])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        
+        [stackView].forEach { button.addSubview($0) }
+        
+        stackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        imageView.snp.makeConstraints {
+            $0.width.height.equalTo(24)
+        }
+        
+        return button
+    }
+    private var joinCodeShareButton = UIButton()
+    
+    private let noticeView = {
+        let imageView = UIImageView(image: .notice)
+        
         let label = UILabel()
+        label.text = "카카오톡, 문자 등을 통해 공유해보세요 !"
         label.textColor = .grey400
         label.font = Fonts.body2R
-        label.numberOfLines = 0
-        return label
-    }()
-    private let noticeImageView = {
-        let imageView = UIImageView()
-        imageView.image = .notice
-        return imageView
+        
+        let stackView = UIStackView(arrangedSubviews: [imageView, label])
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        
+        imageView.snp.makeConstraints {
+            $0.width.height.equalTo(20)
+        }
+        
+        return stackView
     }()
     
     override func viewDidLoad() {
@@ -67,8 +91,14 @@ final class CompleteViewController: BaseViewController {
             string: viewModel.groupType.completeTitleText,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
-        completeButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
-        // TODO: 추후 수정
+        
+        completeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                coordinator?.setNavigationController(MainViewController())
+            }, for: .touchUpInside
+        )
+        
         switch viewModel.groupType {
         case .join:
             // FIXME: API 수정 후 내용 반영
@@ -80,19 +110,24 @@ final class CompleteViewController: BaseViewController {
                 endAtString: viewModel.groupInfo.endAt
             )
         case .create:
-            noticeLabel.text = viewModel.groupType.completeNoticeText
-            joinCodeLabel.text = viewModel.joinCode
-            joinCodeShareButton.addTarget(self, action: #selector(didTapJoinCodeShareButton), for: .touchUpInside)
+            joinCodeShareButton = joinCodeShareButton(joinCode: viewModel.joinCode)
+            joinCodeShareButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    present(UIActivityViewController(activityItems: [viewModel.joinCode], applicationActivities: nil), animated: true)
+                }, for: .touchUpInside
+            )
         }
     }
     
     override func configureHierarchy() {
         [firecrackerImageView, titleLabel, completeButton].forEach { view.addSubview($0) }
+        
         switch viewModel.groupType {
         case .join:
             [groupInfoView].forEach { view.addSubview($0) }
         case .create:
-            [joinCodeShareButton, joinCodeLabel, joinCodeImageView, noticeLabel, noticeImageView].forEach { view.addSubview($0) }
+            [joinCodeShareButton, noticeView].forEach { view.addSubview($0) }
         }
     }
     
@@ -102,15 +137,18 @@ final class CompleteViewController: BaseViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(68)
             $0.width.height.equalTo(40)
         }
+        
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(firecrackerImageView.snp.bottom).offset(20)
             $0.height.equalTo(72)
         }
+        
         completeButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(48)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
+        
         switch viewModel.groupType {
         case .join:
             groupInfoView.snp.makeConstraints {
@@ -124,34 +162,11 @@ final class CompleteViewController: BaseViewController {
                 $0.horizontalEdges.equalToSuperview().inset(36)
                 $0.height.equalTo(75)
             }
-            joinCodeLabel.snp.makeConstraints {
-                $0.centerX.equalTo(joinCodeShareButton).offset(-17)
-                $0.centerY.equalTo(joinCodeShareButton)
-            }
-            joinCodeImageView.snp.makeConstraints {
-                $0.centerY.equalTo(joinCodeShareButton)
-                $0.left.equalTo(joinCodeLabel.snp.right).offset(10)
-                $0.width.height.equalTo(24)
-            }
-            noticeLabel.snp.makeConstraints {
-                $0.centerX.equalToSuperview().offset(12)
+            
+            noticeView.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
                 $0.top.equalTo(joinCodeShareButton.snp.bottom).offset(16)
-                $0.height.equalTo(21)
-            }
-            noticeImageView.snp.makeConstraints {
-                $0.top.equalTo(noticeLabel)
-                $0.right.equalTo(noticeLabel.snp.left).offset(-4)
-                $0.width.height.equalTo(20)
             }
         }
-    }
-    
-    @objc private func didTapCompleteButton() {
-        coordinator?.setNavigationController(MainViewController())
-    }
-    
-    @objc private func didTapJoinCodeShareButton() {
-        // TODO: 추후 수정
-        present(UIActivityViewController(activityItems: [viewModel.joinCode], applicationActivities: nil), animated: true)
     }
 }
