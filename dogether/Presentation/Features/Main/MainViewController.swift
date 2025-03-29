@@ -303,10 +303,14 @@ final class MainViewController: BaseViewController {
         
         todoButton.addTarget(self, action: #selector(didTapTodoButton), for: .touchUpInside)
         
-        allButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
-        waitButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
-        rejectButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
-        approveButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
+        [allButton, waitButton, rejectButton, approveButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self, weak button] _ in
+                    guard let self, let button else { return }
+                    viewModel.updateFilter(filter: button.type, completeAction: updateList)
+                }, for: .touchUpInside
+            )
+        }
         
         filterStackView = filterStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
     }

@@ -10,12 +10,10 @@ import UIKit
 final class FilterButton: UIButton {
     let type: FilterTypes
     private(set) var isColorful: Bool
-    private(set) var action: (FilterTypes) -> Void
     
-    init(type: FilterTypes, isColorful: Bool = true, action: @escaping (FilterTypes) -> Void = { _ in }) {
+    init(type: FilterTypes, isColorful: Bool = true) {
         self.type = type
         self.isColorful = isColorful
-        self.action = action
         
         super.init(frame: .zero)
         setUI()
@@ -40,7 +38,6 @@ final class FilterButton: UIButton {
         
         layer.cornerRadius = 16
         layer.borderWidth = 1
-        addTarget(self, action: #selector(didTapFilterButton), for: .touchUpInside)
         
         icon.image = type.image?.withRenderingMode(.alwaysTemplate)
         
@@ -68,17 +65,9 @@ final class FilterButton: UIButton {
         }
     }
     
-    func setAction(_ action: @escaping (FilterTypes) -> Void) {
-        self.action = action
-    }
-    
     func setIsColorful(_ isColorful: Bool) {
         self.isColorful = isColorful
         
         updateUI()
-    }
-    
-    @objc private func didTapFilterButton() {
-        action(type)
     }
 }
