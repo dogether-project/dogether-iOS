@@ -17,12 +17,12 @@ final class DIManager {
         case live
     }
     
-    private let defualtBuildMode: BuildMode = .debug
+    private let defaultBuildMode: BuildMode = .debug
 }
 
 extension DIManager {
     func getAppLaunchRepository(buildMode: BuildMode? = nil) -> AppLaunchProtocol {
-        switch buildMode ?? defualtBuildMode {
+        switch buildMode ?? defaultBuildMode {
         case .debug:
             return AppLaunchRepositoryTest()
         case .live:
@@ -31,7 +31,7 @@ extension DIManager {
     }
     
     func getAuthRepository(buildMode: BuildMode? = nil) -> AuthProtocol {
-        switch buildMode ?? defualtBuildMode {
+        switch buildMode ?? defaultBuildMode {
         case .debug:
             return AuthRepositoryTest()
         case .live:
@@ -40,7 +40,7 @@ extension DIManager {
     }
     
     func getMainRepository(buildMode: BuildMode? = nil) -> MainProtocol {
-        switch buildMode ?? defualtBuildMode {
+        switch buildMode ?? defaultBuildMode {
         case .debug:
             return MainRepositoryTest()
         case .live:
@@ -49,11 +49,20 @@ extension DIManager {
     }
     
     func getGroupRepository(buildMode: BuildMode? = nil) -> GroupProtocol {
-        switch buildMode ?? defualtBuildMode {
+        switch buildMode ?? defaultBuildMode {
         case .debug:
             return GroupRepositoryTest()
         case .live:
             return GroupRepository()
+        }
+    }
+    
+    func getTodoRepository(buildMode: BuildMode? = nil) -> TodoProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return TodoRepositoryTest()
+        case .live:
+            return TodoRepository()
         }
     }
 }

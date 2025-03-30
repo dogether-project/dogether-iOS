@@ -15,4 +15,8 @@ final class TodosDataSource {
     func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse {
         try await NetworkManager.shared.request(TodosRouter.getMyTodos(date: date, status: status))
     }
+    
+    func createTodos(createTodosRequest: CreateTodosRequest) async throws {
+        try await NetworkManager.shared.request(TodosRouter.createTodos(createTodosRequest: createTodosRequest))
+    }
 }

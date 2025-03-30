@@ -9,8 +9,8 @@ import Foundation
 
 final class MainRepositoryTest: MainProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse {
-        return GetGroupStatusResponse(status: "READY")
-//        return GetGroupStatusResponse(status: "RUNNING")
+//        return GetGroupStatusResponse(status: "READY")
+        return GetGroupStatusResponse(status: "RUNNING")
     }
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
