@@ -53,6 +53,9 @@ final class GroupJoinViewController: BaseViewController {
     
     private var joinButton = DogetherButton(title: "가입하기", status: .disabled)
     
+    // MARK: about keyboardOserver
+    deinit { NotificationCenter.default.removeObserver(self) }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -60,9 +63,6 @@ final class GroupJoinViewController: BaseViewController {
         updateCodeLabelFocus()
         setupKeyboardHandling()
     }
-    
-    // MARK: about keyboardOserver
-    deinit { NotificationCenter.default.removeObserver(self) }
     
     override func configureView() {
         dogetherHeader.delegate = self

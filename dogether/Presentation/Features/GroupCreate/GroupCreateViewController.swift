@@ -140,14 +140,14 @@ final class GroupCreateViewController: BaseViewController {
     
     private let dogetherGroupInfo = DogetherGroupInfo()
     
+    // MARK: about keyboardOserver
+    deinit { NotificationCenter.default.removeObserver(self) }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         groupNameTextField.becomeFirstResponder()
         setupKeyboardHandling()
     }
-    
-    // MARK: about keyboardOserver
-    deinit { NotificationCenter.default.removeObserver(self) }
     
     override func configureView() {
         updateDuration()

@@ -23,8 +23,7 @@ final class MainViewController: BaseViewController {
         button.backgroundColor = .grey700
         button.layer.cornerRadius = 8
         
-        let imageView = UIImageView()
-        imageView.image = .chart
+        let imageView = UIImageView(image: .chart)
         imageView.isUserInteractionEnabled = false
         
         let label = UILabel()
@@ -65,6 +64,7 @@ final class MainViewController: BaseViewController {
         let view = UIView()
         view.backgroundColor = .grey800
         view.layer.cornerRadius = 32
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         view.clipsToBounds = true
         view.isUserInteractionEnabled = true
         return view
@@ -274,10 +274,6 @@ final class MainViewController: BaseViewController {
     }
     private var emptyDescriptionView = EmptyDescriptionView()
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -291,7 +287,20 @@ final class MainViewController: BaseViewController {
     override func configureView() {
         dogetherHeader.delegate = self
         
-        rankingButton.addTarget(self, action: #selector(didTapRankingButton), for: .touchUpInside)
+        rankingButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                Task {
+                    try await self.viewModel.getRankings()
+                    guard let rankings = self.viewModel.rankings else { return }
+                    await MainActor.run {
+                        let rankingViewController = RankingViewController()
+                        rankingViewController.rankings = rankings
+                        self.coordinator?.pushViewController(rankingViewController)
+                    }
+                }
+            }, for: .touchUpInside
+        )
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
@@ -301,7 +310,12 @@ final class MainViewController: BaseViewController {
         todoScrollView.bounces = false
         todoScrollView.showsVerticalScrollIndicator = false
         
-        todoButton.addTarget(self, action: #selector(didTapTodoButton), for: .touchUpInside)
+        todoButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                coordinator?.pushViewController(TodoWriteViewController())
+            }, for: .touchUpInside
+        )
         
         [allButton, waitButton, rejectButton, approveButton].forEach { button in
             button.addAction(
@@ -397,9 +411,8 @@ final class MainViewController: BaseViewController {
         }
         
         todoButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(48)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
         }
         
         // MARK: - todoList
@@ -430,22 +443,6 @@ final class MainViewController: BaseViewController {
             $0.width.equalTo(233)
             $0.height.equalTo(98)
         }
-    }
-    
-    @objc private func didTapRankingButton() {
-        Task {
-            try await viewModel.getRankings()
-            guard let rankings = viewModel.rankings else { return }
-            await MainActor.run {
-                let rankingViewController = RankingViewController()
-                rankingViewController.rankings = rankings
-                coordinator?.pushViewController(rankingViewController)
-            }
-        }
-    }
-    
-    @objc private func didTapTodoButton() {
-        coordinator?.pushViewController(TodoWriteViewController())
     }
 }
 
