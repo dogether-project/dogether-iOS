@@ -1,41 +1,33 @@
 //
-//  RankingView.swift
+//  RankingTableViewCell.swift
 //  dogether
 //
-//  Created by seungyooooong on 2/14/25.
+//  Created by seungyooooong on 3/30/25.
 //
 
 import UIKit
-import SnapKit
 
-final class RankingView: UIView {
-    private let ranking: RankingModel
-    init(ranking: RankingModel) {
-        self.ranking = ranking
-        super.init(frame: .zero)
-        setUI()
-    }
-    required init?(coder: NSCoder) { fatalError() }
+final class RankingTableViewCell: UITableViewCell, ReusableProtocol {
+    private let tableViewCell = UIView()
     
-    private let rankingView = UIView()
     private let rankingLabel = {
         let label = UILabel()
         label.textColor = .grey0
         label.font = Fonts.body2S
         return label
     }()
-    private let profileImageView = UIImageView()
+    
+    private let profileImageView = UIImageView(image: .profile4)
+    
     private let nameLabel = {
         let label = UILabel()
         label.textColor = .grey0
         label.font = Fonts.body1S
         return label
     }()
-    private let certificationImageView = {
-        let imageView = UIImageView()
-        imageView.image = .certification
-        return imageView
-    }()
+    
+    private let certificationImageView = UIImageView(image: .certification)
+    
     private let certificationLabel = {
         let label = UILabel()
         label.textColor = .blue300
@@ -43,16 +35,29 @@ final class RankingView: UIView {
         return label
     }()
     
-    private func setUI() {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        setUI()
+    }
+    required init?(coder: NSCoder) { fatalError() }
+    
+    func setExtraInfo(ranking: RankingModel) {
         rankingLabel.text = String(ranking.rank)
-        profileImageView.image = .profile4
         nameLabel.text = ranking.name
-        certificationLabel.text = "\(ranking.certificationRate)%"
+        certificationLabel.text = "\(Int(ranking.certificationRate))%"
+    }
+    
+    private func setUI() {
+        selectionStyle = .none
+        backgroundColor = .clear
+        contentView.addSubview(tableViewCell)
         
-        [rankingView, rankingLabel, profileImageView, nameLabel, certificationImageView, certificationLabel].forEach { addSubview($0) }
+        [rankingLabel, profileImageView, nameLabel, certificationImageView, certificationLabel].forEach { tableViewCell.addSubview($0) }
         
-        rankingView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        tableViewCell.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(32)
+            $0.verticalEdges.equalToSuperview().inset(10)
             $0.height.equalTo(40)
         }
         

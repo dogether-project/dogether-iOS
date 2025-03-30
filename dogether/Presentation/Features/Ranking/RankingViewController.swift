@@ -13,10 +13,6 @@ final class RankingViewController: BaseViewController {
     
     private let navigationHeader = NavigationHeader(title: "순위")
     
-    private var ranking1View = UIView()
-    private var ranking2View = UIView()
-    private var ranking3View = UIView()
-    
     private func rankingTopStackView(views: [UIView]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .horizontal
@@ -56,14 +52,13 @@ final class RankingViewController: BaseViewController {
         return view
     }()
     
-    private func rankingStackView(views: [UIView]) -> UIStackView {
-        let stackView = UIStackView(arrangedSubviews: views)
-        stackView.axis = .vertical
-        stackView.spacing = 20
-        stackView.distribution = .fillEqually
-        return stackView
-    }
-    private var rankingStackView = UIStackView()
+    private let rankingTableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        return tableView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,21 +68,16 @@ final class RankingViewController: BaseViewController {
         navigationHeader.delegate = self
         
         guard let rankings else { return }
-        ranking1View = RankingTopView(ranking: rankings.count > 0 ? rankings[0] : nil)
-        ranking2View = RankingTopView(ranking: rankings.count > 1 ? rankings[1] : nil)
-        ranking3View = RankingTopView(ranking: rankings.count > 2 ? rankings[2] : nil)
+        let rankingTopViews = (0 ..< 3).map { RankingTopView(ranking: rankings.count > $0 ? rankings[$0] : nil) }
+        rankingTopStackView = rankingTopStackView(views: [rankingTopViews[1], rankingTopViews[0], rankingTopViews[2]])
         
-        rankingTopStackView = rankingTopStackView(views: [ranking2View, ranking1View, ranking3View])
-        
-        rankingStackView = rankingStackView(
-            views: rankings
-                .filter { $0.rank > 3 }
-                .map { RankingView(ranking: $0) }
-        )
+        rankingTableView.delegate = self
+        rankingTableView.dataSource = self
+        rankingTableView.register(RankingTableViewCell.self, forCellReuseIdentifier: RankingTableViewCell.identifier)
     }
     
     override func configureHierarchy() {
-        [navigationHeader, rankingTopStackView, descriptionView, rankingStackView].forEach { view.addSubview($0) }
+        [navigationHeader, rankingTopStackView, descriptionView, rankingTableView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -109,9 +99,28 @@ final class RankingViewController: BaseViewController {
             $0.height.equalTo(40)
         }
         
-        rankingStackView.snp.makeConstraints {
-            $0.top.equalTo(descriptionView.snp.bottom).offset(28)
-            $0.horizontalEdges.equalToSuperview().inset(32)
+        rankingTableView.snp.makeConstraints {
+            $0.top.equalTo(descriptionView.snp.bottom).offset(18)
+            $0.bottom.left.right.equalToSuperview()
         }
+    }
+}
+
+// MARK: - aboout tableView
+extension RankingViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let rankings, rankings.count > 3 else { return 0}
+        return rankings.count - 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let ranking = rankings?[indexPath.row + 3], let cell = tableView.dequeueReusableCell(
+            withIdentifier: RankingTableViewCell.identifier,
+            for: indexPath
+        ) as? RankingTableViewCell else { return UITableViewCell() }
+        
+        cell.setExtraInfo(ranking: ranking)
+        
+        return cell
     }
 }

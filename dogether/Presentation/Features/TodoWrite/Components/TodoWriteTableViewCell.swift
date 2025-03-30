@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TodoWriteTableViewCell: UITableViewCell, ReusableProtocol {
+final class TodoWriteTableViewCell: UITableViewCell, ReusableProtocol {
     private let tableViewCell = {
         let view = UIView()
         view.backgroundColor = .grey800

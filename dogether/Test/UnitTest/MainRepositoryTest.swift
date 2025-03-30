@@ -25,7 +25,8 @@ final class MainRepositoryTest: MainProtocol {
     }
     
     func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        return GetTeamSummaryResponse(ranking: [])
+        let rankings = (1 ... 20).map { RankingModel(rank: $0, name: "testName \($0)", certificationRate: Double($0)) }
+        return GetTeamSummaryResponse(ranking: rankings)
     }
     
     func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse {
