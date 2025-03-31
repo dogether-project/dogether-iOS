@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class CertificationInfoPopupView: UIView {
+final class CertificationInfoPopupView: BasePopupView {
     private var todoInfo: TodoInfo
     
     init(todoInfo: TodoInfo) {
@@ -148,6 +148,6 @@ final class CertificationInfoPopupView: UIView {
     }
     
     @objc private func didTapCloseButton() {
-        PopupManager.shared.hidePopup()
+        delegate?.hidePopup()
     }
 }

@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class CertificationPopupView: UIView {
+final class CertificationPopupView: BasePopupView {
     var cameraManager: CameraManager!
     var galleryManager: GalleryManager!
     var certificationTextView = UITextView()
@@ -232,7 +232,7 @@ final class CertificationPopupView: UIView {
     }
     
     @objc private func didTapCloseButton() {
-        PopupManager.shared.hidePopup()
+        delegate?.hidePopup()
     }
     
     @objc private func didTapNextButton() {

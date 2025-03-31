@@ -8,23 +8,17 @@
 import UIKit
 
 class AlertHelper  {
-    static func alert(on viewController: UIViewController,
-                      title: String,
-                      message: String?,
-                      okTitle: String = "확인",
-                      okAction: (() -> Void)? = nil,
-                      cancelTitle: String = "취소",
-                      cancelAction: (() -> Void)? = nil) {
+    static func alert(on viewController: UIViewController, alertType: AlertTypes, okAction: (() -> Void)? = nil) {
+        let alert = UIAlertController(title: alertType.title, message: alertType.message, preferredStyle: .alert)
         
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let okAction = UIAlertAction(title: okTitle, style: .default, handler: { action in
+        let okAction = UIAlertAction(title: alertType.buttonText, style: .default, handler: { _ in
             okAction?()
         })
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel, handler: nil)
+        
+        let noAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         
         alert.addAction(okAction)
-        alert.addAction(cancelAction)
+        alert.addAction(noAction)
         
         viewController.present(alert, animated: true)
     }

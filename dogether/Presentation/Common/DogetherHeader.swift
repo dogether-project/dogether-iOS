@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 
 final class DogetherHeader: UIView {
+    weak var delegate: CoordinatorDelegate?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUI()
@@ -30,7 +32,12 @@ final class DogetherHeader: UIView {
     }()
     
     private func setUI() {
-        myPageButton.addTarget(self, action: #selector(didTapMyPageButton), for: .touchUpInside)
+        myPageButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.coordinator?.pushViewController(MyPageViewController())
+            }, for: .touchUpInside
+        )
         
         [dogetherIconTypo, myPageButton].forEach { addSubview($0) }
         
@@ -46,9 +53,5 @@ final class DogetherHeader: UIView {
             $0.right.equalToSuperview()
             $0.width.height.equalTo(24)
         }
-    }
-    
-    @objc private func didTapMyPageButton() {
-        NavigationManager.shared.pushViewController(MyPageViewController())
     }
 }

@@ -10,6 +10,8 @@ import UIKit
 final class MainViewModel {
     private let mainUseCase: MainUseCase
     
+    private(set) var rankings: [RankingModel]?
+    
     private(set) var mainViewStatus: MainViewStatus = .emptyList
     
     private(set) var groupInfo: GroupInfo = GroupInfo()
@@ -29,7 +31,7 @@ final class MainViewModel {
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     
     init() {
-        let mainRepository = MainRepository()
+        let mainRepository = DIManager.shared.getMainRepository()
         self.mainUseCase = MainUseCase(repository: mainRepository)
     }
 }
@@ -91,11 +93,6 @@ extension MainViewModel {
     
 // MARK: - todoList
 extension MainViewModel {
-    func didTapTodoItem(todo: TodoInfo) {
-        let popupType: PopupTypes = TodoStatus(rawValue: todo.status) == .waitCertificattion ? .certification : .certificationInfo
-        mainUseCase.showPopup(type: popupType, todoInfo: todo)
-    }
-    
     func updateFilter(filter: FilterTypes, completeAction: @escaping () -> Void) {
         self.currentFilter = filter
         
@@ -141,13 +138,10 @@ extension MainViewModel {
     }
 }
 
-// MARK: - navigate
+// MARK: - ranking
 extension MainViewModel {
-    func navigateToTodoWriteView() {
-        mainUseCase.navigateToTodoWriteView(maximumTodoCount: groupInfo.maximumTodoCount)
-    }
-    
-    func navigateToRankingView() {
-        mainUseCase.navigateToRankingView()
+    func getRankings() async throws {
+        let response = try await mainUseCase.getTeamSummary()
+        rankings = response.ranking
     }
 }

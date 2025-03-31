@@ -8,14 +8,14 @@
 import UIKit
 
 enum TodoStatus: String, CaseIterable {
-    case waitCertificattion = "CERTIFY_PENDING"
+    case waitCertification = "CERTIFY_PENDING"
     case waitExamination = "REVIEW_PENDING"
     case reject = "REJECT"
     case approve = "APPROVE"
     
     var tag: Int {
         switch self {
-        case .waitCertificattion:
+        case .waitCertification:
             return 0
         case .waitExamination:
             return 1
@@ -28,7 +28,7 @@ enum TodoStatus: String, CaseIterable {
     
     var image: UIImage? {
         switch self {
-        case .waitCertificattion:
+        case .waitCertification:
             return nil
         case .waitExamination:
             return .wait
@@ -41,7 +41,7 @@ enum TodoStatus: String, CaseIterable {
     
     var contentColor: UIColor {
         switch self {
-        case .waitCertificattion:
+        case .waitCertification:
             return .grey50
         default:
             return .grey300
@@ -50,7 +50,7 @@ enum TodoStatus: String, CaseIterable {
     
     var buttonText: String {
         switch self {
-        case .waitCertificattion:
+        case .waitCertification:
             return "인증하기"
         default:
             return "인증완료"
@@ -59,7 +59,7 @@ enum TodoStatus: String, CaseIterable {
     
     var buttonTextColor: UIColor {
         switch self {
-        case .waitCertificattion:
+        case .waitCertification:
             return .grey900
         default:
             return .grey400
@@ -68,7 +68,7 @@ enum TodoStatus: String, CaseIterable {
     
     var buttonColor: UIColor {
         switch self {
-        case .waitCertificattion:
+        case .waitCertification:
             return .blue300
         default:
             return .grey800

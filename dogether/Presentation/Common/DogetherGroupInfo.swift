@@ -119,11 +119,11 @@ final class DogetherGroupInfo: UIView {
             endDayInfoLabel.text = "\(endAtString)"
         }
         
-        [
-            groupInfoView,
-            durationDescriptionLabel, memberCountDescriptionLabel, startDayDescriptionLabel, endDayDescriptionLabel,
-            durationInfoLabel, memberCountInfoLabel, startDayInfoLabel, endDayInfoLabel
+        [ groupInfoView,
+          durationDescriptionLabel, memberCountDescriptionLabel, startDayDescriptionLabel, endDayDescriptionLabel,
+          durationInfoLabel, memberCountInfoLabel, startDayInfoLabel, endDayInfoLabel
         ].forEach { addSubview($0) }
+        
         [groupNameLabel, dividerView].forEach { groupInfoView.addSubview($0) }
         
         groupInfoView.snp.makeConstraints {

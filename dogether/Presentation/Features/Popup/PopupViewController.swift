@@ -13,25 +13,20 @@ final class PopupViewController: BaseViewController {
     
     var popupType: PopupTypes?
     var todoInfo: TodoInfo?
-    var completeAction: ((String) -> Void)?
+    var rejectPopupCompletion: ((String) -> Void)?
     
     private var cameraManager: CameraManager!
     private var galleryManager: GalleryManager!
     
-    private let backgroundView = {
-        let view = UIView()
-        view.backgroundColor = .grey900.withAlphaComponent(0.8)
-        return view
-    }()
-    
-    private var popupView = UIView()
+    private var popupView = BasePopupView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func configureView() {
-        backgroundView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissPopup)))
+        view.backgroundColor = .grey900.withAlphaComponent(0.8)
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissPopup)))
         guard let popupType else { return }
         switch popupType {
         case .certification:
@@ -39,7 +34,7 @@ final class PopupViewController: BaseViewController {
             popupView = CertificationPopupView(todoInfo: todoInfo, completeAction: { certificationContent in
                 Task { @MainActor in
                     try await self.viewModel.certifyTodo(todoId: self.todoInfo?.id ?? 0, certificationContent: certificationContent)
-                    PopupManager.shared.hidePopup()
+                    self.hidePopup()
                 }
             })
             
@@ -58,27 +53,33 @@ final class PopupViewController: BaseViewController {
             guard let todoInfo else { return }
             popupView = CertificationInfoPopupView(todoInfo: todoInfo)
         case .rejectReason:
-            popupView = RejectReasonPopupView(completeAction: completeAction ?? { _ in })
+            popupView = RejectReasonPopupView()
         }
+        popupView.delegate = self
+        popupView.delegate?.rejectPopupCompletion = rejectPopupCompletion
     }
     
     override func configureHierarchy() {
-        [backgroundView, popupView].forEach { view.addSubview($0) }
+        [popupView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        backgroundView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
         popupView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.equalTo(343)
         }
     }
-    
+}
+
+extension PopupViewController: PopupDelegate {
+    func hidePopup() {
+        coordinator?.hidePopup()
+    }
+}
+
+extension PopupViewController {
     @objc private func dismissPopup() {
-        self.dismiss(animated: true)
+        hidePopup()
     }
     
     private func uploadImage(view certificationPopupView: CertificationPopupView, image: UIImage?) {

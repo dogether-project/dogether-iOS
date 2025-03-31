@@ -12,7 +12,4 @@ final class CompleteViewModel {
     
     var joinCode: String = ""
     var groupInfo: GroupInfo = GroupInfo()
-    
-    // TODO: 추후 통일
-    var joinGroupResponse: JoinGroupResponse?
 }

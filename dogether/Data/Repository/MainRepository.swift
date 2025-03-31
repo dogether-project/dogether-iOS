@@ -7,20 +7,31 @@
 
 import Foundation
 
-final class MainRepository: MainInterface {
+final class MainRepository: MainProtocol {
+    private let groupsDataSource: GroupsDataSource
+    private let todosDataSource: TodosDataSource
+    
+    init(
+        groupsDataSource: GroupsDataSource = .shared,
+        todosDataSource: TodosDataSource = .shared
+    ) {
+        self.groupsDataSource = groupsDataSource
+        self.todosDataSource = todosDataSource
+    }
+    
     func getGroupStatus() async throws -> GetGroupStatusResponse {
-        try await GroupsDataSource.shared.getGroupStatus()
+        try await groupsDataSource.getGroupStatus()
     }
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
-        try await GroupsDataSource.shared.getGroupInfo()
+        try await groupsDataSource.getGroupInfo()
     }
     
     func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        try await GroupsDataSource.shared.getTeamSummary()
+        try await groupsDataSource.getTeamSummary()
     }
     
     func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse {
-        try await TodosDataSource.shared.getMyTodos(date: date, status: status)
+        try await todosDataSource.getMyTodos(date: date, status: status)
     }
 }

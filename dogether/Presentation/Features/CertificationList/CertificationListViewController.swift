@@ -19,13 +19,10 @@ final class CertificationListViewController: BaseViewController {
     
     private var buttonStackView = UIStackView()
     
-    private lazy var allButton = FilterButton(type: .all) { self.updateTodoList(type: $0) }
-    
-    private lazy var waitButton = FilterButton(type: .wait, isColorful: false) { self.updateTodoList(type: $0) }
-                                               
-    private lazy var rejectButton = FilterButton(type: .reject, isColorful: false) { self.updateTodoList(type: $0) }
-    
-    private lazy var approveButton = FilterButton(type: .approve, isColorful: false) { self.updateTodoList(type: $0) }
+    private let allButton = FilterButton(type: .all)
+    private let waitButton = FilterButton(type: .wait, isColorful: false)
+    private let rejectButton = FilterButton(type: .reject, isColorful: false)
+    private let approveButton = FilterButton(type: .approve, isColorful: false)
     
     private lazy var collectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -56,6 +53,19 @@ final class CertificationListViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func configureView() {
+        navigationItem.title = "인증 목록"
+        [allButton, waitButton, rejectButton, approveButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self, weak button] _ in
+                    guard let self, let button else { return }
+                    updateTodoList(type: button.type)
+                }, for: .touchUpInside
+            )
+        }
+        buttonStackView = filterButtonStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
+    }
+    
     override func configureHierarchy() {
         [buttonStackView, collectionView].forEach {
             view.addSubview($0)
@@ -73,14 +83,6 @@ final class CertificationListViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview()
         }
-    }
-    
-    override func configureView() {
-        navigationItem.title = "인증 목록"
-        buttonStackView = filterButtonStackView(buttons: [allButton,
-                                                          waitButton,
-                                                          rejectButton,
-                                                          approveButton])
     }
     
     private func filterButtonStackView(buttons: [UIButton]) -> UIStackView {

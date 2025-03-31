@@ -7,10 +7,10 @@
 
 import Foundation
 
-final class MainRepositoryTest: MainInterface {
+final class MainRepositoryTest: MainProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse {
-        return GetGroupStatusResponse(status: "READY")
-//        return GetGroupStatusResponse(status: "RUNNING")
+//        return GetGroupStatusResponse(status: "READY")
+        return GetGroupStatusResponse(status: "RUNNING")
     }
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
@@ -25,7 +25,8 @@ final class MainRepositoryTest: MainInterface {
     }
     
     func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        return GetTeamSummaryResponse(ranking: [])
+        let rankings = (1 ... 20).map { RankingModel(rank: $0, name: "testName \($0)", certificationRate: Double($0)) }
+        return GetTeamSummaryResponse(ranking: rankings)
     }
     
     func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse {

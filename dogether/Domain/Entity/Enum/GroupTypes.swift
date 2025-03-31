@@ -47,16 +47,7 @@ enum GroupTypes: Int {
         }
     }
     
-    var completeNoticeText: String {
-        switch self {
-        case .create:
-            return "카카오톡, 문자 등을 통해 공유해보세요 !"
-        default:
-            return ""
-        }
-    }
-    
-    var destination: UIViewController {
+    var destination: BaseViewController {
         switch self {
         case .create:
             return GroupCreateViewController()

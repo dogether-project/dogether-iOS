@@ -22,6 +22,12 @@ final class GroupsDataSource {
         )
     }
     
+    func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse {
+        try await NetworkManager.shared.request(
+            GroupsRouter.joinGroup(joinGroupRequest: joinGroupRequest)
+        )
+    }
+    
     func getGroupStatus() async throws -> GetGroupStatusResponse {
         try await NetworkManager.shared.request(GroupsRouter.getGroupStatus)
     }

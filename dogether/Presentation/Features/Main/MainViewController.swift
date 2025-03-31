@@ -23,8 +23,7 @@ final class MainViewController: BaseViewController {
         button.backgroundColor = .grey700
         button.layer.cornerRadius = 8
         
-        let imageView = UIImageView()
-        imageView.image = .chart
+        let imageView = UIImageView(image: .chart)
         imageView.isUserInteractionEnabled = false
         
         let label = UILabel()
@@ -65,6 +64,7 @@ final class MainViewController: BaseViewController {
         let view = UIView()
         view.backgroundColor = .grey800
         view.layer.cornerRadius = 32
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         view.clipsToBounds = true
         view.isUserInteractionEnabled = true
         return view
@@ -274,10 +274,6 @@ final class MainViewController: BaseViewController {
     }
     private var emptyDescriptionView = EmptyDescriptionView()
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -289,7 +285,22 @@ final class MainViewController: BaseViewController {
     }
     
     override func configureView() {
-        rankingButton.addTarget(self, action: #selector(didTapRankingButton), for: .touchUpInside)
+        dogetherHeader.delegate = self
+        
+        rankingButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                Task {
+                    try await self.viewModel.getRankings()
+                    guard let rankings = self.viewModel.rankings else { return }
+                    await MainActor.run {
+                        let rankingViewController = RankingViewController()
+                        rankingViewController.rankings = rankings
+                        self.coordinator?.pushViewController(rankingViewController)
+                    }
+                }
+            }, for: .touchUpInside
+        )
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
@@ -299,12 +310,21 @@ final class MainViewController: BaseViewController {
         todoScrollView.bounces = false
         todoScrollView.showsVerticalScrollIndicator = false
         
-        todoButton.addTarget(self, action: #selector(didTapTodoButton), for: .touchUpInside)
+        todoButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                coordinator?.pushViewController(TodoWriteViewController())
+            }, for: .touchUpInside
+        )
         
-        allButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
-        waitButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
-        rejectButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
-        approveButton.setAction { self.viewModel.updateFilter(filter: $0, completeAction: self.updateList) }
+        [allButton, waitButton, rejectButton, approveButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self, weak button] _ in
+                    guard let self, let button else { return }
+                    viewModel.updateFilter(filter: button.type, completeAction: updateList)
+                }, for: .touchUpInside
+            )
+        }
         
         filterStackView = filterStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
     }
@@ -391,9 +411,8 @@ final class MainViewController: BaseViewController {
         }
         
         todoButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(48)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
         }
         
         // MARK: - todoList
@@ -424,14 +443,6 @@ final class MainViewController: BaseViewController {
             $0.width.equalTo(233)
             $0.height.equalTo(98)
         }
-    }
-    
-    @objc private func didTapRankingButton() {
-        viewModel.navigateToRankingView()
-    }
-    
-    @objc private func didTapTodoButton() {
-        viewModel.navigateToTodoWriteView()
     }
 }
 
@@ -477,7 +488,18 @@ extension MainViewController {
         todoListStackView.isHidden = viewModel.todoList.isEmpty
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
         viewModel.todoList
-            .map { todo in TodoListItemButton(todo: todo) { self.viewModel.didTapTodoItem(todo: $0) } }
+            .map {
+                let todoListItemButton = TodoListItemButton(todo: $0)
+                todoListItemButton.addAction(
+                    UIAction { [weak self, weak todoListItemButton] _ in
+                        guard let self, let button = todoListItemButton else { return }
+                        let isWaitCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification
+                        let popupType: PopupTypes = isWaitCertification ? .certification : .certificationInfo
+                        coordinator?.showPopup(self, type: popupType, todoInfo: button.todo)
+                    }, for: .touchUpInside
+                )
+                return todoListItemButton
+            }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
         emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)

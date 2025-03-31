@@ -10,12 +10,16 @@ import Foundation
 final class SplashViewModel {
     private let appLaunchUseCase: AppLaunchUseCase
     
+    private(set) var destination: BaseViewController?
+    
     init() {
-        let appLaunchRepository = AppLaunchRepository()
+        let appLaunchRepository = DIManager.shared.getAppLaunchRepository()
         self.appLaunchUseCase = AppLaunchUseCase(repository: appLaunchRepository)
     }
     
-    func launchApp() {
-        appLaunchUseCase.launchApp()
+    func launchApp() async throws {
+        try await appLaunchUseCase.launchApp()
+        
+        destination = try await appLaunchUseCase.getDestination()
     }
 }

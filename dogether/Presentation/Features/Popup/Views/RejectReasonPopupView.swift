@@ -8,13 +8,10 @@
 import UIKit
 import SnapKit
 
-final class RejectReasonPopupView: UIView {
+final class RejectReasonPopupView: BasePopupView {
     private let rejectReasonMaxLength = 60
     
-    private var completeAction: (String) -> Void
-    
-    init(completeAction: @escaping (String) -> Void) {
-        self.completeAction = completeAction
+    init() {
         super.init(frame: .zero)
         setUI()
         setupKeyboardHandling()
@@ -200,12 +197,12 @@ final class RejectReasonPopupView: UIView {
     }
     
     @objc private func didTapCloseButton() {
-        PopupManager.shared.hidePopup()
+        delegate?.hidePopup()
     }
     
     @objc private func didTapRejectReasonButton() {
-        self.completeAction(self.rejectReasonTextView.text)
-        PopupManager.shared.hidePopup()
+        delegate?.rejectPopupCompletion?(rejectReasonTextView.text)
+        delegate?.hidePopup()
     }
 }
 
