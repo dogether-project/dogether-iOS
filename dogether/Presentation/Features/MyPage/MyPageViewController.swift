@@ -2,7 +2,7 @@
 //  MyPageViewController.swift
 //  dogether
 //
-//  Created by 박지은 on 2/14/25.
+//  Created by seungyooooong on 3/31/25.
 //
 
 import UIKit
@@ -13,81 +13,81 @@ final class MyPageViewController: BaseViewController {
     
     private let dogetherHeader = NavigationHeader(title: "마이페이지")
     
-    private let profileImageView = {
-        let imageView = UIImageView()
-        imageView.image = .profile2
-        return imageView
-    }()
+    // FIXME: API 수정 후 내용 반영
+    private let profileImageView = UIImageView(image: .profile2)
     
     private let nameLabel = {
         let label = UILabel()
         label.text = "\(UserDefaultsManager.shared.userFullName ?? "")"
+        label.textColor = .grey0
         label.font = Fonts.head1B
-        label.textColor = .grey100
         return label
     }()
     
-//    private let myHistory = {
-//        let button = UIButton()
-//        button.backgroundColor = .grey700
-//        button.layer.cornerRadius = 12
-//        return button
-//    }()
+    private let leaveGroupButton = MyPageButton(icon: .leaveGroup, title: "그룹탈퇴")
+    private let logoutButton = MyPageButton(icon: .logout, title: "로그아웃")
+    private let withdrawButton = MyPageButton(icon: .withdraw, title: "회원탈퇴")
     
-//    private let checkMyTodosLabel = {
-//        let label = UILabel()
-//        label.text = "내가 해낸 모든 투두들을 확인해보세요 !"
-//        label.font = Fonts.body1S
-//        label.textColor = .grey0
-//        label.textAlignment = .center
-//        return label
-//    }()
-    
-//    private let goToButton = {
-//        let button = UIButton()
-//        button.setTitle("보러가기", for: .normal)
-//        button.titleLabel?.font = Fonts.body1B
-//        button.setTitleColor(.grey700, for: .normal)
-//        button.backgroundColor = .grey0
-//        button.layer.cornerRadius = 12
-//        return button
-//    }()
-    
-    // TODO: 추후 isJoining 값을 가져와 비활성화 하는 부분 추가
-    private let leaveGroupView = {
-        let view = UIView()
-        return view
-    }()
-    
-    private let logoutView = {
-        let view = UIView()
-        return view
-    }()
-    
-    private let withdrawView = {
-        let view = UIView()
-        return view
+    private let mypageButtonStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func configureView() {
+        dogetherHeader.delegate = self
         
-        setupGestureReconizers()
+        leaveGroupButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                AlertHelper.alert(on: self, alertType: .leaveGroup) {
+                    Task {
+                        try await self.viewModel.leaveGroup()
+                        await MainActor.run {
+                            self.coordinator?.setNavigationController(StartViewController())
+                        }
+                    }
+                }
+            }, for: .touchUpInside
+        )
+        
+        logoutButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                AlertHelper.alert(on: self, alertType: .logout) {
+                    self.viewModel.logout()
+                    self.coordinator?.setNavigationController(OnboardingViewController())
+                }
+            }, for: .touchUpInside
+        )
+        
+        withdrawButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                AlertHelper.alert(on: self, alertType: .withdraw) {
+                    Task {
+                        try await self.viewModel.withdraw()
+                        self.viewModel.logout()
+                        await MainActor.run {
+                            self.coordinator?.setNavigationController(OnboardingViewController())
+                        }
+                    }
+                }
+            }, for: .touchUpInside
+        )
+        
+        [leaveGroupButton, logoutButton, withdrawButton].forEach { mypageButtonStackView.addArrangedSubview($0) }
     }
     
     override func configureHierarchy() {
-//        [profileImageView, nameLabel, myHistory, leaveGroupView, logoutView, withdrawView].forEach {
-        [dogetherHeader, profileImageView, nameLabel, leaveGroupView, logoutView, withdrawView].forEach {
-            view.addSubview($0)
-        }
-        
-//        [checkMyTodosLabel, goToButton].forEach {
-//            myHistory.addSubview($0)
-//        }
+        [dogetherHeader, profileImageView, nameLabel, mypageButtonStackView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        
         dogetherHeader.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
@@ -105,155 +105,10 @@ final class MyPageViewController: BaseViewController {
             $0.centerX.equalToSuperview()
         }
         
-//        myHistory.snp.makeConstraints {
-//            $0.top.equalTo(nameLabel.snp.bottom).offset(40)
-//            $0.horizontalEdges.equalToSuperview().inset(16)
-//            $0.height.equalTo(131)
-//        }
-        
-//        checkMyTodosLabel.snp.makeConstraints {
-//            $0.top.equalToSuperview().offset(20)
-//            $0.horizontalEdges.equalToSuperview().inset(16)
-//        }
-        
-//        goToButton.snp.makeConstraints {
-//            $0.top.equalTo(checkMyTodosLabel.snp.bottom).offset(16)
-//            $0.horizontalEdges.equalToSuperview().inset(16)
-//            $0.height.equalTo(50)
-//        }
-        
-        setUpView(leaveGroupView, iconName: .leaveGroup, text: "그룹탈퇴")
-        setUpView(logoutView, iconName: .logout, text: "로그아웃")
-        setUpView(withdrawView, iconName: .withdraw, text: "회원탈퇴")
-        
-        leaveGroupView.snp.makeConstraints {
-//            $0.top.equalTo(myHistory.snp.bottom).offset(8)
-            $0.top.equalTo(nameLabel.snp.bottom).offset(8)
+        mypageButtonStackView.snp.makeConstraints {
+            $0.top.equalTo(nameLabel.snp.bottom).offset(56)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(48)
         }
-        
-        logoutView.snp.makeConstraints {
-            $0.top.equalTo(leaveGroupView.snp.bottom).offset(8)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(48)
-        }
-        
-        withdrawView.snp.makeConstraints {
-            $0.top.equalTo(logoutView.snp.bottom).offset(8)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(48)
-        }
-    }
-    
-    override func configureView() {
-        dogetherHeader.delegate = self
-    }
-    
-    private func setUpView(_ view: UIView, iconName: UIImage, text: String) {
-        view.isUserInteractionEnabled = true
-        
-        let icon = UIImageView()
-        icon.image = iconName.withRenderingMode(.alwaysTemplate)
-        icon.tintColor = .grey100
-        
-        let label = UILabel()
-        label.text = text
-        label.textColor = .grey100
-        
-        let goToIcon = UIImageView()
-        goToIcon.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        goToIcon.tintColor = .grey400
-        
-        [icon, label, goToIcon].forEach {
-            view.addSubview($0)
-        }
-        
-        icon.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(16)
-            $0.width.height.equalTo(24)
-        }
-        
-        label.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.leading.equalTo(icon.snp.trailing).offset(8)
-        }
-        
-        goToIcon.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(20)
-        }
-    }
-    
-    private func setupGestureReconizers() {
-//        goToButton.addTarget(self, action: #selector(goToDashBoard), for: .touchUpInside)
-        
-        let leaveGroupTap = UITapGestureRecognizer(target: self, action: #selector(leaveGroupTapped))
-        leaveGroupView.addGestureRecognizer(leaveGroupTap)
-        
-        let logoutTap = UITapGestureRecognizer(target: self, action: #selector(logoutTapped))
-        logoutView.addGestureRecognizer(logoutTap)
-        
-        let withdrawTap = UITapGestureRecognizer(target: self, action: #selector(withdrawTapped))
-        withdrawView.addGestureRecognizer(withdrawTap)
-    }
-    
-    @objc private func goToDashBoard() {
-        coordinator?.pushViewController(MyDashboardViewController())
-    }
-    
-    @objc private func leaveGroupTapped() {
-        AlertHelper.alert(on: self,
-                          title: "현재 그룹을 탈퇴하시겠어요?",
-                          message: "그룹을 탈퇴하면 그룹 내 모든 데이터가\n삭제되어 복구할 수 없어요.",
-                          okTitle: "탈퇴하기") {
-            
-            // TODO: 추후 viewModel로 이동
-            Task { @MainActor in
-                try await NetworkManager.shared.request(GroupsRouter.leaveGroup)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                    self?.coordinator?.setNavigationController(StartViewController())
-                }
-            }
-        } cancelAction: { }
-    }
-    
-    @objc private func logoutTapped() {
-        AlertHelper.alert(on: self,
-                          title: "로그아웃 하시겠어요?",
-                          message: "",
-                          okTitle: "로그아웃") {
-            
-            UserDefaultsManager.shared.accessToken = nil
-            UserDefaultsManager.shared.userFullName = nil
-            
-            // 온보딩 화면으로 이동
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.coordinator?.setNavigationController(OnboardingViewController())
-            }
-        } cancelAction: { }
-    }
-    
-    // TODO: - 탈퇴하기 로직 구현
-    @objc private func withdrawTapped() {
-        AlertHelper.alert(on: self,
-                          title: "정말 회원탈퇴를 하시겠어요?",
-                          message: "탈퇴하면 모든 데이터가 삭제되며\n복구할 수 없어요.",
-                          okTitle: "탈퇴하기") {
-            
-            // TODO: 회원 탈퇴 부분 임시로 추가, 추후 수정
-            Task { @MainActor in
-                try await self.viewModel.withdraw()
-                
-                UserDefaultsManager.shared.accessToken = nil
-                UserDefaultsManager.shared.userFullName = nil
-                
-                self.coordinator?.setNavigationController(OnboardingViewController())
-            }
-        } cancelAction: { }
     }
 }
 
