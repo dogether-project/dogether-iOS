@@ -9,7 +9,7 @@ import Foundation
 
 final class AppLaunchRepositoryTest: AppLaunchProtocol {
     func getIsJoining() async throws -> GetIsJoiningResponse {
-//        return GetIsJoiningResponse(isJoining: false)
-        return GetIsJoiningResponse(isJoining: true)
+        return GetIsJoiningResponse(isJoining: false)
+//        return GetIsJoiningResponse(isJoining: true)
     }
 }

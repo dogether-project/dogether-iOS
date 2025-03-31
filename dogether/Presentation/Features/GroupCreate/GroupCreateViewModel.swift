@@ -10,14 +10,13 @@ import Foundation
 final class GroupCreateViewModel {
     private let groupUseCase: GroupUseCase
     
+    let maxStep: Int = 3
     let groupNameMaxLength: Int = 12
     
     private(set) var joinCode: String?
     private(set) var currentStep: CreateGroupSteps = .one
-    private(set) var isDisabledCompleteButton: Bool = true
     private(set) var currentGroupName: String = ""
     private(set) var memberCount: Int = 10
-    private(set) var todoLimit: Int = 5
     private(set) var currentDuration: GroupChallengeDurations = .threeDays
     private(set) var currentStartAt: GroupStartAts = .today
     
@@ -44,10 +43,6 @@ extension GroupCreateViewModel {
         memberCount = count
     }
     
-    func updateTodoLimit(count: Int) {
-        todoLimit = count
-    }
-    
     func updateDuration(duration: GroupChallengeDurations) {
         currentDuration = duration
     }
@@ -64,7 +59,7 @@ extension GroupCreateViewModel {
             maximumMemberCount: memberCount,
             startAt: currentStartAt,
             durationOption: currentDuration,
-            maximumTodoCount: todoLimit
+            maximumTodoCount: 10    // FIXME: API 수정 시 삭제
         )
         joinCode = try await groupUseCase.createGroup(createGroupRequest: createGroupRequest)
     }
