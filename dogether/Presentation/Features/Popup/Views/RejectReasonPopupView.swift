@@ -111,13 +111,19 @@ final class RejectReasonPopupView: BasePopupView {
         return label
     }()
     
-    private var rejectReasonButton = DogetherButton(title: "등록하기", status: .disabled)
+    // MARK: - PopupViewController에서 action handling
+    let rejectReasonButton = DogetherButton(title: "등록하기", status: .disabled)
     
     private func setUI() {
         backgroundColor = .grey700
         layer.cornerRadius = 12
         
-        closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
+        closeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.hidePopup()
+            }, for: .touchUpInside
+        )
         
         descriptionView = descriptionView()
         rejectReasonPlaceHolder.attributedText = NSAttributedString(
@@ -127,13 +133,11 @@ final class RejectReasonPopupView: BasePopupView {
         rejectReasonTextView = rejectReasonTextView()
         rejectReasonTextView.becomeFirstResponder()
         rejectReasonMaxLengthLabel.text = "/\(rejectReasonMaxLength)"
-        rejectReasonButton.addTarget(self, action: #selector(didTapRejectReasonButton), for: .touchUpInside)
         
-        [
-            closeButton, descriptionLabel, descriptionView,
-            rejectReasonView, rejectReasonPlaceHolder, rejectReasonTextView,
-            rejectReasonTextCountLabel, rejectReasonMaxLengthLabel,
-            rejectReasonButton
+        [ closeButton, descriptionLabel, descriptionView,
+          rejectReasonView, rejectReasonPlaceHolder, rejectReasonTextView,
+          rejectReasonTextCountLabel, rejectReasonMaxLengthLabel,
+          rejectReasonButton
         ].forEach { addSubview($0) }
         
         self.snp.updateConstraints {
@@ -194,15 +198,6 @@ final class RejectReasonPopupView: BasePopupView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(50)
         }
-    }
-    
-    @objc private func didTapCloseButton() {
-        delegate?.hidePopup()
-    }
-    
-    @objc private func didTapRejectReasonButton() {
-        delegate?.rejectPopupCompletion?(rejectReasonTextView.text)
-        delegate?.hidePopup()
     }
 }
 

@@ -46,19 +46,23 @@ extension NavigationCoordinator {
     func showPopup(
         _ viewController: BaseViewController,
         type: PopupTypes,
+        alertType: AlertTypes? = nil,
         todoInfo: TodoInfo? = nil,
-        rejectPopupCompletion: ((String) -> Void)? = nil,
         animated: Bool = true,
-        completion: (() -> Void)? = nil
+        completion: ((Any) -> Void)? = nil
     ) {
         let popupViewController = PopupViewController()
+        
         popupViewController.coordinator = self
-        popupViewController.popupType = type
-        popupViewController.todoInfo = todoInfo
-        popupViewController.rejectPopupCompletion = rejectPopupCompletion
+        popupViewController.completion = completion
         popupViewController.modalPresentationStyle = .overFullScreen
         popupViewController.modalTransitionStyle = .crossDissolve
-        viewController.present(popupViewController, animated: animated, completion: completion)
+        
+        popupViewController.viewModel.popupType = type
+        popupViewController.viewModel.alertType = alertType
+        popupViewController.viewModel.todoInfo = todoInfo
+        
+        viewController.present(popupViewController, animated: animated)
     }
     
     func hidePopup(animated: Bool = true) {

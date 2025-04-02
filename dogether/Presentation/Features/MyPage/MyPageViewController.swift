@@ -44,7 +44,7 @@ final class MyPageViewController: BaseViewController {
         leaveGroupButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                AlertHelper.alert(on: self, alertType: .leaveGroup) {
+                coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { _ in
                     Task {
                         try await self.viewModel.leaveGroup()
                         await MainActor.run {
@@ -58,7 +58,7 @@ final class MyPageViewController: BaseViewController {
         logoutButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                AlertHelper.alert(on: self, alertType: .logout) {
+                coordinator?.showPopup(self, type: .alert, alertType: .logout) { _ in
                     self.viewModel.logout()
                     self.coordinator?.setNavigationController(OnboardingViewController())
                 }
@@ -68,7 +68,7 @@ final class MyPageViewController: BaseViewController {
         withdrawButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                AlertHelper.alert(on: self, alertType: .withdraw) {
+                coordinator?.showPopup(self, type: .alert, alertType: .withdraw) { _ in
                     Task {
                         try await self.viewModel.withdraw()
                         self.viewModel.logout()

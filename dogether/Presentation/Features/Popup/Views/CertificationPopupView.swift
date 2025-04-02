@@ -22,6 +22,7 @@ final class CertificationPopupView: BasePopupView {
         self.todoInfo = todoInfo
         self.completeAction = completeAction
         super.init(frame: .zero)
+        
         setUI()
         setupKeyboardHandling()
     }

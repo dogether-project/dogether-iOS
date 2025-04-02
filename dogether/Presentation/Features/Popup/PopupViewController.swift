@@ -9,11 +9,9 @@ import UIKit
 import SnapKit
 
 final class PopupViewController: BaseViewController {
-    private var viewModel = PopupViewModel()
+    var viewModel = PopupViewModel()
     
-    var popupType: PopupTypes?
-    var todoInfo: TodoInfo?
-    var rejectPopupCompletion: ((String) -> Void)?
+    var completion: ((Any) -> Void)?
     
     private var cameraManager: CameraManager!
     private var galleryManager: GalleryManager!
@@ -27,36 +25,54 @@ final class PopupViewController: BaseViewController {
     override func configureView() {
         view.backgroundColor = .grey900.withAlphaComponent(0.8)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissPopup)))
-        guard let popupType else { return }
+        
+        guard let popupType = viewModel.popupType else { return }
         switch popupType {
+        case .alert:
+            guard let alertType = viewModel.alertType else { return }
+            let alertView = AlertPopupView(type: alertType)
+            alertView.confirmButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    completion?(())
+                    hidePopup()
+                }, for: .touchUpInside
+            )
+            popupView = alertView
+            
         case .certification:
-            guard let todoInfo else { return }
-            popupView = CertificationPopupView(todoInfo: todoInfo, completeAction: { certificationContent in
+            guard let todoInfo = viewModel.todoInfo else { return }
+            let certificationPopupView = CertificationPopupView(todoInfo: todoInfo, completeAction: { certificationContent in
                 Task { @MainActor in
-                    try await self.viewModel.certifyTodo(todoId: self.todoInfo?.id ?? 0, certificationContent: certificationContent)
+                    try await self.viewModel.certifyTodo(todoId: todoInfo.id, certificationContent: certificationContent)
                     self.hidePopup()
                 }
             })
             
-            cameraManager = CameraManager(viewController: self)
-            galleryManager = GalleryManager(viewController: self)
+            certificationPopupView.cameraManager = CameraManager(viewController: self)
+            certificationPopupView.galleryManager = GalleryManager(viewController: self)
             
-            if let popupView = popupView as? CertificationPopupView {
-                popupView.cameraManager = cameraManager
-                popupView.galleryManager = galleryManager
-                
-                let completion = { self.uploadImage(view: popupView, image: $0) }
-                cameraManager.completion = completion
-                galleryManager.completion = completion
-            }
+            let completion = { self.uploadImage(view: certificationPopupView, image: $0) }
+            cameraManager.completion = completion
+            galleryManager.completion = completion
+            popupView = certificationPopupView
+            
         case .certificationInfo:
-            guard let todoInfo else { return }
+            guard let todoInfo = viewModel.todoInfo else { return }
             popupView = CertificationInfoPopupView(todoInfo: todoInfo)
+            
         case .rejectReason:
-            popupView = RejectReasonPopupView()
+            let rejectReasonPopupView = RejectReasonPopupView()
+            rejectReasonPopupView.rejectReasonButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let rejectReason = viewModel.stringContent else { return }
+                    completion?(rejectReason)
+                    hidePopup()
+                }, for: .touchUpInside
+            )
+            popupView = rejectReasonPopupView
         }
         popupView.delegate = self
-        popupView.delegate?.rejectPopupCompletion = rejectPopupCompletion
     }
     
     override func configureHierarchy() {
@@ -66,7 +82,7 @@ final class PopupViewController: BaseViewController {
     override func configureConstraints() {
         popupView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.width.equalTo(343)
+            $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
 }

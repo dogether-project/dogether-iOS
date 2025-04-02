@@ -8,8 +8,8 @@
 import UIKit
 
 final class CertificationImageView: UIImageView {
-    private(set) var certificationContent: String
-    private(set) var certificator: String
+    private let certificationContent: String
+    private let certificator: String
     
     init(image: UIImage?, certificationContent: String = "", certificator: String = "") {
         self.certificationContent = certificationContent
@@ -41,7 +41,7 @@ final class CertificationImageView: UIImageView {
     private let certificationContentLabel = {
         let label = UILabel()
         label.textColor = .grey100
-        label.font = Fonts.body1R
+        label.numberOfLines = 0
         return label
     }()
     
@@ -62,7 +62,10 @@ final class CertificationImageView: UIImageView {
         layer.cornerRadius = 12
         contentMode = .scaleAspectFit
         
-        certificationContentLabel.text = certificationContent
+        certificationContentLabel.attributedText = NSAttributedString(
+            string: certificationContent,
+            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
+        )
         certificatorLabel.text = certificator
         
         [gradientView, certificationContentLabel, certificatorLabel].forEach { addSubview($0) }
@@ -73,8 +76,8 @@ final class CertificationImageView: UIImageView {
         
         certificationContentLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(certificatorLabel.snp.top).inset(4)
-            $0.height.equalTo(25)
         }
         
         certificatorLabel.snp.makeConstraints {

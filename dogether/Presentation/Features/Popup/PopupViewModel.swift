@@ -9,7 +9,11 @@ import UIKit
 
 final class PopupViewModel {
     private(set) var certificationMediaUrl: String?
-    private(set) var rejectReason: String?
+    private(set) var stringContent: String?
+    
+    var popupType: PopupTypes?
+    var alertType: AlertTypes?
+    var todoInfo: TodoInfo?
     
     func uploadImage(image: UIImage) {
         Task { @MainActor in

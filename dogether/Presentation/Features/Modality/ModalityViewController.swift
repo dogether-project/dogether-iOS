@@ -42,10 +42,11 @@ final class ModalityViewController: BaseViewController {
                 self.viewModel.setResult(.reject)
                 self.viewModel.setRejectReason()
                 self.closeButton.setButtonStatus(status: .disabled)
-                self.coordinator?.showPopup(self, type: .rejectReason, rejectPopupCompletion: {
-                    self.viewModel.setRejectReason($0)
+                self.coordinator?.showPopup(self, type: .rejectReason) { rejectReason in
+                    guard let rejectReason = rejectReason as? String else { return }
+                    self.viewModel.setRejectReason(rejectReason)
                     self.closeButton.setButtonStatus(status: .enabled)
-                })
+                }
                 
             case .approve:
                 self.viewModel.setResult(.approve)
