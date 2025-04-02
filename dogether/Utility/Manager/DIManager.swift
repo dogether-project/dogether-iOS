@@ -12,16 +12,16 @@ final class DIManager {
     
     private init() { }
     
-    enum BuildMode {
+    enum BuildModes {
         case debug
         case live
     }
     
-    private let defaultBuildMode: BuildMode = .debug
+    private let defaultBuildMode: BuildModes = .debug
 }
 
 extension DIManager {
-    func getAppLaunchRepository(buildMode: BuildMode? = nil) -> AppLaunchProtocol {
+    func getAppLaunchRepository(buildMode: BuildModes? = nil) -> AppLaunchProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
             return AppLaunchRepositoryTest()
@@ -30,7 +30,7 @@ extension DIManager {
         }
     }
     
-    func getAuthRepository(buildMode: BuildMode? = nil) -> AuthProtocol {
+    func getAuthRepository(buildMode: BuildModes? = nil) -> AuthProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
             return AuthRepositoryTest()
@@ -39,7 +39,7 @@ extension DIManager {
         }
     }
     
-    func getMainRepository(buildMode: BuildMode? = nil) -> MainProtocol {
+    func getMainRepository(buildMode: BuildModes? = nil) -> MainProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
             return MainRepositoryTest()
@@ -48,7 +48,7 @@ extension DIManager {
         }
     }
     
-    func getGroupRepository(buildMode: BuildMode? = nil) -> GroupProtocol {
+    func getGroupRepository(buildMode: BuildModes? = nil) -> GroupProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
             return GroupRepositoryTest()
@@ -57,12 +57,21 @@ extension DIManager {
         }
     }
     
-    func getTodoRepository(buildMode: BuildMode? = nil) -> TodoProtocol {
+    func getTodoRepository(buildMode: BuildModes? = nil) -> TodoProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
             return TodoRepositoryTest()
         case .live:
             return TodoRepository()
+        }
+    }
+    
+    func getPopupRepository(buildMode: BuildModes? = nil) -> PopupProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return PopupRepositoryTest()
+        case .live:
+            return PopupRepository()
         }
     }
 }

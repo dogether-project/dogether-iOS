@@ -19,4 +19,8 @@ final class TodosDataSource {
     func createTodos(createTodosRequest: CreateTodosRequest) async throws {
         try await NetworkManager.shared.request(TodosRouter.createTodos(createTodosRequest: createTodosRequest))
     }
+    
+    func certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest) async throws {
+        try await NetworkManager.shared.request(TodosRouter.certifyTodo(todoId: todoId, certifyTodoRequest: certifyTodoRequest))
+    }
 }

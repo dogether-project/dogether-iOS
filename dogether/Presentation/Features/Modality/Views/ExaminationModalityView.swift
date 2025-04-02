@@ -108,7 +108,7 @@ final class ExaminationModalityView: UIView {
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.width.height.equalTo(303)
+            $0.width.height.equalTo(imageView.snp.width)
         }
         
         contentLabel.snp.makeConstraints {

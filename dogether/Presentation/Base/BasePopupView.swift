@@ -15,6 +15,7 @@ class BasePopupView: UIView {
         
         backgroundColor = .grey700
         layer.cornerRadius = 12
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
     }
-    required init?(coder: NSCoder) { fatalError() }    
+    required init?(coder: NSCoder) { fatalError() }
 }

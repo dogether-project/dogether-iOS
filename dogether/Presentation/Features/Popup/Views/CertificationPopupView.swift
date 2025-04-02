@@ -9,22 +9,18 @@ import UIKit
 import SnapKit
 
 final class CertificationPopupView: BasePopupView {
-    var cameraManager: CameraManager!
-    var galleryManager: GalleryManager!
-    var certificationTextView = UITextView()
-    private let certificationMaxLength = 20
+    // MARK: - PopupViewController에서 action handling
+    var galleryButton = UIButton()
+    var cameraButton = UIButton()
+    var certificationButton = DogetherButton(title: "인증하기", status: .disabled)
     
-    // TODO: 추후 수정
-    private var todoInfo: TodoInfo
-    private var completeAction: (String) -> Void
+    // MARK: - PopupViewController에서 delegate 지정
+    let certificationTextView = DogetherTextView(type: .certification)
     
-    init(todoInfo: TodoInfo, completeAction: @escaping (String) -> Void) {
-        self.todoInfo = todoInfo
-        self.completeAction = completeAction
+    init() {
         super.init(frame: .zero)
         
         setUI()
-        setupKeyboardHandling()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -58,7 +54,6 @@ final class CertificationPopupView: BasePopupView {
         button.layer.borderColor = UIColor.grey500.cgColor
         button.layer.borderWidth = 1
         button.tag = certificationMethod.rawValue
-        button.addTarget(self, action: #selector(didTapCertificationButton(_:)), for: .touchUpInside)
         
         let imageView = UIImageView(image: certificationMethod.image)
         
@@ -67,37 +62,37 @@ final class CertificationPopupView: BasePopupView {
         label.textColor = .grey300
         label.font = Fonts.body1S
         
-        [imageView, label].forEach { button.addSubview($0) }
+        let stackView = UIStackView(arrangedSubviews: [imageView, label])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        stackView.isUserInteractionEnabled = false
+        
+        button.addSubview(stackView)
         
         imageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalTo(30)
             $0.width.height.equalTo(20)
         }
         
-        label.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalTo(imageView.snp.right).offset(8)
-            $0.height.equalTo(25)
+        stackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        button.snp.makeConstraints {
+            $0.height.equalTo(48)
         }
         
         return button
     }
     
-    private var selectButton = UIButton()
-    private var shootButton = UIButton()
-    
-    private func certificationStackView(views: [UIView]) -> UIStackView {
-        let stackView = UIStackView(arrangedSubviews: views)
+    private let certificationStackView = {
+        let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 11
         stackView.distribution = .fillEqually
         return stackView
-    }
-    private var certificationStackView = UIStackView()
+    }()
     
-    private var nextButton = UIButton()
-    private var certificationButton = UIButton()
+    private let nextButton = DogetherButton(title: "다음", status: .enabled)
     
     private let descriptionLabel = {
         let label = UILabel()
@@ -108,7 +103,7 @@ final class CertificationPopupView: BasePopupView {
         return label
     }()
     
-    private func descriptionView(tempParameter: Bool = false) -> UIView {
+    private let descriptionView = {
         let view = UIView()
         view.layer.cornerRadius = 8
         view.layer.borderColor = UIColor.grey600.cgColor
@@ -136,77 +131,29 @@ final class CertificationPopupView: BasePopupView {
         }
         
         return view
-    }
-    private var descriptionView = UIView()
-    
-    private let certificationView = {
-        let view = UIView()
-        view.backgroundColor = .grey800
-        view.layer.cornerRadius = 12
-        view.layer.borderColor = UIColor.blue300.cgColor
-        view.layer.borderWidth = 1
-        return view
-    }()
-    
-    private let certificationPlaceHolder = {
-        let label = UILabel()
-        label.textColor = .grey300
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
-        return label
-    }()
-    
-    private func certificationTextView(tempParameter: Bool = false) -> UITextView {
-        let textView = UITextView()
-        textView.text = ""
-        textView.textColor = .grey50
-        textView.font = Fonts.body1R
-        textView.tintColor = .blue300
-        textView.backgroundColor = .clear
-        textView.textContainer.lineFragmentPadding = 0
-        textView.textContainerInset = .zero
-        textView.delegate = self
-        return textView
-    }
-    
-    private let certificationTextCountLabel = {
-        let label = UILabel()
-        label.text = "0"
-        label.textColor = .blue300
-        label.font = Fonts.smallS
-        return label
-    }()
-    
-    private let certificationMaxLengthLabel = {
-        let label = UILabel()
-        label.textColor = .grey400
-        label.font = Fonts.smallS
-        return label
     }()
     
     private func setUI() {
-        backgroundColor = .grey700
-        layer.cornerRadius = 12
-        
-        closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
-        todoContentLabel.attributedText = NSAttributedString(
-            string: todoInfo.content,
-            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
+        closeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.hidePopup()
+            }, for: .touchUpInside
         )
         
-        selectButton = certificationButton(certificationMethod: .select)
-        shootButton = certificationButton(certificationMethod: .shoot)
-        certificationStackView = certificationStackView(views: [selectButton, shootButton])
+        galleryButton = certificationButton(certificationMethod: .gallery)
+        cameraButton = certificationButton(certificationMethod: .camera)
+        [galleryButton, cameraButton].forEach { certificationStackView.addArrangedSubview($0) }
         
-        nextButton = DogetherButton(title: "다음", status: .enabled)
-        nextButton.addTarget(self, action: #selector(didTapNextButton), for: .touchUpInside)
+        nextButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                updatePopup()
+            }, for: .touchUpInside
+        )
         
         [titleLabel, closeButton, todoContentLabel, certificationStackView].forEach { addSubview($0) }
         
-        self.snp.updateConstraints {
-            $0.height.equalTo(240)
-        }
-
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.left.equalToSuperview().offset(20)
@@ -222,62 +169,45 @@ final class CertificationPopupView: BasePopupView {
         todoContentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(72)
         }
         
         certificationStackView.snp.makeConstraints {
             $0.top.equalTo(todoContentLabel.snp.bottom).offset(24)
+            $0.bottom.equalToSuperview().inset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(48)
         }
     }
     
-    @objc private func didTapCloseButton() {
-        delegate?.hidePopup()
-    }
-    
-    @objc private func didTapNextButton() {
-        updatePopup()
-    }
-    
-    @objc private func didTapCertificationButton(_ sender: UIButton) {
-        guard let certificationMethod = CertificationMethods(rawValue: sender.tag) else { return }
-        switch certificationMethod {
-        case .select:
-            galleryManager.openGallery()
-        case .shoot:
-            cameraManager.openCamera()
-        }
-    }
-    
-    @objc private func didTapCompleteButton() {
-        completeAction(self.certificationTextView.text)
+    func setExtraInfo(todoInfo: TodoInfo?) {
+        todoContentLabel.attributedText = NSAttributedString(
+            string: todoInfo?.content ?? "",
+            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
+        )
     }
     
     func uploadImage(image: UIImage) {
         if imageView.image == nil {
             [imageView, nextButton].forEach { addSubview($0) }
             
-            todoContentLabel.snp.removeConstraints()
-            
-            self.snp.updateConstraints {
-                $0.height.equalTo(637)
-            }
-            
             imageView.snp.makeConstraints {
                 $0.top.equalTo(titleLabel.snp.bottom).offset(20)
                 $0.horizontalEdges.equalToSuperview().inset(20)
-                $0.height.equalTo(303)
+                $0.height.equalTo(imageView.snp.width)
             }
             
-            todoContentLabel.snp.makeConstraints {
+            todoContentLabel.snp.remakeConstraints {
                 $0.top.equalTo(imageView.snp.bottom).offset(24)
                 $0.horizontalEdges.equalToSuperview().inset(20)
-                $0.height.equalTo(72)
+            }
+            
+            certificationStackView.snp.remakeConstraints {
+                $0.top.equalTo(todoContentLabel.snp.bottom).offset(24)
+                $0.horizontalEdges.equalToSuperview().inset(20)
             }
             
             nextButton.snp.makeConstraints {
                 $0.top.equalTo(certificationStackView.snp.bottom).offset(20)
+                $0.bottom.equalToSuperview().inset(24)
                 $0.horizontalEdges.equalToSuperview().inset(20)
             }
         }
@@ -286,32 +216,14 @@ final class CertificationPopupView: BasePopupView {
     }
     
     private func updatePopup() {
-        [imageView as Any, todoContentLabel, certificationStackView, nextButton].forEach {
-            let view = $0 as? UIView
-            view?.isHidden = true
+        [imageView, todoContentLabel, certificationStackView, nextButton].forEach {
+            $0.snp.removeConstraints()
+            $0.isHidden = true
         }
         
-        descriptionView = descriptionView()
-        certificationPlaceHolder.attributedText = NSAttributedString(
-            string: "팀원이 이해하기 쉽도록 인증에 대한 설명을 입력하세요.",
-            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .left)
-        )
-        certificationTextView = certificationTextView()
         certificationTextView.becomeFirstResponder()
-        certificationMaxLengthLabel.text = "/\(certificationMaxLength)"
-        certificationButton = DogetherButton(title: "인증하기", status: .enabled)
-        certificationButton.addTarget(self, action: #selector(didTapCompleteButton), for: .touchUpInside)
         
-        [
-            descriptionLabel, descriptionView,
-            certificationView, certificationPlaceHolder, certificationTextView,
-            certificationTextCountLabel, certificationMaxLengthLabel,
-            certificationButton
-        ].forEach { addSubview($0) }
-        
-        self.snp.updateConstraints {
-            $0.height.equalTo(380)
-        }
+        [descriptionLabel, descriptionView, certificationTextView, certificationButton].forEach { addSubview($0) }
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
@@ -325,82 +237,16 @@ final class CertificationPopupView: BasePopupView {
             $0.height.equalTo(40)
         }
         
-        certificationView.snp.makeConstraints {
+        certificationTextView.snp.makeConstraints {
             $0.top.equalTo(descriptionView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(106)
         }
         
-        certificationPlaceHolder.snp.makeConstraints {
-            $0.top.equalTo(certificationView).offset(16)
-            $0.horizontalEdges.equalTo(certificationView).inset(16)
-            $0.width.equalTo(271)
-        }
-        
-        certificationTextView.snp.makeConstraints {
-            $0.top.equalTo(certificationView).offset(22)
-            $0.horizontalEdges.equalTo(certificationView).inset(16)
-            $0.width.equalTo(271)
-            $0.height.equalTo(50)
-        }
-        
-        certificationTextCountLabel.snp.makeConstraints {
-            $0.bottom.equalTo(certificationView).inset(16)
-            $0.right.equalTo(certificationMaxLengthLabel.snp.left)
-            $0.height.equalTo(18)
-        }
-        
-        certificationMaxLengthLabel.snp.makeConstraints {
-            $0.bottom.equalTo(certificationView).inset(16)
-            $0.right.equalTo(certificationView).inset(16)
-            $0.height.equalTo(18)
-        }
-        
         certificationButton.snp.makeConstraints {
-            $0.top.equalTo(certificationView.snp.bottom).offset(20)
+            $0.top.equalTo(certificationTextView.snp.bottom).offset(20)
+            $0.bottom.equalToSuperview().inset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(50)
         }
-    }
-}
-
-// MARK: - abount keyboard
-extension CertificationPopupView: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        if let text = textView.text {
-            if text.count > certificationMaxLength {
-                textView.text = String(text.prefix(certificationMaxLength))
-            }
-            certificationPlaceHolder.isHidden = text.count > 0
-            certificationTextCountLabel.text = String(textView.text.count)
-        }
-    }
-    
-    private func setupKeyboardHandling() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-    }
-    
-    // MARK: - UITextFieldDelegate
-    @objc private func keyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let keyboardHeight = keyboardFrame.height
-        self.snp.updateConstraints { $0.centerY.equalToSuperview().offset(-keyboardHeight / 2) }
-        UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
-    }
-    
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        self.snp.updateConstraints { $0.centerY.equalToSuperview() }
-        UIView.animate(withDuration: 0.3) { self.layoutIfNeeded() }
     }
 }

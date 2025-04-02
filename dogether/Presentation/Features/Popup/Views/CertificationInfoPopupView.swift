@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class CertificationInfoPopupView: BasePopupView {
-    private var todoInfo: TodoInfo
+    private let todoInfo: TodoInfo
     
     init(todoInfo: TodoInfo) {
         self.todoInfo = todoInfo
@@ -117,7 +117,7 @@ final class CertificationInfoPopupView: BasePopupView {
         imageView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(303)
+            $0.height.equalTo(imageView.snp.width)
         }
         
         statusView.snp.makeConstraints {
