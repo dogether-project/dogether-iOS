@@ -12,7 +12,7 @@ import AuthenticationServices
 
 final class OnboardingViewController: BaseViewController {
     private let viewModel = OnboardingViewModel()
-
+    
     private let scrollView = {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
@@ -44,7 +44,7 @@ final class OnboardingViewController: BaseViewController {
         )
         subTitleLabel.textColor = .grey200
         subTitleLabel.numberOfLines = 0
-
+        
         let imageView = UIImageView(image: step.image)
         let aspectRatio = imageView.frame.height / imageView.frame.width
         
@@ -63,7 +63,7 @@ final class OnboardingViewController: BaseViewController {
     }
     
     private let pageControl = UIPageControl()
-
+    
     private var signInButton =  {
         let button = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
         button.cornerRadius = 12
@@ -109,13 +109,16 @@ final class OnboardingViewController: BaseViewController {
     }
     
     override func configureConstraints() {
+        let pageControlHeight: CGFloat = 26
+        let buttonBottomPadding: CGFloat = 16
+        let buttonHeight: CGFloat = 50
+        
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
         onboardingStackView.snp.makeConstraints {
-            // FIXME: 26 -> pageControl.height, 16 -> buttonBottomPadding, 50 -> button.height
-            $0.centerY.equalTo(view.safeAreaLayoutGuide).offset(-(26 + 16 + 50) / 2)
+            $0.centerY.equalTo(view.safeAreaLayoutGuide).offset(-(pageControlHeight + buttonBottomPadding + buttonHeight) / 2)
             $0.width.equalTo(view.frame.width * CGFloat(viewModel.onboardingStep))
         }
         
@@ -123,7 +126,7 @@ final class OnboardingViewController: BaseViewController {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(onboardingStackView.snp.bottom)
         }
-
+        
         signInButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
