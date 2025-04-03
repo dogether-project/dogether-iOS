@@ -63,8 +63,6 @@ final class OnboardingViewController: BaseViewController {
     }
     
     private let pageControl = UIPageControl()
-    
-    private let nextButton = DogetherButton(title: "다음", status: .enabled)
 
     private var signInButton =  {
         let button = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
@@ -90,17 +88,6 @@ final class OnboardingViewController: BaseViewController {
         
         pageControl.numberOfPages = viewModel.onboardingStep
         
-        nextButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                let nextPage = pageControl.currentPage + 1
-                if nextPage < pageControl.numberOfPages {
-                    let nextOffset = CGPoint(x: CGFloat(nextPage) * view.frame.width, y: 0)
-                    scrollView.setContentOffset(nextOffset, animated: true)
-                }
-            }, for: .touchUpInside
-        )
-        
         signInButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -116,7 +103,7 @@ final class OnboardingViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [scrollView, pageControl, nextButton, signInButton].forEach { view.addSubview($0) }
+        [scrollView, pageControl, signInButton].forEach { view.addSubview($0) }
         
         [onboardingStackView].forEach { scrollView.addSubview($0) }
     }
@@ -136,12 +123,6 @@ final class OnboardingViewController: BaseViewController {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(onboardingStackView.snp.bottom)
         }
-        
-        nextButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
-        }
 
         signInButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
@@ -156,10 +137,5 @@ extension OnboardingViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageIndex = round(scrollView.contentOffset.x / view.frame.width)
         pageControl.currentPage = Int(pageIndex)
-        
-        let isLastPage = pageControl.currentPage == pageControl.numberOfPages - 1
-        
-        signInButton.isHidden = !isLastPage
-        nextButton.isHidden = isLastPage
     }
 }
