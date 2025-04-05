@@ -95,7 +95,7 @@ final class OnboardingViewController: BaseViewController {
                 guard let self else { return }
                 let page = self.pageControl.currentPage
                 let offset = CGPoint(x: CGFloat(page) * self.view.frame.width, y: 0)
-                self.scrollView.setContentOffset(offset, animated: true)
+                scrollView.setContentOffset(offset, animated: true)
             },
             for: .valueChanged
         )
