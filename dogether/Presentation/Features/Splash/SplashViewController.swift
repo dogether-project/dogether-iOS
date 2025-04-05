@@ -12,7 +12,7 @@ final class SplashViewController: BaseViewController {
     private let viewModel = SplashViewModel()
     
     private let logoView: UIStackView = {
-        let logoImage = UIImageView(image: .logoV2)
+        let logoImage = UIImageView(image: .logo)
         logoImage.contentMode = .scaleAspectFit
         
         let typoImage = UIImageView(image: .logoTypo)
