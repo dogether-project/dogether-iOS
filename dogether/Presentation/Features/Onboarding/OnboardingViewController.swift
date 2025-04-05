@@ -87,6 +87,7 @@ final class OnboardingViewController: BaseViewController {
         }
         
         pageControl.numberOfPages = viewModel.onboardingStep
+        pageControl.addTarget(self, action: #selector(pageControlDidChange(_:)), for: .valueChanged)
         
         signInButton.addAction(
             UIAction { [weak self] _ in
@@ -132,6 +133,12 @@ final class OnboardingViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
+    }
+    
+    @objc private func pageControlDidChange(_ sender: UIPageControl) {
+        let page = sender.currentPage
+        let offset = CGPoint(x: CGFloat(page) * view.frame.width, y: 0)
+        scrollView.setContentOffset(offset, animated: true)
     }
 }
 
