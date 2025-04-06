@@ -93,11 +93,10 @@ final class OnboardingViewController: BaseViewController {
         pageControl.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                let page = self.pageControl.currentPage
-                let offset = CGPoint(x: CGFloat(page) * self.view.frame.width, y: 0)
+                let page = pageControl.currentPage
+                let offset = CGPoint(x: CGFloat(page) * view.frame.width, y: 0)
                 scrollView.setContentOffset(offset, animated: true)
-            },
-            for: .valueChanged
+            }, for: .valueChanged
         )
         
         signInButton.addAction(
