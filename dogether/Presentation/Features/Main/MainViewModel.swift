@@ -47,32 +47,33 @@ final class MainViewModel {
 
 // MARK: - load view
 extension MainViewModel {
-    func loadMainView(updateView: @escaping () -> Void, updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
-        Task {
-            let groupStatus = try await groupUseCase.getGroupStatus()
-            mainViewStatus = try await mainUseCase.getMainViewStatus(groupStatus: groupStatus)
-            groupInfo = try await groupUseCase.getGroupInfo()
-            await MainActor.run { updateView() }
-            loadMainViewDetail(updateTimer: updateTimer, updateList: updateList)
-        }
-    }
-    
-    func loadMainViewDetail(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
-        if mainViewStatus == .beforeStart {
-            startCountdown(updateTimer: updateTimer, updateList: updateList)
-        } else {
-            updateListInfo(updateList: updateList)
-        }
+    func loadMainView() async throws {
+        let groupStatus = try await groupUseCase.getGroupStatus()
+        mainViewStatus = try await mainUseCase.getMainViewStatus(groupStatus: groupStatus)
+        groupInfo = try await groupUseCase.getGroupInfo()
     }
     
     func getReviews() async throws -> [ReviewModel] {
         try await todoCertificationsUseCase.getReviews()
     }
+    
+    func checkAuthorization() async throws {
+        let userNoti = UNUserNotificationCenter.current()
+        let settings = await userNoti.notificationSettings()
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            try await userNoti.requestAuthorization(options: [.alert, .badge, .sound])
+        case .denied:
+            SystemManager().openSettingApp()    // FIXME: show AlertPopup
+        default:    // MARK: .authorized, .provisional, .ephemeral
+            break
+        }
+    }
 }
 
 // MARK: - beforeStart
 extension MainViewModel {
-    private func startCountdown(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
+    func startCountdown(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
         checkRemainTime(updateTimer: updateTimer, updateList: updateList)
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -91,10 +92,10 @@ extension MainViewModel {
         let remainTime = Date().getRemainTime()
         
         if remainTime > 0 {
-            self.updateTimerInfo(remainTime: remainTime, updateTimer: updateTimer)
+            updateTimerInfo(remainTime: remainTime, updateTimer: updateTimer)
         } else {
-            self.stopCountdown()
-            self.updateListInfo(updateList: updateList)
+            stopCountdown()
+            updateListInfo(updateList: updateList)
         }
     }
     
@@ -102,15 +103,6 @@ extension MainViewModel {
         self.time = remainTime.formatToHHmmss()
         self.timeProgress = remainTime.getTimeProgress()
         Task { @MainActor in updateTimer() }
-    }
-}
-    
-// MARK: - todoList
-extension MainViewModel {
-    func updateFilter(filter: FilterTypes, completeAction: @escaping () -> Void) {
-        self.currentFilter = filter
-        
-        updateListInfo(updateList: completeAction)
     }
     
     private func updateListInfo(updateList: @escaping () -> Void) {
@@ -121,6 +113,20 @@ extension MainViewModel {
             isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
             await MainActor.run { updateList() }
         }
+    }
+}
+    
+// MARK: - todoList
+extension MainViewModel {
+    func updateFilter(filter: FilterTypes) {
+        self.currentFilter = filter
+    }
+    
+    func updateListInfo() async throws {
+        let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
+        todoList = try await todoUseCase.getMyTodos(date: date, status: status)
+        mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
+        isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }
 }
 
@@ -141,15 +147,14 @@ extension MainViewModel {
         }
     }
     
-    func updateSheetStatus(with translation: CGFloat, completeAction: @escaping (SheetStatus) -> Void) {
+    func updateSheetStatus(with translation: CGFloat) -> SheetStatus {
         switch sheetStatus {
         case .expand:
             sheetStatus = translation > 100 ? .normal : .expand
         case .normal:
             sheetStatus = translation < -100 ? .expand : .normal
         }
-        
-        completeAction(sheetStatus)
+        return sheetStatus
     }
 }
 

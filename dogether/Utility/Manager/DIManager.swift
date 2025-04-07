@@ -17,7 +17,7 @@ final class DIManager {
         case live
     }
     
-    private let defaultBuildMode: BuildModes = .debug
+    private let defaultBuildMode: BuildModes = .live
 }
 
 extension DIManager {

@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class MainViewController: BaseViewController {
-    private var viewModel = MainViewModel()
+    var viewModel = MainViewModel()
     
     private var dogetherPanGesture: UIPanGestureRecognizer!
     private var dogetherSheetTopConstraint: Constraint?
@@ -281,8 +281,11 @@ final class MainViewController: BaseViewController {
         // TODO: 알림 권한을 거부한 사용자에 대한 로직은 추후에 추가
         Task { [weak self] in
             guard let self else { return }
+            try await viewModel.checkAuthorization()
+            
             let reviews = try await viewModel.getReviews()
             if reviews.isEmpty { return }
+            
             await MainActor.run {
                 self.coordinator?.showModal(reviews: reviews)
             }
@@ -292,10 +295,25 @@ final class MainViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        viewModel.loadMainView(updateView: updateView, updateTimer: updateTimer, updateList: updateList)
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.loadMainView()
+            await MainActor.run { self.updateView() }
+            
+            if viewModel.mainViewStatus == .beforeStart {
+                viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
+            } else {
+                try await viewModel.updateListInfo()
+                await MainActor.run { self.updateList() }
+            }
+        }
     }
     
     override func configureView() {
+        filterStackView = filterStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
+    }
+    
+    override func configureAction() {
         dogetherHeader.delegate = self
         
         rankingButton.addAction(
@@ -332,12 +350,14 @@ final class MainViewController: BaseViewController {
             button.addAction(
                 UIAction { [weak self, weak button] _ in
                     guard let self, let button else { return }
-                    viewModel.updateFilter(filter: button.type, completeAction: updateList)
+                    Task {
+                        self.viewModel.updateFilter(filter: button.type)
+                        try await self.viewModel.updateListInfo()
+                        await MainActor.run { self.updateList() }
+                    }
                 }, for: .touchUpInside
             )
         }
-        
-        filterStackView = filterStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
     }
     
     override func configureHierarchy() {
@@ -484,7 +504,7 @@ extension MainViewController {
         (timeProgress.layer.sublayers?.first as? CAShapeLayer)?.strokeEnd = viewModel.timeProgress
     }
     
-    private func updateList() {
+    func updateList() {
         // TODO: 추후 MainViewStatus와 GroupStatus를 통합할 때 개선 필요
         emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
         todoListView.isHidden = viewModel.mainViewStatus != .todoList
@@ -535,7 +555,7 @@ extension MainViewController: UIGestureRecognizerDelegate {
             view.layoutIfNeeded()
             
         case .ended:
-            viewModel.updateSheetStatus(with: translation.y, completeAction: updateSheet)
+            updateSheet(viewModel.updateSheetStatus(with: translation.y))
             
         default:
             break

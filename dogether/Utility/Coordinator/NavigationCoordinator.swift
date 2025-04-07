@@ -104,6 +104,40 @@ extension NavigationCoordinator {
     }
 }
 
+// MARK: about push notice
+extension NavigationCoordinator: NotificationHandler {
+    func handleNotification(userInfo: [AnyHashable: Any]) {
+        guard let notificationTypeString = userInfo["type"] as? String,
+              let notificationType = PushNoticeTypes(rawValue: notificationTypeString) else { return }
+        
+        switch notificationType {
+        case .certification:
+            Task { [weak self] in
+                guard let self else { return }
+                let repository = DIManager.shared.getTodoCertificationsRepository()
+                let response = try await repository.getReviews()
+                let reviews = response.dailyTodoCertifications
+                
+                if reviews.isEmpty { return }
+                await MainActor.run { self.showModal(reviews: reviews) }
+            }
+            
+        case .review:
+            guard let currentViewController = navigationController.viewControllers.last,
+                  let mainViewController = currentViewController as? MainViewController else { return }
+            // TODO: 페이지로 바뀌면 popViewController에서 자동으로 willAppear가 불리지 않지
+            Task { [weak mainViewController] in
+                guard let self = mainViewController else { return }
+                try await self.viewModel.updateListInfo()
+                await MainActor.run { self.updateList() }
+            }
+            
+        default:
+            return
+        }
+    }
+}
+
 extension NavigationCoordinator: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return navigationController.viewControllers.count > 1
