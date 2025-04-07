@@ -9,6 +9,9 @@ import UIKit
 
 final class MainViewModel {
     private let mainUseCase: MainUseCase
+    private let groupUseCase: GroupUseCase
+    private let todoUseCase: TodoUseCase
+    private let todoCertificationsUseCase: TodoCertificationsUseCase
     
     private(set) var rankings: [RankingModel]?
     
@@ -31,8 +34,14 @@ final class MainViewModel {
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     
     init() {
-        let mainRepository = DIManager.shared.getMainRepository()
-        self.mainUseCase = MainUseCase(repository: mainRepository)
+        let groupRepository = DIManager.shared.getGroupRepository()
+        let todoRepository = DIManager.shared.getTodoRepository()
+        let todoCertificationsRepository = DIManager.shared.getTodoCertificationsRepository()
+        
+        self.mainUseCase = MainUseCase()
+        self.groupUseCase = GroupUseCase(repository: groupRepository)
+        self.todoUseCase = TodoUseCase(repository: todoRepository)
+        self.todoCertificationsUseCase = TodoCertificationsUseCase(repository: todoCertificationsRepository)
     }
 }
 
@@ -40,8 +49,9 @@ final class MainViewModel {
 extension MainViewModel {
     func loadMainView(updateView: @escaping () -> Void, updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
         Task {
-            mainViewStatus = try await mainUseCase.getMainViewStatus()
-            groupInfo = try await mainUseCase.getGroupInfo()
+            let groupStatus = try await groupUseCase.getGroupStatus()
+            mainViewStatus = try await mainUseCase.getMainViewStatus(groupStatus: groupStatus)
+            groupInfo = try await groupUseCase.getGroupInfo()
             await MainActor.run { updateView() }
             loadMainViewDetail(updateTimer: updateTimer, updateList: updateList)
         }
@@ -53,6 +63,10 @@ extension MainViewModel {
         } else {
             updateListInfo(updateList: updateList)
         }
+    }
+    
+    func getReviews() async throws -> [ReviewModel] {
+        try await todoCertificationsUseCase.getReviews()
     }
 }
 
@@ -101,7 +115,8 @@ extension MainViewModel {
     
     private func updateListInfo(updateList: @escaping () -> Void) {
         Task {
-            todoList = try await mainUseCase.getTodoList(dateOffset: dateOffset, currentFilter: currentFilter)
+            let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
+            todoList = try await todoUseCase.getMyTodos(date: date, status: status)
             mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
             isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
             await MainActor.run { updateList() }
@@ -141,7 +156,6 @@ extension MainViewModel {
 // MARK: - ranking
 extension MainViewModel {
     func getRankings() async throws {
-        let response = try await mainUseCase.getTeamSummary()
-        rankings = response.ranking
+        rankings = try await groupUseCase.getRankings()
     }
 }

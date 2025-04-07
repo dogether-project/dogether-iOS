@@ -21,30 +21,12 @@ final class DIManager {
 }
 
 extension DIManager {
-    func getAppLaunchRepository(buildMode: BuildModes? = nil) -> AppLaunchProtocol {
-        switch buildMode ?? defaultBuildMode {
-        case .debug:
-            return AppLaunchRepositoryTest()
-        case .live:
-            return AppLaunchRepository()
-        }
-    }
-    
     func getAuthRepository(buildMode: BuildModes? = nil) -> AuthProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
             return AuthRepositoryTest()
         case .live:
             return AuthRepository()
-        }
-    }
-    
-    func getMainRepository(buildMode: BuildModes? = nil) -> MainProtocol {
-        switch buildMode ?? defaultBuildMode {
-        case .debug:
-            return MainRepositoryTest()
-        case .live:
-            return MainRepository()
         }
     }
     
@@ -72,6 +54,15 @@ extension DIManager {
             return PopupRepositoryTest()
         case .live:
             return PopupRepository()
+        }
+    }
+    
+    func getTodoCertificationsRepository(buildMode: BuildModes? = nil) -> TodoCertificationsProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return TodoCertificationsRepositoryTest()
+        case .live:
+            return TodoCertificationsRepository()
         }
     }
 }
