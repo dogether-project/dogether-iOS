@@ -9,22 +9,17 @@ import UIKit
 import SnapKit
 
 final class ExaminationModalityView: BasePopupView {
-    private var review: ReviewModel
-    
-    init(review: ReviewModel) {
-        self.review = review
+    init() {
         super.init(frame: .zero)
         setUI()
-        
-        Task { @MainActor in
-            guard let url = URL(string: self.review.mediaUrls[0]) else { return }
-            let (data, _) = try await URLSession.shared.data(from: url)
-            imageView.image = UIImage(data: data)
-        }
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var imageView = UIImageView()
+    private var imageView = CertificationImageView(
+        image: .logo,
+        certificationContent: "",
+        certificator: ""
+    )
     
     private let contentLabel = {
         let label = UILabel()
@@ -80,18 +75,6 @@ final class ExaminationModalityView: BasePopupView {
         backgroundColor = .grey800
         layer.cornerRadius = 12
         
-        // TODO: 추후 수정
-        imageView = CertificationImageView(
-            image: .logo,
-            certificationContent: review.content,
-            certificator: review.doer
-        )
-        
-        contentLabel.attributedText = NSAttributedString(
-            string: review.todoContent,
-            attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
-        )
-        
         rejectButton = examinationButton(type: .reject)
         approveButton = examinationButton(type: .approve)
         examinationStackView = examinationStackView(buttons: [rejectButton, approveButton])
@@ -116,6 +99,25 @@ final class ExaminationModalityView: BasePopupView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(48)
         }
+    }
+    
+    func setReview(review: ReviewModel) {
+        Task { [weak self] in
+            guard let self, let url = URL(string: review.mediaUrls[0]) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            imageView.image = UIImage(data: data)
+        }
+        
+        imageView = CertificationImageView(
+            image: .logo,
+            certificationContent: review.content,
+            certificator: review.doer
+        )
+        
+        contentLabel.attributedText = NSAttributedString(
+            string: review.todoContent,
+            attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
+        )
     }
     
     func updateButtonBackgroundColor(type: FilterTypes) {

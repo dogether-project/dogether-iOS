@@ -23,6 +23,7 @@ final class ModalityViewModel {
     func setReviews(_ reviews: [ReviewModel]?) {
         guard let reviews else { return }
         self.reviews = reviews
+        self.current = 0
     }
     
     func setCurrent(_ current: Int) {

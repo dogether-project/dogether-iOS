@@ -282,6 +282,7 @@ final class MainViewController: BaseViewController {
         Task { [weak self] in
             guard let self else { return }
             let reviews = try await viewModel.getReviews()
+            if reviews.isEmpty { return }
             await MainActor.run {
                 self.coordinator?.showModal(reviews: reviews)
             }

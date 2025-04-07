@@ -80,6 +80,7 @@ extension NavigationCoordinator {
         if let modalityWindow {
             if let viewController = modalityWindow.rootViewController as? ModalityViewController {
                 viewController.viewModel.setReviews(reviews)
+                viewController.updateView()
             }
         } else {
             let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
