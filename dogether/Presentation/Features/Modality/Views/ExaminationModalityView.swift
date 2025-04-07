@@ -8,12 +8,10 @@
 import UIKit
 import SnapKit
 
-final class ExaminationModalityView: UIView {
-    var buttonAction: (FilterTypes) -> Void
+final class ExaminationModalityView: BasePopupView {
     private var review: ReviewModel
     
-    init(buttonAction: @escaping (FilterTypes) -> Void, review: ReviewModel) {
-        self.buttonAction = buttonAction
+    init(review: ReviewModel) {
         self.review = review
         super.init(frame: .zero)
         setUI()
@@ -40,7 +38,6 @@ final class ExaminationModalityView: UIView {
         button.backgroundColor = .grey0
         button.layer.cornerRadius = 8
         button.tag = type.tag
-        button.addTarget(self, action: #selector(didTapExaminationButton(_:)), for: .touchUpInside)
         
         let icon = UIImageView(image: type.image?.withRenderingMode(.alwaysTemplate))
         icon.tintColor = .grey700
@@ -67,8 +64,8 @@ final class ExaminationModalityView: UIView {
         
         return button
     }
-    private var rejectButton = UIButton()
-    private var approveButton = UIButton()
+    var rejectButton = UIButton()
+    var approveButton = UIButton()
     
     private func examinationStackView(buttons: [UIButton]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: buttons)
@@ -101,10 +98,6 @@ final class ExaminationModalityView: UIView {
         
         [imageView, contentLabel, examinationStackView].forEach { addSubview($0) }
         
-        self.snp.updateConstraints {
-            $0.height.equalTo(487)
-        }
-        
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
@@ -119,24 +112,14 @@ final class ExaminationModalityView: UIView {
         
         examinationStackView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(16)
+            $0.bottom.equalToSuperview().inset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.height.equalTo(48)
         }
     }
     
-    @objc private func didTapExaminationButton(_ sender: UIButton) {
-        guard let type = FilterTypes.allCases.first(where: { $0.tag == sender.tag }) else { return }
-        
+    func updateButtonBackgroundColor(type: FilterTypes) {
         rejectButton.backgroundColor = type == .reject ? .dogetherRed : .grey0
         approveButton.backgroundColor = type == .approve ? .blue300 : .grey0
-        
-        switch type {
-        case .reject:
-            buttonAction(type)
-        case .approve:
-            buttonAction(type)
-        default:
-            return
-        }
     }
 }

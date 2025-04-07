@@ -14,11 +14,11 @@ protocol CoordinatorDelegate: AnyObject {
 
 final class NavigationCoordinator: NSObject {
     private let navigationController: UINavigationController
+    private var modalityWindow: UIWindow? = nil
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
-    
 }
 
 // MARK: view
@@ -66,7 +66,40 @@ extension NavigationCoordinator {
     }
     
     func hidePopup(animated: Bool = true) {
-        navigationController.viewControllers.last?.dismiss(animated: animated)
+        if let modalityWindow {
+            modalityWindow.rootViewController?.dismiss(animated: animated)
+        } else {
+            navigationController.viewControllers.last?.dismiss(animated: animated)
+        }
+    }
+}
+
+// MARK: modality
+extension NavigationCoordinator {
+    func showModal(reviews: [ReviewModel]? = nil) {
+        if let modalityWindow {
+            if let viewController = modalityWindow.rootViewController as? ModalityViewController {
+                viewController.viewModel.setReviews(reviews)
+            }
+        } else {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            let window = UIWindow(windowScene: windowScene!)
+            let modalityViewController = ModalityViewController()
+            
+            modalityViewController.coordinator = self
+            modalityViewController.viewModel.setReviews(reviews)
+            window.frame = UIScreen.main.bounds
+            window.rootViewController = modalityViewController
+            window.windowLevel = .alert + 1
+            window.makeKeyAndVisible()
+            
+            modalityWindow = window
+        }
+    }
+    
+    func hideModal() {
+        modalityWindow?.isHidden = true
+        modalityWindow = nil
     }
 }
 

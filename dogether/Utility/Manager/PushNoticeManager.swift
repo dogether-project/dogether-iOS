@@ -49,7 +49,8 @@ final class PushNoticeManager: NSObject, UNUserNotificationCenterDelegate {
                 let response: GetReviewsResponse = try await NetworkManager.shared.request(TodoCertificationsRouter.getReviews)
                 if response.dailyTodoCertifications.count > 0 {
                     Task { @MainActor in
-                        ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+//                        ModalityManager.shared.show(reviews: response.dailyTodoCertifications)
+                        // TODO: getCurrentViewController -> as BaseViewController -> coordinator.showModal
                     }
                 }
             }
