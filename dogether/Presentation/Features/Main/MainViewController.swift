@@ -291,15 +291,29 @@ final class MainViewController: BaseViewController {
             UIAction { [weak self] _ in
                 guard let self else { return }
                 Task {
-                    try await self.viewModel.getRankings()
-                    guard let rankings = self.viewModel.rankings else { return }
                     await MainActor.run {
-                        let rankingViewController = RankingViewController()
-                        rankingViewController.rankings = rankings
-                        self.coordinator?.pushViewController(rankingViewController)
+                        self.showLoadingView() // 로딩 시작
+                    }
+
+                    do {
+                        try await self.viewModel.getRankings()
+                        guard let rankings = self.viewModel.rankings else { return }
+
+                        await MainActor.run {
+                            self.hideLoadingView() // 로딩 끝
+                            let rankingViewController = RankingViewController()
+                            rankingViewController.rankings = rankings
+                            self.coordinator?.pushViewController(rankingViewController)
+                        }
+                    } catch {
+                        await MainActor.run {
+                            self.hideLoadingView() // 로딩 끝
+//                            self.showErrorAlert(error) // 실패시 Alert 처리
+                        }
                     }
                 }
-            }, for: .touchUpInside
+            },
+            for: .touchUpInside
         )
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
