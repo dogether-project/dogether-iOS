@@ -9,11 +9,23 @@ import Foundation
 
 final class MainRepositoryTest: MainProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse {
-//        return GetGroupStatusResponse(status: "READY")
+        //        return GetGroupStatusResponse(status: "READY")
         return GetGroupStatusResponse(status: "RUNNING")
     }
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
+        await MainActor.run {
+            LoadingEventBus.shared.show()
+        }
+        
+        try? await Task.sleep(nanoseconds: 2_000_000_000) 
+        
+        defer {
+            Task { @MainActor in
+                LoadingEventBus.shared.hide()
+            }
+        }
+        
         return GetGroupInfoResponse(
             name: "Test Group Name",
             duration: 3,
@@ -25,7 +37,18 @@ final class MainRepositoryTest: MainProtocol {
     }
     
     func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        try? await Task.sleep(nanoseconds: 2_000_000_000) // 로딩뷰 테스트용 임시 지연 코드 (2초)
+        await MainActor.run {
+            LoadingEventBus.shared.show()
+        }
+        
+        defer {
+            Task { @MainActor in
+                LoadingEventBus.shared.hide()
+            }
+        }
+        
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+        
         let rankings = (1 ... 20).map { RankingModel(rank: $0, name: "testName \($0)", certificationRate: Double($0)) }
         return GetTeamSummaryResponse(ranking: rankings)
     }
