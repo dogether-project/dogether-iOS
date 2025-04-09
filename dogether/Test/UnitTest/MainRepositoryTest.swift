@@ -18,13 +18,13 @@ final class MainRepositoryTest: MainProtocol {
             LoadingEventBus.shared.show()
         }
         
-        try? await Task.sleep(nanoseconds: 2_000_000_000) 
-        
         defer {
             Task { @MainActor in
                 LoadingEventBus.shared.hide()
             }
         }
+        
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
         
         return GetGroupInfoResponse(
             name: "Test Group Name",
