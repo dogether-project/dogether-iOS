@@ -6,17 +6,23 @@
 //
 
 import UIKit
+import Combine
 
 // MARK: AnyObject를 채택해 '클래스 전용' 프로토콜로 만들어 줌
 protocol CoordinatorDelegate: AnyObject {
     var coordinator: NavigationCoordinator? { get set }
 }
 
+private let loadingViewTag = 9999
+
 final class NavigationCoordinator: NSObject {
     private let navigationController: UINavigationController
+    private var cancellables = Set<AnyCancellable>()
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+        super.init()
+        bindLoadingEvents()
     }
     
 }
@@ -69,5 +75,29 @@ extension NavigationCoordinator {
 extension NavigationCoordinator: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return navigationController.viewControllers.count > 1
+    }
+}
+
+// MARK: - loadingView
+extension NavigationCoordinator {
+    private func bindLoadingEvents() {
+        LoadingEventBus.shared.loadingPublisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                isLoading ? self?.showLoadingView() : self?.hideLoadingView()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showLoadingView() {
+        guard navigationController.view.viewWithTag(loadingViewTag) == nil else { return }
+
+        let loadingView = LoadingView(frame: navigationController.view.bounds)
+        loadingView.tag = loadingViewTag
+        navigationController.view.addSubview(loadingView)
+    }
+
+    private func hideLoadingView() {
+        navigationController.view.viewWithTag(loadingViewTag)?.removeFromSuperview()
     }
 }
