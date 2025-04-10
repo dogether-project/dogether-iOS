@@ -9,17 +9,13 @@ import UIKit
 import SnapKit
 
 final class MyDashboardViewController: BaseViewController {
-    
     private let scrollView = {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
     
-    private let contentView = {
-        let view = UIView()
-        return view
-    }()
+    private let contentView = UIView()
     
     private let contentStackView = {
         let stackView = UIStackView()
@@ -106,7 +102,6 @@ final class MyDashboardViewController: BaseViewController {
     }()
     
     private func createProgressView(title: String, progress: Float, isToday: Bool = false) -> UIStackView {
-        
         // 프로그레스바 전체
         let progressBarContainer = StripedView()
         
@@ -228,19 +223,14 @@ final class MyDashboardViewController: BaseViewController {
         fetchMySummary()
     }
     
+    override func configureView() { }
+    
+    override func configureAction() { }
+    
     override func configureHierarchy() {
+        [scrollView].forEach { view.addSubview($0) }
         
-        [scrollView].forEach {
-            view.addSubview($0)
-        }
-        
-        [contentView].forEach {
-            scrollView.addSubview($0)
-        }
-        
-        [contentStackView].forEach {
-            scrollView.addSubview($0)
-        }
+        [contentView, contentStackView].forEach { scrollView.addSubview($0) }
         
         [messageLabel, myDataCollectionView, progressStackView, certificationStackView].forEach {
             contentStackView.addArrangedSubview($0)
@@ -256,7 +246,6 @@ final class MyDashboardViewController: BaseViewController {
     }
     
     override func configureConstraints() {
-        
         scrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -326,8 +315,6 @@ final class MyDashboardViewController: BaseViewController {
             $0.height.equalTo(206)
         }
     }
-    
-    override func configureView() { }
     
     private func createMyDataCollectionLayout() -> UICollectionViewFlowLayout {
         

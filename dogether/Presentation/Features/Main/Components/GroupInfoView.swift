@@ -7,16 +7,13 @@
 
 import UIKit
 
-final class GroupInfoView: UIView {
+final class GroupInfoView: BaseView {
     private(set) var groupInfo: GroupInfo
     
     init(groupInfo: GroupInfo = GroupInfo()) {
         self.groupInfo = groupInfo
-        
         super.init(frame: .zero)
-        setUI()
     }
-    
     required init?(coder: NSCoder) { fatalError() }
     
     private let nameLabel = UILabel()
@@ -35,31 +32,20 @@ final class GroupInfoView: UIView {
     private let joinCodeInfoLabel = UILabel()
     private let endDateInfoLabel = UILabel()
     
-    
     private func infoStackView(labels: [UILabel]) -> UIStackView {
         let stackView = UIStackView(arrangedSubviews: labels)
         stackView.axis = .vertical
         return stackView
     }
     
-    private func updateUI() {
-        nameLabel.text = groupInfo.name
-        
-        durationInfoLabel.attributedText = NSAttributedString(
-            string: "\(groupInfo.duration)일",
-            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-        )
-        joinCodeInfoLabel.attributedText = NSAttributedString(
-            string: groupInfo.joinCode,
-            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-        )
-        endDateInfoLabel.attributedText = NSAttributedString(
-            string: "\(groupInfo.endAt)(D-\(groupInfo.remainingDays))",
-            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-        )
-    }
+    private let groupInfoStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 28
+        return stackView
+    }()
     
-    private func setUI() {
+    override func configureView() {
         updateUI()
         
         nameLabel.textColor = .blue300
@@ -77,12 +63,16 @@ final class GroupInfoView: UIView {
         let joinCodeStackView = infoStackView(labels: [joinCodeDescriptionLabel, joinCodeInfoLabel])
         let endDateStackView = infoStackView(labels: [endDateDescriptionLabel, endDateInfoLabel])
         
-        let groupInfoStackView = UIStackView(arrangedSubviews: [durationStackView, joinCodeStackView, endDateStackView])
-        groupInfoStackView.axis = .horizontal
-        groupInfoStackView.spacing = 28
-        
+        [durationStackView, joinCodeStackView, endDateStackView].forEach { groupInfoStackView.addArrangedSubview($0) }
+    }
+    
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [nameLabel, groupInfoStackView].forEach { self.addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         nameLabel.snp.makeConstraints {
             $0.top.left.equalToSuperview()
             $0.height.equalTo(36)
@@ -92,6 +82,25 @@ final class GroupInfoView: UIView {
             $0.top.equalTo(nameLabel.snp.bottom).offset(16)
             $0.left.equalToSuperview()
         }
+    }
+}
+ 
+extension GroupInfoView {
+    private func updateUI() {
+        nameLabel.text = groupInfo.name
+        
+        durationInfoLabel.attributedText = NSAttributedString(
+            string: "\(groupInfo.duration)일",
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+        )
+        joinCodeInfoLabel.attributedText = NSAttributedString(
+            string: groupInfo.joinCode,
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+        )
+        endDateInfoLabel.attributedText = NSAttributedString(
+            string: "\(groupInfo.endAt)(D-\(groupInfo.remainingDays))",
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+        )
     }
     
     func setGroupInfo(groupInfo: GroupInfo) {

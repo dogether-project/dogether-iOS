@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CertificationImageView: UIImageView {
+final class CertificationImageView: BaseImageView {
     private let certificationContent: String
     private let certificator: String
     
@@ -16,7 +16,6 @@ final class CertificationImageView: UIImageView {
         self.certificator = certificator
         
         super.init(image: image)
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -57,7 +56,7 @@ final class CertificationImageView: UIImageView {
         gradientView.layer.sublayers?.first?.frame = gradientView.bounds
     }
     
-    private func setUI() {
+    override func configureView() {
         backgroundColor = .grey900
         layer.cornerRadius = 12
         contentMode = .scaleAspectFit
@@ -67,9 +66,15 @@ final class CertificationImageView: UIImageView {
             attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
         )
         certificatorLabel.text = certificator
-        
+    }
+    
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [gradientView, certificationContentLabel, certificatorLabel].forEach { addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         gradientView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

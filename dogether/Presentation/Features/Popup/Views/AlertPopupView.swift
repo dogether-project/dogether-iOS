@@ -8,6 +8,14 @@
 import UIKit
 
 final class AlertPopupView: BasePopupView {
+    private let type: AlertTypes
+    
+    init(type: AlertTypes) {
+        self.type = type
+        super.init(frame: .zero)
+    }
+    required init?(coder: NSCoder) { fatalError() }
+    
     private let titleLabel = {
         let label = UILabel()
         label.textColor = .grey0
@@ -56,14 +64,7 @@ final class AlertPopupView: BasePopupView {
         return stackView
     }()
     
-    init(type: AlertTypes) {
-        super.init(frame: .zero)
-        
-        setUI(type: type)
-    }
-    required init?(coder: NSCoder) { fatalError() }
-    
-    private func setUI(type: AlertTypes) {
+    override func configureView() {
         titleLabel.attributedText = NSAttributedString(
             string: type.title,
             attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
@@ -79,21 +80,26 @@ final class AlertPopupView: BasePopupView {
         confirmButton.setTitle(type.buttonText, for: .normal)
         confirmButton.backgroundColor = type.buttonColor
         
+        [cancelButton, confirmButton].forEach { buttonStackView.addArrangedSubview($0) }
+        
+        [titleLabel, messageLabel, buttonStackView].forEach { contentStackView.addArrangedSubview($0) }
+        contentStackView.setCustomSpacing(8, after: titleLabel)
+        contentStackView.setCustomSpacing(20, after: messageLabel)
+    }
+    
+    override func configureAction() {
         cancelButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
                 delegate?.hidePopup()
             }, for: .touchUpInside
         )
-        
-        [cancelButton, confirmButton].forEach { buttonStackView.addArrangedSubview($0) }
-        
-        [titleLabel, messageLabel, buttonStackView].forEach { contentStackView.addArrangedSubview($0) }
-        contentStackView.setCustomSpacing(8, after: titleLabel)
-        contentStackView.setCustomSpacing(20, after: messageLabel)
-        
+    }
+    override func configureHierarchy() {
         addSubview(contentStackView)
-        
+    }
+
+    override func configureConstraints() {
         buttonStackView.snp.makeConstraints {
             $0.height.equalTo(48)
         }

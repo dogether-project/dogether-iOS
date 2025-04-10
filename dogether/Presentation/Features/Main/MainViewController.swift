@@ -225,6 +225,7 @@ final class MainViewController: BaseViewController {
         return stackView
     }()
     
+    // FIXME: 추후 메인 화면 작업 시 수정
     final class EmptyDescriptionView: UIView {
         private(set) var type: FilterTypes = .all
         

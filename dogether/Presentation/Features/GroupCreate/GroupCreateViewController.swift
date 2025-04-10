@@ -140,21 +140,15 @@ final class GroupCreateViewController: BaseViewController {
     
     private let dogetherGroupInfo = DogetherGroupInfo()
     
-    // MARK: about keyboardOserver
-    deinit { NotificationCenter.default.removeObserver(self) }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         groupNameTextField.becomeFirstResponder()
-        setupKeyboardHandling()
     }
     
     override func configureView() {
         updateDuration()
         updateStartAt()
-        
-        dogetherHeader.delegate = self
         
         currentStepLabel.text = "\(viewModel.currentStep.rawValue)"
         maxStepLabel.text = "/\(viewModel.maxStep)"
@@ -165,6 +159,30 @@ final class GroupCreateViewController: BaseViewController {
         stepOneView = stepView(step: .one)
         stepTwoView = stepView(step: .two)
         stepThreeView = stepView(step: .three)
+        
+        groupName = componentTitleLabel(componentTitle: "그룹명")
+        groupNameCountLabel.text = "\(viewModel.currentGroupName.count)"
+        groupNameMaxLengthLabel.text = "/\(viewModel.groupNameMaxLength)"
+        [groupNameCountLabel, groupNameMaxLengthLabel].forEach { groupNameCountStackView.addArrangedSubview($0) }
+        
+        memberCount = componentTitleLabel(componentTitle: "그룹 인원")
+        memberCountView = CounterView(min: 2, max: 20, current: viewModel.memberCount, unit: "명") { [weak self] in
+            self?.viewModel.updateMemberCount(count: $0)
+        }
+        
+        duration = componentTitleLabel(componentTitle: "기간")
+        durationRow1 = horizontalStackView(buttons: [threeDaysButton, oneWeekButton])
+        durationRow2 = horizontalStackView(buttons: [twoWeeksButton, fourWeeksButton])
+        durationStack = verticalStackView(stacks: [durationRow1, durationRow2])
+        
+        startAt = componentTitleLabel(componentTitle: "시작일")
+        startAtStack = horizontalStackView(buttons: [todayButton, tomorrowButton])
+    }
+    
+    override func configureAction() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        
+        dogetherHeader.delegate = self
         
         completeButton.addAction(
             UIAction { [weak self] _ in
@@ -188,7 +206,6 @@ final class GroupCreateViewController: BaseViewController {
             }, for: .touchUpInside
         )
         
-        groupName = componentTitleLabel(componentTitle: "그룹명")
         groupNameTextField.delegate = self
         groupNameTextField.addAction(
             UIAction { [weak self] _ in
@@ -199,16 +216,7 @@ final class GroupCreateViewController: BaseViewController {
                 completeButton.setButtonStatus(status: viewModel.currentStep == .one && viewModel.currentGroupName.count > 0 ? .enabled : .disabled)
             }, for: .editingChanged
         )
-        groupNameCountLabel.text = "\(viewModel.currentGroupName.count)"
-        groupNameMaxLengthLabel.text = "/\(viewModel.groupNameMaxLength)"
-        [groupNameCountLabel, groupNameMaxLengthLabel].forEach { groupNameCountStackView.addArrangedSubview($0) }
         
-        memberCount = componentTitleLabel(componentTitle: "그룹 인원")
-        memberCountView = CounterView(min: 2, max: 20, current: viewModel.memberCount, unit: "명") { [weak self] in
-            self?.viewModel.updateMemberCount(count: $0)
-        }
-        
-        duration = componentTitleLabel(componentTitle: "기간")
         [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach { button in
             button.addAction(
                 UIAction { [weak self, weak button] _ in
@@ -217,11 +225,7 @@ final class GroupCreateViewController: BaseViewController {
                 }, for: .touchUpInside
             )
         }
-        durationRow1 = horizontalStackView(buttons: [threeDaysButton, oneWeekButton])
-        durationRow2 = horizontalStackView(buttons: [twoWeeksButton, fourWeeksButton])
-        durationStack = verticalStackView(stacks: [durationRow1, durationRow2])
         
-        startAt = componentTitleLabel(componentTitle: "시작일")
         [todayButton, tomorrowButton].forEach { button in
             button.addAction(
                 UIAction { [weak self, weak button] _ in
@@ -230,7 +234,6 @@ final class GroupCreateViewController: BaseViewController {
                 }, for: .touchUpInside
             )
         }
-        startAtStack = horizontalStackView(buttons: [todayButton, tomorrowButton])
     }
     
     override func configureHierarchy() {
@@ -385,34 +388,18 @@ extension GroupCreateViewController {
 
 // MARK: - abount keyboard
 extension GroupCreateViewController: UITextFieldDelegate {
-    private func setupKeyboardHandling() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-    }
-    
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
-    @objc private func keyboardWillShow(_ notification: NSNotification) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         groupNameTextField.layer.borderColor = UIColor.blue300.cgColor
         groupNameCountLabel.textColor = .blue300
     }
     
-    @objc private func keyboardWillHide(_ notification: NSNotification) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         groupNameTextField.layer.borderColor = UIColor.clear.cgColor
         groupNameCountLabel.textColor = .grey300
     }

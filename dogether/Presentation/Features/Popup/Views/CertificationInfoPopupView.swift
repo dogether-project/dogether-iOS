@@ -14,8 +14,6 @@ final class CertificationInfoPopupView: BasePopupView {
     init(todoInfo: TodoInfo) {
         self.todoInfo = todoInfo
         super.init(frame: .zero)
-        
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -69,27 +67,14 @@ final class CertificationInfoPopupView: BasePopupView {
     }
     private var rejectReasonView = UIView()
     
-    private func setUI() {
-        closeButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.hidePopup()
-            }, for: .touchUpInside
-        )
+    override func configureView() {
+        loadImage()
         
         imageView = CertificationImageView(
             image: .logo,
             certificationContent: todoInfo.certificationContent ?? "",
             certificator: UserDefaultsManager.shared.userFullName ?? ""
         )
-        
-        Task {
-            guard let mediaUrl = self.todoInfo.certificationMediaUrl, let url = URL(string: mediaUrl) else { return }
-            let (data, _) = try await URLSession.shared.data(from: url)
-            await MainActor.run {
-                imageView.image = UIImage(data: data)
-            }
-        }
         
         guard let status = TodoStatus(rawValue: todoInfo.status),
               let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
@@ -99,9 +84,22 @@ final class CertificationInfoPopupView: BasePopupView {
             string: todoInfo.content,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
-        
+    }
+    
+    override func configureAction() {
+        closeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.hidePopup()
+            }, for: .touchUpInside
+        )
+    }
+    
+    override func configureHierarchy() {
         [titleLabel, closeButton, imageView, statusView, contentLabel].forEach { addSubview($0) }
-        
+    }
+     
+    override func configureConstraints() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.left.equalToSuperview().offset(20)
@@ -142,6 +140,18 @@ final class CertificationInfoPopupView: BasePopupView {
         } else {
             contentLabel.snp.makeConstraints {
                 $0.bottom.equalToSuperview().inset(24)
+            }
+        }
+    }
+}
+
+extension CertificationInfoPopupView {
+    private func loadImage() {
+        Task {
+            guard let mediaUrl = self.todoInfo.certificationMediaUrl, let url = URL(string: mediaUrl) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            await MainActor.run {
+                imageView.image = UIImage(data: data)
             }
         }
     }

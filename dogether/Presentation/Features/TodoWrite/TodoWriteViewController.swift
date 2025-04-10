@@ -139,24 +139,25 @@ final class TodoWriteViewController: BaseViewController {
     
     private let saveButton = DogetherButton(title: "투두 저장", status: .disabled)
     
-    // MARK: about keyboardOserver
-    deinit { NotificationCenter.default.removeObserver(self) }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         todoTextField.becomeFirstResponder()
-        setupKeyboardHandling()
     }
     
     override func configureView() {
         updateView()
         
-        todoTextField.delegate = self
         todoTextField.attributedPlaceholder = NSAttributedString(
             string: "투두를 입력해주세요 (최대 \(viewModel.maximumTodoCount)개)",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.grey300]
         )
+    }
+    
+    override func configureAction() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        
+        todoTextField.delegate = self
         todoTextField.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -295,35 +296,18 @@ extension TodoWriteViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - abount keyboard
+// MARK: - abount keyboard (UITextFieldDelegate)
 extension TodoWriteViewController: UITextFieldDelegate {
-    private func setupKeyboardHandling() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-    }
-    
-    // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
-    @objc private func keyboardWillShow(_ notification: NSNotification) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         todoTextField.layer.borderColor = UIColor.blue300.cgColor
     }
     
-    @objc private func keyboardWillHide(_ notification: NSNotification) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         todoTextField.layer.borderColor = UIColor.clear.cgColor
     }
     

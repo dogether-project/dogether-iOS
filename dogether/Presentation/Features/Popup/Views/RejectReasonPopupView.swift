@@ -9,10 +9,14 @@ import UIKit
 import SnapKit
 
 final class RejectReasonPopupView: BasePopupView {
+    // MARK: - PopupViewController에서 action handling
+    let rejectReasonButton = DogetherButton(title: "등록하기", status: .disabled)
+    
+    // MARK: - PopupViewController에서 delegate 지정
+    let rejectReasonTextView = DogetherTextView(type: .rejectReason)
+    
     init() {
         super.init(frame: .zero)
-        
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -62,22 +66,22 @@ final class RejectReasonPopupView: BasePopupView {
         return view
     }()
     
-    // MARK: - PopupViewController에서 delegate 지정
-    let rejectReasonTextView = DogetherTextView(type: .rejectReason)
+    override func configureView() { }
     
-    // MARK: - PopupViewController에서 action handling
-    let rejectReasonButton = DogetherButton(title: "등록하기", status: .disabled)
-    
-    private func setUI() {
+    override func configureAction() {
         closeButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
                 delegate?.hidePopup()
             }, for: .touchUpInside
         )
-        
+    }
+     
+    override func configureHierarchy() {
         [closeButton, descriptionLabel, descriptionView, rejectReasonTextView, rejectReasonButton].forEach { addSubview($0) }
-        
+    }
+     
+    override func configureConstraints() {
         closeButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.right.equalToSuperview().offset(-20)

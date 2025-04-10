@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class NavigationHeader: UIView {
+final class NavigationHeader: BaseView{
     weak var delegate: CoordinatorDelegate?
     
     private var title: String
@@ -16,7 +16,6 @@ final class NavigationHeader: UIView {
     init(title: String) {
         self.title = title
         super.init(frame: .zero)
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -34,17 +33,24 @@ final class NavigationHeader: UIView {
         return label
     }()
     
-    private func setUI() {
+    override func configureView() {
+        titleLabel.text = title
+    }
+    
+    override func configureAction() {
         prevButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
                 delegate?.coordinator?.popViewController()
             }, for: .touchUpInside
         )
-        titleLabel.text = title
-        
+    }
+     
+    override func configureHierarchy() {
         [prevButton, titleLabel].forEach { addSubview($0) }
-        
+    }
+     
+    override func configureConstraints() {
         prevButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalToSuperview()

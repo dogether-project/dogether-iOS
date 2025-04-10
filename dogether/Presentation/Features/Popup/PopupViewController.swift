@@ -24,9 +24,13 @@ final class PopupViewController: BaseViewController {
     
     override func configureView() {
         view.backgroundColor = .grey900.withAlphaComponent(0.8)
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissPopup)))
         
         popupView = getPopupView()
+    }
+    
+    override func configureAction() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissPopup)))
+        
         popupView.delegate = self
     }
     

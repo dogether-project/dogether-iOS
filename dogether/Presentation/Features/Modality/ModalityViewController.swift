@@ -12,7 +12,7 @@ final class ModalityViewController: BaseViewController {
     var viewModel = ModalityViewModel()
     
     // TODO: 현재는 TodoExamination 단일 종류만 존재하지만 추후 확장
-    private let titlaLabel = {
+    private let titleLabel = {
         let label = UILabel()
         label.text = "투두를 검사해주세요!"
         label.textColor = .grey0
@@ -86,11 +86,11 @@ final class ModalityViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [titlaLabel, todoExaminationModalityView, closeButton].forEach { view.addSubview($0) }
+        [titleLabel, todoExaminationModalityView, closeButton].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        titlaLabel.snp.makeConstraints {
+        titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(48)
             $0.height.equalTo(36)

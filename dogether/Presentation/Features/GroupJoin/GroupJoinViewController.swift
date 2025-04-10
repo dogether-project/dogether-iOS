@@ -61,13 +61,19 @@ final class GroupJoinViewController: BaseViewController {
         
         textField.becomeFirstResponder()
         updateCodeLabelFocus()
-        setupKeyboardHandling()
     }
     
     override func configureView() {
-        dogetherHeader.delegate = self
-        
         updateSubTitleLabel()
+
+        (0 ..< viewModel.codeLength).forEach { _ in codeLabelStackView.addArrangedSubview(codeLabel()) }
+    }
+    
+    override func configureAction() {
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+        codeLabelStackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showKeyboard)))
+        
+        dogetherHeader.delegate = self
         
         textField.delegate = self
         textField.addAction(
@@ -77,8 +83,6 @@ final class GroupJoinViewController: BaseViewController {
                 updateCodeLabels()
             }, for: .editingChanged
         )
-
-        (0 ..< viewModel.codeLength).forEach { _ in codeLabelStackView.addArrangedSubview(codeLabel()) }
         
         joinButton.addAction(
             UIAction { [weak self] _ in
@@ -181,56 +185,10 @@ extension GroupJoinViewController {
 
 // MARK: - about keyboard
 extension GroupJoinViewController: UITextFieldDelegate {
-    private func setupKeyboardHandling() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-        codeLabelStackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showKeyboard)))
-    }
-    
     // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print("return \(textField)")
         textField.resignFirstResponder()
         return true
-    }
-    
-    @objc private func keyboardWillShow(_ notification: NSNotification) {
-        print("keyboardshow")
-    }
-    
-    @objc private func keyboardWillHide(_ notification: NSNotification) {
-        print("keyboardhide")
-    }
-    
-    @objc private func textDidChange(_ textField: UITextField) {
-        
-        guard let text = textField.text, !text.isEmpty else { return }
-        
-        for (index, textF) in textFields.enumerated() where textF == textField {
-            if index < textFields.count - 1 {
-                textFields[index + 1].becomeFirstResponder()
-            } else {
-                // 마지막 입력 후 키보드 내리기
-                textField.resignFirstResponder()
-                joinButton.isEnabled = true
-            }
-        }
-        
-        // 입력중인 텍스트필드 border 색상 변경
-        setTextFieldBorderColor()
-        
-        textField.textColor = .grey0
     }
     
     private func setTextFieldBorderColor() {

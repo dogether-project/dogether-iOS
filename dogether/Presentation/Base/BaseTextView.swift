@@ -1,15 +1,15 @@
 //
-//  CollectionViewCell.swift
+//  BaseTextView.swift
 //  dogether
 //
-//  Created by 박지은 on 2/14/25.
+//  Created by seungyooooong on 4/9/25.
 //
 
 import UIKit
 
-class BaseCollectionViewCell: UICollectionViewCell {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+class BaseTextView: UITextView {
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        super.init(frame: .zero, textContainer: nil)
         
         configureView()
         configureAction()

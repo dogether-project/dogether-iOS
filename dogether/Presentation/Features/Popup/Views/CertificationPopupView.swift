@@ -19,8 +19,6 @@ final class CertificationPopupView: BasePopupView {
     
     init() {
         super.init(frame: .zero)
-        
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -133,7 +131,13 @@ final class CertificationPopupView: BasePopupView {
         return view
     }()
     
-    private func setUI() {
+    override func configureView() {
+        galleryButton = certificationButton(certificationMethod: .gallery)
+        cameraButton = certificationButton(certificationMethod: .camera)
+        [galleryButton, cameraButton].forEach { certificationStackView.addArrangedSubview($0) }
+    }
+    
+    override func configureAction() {
         closeButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -141,19 +145,19 @@ final class CertificationPopupView: BasePopupView {
             }, for: .touchUpInside
         )
         
-        galleryButton = certificationButton(certificationMethod: .gallery)
-        cameraButton = certificationButton(certificationMethod: .camera)
-        [galleryButton, cameraButton].forEach { certificationStackView.addArrangedSubview($0) }
-        
         nextButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
                 updatePopup()
             }, for: .touchUpInside
         )
-        
+    }
+    
+    override func configureHierarchy() {
         [titleLabel, closeButton, todoContentLabel, certificationStackView].forEach { addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.left.equalToSuperview().offset(20)
@@ -177,7 +181,9 @@ final class CertificationPopupView: BasePopupView {
             $0.horizontalEdges.equalToSuperview().inset(20)
         }
     }
-    
+}
+
+extension CertificationPopupView {
     func setExtraInfo(todoInfo: TodoInfo?) {
         todoContentLabel.attributedText = NSAttributedString(
             string: todoInfo?.content ?? "",

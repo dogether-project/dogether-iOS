@@ -47,6 +47,8 @@ final class SplashViewController: BaseViewController {
     
     override func configureView() { }
     
+    override func configureAction() { }
+    
     override func configureHierarchy() {
         [logoView].forEach { view.addSubview($0) }
     }

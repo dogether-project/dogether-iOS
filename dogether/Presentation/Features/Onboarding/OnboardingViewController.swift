@@ -75,7 +75,6 @@ final class OnboardingViewController: BaseViewController {
     }
     
     override func configureView() {
-        scrollView.delegate = self
         scrollView.contentSize = CGSize(
             width: view.frame.width * CGFloat(viewModel.onboardingStep),
             height: scrollView.frame.height
@@ -90,6 +89,8 @@ final class OnboardingViewController: BaseViewController {
     }
     
     override func configureAction() {
+        scrollView.delegate = self
+        
         pageControl.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }

@@ -7,7 +7,12 @@
 
 import UIKit
 
-final class RankingTableViewCell: UITableViewCell, ReusableProtocol {
+final class RankingTableViewCell: BaseTableViewCell, ReusableProtocol {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    }
+    required init?(coder: NSCoder) { fatalError() }
+    
     private let tableViewCell = UIView()
     
     private let rankingLabel = {
@@ -35,26 +40,25 @@ final class RankingTableViewCell: UITableViewCell, ReusableProtocol {
         return label
     }()
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        setUI()
-    }
-    required init?(coder: NSCoder) { fatalError() }
-    
     func setExtraInfo(ranking: RankingModel) {
         rankingLabel.text = String(ranking.rank)
         nameLabel.text = ranking.name
         certificationLabel.text = "\(Int(ranking.certificationRate))%"
     }
     
-    private func setUI() {
+    override func configureView() {
         selectionStyle = .none
         backgroundColor = .clear
         contentView.addSubview(tableViewCell)
-        
+    }
+     
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [rankingLabel, profileImageView, nameLabel, certificationImageView, certificationLabel].forEach { tableViewCell.addSubview($0) }
-        
+    }
+     
+    override func configureConstraints() {
         tableViewCell.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(32)
             $0.verticalEdges.equalToSuperview().inset(10)

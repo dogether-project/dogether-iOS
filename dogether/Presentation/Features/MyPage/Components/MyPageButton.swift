@@ -7,7 +7,15 @@
 
 import UIKit
 
-final class MyPageButton: UIButton {
+final class MyPageButton: BaseButton {
+    init(icon: UIImage, title: String) {
+        iconImageView.image = icon
+        buttonTitleLabel.text = title
+        
+        super.init(frame: .zero)
+    }
+    required init?(coder: NSCoder) { fatalError() }
+    
     private let iconImageView = UIImageView()
     
     private let buttonTitleLabel = {
@@ -19,20 +27,17 @@ final class MyPageButton: UIButton {
     
     private let chevronImageView = UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
     
-    init(icon: UIImage, title: String) {
-        iconImageView.image = icon
-        buttonTitleLabel.text = title
-        
-        super.init(frame: .zero)
-        setUI()
-    }
-    required init?(coder: NSCoder) { fatalError() }
-    
-    private func setUI() {
+    override func configureView() {
         chevronImageView.tintColor = .grey100
-        
+    }
+    
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [iconImageView, buttonTitleLabel, chevronImageView].forEach { addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         self.snp.makeConstraints {
             $0.height.equalTo(48)
         }

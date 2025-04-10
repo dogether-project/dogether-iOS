@@ -7,10 +7,16 @@
 
 import UIKit
 
-final class DogetherTextView: UITextView {
+final class DogetherTextView: BaseTextView {
     // TODO: paste 처리 추가
     
     let type: TextViewTypes
+    
+    init(type: TextViewTypes) {
+        self.type = type
+        super.init(frame: .zero, textContainer: nil)
+    }
+    required init?(coder: NSCoder) { fatalError() }
     
     private let placeHolder = {
         let label = UILabel()
@@ -33,25 +39,20 @@ final class DogetherTextView: UITextView {
         return label
     }()
 
-    init(type: TextViewTypes) {
-        self.type = type
-        super.init(frame: .zero, textContainer: nil)
-        
-        setUI()
-    }
-    required init?(coder: NSCoder) { fatalError() }
-    
-    private func setUI() {
+    override func configureView() {
         updateTextInfo()
         focusOn()
         
         text = ""
         textColor = .grey50
         font = Fonts.body1S
+        
         tintColor = .blue300
         returnKeyType = .done
+        
         textContainer.lineFragmentPadding = 0
         textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        
         backgroundColor = .grey800
         layer.cornerRadius = 12
         layer.borderWidth = 1
@@ -62,9 +63,15 @@ final class DogetherTextView: UITextView {
         )
         
         maxLengthLabel.text = "/\(type.maxLength)"
+    }
+    
+    override func configureAction() { }
         
+    override func configureHierarchy() {
         [placeHolder, textCountLabel, maxLengthLabel].forEach { addSubview($0) }
-        
+    }
+     
+    override func configureConstraints() {
         placeHolder.snp.makeConstraints {
             $0.top.equalToSuperview().offset(8.5) // FIXME: 8.5 -> 16   // ???: 좀 떨어져있음 (border or cornerRadius 의심 중)
             $0.horizontalEdges.equalToSuperview().inset(16)

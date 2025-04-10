@@ -39,6 +39,10 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureView() {
+        [leaveGroupButton, logoutButton, withdrawButton].forEach { mypageButtonStackView.addArrangedSubview($0) }
+    }
+    
+    override func configureAction() {
         dogetherHeader.delegate = self
         
         leaveGroupButton.addAction(
@@ -79,8 +83,6 @@ final class MyPageViewController: BaseViewController {
                 }
             }, for: .touchUpInside
         )
-        
-        [leaveGroupButton, logoutButton, withdrawButton].forEach { mypageButtonStackView.addArrangedSubview($0) }
     }
     
     override func configureHierarchy() {

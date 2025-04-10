@@ -11,7 +11,6 @@ import SnapKit
 final class ExaminationModalityView: BasePopupView {
     init() {
         super.init(frame: .zero)
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -71,16 +70,22 @@ final class ExaminationModalityView: BasePopupView {
     }
     private var examinationStackView = UIStackView()
     
-    private func setUI() {
+    override func configureView() {
         backgroundColor = .grey800
         layer.cornerRadius = 12
         
         rejectButton = examinationButton(type: .reject)
         approveButton = examinationButton(type: .approve)
         examinationStackView = examinationStackView(buttons: [rejectButton, approveButton])
-        
+    }
+    
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [imageView, contentLabel, examinationStackView].forEach { addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.horizontalEdges.equalToSuperview().inset(20)
@@ -100,7 +105,9 @@ final class ExaminationModalityView: BasePopupView {
             $0.height.equalTo(48)
         }
     }
-    
+}
+ 
+extension ExaminationModalityView {
     func setReview(review: ReviewModel) {
         Task { [weak self] in
             guard let self, let url = URL(string: review.mediaUrls[0]) else { return }

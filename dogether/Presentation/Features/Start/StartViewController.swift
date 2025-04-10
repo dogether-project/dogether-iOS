@@ -147,6 +147,8 @@ final class StartViewController: BaseViewController {
         joinButton = startButton(groupType: .join)
     }
     
+    override func configureAction() { }
+    
     override func configureHierarchy() {
         [dogetherHeader, titleLabel, floatingDescription, createButton, joinButton].forEach { view.addSubview($0) }
     }
