@@ -9,8 +9,8 @@ import Foundation
 
 final class GroupRepositoryTest: GroupProtocol {
     func getIsJoining() async throws -> GetIsJoiningResponse {
-        return GetIsJoiningResponse(isJoining: false)
-//        return GetIsJoiningResponse(isJoining: true)
+//        return GetIsJoiningResponse(isJoining: false)
+        return GetIsJoiningResponse(isJoining: true)
     }
     
     func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {

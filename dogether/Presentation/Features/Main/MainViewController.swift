@@ -320,15 +320,7 @@ final class MainViewController: BaseViewController {
         rankingButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                Task {
-                    try await self.viewModel.getRankings()
-                    guard let rankings = self.viewModel.rankings else { return }
-                    await MainActor.run {
-                        let rankingViewController = RankingViewController()
-                        rankingViewController.rankings = rankings
-                        self.coordinator?.pushViewController(rankingViewController)
-                    }
-                }
+                coordinator?.pushViewController(RankingViewController())
             }, for: .touchUpInside
         )
         

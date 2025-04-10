@@ -9,18 +9,17 @@ import UIKit
 import SnapKit
 
 final class RankingViewController: BaseViewController {
-    var rankings: [RankingModel]?
+    private let viewModel = RankingViewModel()
     
     private let navigationHeader = NavigationHeader(title: "순위")
     
-    private func rankingTopStackView(views: [UIView]) -> UIStackView {
-        let stackView = UIStackView(arrangedSubviews: views)
+    private var rankingTopStackView = {
+        let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 11
         stackView.distribution = .fillEqually
         return stackView
-    }
-    private var rankingTopStackView = UIStackView()
+    }()
     
     private let descriptionView = {
         let view = UIView()
@@ -64,10 +63,18 @@ final class RankingViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.loadRankingView()
+            await MainActor.run { self.updateView() }
+        }
+    }
+    
     override func configureView() {
-        guard let rankings else { return }
-        let rankingTopViews = (0 ..< 3).map { RankingTopView(ranking: rankings.count > $0 ? rankings[$0] : nil) }
-        rankingTopStackView = rankingTopStackView(views: [rankingTopViews[1], rankingTopViews[0], rankingTopViews[2]])
+        updateView()
     }
     
     override func configureAction() {
@@ -107,20 +114,34 @@ final class RankingViewController: BaseViewController {
     }
 }
 
+extension RankingViewController {
+    private func updateView() {
+        rankingTopStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+        [1, 0, 2].forEach { index in
+            let ranking = viewModel.rankings[safe: index]
+            let topView = RankingTopView(ranking: ranking)
+            rankingTopStackView.addArrangedSubview(topView)
+        }
+        
+        rankingTableView.reloadData()
+    }
+}
+
 // MARK: - aboout tableView
 extension RankingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let rankings, rankings.count > 3 else { return 0}
-        return rankings.count - 3
+        guard viewModel.rankings.count > 3 else { return 0 }
+        return viewModel.rankings.count - 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let ranking = rankings?[indexPath.row + 3], let cell = tableView.dequeueReusableCell(
+        guard let cell = tableView.dequeueReusableCell(
             withIdentifier: RankingTableViewCell.identifier,
             for: indexPath
         ) as? RankingTableViewCell else { return UITableViewCell() }
         
-        cell.setExtraInfo(ranking: ranking)
+        cell.setExtraInfo(ranking: viewModel.rankings[indexPath.row + 3])
         
         return cell
     }

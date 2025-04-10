@@ -13,8 +13,6 @@ final class MainViewModel {
     private let todoUseCase: TodoUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
-    private(set) var rankings: [RankingModel]?
-    
     private(set) var mainViewStatus: MainViewStatus = .emptyList
     
     private(set) var groupInfo: GroupInfo = GroupInfo()
@@ -155,12 +153,5 @@ extension MainViewModel {
             sheetStatus = translation < -100 ? .expand : .normal
         }
         return sheetStatus
-    }
-}
-
-// MARK: - ranking
-extension MainViewModel {
-    func getRankings() async throws {
-        rankings = try await groupUseCase.getRankings()
     }
 }
