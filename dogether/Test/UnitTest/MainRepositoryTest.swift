@@ -15,6 +15,7 @@ final class MainRepositoryTest: MainProtocol {
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
         try? await Task.sleep(nanoseconds: 2_000_000_000)
+//        try? await Task.sleep(nanoseconds: 500_000_000)
         return GetGroupInfoResponse(
             name: "Test Group Name",
             duration: 3,

@@ -22,7 +22,7 @@ final class LoadingView: UIView {
     }
 
     private func setup() {
-        backgroundColor = UIColor.black.withAlphaComponent(0.5)
+//        backgroundColor = UIColor.black.withAlphaComponent(0.5)
         isUserInteractionEnabled = true
 
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
