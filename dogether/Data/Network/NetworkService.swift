@@ -41,15 +41,6 @@ class NetworkService {
     }
     
     func request<T: Decodable>(_ endpoint: NetworkEndpoint) async throws -> T {
-        await MainActor.run {
-            LoadingEventBus.shared.show()
-        }
-        
-        defer {
-            Task { @MainActor in
-                LoadingEventBus.shared.hide()
-            }
-        }
         guard let url = configureURL(endpoint) else {
             throw NetworkError.request
         }

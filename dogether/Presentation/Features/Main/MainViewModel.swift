@@ -40,6 +40,8 @@ final class MainViewModel {
 extension MainViewModel {
     func loadMainView(updateView: @escaping () -> Void, updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
         Task {
+            await MainActor.run { LoadingEventBus.shared.show() }
+            defer { Task { @MainActor in LoadingEventBus.shared.hide() } }
             mainViewStatus = try await mainUseCase.getMainViewStatus()
             groupInfo = try await mainUseCase.getGroupInfo()
             await MainActor.run { updateView() }
@@ -141,6 +143,8 @@ extension MainViewModel {
 // MARK: - ranking
 extension MainViewModel {
     func getRankings() async throws {
+        await MainActor.run { LoadingEventBus.shared.show() }
+        defer { Task { @MainActor in LoadingEventBus.shared.hide() } }
         let response = try await mainUseCase.getTeamSummary()
         rankings = response.ranking
     }

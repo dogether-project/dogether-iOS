@@ -14,18 +14,7 @@ final class MainRepositoryTest: MainProtocol {
     }
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
-        await MainActor.run {
-            LoadingEventBus.shared.show()
-        }
-        
-        defer {
-            Task { @MainActor in
-                LoadingEventBus.shared.hide()
-            }
-        }
-        
         try? await Task.sleep(nanoseconds: 2_000_000_000)
-        
         return GetGroupInfoResponse(
             name: "Test Group Name",
             duration: 3,
@@ -37,18 +26,7 @@ final class MainRepositoryTest: MainProtocol {
     }
     
     func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        await MainActor.run {
-            LoadingEventBus.shared.show()
-        }
-        
-        defer {
-            Task { @MainActor in
-                LoadingEventBus.shared.hide()
-            }
-        }
-        
         try? await Task.sleep(nanoseconds: 2_000_000_000)
-        
         let rankings = (1 ... 20).map { RankingModel(rank: $0, name: "testName \($0)", certificationRate: Double($0)) }
         return GetTeamSummaryResponse(ranking: rankings)
     }
