@@ -17,4 +17,8 @@ final class TodoRepository: TodoProtocol {
     func createTodos(createTodosRequest: CreateTodosRequest) async throws {
         try await todosDataSource.createTodos(createTodosRequest: createTodosRequest)
     }
+    
+    func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse {
+        try await todosDataSource.getMyTodos(date: date, status: status)
+    }
 }

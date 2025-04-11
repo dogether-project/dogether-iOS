@@ -9,11 +9,12 @@ import UIKit
 import SnapKit
 
 class MyDashboardCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    required init?(coder: NSCoder) { fatalError() }
     
-    private let icon = {
-        let icon = UIImageView()
-        return icon
-    }()
+    private let icon = UIImageView()
     
     private let titleLabel = {
         let label = UILabel()
@@ -31,14 +32,12 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
         return label
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-
+    override func configureView() { }
+    
+    override func configureAction() { }
+    
     override func configureHierarchy() {
-        [icon, titleLabel, countLabel].forEach {
-            contentView.addSubview($0)
-        }
+        [icon, titleLabel, countLabel].forEach { contentView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -58,16 +57,12 @@ class MyDashboardCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
             $0.centerX.equalToSuperview()
         }
     }
-    
-    override func configureView() { }
-    
+}
+
+extension MyDashboardCollectionViewCell {
     func configure(with image: UIImage, title: String, count: String) {
         icon.image = image
         titleLabel.text = title
         countLabel.text = count
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

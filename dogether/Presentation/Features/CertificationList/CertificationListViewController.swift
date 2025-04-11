@@ -16,7 +16,6 @@ struct SectionData {
 }
 
 final class CertificationListViewController: BaseViewController {
-    
     private var buttonStackView = UIStackView()
     
     private let allButton = FilterButton(type: .all)
@@ -52,6 +51,7 @@ final class CertificationListViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    required init?(coder: NSCoder) { fatalError() }
     
     override func configureView() {
         navigationItem.title = "인증 목록"
@@ -65,6 +65,8 @@ final class CertificationListViewController: BaseViewController {
         }
         buttonStackView = filterButtonStackView(buttons: [allButton, waitButton, rejectButton, approveButton])
     }
+    
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [buttonStackView, collectionView].forEach {
@@ -147,20 +149,15 @@ final class CertificationListHeaderView: UICollectionReusableView, ReusableProto
             $0.leading.equalToSuperview()
         }
     }
+    required init?(coder: NSCoder) { fatalError() }
     
     func configure(title: String, date: String) {
         titleLabel.text = title
         dateLabel.text = date
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-        
-    }
 }
 
 extension CertificationListViewController: UICollectionViewDelegate, UICollectionViewDataSource {
-    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return sections.count
     }

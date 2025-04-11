@@ -92,13 +92,6 @@ final class CompleteViewController: BaseViewController {
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         
-        completeButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                coordinator?.setNavigationController(MainViewController())
-            }, for: .touchUpInside
-        )
-        
         switch viewModel.groupType {
         case .join:
             // FIXME: API 수정 후 내용 반영
@@ -111,6 +104,18 @@ final class CompleteViewController: BaseViewController {
             )
         case .create:
             joinCodeShareButton = joinCodeShareButton(joinCode: viewModel.joinCode)
+        }
+    }
+    
+    override func configureAction() {
+        completeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                coordinator?.setNavigationController(MainViewController())
+            }, for: .touchUpInside
+        )
+        
+        if viewModel.groupType == .create {
             joinCodeShareButton.addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }

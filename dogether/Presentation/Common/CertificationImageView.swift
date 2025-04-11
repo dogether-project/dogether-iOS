@@ -7,16 +7,15 @@
 
 import UIKit
 
-final class CertificationImageView: UIImageView {
-    private(set) var certificationContent: String
-    private(set) var certificator: String
+final class CertificationImageView: BaseImageView {
+    private let certificationContent: String
+    private let certificator: String
     
     init(image: UIImage?, certificationContent: String = "", certificator: String = "") {
         self.certificationContent = certificationContent
         self.certificator = certificator
         
         super.init(image: image)
-        setUI()
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -41,7 +40,7 @@ final class CertificationImageView: UIImageView {
     private let certificationContentLabel = {
         let label = UILabel()
         label.textColor = .grey100
-        label.font = Fonts.body1R
+        label.numberOfLines = 0
         return label
     }()
     
@@ -57,24 +56,33 @@ final class CertificationImageView: UIImageView {
         gradientView.layer.sublayers?.first?.frame = gradientView.bounds
     }
     
-    private func setUI() {
+    override func configureView() {
         backgroundColor = .grey900
         layer.cornerRadius = 12
         contentMode = .scaleAspectFit
         
-        certificationContentLabel.text = certificationContent
+        certificationContentLabel.attributedText = NSAttributedString(
+            string: certificationContent,
+            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
+        )
         certificatorLabel.text = certificator
-        
+    }
+    
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [gradientView, certificationContentLabel, certificatorLabel].forEach { addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         gradientView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
         certificationContentLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(certificatorLabel.snp.top).inset(4)
-            $0.height.equalTo(25)
         }
         
         certificatorLabel.snp.makeConstraints {

@@ -13,8 +13,8 @@ final class SplashViewModel {
     private(set) var destination: BaseViewController?
     
     init() {
-        let appLaunchRepository = DIManager.shared.getAppLaunchRepository()
-        self.appLaunchUseCase = AppLaunchUseCase(repository: appLaunchRepository)
+        let groupRepository = DIManager.shared.getGroupRepository()
+        self.appLaunchUseCase = AppLaunchUseCase(repository: groupRepository)
     }
     
     func launchApp() async throws {

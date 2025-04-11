@@ -9,39 +9,40 @@ import UIKit
 import SnapKit
 
 class CertificationCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    required init?(coder: NSCoder) { fatalError() }
     
-    let dateHeaderLabel = {
+    private let dateHeaderLabel = {
         let label = UILabel()
         label.font = Fonts.head2B
         label.textColor = .grey0
         return label
     }()
     
-    let dateLabel = {
+    private let dateLabel = {
         let label = UILabel()
         label.font = Fonts.body1S
         label.textColor = .grey400
         return label
     }()
     
-    var imageView = {
+    private let imageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
+    override func configureView() { }
+    
+    override func configureAction() { }
     
     override func configureHierarchy() {
-        [dateHeaderLabel, dateLabel, imageView].forEach {
-            contentView.addSubview($0)
-        }
+        [dateHeaderLabel, dateLabel, imageView].forEach { contentView.addSubview($0) }
     }
     
     override func configureConstraints() {
-        
         dateHeaderLabel.snp.makeConstraints {
             $0.top.leading.equalTo(contentView)
         }
@@ -57,13 +58,7 @@ class CertificationCollectionViewCell: BaseCollectionViewCell, ReusableProtocol 
         }
     }
     
-    override func configureView() { }
-    
     func configure(with image: UIImage) {
         imageView.image = image
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

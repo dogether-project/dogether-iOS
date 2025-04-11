@@ -9,18 +9,11 @@ import UIKit
 import SnapKit
 
 final class CertificationInfoPopupView: BasePopupView {
-    private var todoInfo: TodoInfo
+    private let todoInfo: TodoInfo
     
     init(todoInfo: TodoInfo) {
         self.todoInfo = todoInfo
         super.init(frame: .zero)
-        setUI()
-        
-        Task { @MainActor in
-            guard let mediaUrl = self.todoInfo.certificationMediaUrl, let url = URL(string: mediaUrl) else { return }
-            let (data, _) = try await URLSession.shared.data(from: url)
-            imageView.image = UIImage(data: data)
-        }
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -66,21 +59,17 @@ final class CertificationInfoPopupView: BasePopupView {
         view.addSubview(label)
         
         label.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.verticalEdges.equalToSuperview().inset(10)
         }
         
         return view
     }
     private var rejectReasonView = UIView()
     
-    private func setUI() {
-        backgroundColor = .grey700
-        layer.cornerRadius = 12
+    override func configureView() {
+        loadImage()
         
-        closeButton.addTarget(self, action: #selector(didTapCloseButton), for: .touchUpInside)
-        
-        // TODO: 추후 수정
         imageView = CertificationImageView(
             image: .logo,
             certificationContent: todoInfo.certificationContent ?? "",
@@ -95,13 +84,22 @@ final class CertificationInfoPopupView: BasePopupView {
             string: todoInfo.content,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
-        
+    }
+    
+    override func configureAction() {
+        closeButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.hidePopup()
+            }, for: .touchUpInside
+        )
+    }
+    
+    override func configureHierarchy() {
         [titleLabel, closeButton, imageView, statusView, contentLabel].forEach { addSubview($0) }
-        
-        self.snp.updateConstraints {
-            $0.height.equalTo(531)
-        }
-        
+    }
+     
+    override func configureConstraints() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.left.equalToSuperview().offset(20)
@@ -117,7 +115,7 @@ final class CertificationInfoPopupView: BasePopupView {
         imageView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(303)
+            $0.height.equalTo(imageView.snp.width)
         }
         
         statusView.snp.makeConstraints {
@@ -129,7 +127,6 @@ final class CertificationInfoPopupView: BasePopupView {
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(statusView.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.height.equalTo(72)
         }
         
         if let rejectReason = todoInfo.rejectReason {
@@ -137,17 +134,25 @@ final class CertificationInfoPopupView: BasePopupView {
             addSubview(rejectReasonView)
             rejectReasonView.snp.makeConstraints {
                 $0.top.equalTo(contentLabel.snp.bottom).offset(16)
+                $0.bottom.equalToSuperview().inset(24)
                 $0.horizontalEdges.equalToSuperview().inset(20)
-                $0.height.equalTo(70)
             }
-            
-            self.snp.updateConstraints {
-                $0.height.equalTo(617)
+        } else {
+            contentLabel.snp.makeConstraints {
+                $0.bottom.equalToSuperview().inset(24)
             }
         }
     }
-    
-    @objc private func didTapCloseButton() {
-        delegate?.hidePopup()
+}
+
+extension CertificationInfoPopupView {
+    private func loadImage() {
+        Task {
+            guard let mediaUrl = self.todoInfo.certificationMediaUrl, let url = URL(string: mediaUrl) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            await MainActor.run {
+                imageView.image = UIImage(data: data)
+            }
+        }
     }
 }

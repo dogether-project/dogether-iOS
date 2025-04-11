@@ -9,4 +9,5 @@ import Foundation
 
 protocol TodoProtocol {
     func createTodos(createTodosRequest: CreateTodosRequest) async throws
+    func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse
 }

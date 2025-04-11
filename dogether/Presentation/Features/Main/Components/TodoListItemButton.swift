@@ -8,16 +8,13 @@
 import UIKit
 import SnapKit
 
-final class TodoListItemButton: UIButton {
+final class TodoListItemButton: BaseButton {
     private(set) var todo: TodoInfo
     
     init(todo: TodoInfo) {
         self.todo = todo
         super.init(frame: .zero)
-        
-        setUI()
     }
-    
     required init?(coder: NSCoder) { fatalError() }
     
     private let todoImageView = UIImageView()
@@ -39,35 +36,20 @@ final class TodoListItemButton: UIButton {
         return label
     }()
     
-    private func updateUI() {
-        guard let status = TodoStatus(rawValue: todo.status) else { return }
-        
-        todoImageView.image = status.image
-        
-        if status == .waitCertification {
-            contentLabel.text = todo.content
-        } else {
-            let attributes: [NSAttributedString.Key: Any] = [
-                .strikethroughStyle: NSUnderlineStyle.single.rawValue,
-                .strikethroughColor: status.contentColor
-            ]
-            contentLabel.attributedText = NSAttributedString(string: todo.content, attributes: attributes)
-        }
-        
-        contentLabel.textColor = status.contentColor
-        buttonLabel.text = status.buttonText
-        buttonLabel.textColor = status.buttonTextColor
-        buttonLabel.backgroundColor = status.buttonColor
-    }
-    
-    private func setUI() {
+    override func configureView() {
         updateUI()
         
         backgroundColor = .grey700
         layer.cornerRadius = 8
-        
+    }
+    
+    override func configureAction() { }
+    
+    override func configureHierarchy() {
         [todoImageView, contentLabel, buttonLabel].forEach { addSubview($0) }
-        
+    }
+    
+    override func configureConstraints() {
         self.snp.makeConstraints {
             $0.height.equalTo(64)
         }
@@ -96,6 +78,29 @@ final class TodoListItemButton: UIButton {
             $0.width.equalTo(72)
             $0.height.equalTo(28)
         }
+    }
+}
+
+extension TodoListItemButton {
+    private func updateUI() {
+        guard let status = TodoStatus(rawValue: todo.status) else { return }
+        
+        todoImageView.image = status.image
+        
+        if status == .waitCertification {
+            contentLabel.text = todo.content
+        } else {
+            let attributes: [NSAttributedString.Key: Any] = [
+                .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                .strikethroughColor: status.contentColor
+            ]
+            contentLabel.attributedText = NSAttributedString(string: todo.content, attributes: attributes)
+        }
+        
+        contentLabel.textColor = status.contentColor
+        buttonLabel.text = status.buttonText
+        buttonLabel.textColor = status.buttonTextColor
+        buttonLabel.backgroundColor = status.buttonColor
     }
     
     func updateTodoStatus(_ status: TodoStatus) {

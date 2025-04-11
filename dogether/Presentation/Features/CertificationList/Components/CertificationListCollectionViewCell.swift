@@ -9,6 +9,10 @@ import UIKit
 import SnapKit
 
 class CertificationListCollectionViewCell: BaseCollectionViewCell, ReusableProtocol {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    required init?(coder: NSCoder) { fatalError() }
     
     private let imageView = {
         let imageView = UIImageView()
@@ -23,9 +27,9 @@ class CertificationListCollectionViewCell: BaseCollectionViewCell, ReusableProto
         return button
     }()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
+    override func configureView() { }
+    
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [imageView, statusButton].forEach {
@@ -43,8 +47,6 @@ class CertificationListCollectionViewCell: BaseCollectionViewCell, ReusableProto
         }
     }
     
-    override func configureView() { }
-    
     func configure(imageName: UIImage, button: UIButton) {
         imageView.image = imageName
         
@@ -59,9 +61,5 @@ class CertificationListCollectionViewCell: BaseCollectionViewCell, ReusableProto
         statusButton.snp.makeConstraints {
             $0.leading.bottom.equalToSuperview().inset(12)
         }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

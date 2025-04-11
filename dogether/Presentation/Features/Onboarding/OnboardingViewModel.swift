@@ -17,10 +17,10 @@ final class OnboardingViewModel {
     
     init() {
         let authRepository = DIManager.shared.getAuthRepository()
-        let appLaunchRepository = DIManager.shared.getAppLaunchRepository()
+        let groupRepository = DIManager.shared.getGroupRepository()
         
         self.authUseCase = AuthUseCase(repository: authRepository)
-        self.appLaunchUseCase = AppLaunchUseCase(repository: appLaunchRepository)
+        self.appLaunchUseCase = AppLaunchUseCase(repository: groupRepository)
     }
 
     func signInWithApple() async throws {

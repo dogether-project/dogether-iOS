@@ -65,11 +65,13 @@ final class RankingViewController: BaseViewController {
     }
     
     override func configureView() {
-        navigationHeader.delegate = self
-        
         guard let rankings else { return }
         let rankingTopViews = (0 ..< 3).map { RankingTopView(ranking: rankings.count > $0 ? rankings[$0] : nil) }
         rankingTopStackView = rankingTopStackView(views: [rankingTopViews[1], rankingTopViews[0], rankingTopViews[2]])
+    }
+    
+    override func configureAction() {
+        navigationHeader.delegate = self
         
         rankingTableView.delegate = self
         rankingTableView.dataSource = self

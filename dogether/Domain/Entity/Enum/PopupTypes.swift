@@ -8,6 +8,7 @@
 import UIKit
 
 enum PopupTypes {
+    case alert
     case certification
     case certificationInfo
     case rejectReason
