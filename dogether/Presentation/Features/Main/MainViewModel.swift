@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class MainViewModel {
     private let mainUseCase: MainUseCase
@@ -27,12 +28,20 @@ final class MainViewModel {
     private(set) var currentFilter: FilterTypes = .all
     private(set) var todoList: [TodoInfo] = []
     
+    private var cancellables = Set<AnyCancellable>()
+    @Published var isLoading: Bool = false
+    
     // MARK: - Computed
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     
     init() {
         let mainRepository = DIManager.shared.getMainRepository()
         self.mainUseCase = MainUseCase(repository: mainRepository)
+        
+        mainRepository.isLoadingPublisher
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isLoading, on: self)
+            .store(in: &cancellables)
     }
 }
 
@@ -40,8 +49,6 @@ final class MainViewModel {
 extension MainViewModel {
     func loadMainView(updateView: @escaping () -> Void, updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
         Task {
-            await MainActor.run { LoadingManager.shared.show() }
-            defer { Task { @MainActor in LoadingManager.shared.hide() } }
             mainViewStatus = try await mainUseCase.getMainViewStatus()
             groupInfo = try await mainUseCase.getGroupInfo()
             await MainActor.run { updateView() }
@@ -143,8 +150,6 @@ extension MainViewModel {
 // MARK: - ranking
 extension MainViewModel {
     func getRankings() async throws {
-        await MainActor.run { LoadingManager.shared.show() }
-        defer { Task { @MainActor in LoadingManager.shared.hide() } }
         let response = try await mainUseCase.getTeamSummary()
         rankings = response.ranking
     }

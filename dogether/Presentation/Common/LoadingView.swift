@@ -35,10 +35,10 @@ final class LoadingView: UIView {
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
 
-        print("LoadingView: 인디케이터 시작됨!")
+        print("LoadingView: 인디케이터 시작됨 ✅")
     }
 
     deinit {
-        print("LoadingView: 인디케이터 꺼짐!")
+        print("LoadingView: 인디케이터 꺼짐 ❌")
     }
 }

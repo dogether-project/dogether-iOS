@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Combine
 
 final class MainViewController: BaseViewController {
     private var viewModel = MainViewModel()
@@ -276,6 +277,7 @@ final class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindLoadingState(viewModel.$isLoading)
     }
     
     override func viewWillAppear(_ animated: Bool) {

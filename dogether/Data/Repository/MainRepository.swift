@@ -6,17 +6,25 @@
 //
 
 import Foundation
+import Combine
 
 final class MainRepository: MainProtocol {
     private let groupsDataSource: GroupsDataSource
     private let todosDataSource: TodosDataSource
+    private let networkService: NetworkService
     
     init(
         groupsDataSource: GroupsDataSource = .shared,
-        todosDataSource: TodosDataSource = .shared
+        todosDataSource: TodosDataSource = .shared,
+        networkService: NetworkService = .shared
     ) {
         self.groupsDataSource = groupsDataSource
         self.todosDataSource = todosDataSource
+        self.networkService = networkService
+    }
+    
+    var isLoadingPublisher: CurrentValueSubject<Bool, Never> {
+        networkService.isLoading
     }
     
     func getGroupStatus() async throws -> GetGroupStatusResponse {

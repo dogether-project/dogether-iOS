@@ -16,12 +16,12 @@ protocol CoordinatorDelegate: AnyObject {
 final class NavigationCoordinator: NSObject {
     private let navigationController: UINavigationController
     private let loadingViewTag = 9999
-    private var cancellables = Set<AnyCancellable>()
+//    private var cancellables = Set<AnyCancellable>()
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         super.init()
-        bindLoadingEvents()
+//        bindLoadingEvents()
     }
     
 }
@@ -79,16 +79,7 @@ extension NavigationCoordinator: UIGestureRecognizerDelegate {
 
 // MARK: - loadingView
 extension NavigationCoordinator {
-    private func bindLoadingEvents() {
-        LoadingManager.shared.loadingPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isLoading in
-                isLoading ? self?.showLoadingView() : self?.hideLoadingView()
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func showLoadingView() {
+    func showLoadingView() {
         guard navigationController.view.viewWithTag(loadingViewTag) == nil else { return }
 
         let loadingView = LoadingView(frame: navigationController.view.bounds)
@@ -96,7 +87,7 @@ extension NavigationCoordinator {
         navigationController.view.addSubview(loadingView)
     }
 
-    private func hideLoadingView() {
+    func hideLoadingView() {
         navigationController.view.viewWithTag(loadingViewTag)?.removeFromSuperview()
     }
 }

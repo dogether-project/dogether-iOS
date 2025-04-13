@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import Combine
 
 class NetworkService {
     static let shared = NetworkService()
     private init () { }
     
+    var isLoading: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
     private let serverURL: URL? = URL(string: "https://api-dev.dogether.site")
 
     private func configureURL(_ endpoint: NetworkEndpoint) -> URL? {
@@ -26,7 +28,7 @@ class NetworkService {
     private func configureRequest(url: URL, _ endpoint: NetworkEndpoint) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
-        
+    
         if let header = endpoint.header {
             for (key,value) in header {
                 request.setValue(value, forHTTPHeaderField: key)
@@ -46,6 +48,11 @@ class NetworkService {
         }
         
         let request = configureRequest(url: url, endpoint)
+        
+        isLoading.send(true)
+        defer {
+            isLoading.send(false)
+        }
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)

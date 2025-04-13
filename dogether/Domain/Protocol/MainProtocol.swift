@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import Combine
 
 protocol MainProtocol {
+    var isLoadingPublisher: CurrentValueSubject<Bool, Never> { get }
     func getGroupStatus() async throws -> GetGroupStatusResponse
     func getGroupInfo() async throws -> GetGroupInfoResponse
     func getTeamSummary() async throws -> GetTeamSummaryResponse
