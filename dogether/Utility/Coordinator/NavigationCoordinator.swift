@@ -13,10 +13,9 @@ protocol CoordinatorDelegate: AnyObject {
     var coordinator: NavigationCoordinator? { get set }
 }
 
-private let loadingViewTag = 9999
-
 final class NavigationCoordinator: NSObject {
     private let navigationController: UINavigationController
+    private let loadingViewTag = 9999
     private var cancellables = Set<AnyCancellable>()
     
     init(navigationController: UINavigationController) {
@@ -81,7 +80,7 @@ extension NavigationCoordinator: UIGestureRecognizerDelegate {
 // MARK: - loadingView
 extension NavigationCoordinator {
     private func bindLoadingEvents() {
-        LoadingEventBus.shared.loadingPublisher
+        LoadingManager.shared.loadingPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] isLoading in
                 isLoading ? self?.showLoadingView() : self?.hideLoadingView()
