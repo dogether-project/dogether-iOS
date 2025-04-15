@@ -16,7 +16,7 @@ enum GroupJoinStatus {
         case .normal:
             return "초대받은 링크에서 초대코드를 확인할 수 있어요"
         case .error:
-            return "해당 번호는 존재하지 않아요!"
+            return "해당 번호는 존재하지 않아요 !"
         }
     }
     
