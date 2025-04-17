@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Combine
 
 final class GroupJoinViewController: BaseViewController {
     private let viewModel = GroupJoinViewModel()
@@ -31,7 +32,7 @@ final class GroupJoinViewController: BaseViewController {
                 .foregroundColor: UIColor.grey300
             ]
         )
-        textField.font = Fonts.body1S // ❌
+        textField.font = Fonts.body1S
         textField.textColor = .grey0
         textField.backgroundColor = .grey800
         textField.layer.cornerRadius = 15
@@ -49,9 +50,14 @@ final class GroupJoinViewController: BaseViewController {
     private var joinButton = DogetherButton(title: "가입하기", status: .disabled)
     
     private var joinButtonBottomConstraint: Constraint?
-        
+    
+    private var cancellables = Set<AnyCancellable>()
+    private var keyboardHeight: CGFloat = 0
+    private let buttonBottomInset: CGFloat = 16
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        observeKeyboardNotifications()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -143,14 +149,12 @@ final class GroupJoinViewController: BaseViewController {
         }
         
         joinButton.snp.makeConstraints {
-            self.joinButtonBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16).constraint
+            self.joinButtonBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(buttonBottomInset).constraint
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
-}
 
-// MARK: - update UI
-extension GroupJoinViewController {
+    // MARK: - Update UI
     private func updateSubTitleLabel() {
         subTitleLabel.text = viewModel.status.text
         subTitleLabel.textColor = viewModel.status.textColor
@@ -160,11 +164,45 @@ extension GroupJoinViewController {
     private func updateCodetextField() {
         codeTextField.layer.borderColor = viewModel.status.borderColor.cgColor
     }
+    
+    // MARK: - Keyboard
+    private func observeKeyboardNotifications() {
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+            .compactMap { notification -> CGFloat? in
+                guard let userInfo = notification.userInfo,
+                      let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
+                    return nil
+                }
+                return frameValue.cgRectValue.height
+            }
+            .sink { [weak self] height in
+                self?.keyboardHeight = height
+                self?.updateUIForKeyboard()
+            }
+            .store(in: &cancellables)
+        
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+            .sink { [weak self] _ in
+                self?.keyboardHeight = 0
+                self?.updateUIForKeyboard()
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func updateUIForKeyboard() {
+        UIView.animate(withDuration: 0.35) {
+            if self.keyboardHeight > 0 {
+                self.joinButtonBottomConstraint?.update(inset: self.keyboardHeight)
+            } else {
+                self.joinButtonBottomConstraint?.update(inset: self.buttonBottomInset)
+            }
+            self.view.layoutIfNeeded()
+        }
+    }
 }
 
-// MARK: - about keyboard
+// MARK: - UITextFieldDelegate
 extension GroupJoinViewController: UITextFieldDelegate {
-    // MARK: - UITextFieldDelegate
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if joinButton.isEnabled {
             joinButton.sendActions(for: .touchUpInside)
@@ -184,20 +222,10 @@ extension GroupJoinViewController: UITextFieldDelegate {
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
         setTextFieldBorderColor()
-        
-        UIView.animate(withDuration: 0.35) {
-            self.joinButtonBottomConstraint?.update(inset: 270)
-            self.view.layoutIfNeeded()
-        }
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         setTextFieldBorderColor()
-        
-        UIView.animate(withDuration: 0.35) {
-            self.joinButtonBottomConstraint?.update(inset: 16)
-            self.view.layoutIfNeeded()
-        }
     }
     
     @objc private func dismissKeyboard() { view.endEditing(true) }
