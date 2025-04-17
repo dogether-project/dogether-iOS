@@ -26,7 +26,7 @@ final class GroupJoinViewController: BaseViewController {
     private let codeTextField = {
         let textField = UITextField()
         textField.attributedPlaceholder = NSAttributedString(
-            string: "코드입력 (6자리 이상)",
+            string: "코드입력 (8자리)",
             attributes: [
                 .foregroundColor: UIColor.grey300
             ]
@@ -158,8 +158,7 @@ extension GroupJoinViewController {
     }
     
     private func updateCodetextField() {
-        codeTextField.layer.borderColor = viewModel.status.textColor.cgColor
-        codeTextField.text = ""
+        codeTextField.layer.borderColor = viewModel.status.borderColor.cgColor
     }
 }
 

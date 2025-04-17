@@ -37,4 +37,13 @@ enum GroupJoinStatus {
             return Fonts.body1S
         }
     }
+    
+    var borderColor: UIColor {
+        switch self {
+        case .normal:
+            return .clear
+        case .error:
+            return .dogetherRed
+        }
+    }
 }
