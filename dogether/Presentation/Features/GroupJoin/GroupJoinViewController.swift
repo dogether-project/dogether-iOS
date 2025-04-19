@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+
 import Combine
 
 final class GroupJoinViewController: BaseViewController {
@@ -35,9 +36,10 @@ final class GroupJoinViewController: BaseViewController {
         textField.font = Fonts.body1S
         textField.textColor = .grey0
         textField.backgroundColor = .grey800
-        textField.layer.cornerRadius = 15
+        textField.layer.cornerRadius = 12
         textField.layer.masksToBounds = true
         textField.keyboardType = .asciiCapable
+        textField.returnKeyType = .done
         textField.tintColor = .blue300
         textField.autocorrectionType = .no
         let paddingView = UIView()
@@ -75,19 +77,11 @@ final class GroupJoinViewController: BaseViewController {
         codeTextField.delegate = self
         
         codeTextField.addAction(
-            UIAction { [weak self] action in
-                guard let self, let textField = action.sender as? UITextField else { return }
-                
-                let text = textField.text ?? ""
-                let trimmed = String(text.prefix(viewModel.codeLength)) // 최대 글자 수 제한
-                textField.text = trimmed
-                viewModel.setCode(trimmed)
-                
-                if trimmed.count == viewModel.codeLength {
-                    joinButton.setButtonStatus(status: .enabled)
-                } else {
-                    joinButton.setButtonStatus(status: .disabled)
-                }
+            UIAction { [weak self, weak codeTextField] _ in
+                guard let self, let textField = codeTextField else { return }
+                viewModel.setCode(textField.text)
+                textField.text = viewModel.code
+                joinButton.setButtonStatus(status: viewModel.code.count < viewModel.codeLength ? .disabled : .enabled)
             },
             for: .editingChanged
         )
@@ -143,18 +137,19 @@ final class GroupJoinViewController: BaseViewController {
         
         codeTextField.snp.makeConstraints {
             $0.top.equalTo(subTitleLabel.snp.bottom).offset(48)
-            $0.leading.equalToSuperview().offset(16)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
         
         joinButton.snp.makeConstraints {
-            self.joinButtonBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(buttonBottomInset).constraint
+            joinButtonBottomConstraint = $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(buttonBottomInset).constraint
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
+}
 
-    // MARK: - Update UI
+// MARK: - Update UI
+extension GroupJoinViewController {
     private func updateSubTitleLabel() {
         subTitleLabel.text = viewModel.status.text
         subTitleLabel.textColor = viewModel.status.textColor
@@ -164,8 +159,10 @@ final class GroupJoinViewController: BaseViewController {
     private func updateCodetextField() {
         codeTextField.layer.borderColor = viewModel.status.borderColor.cgColor
     }
-    
-    // MARK: - Keyboard
+}
+
+// MARK: - Keyboard
+extension GroupJoinViewController {
     private func observeKeyboardNotifications() {
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
             .compactMap { notification -> CGFloat? in
@@ -176,27 +173,30 @@ final class GroupJoinViewController: BaseViewController {
                 return frameValue.cgRectValue.height
             }
             .sink { [weak self] height in
-                self?.keyboardHeight = height
-                self?.updateUIForKeyboard()
+                guard let self else { return }
+                keyboardHeight = height
+                updateUIForKeyboard()
             }
             .store(in: &cancellables)
         
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
             .sink { [weak self] _ in
-                self?.keyboardHeight = 0
-                self?.updateUIForKeyboard()
+                guard let self else { return }
+                keyboardHeight = 0
+                updateUIForKeyboard()
             }
             .store(in: &cancellables)
     }
     
     private func updateUIForKeyboard() {
-        UIView.animate(withDuration: 0.35) {
-            if self.keyboardHeight > 0 {
-                self.joinButtonBottomConstraint?.update(inset: self.keyboardHeight)
+        UIView.animate(withDuration: 0.35) { [weak self] in
+            guard let self = self else { return }
+            if keyboardHeight > 0 {
+                joinButtonBottomConstraint?.update(inset: keyboardHeight + buttonBottomInset)
             } else {
-                self.joinButtonBottomConstraint?.update(inset: self.buttonBottomInset)
+                joinButtonBottomConstraint?.update(inset: buttonBottomInset)
             }
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
         }
     }
 }

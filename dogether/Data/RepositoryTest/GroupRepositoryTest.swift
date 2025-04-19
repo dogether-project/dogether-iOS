@@ -18,10 +18,8 @@ final class GroupRepositoryTest: GroupProtocol {
     }
     
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse {
-        // test: 99999999 입력 시 에러
-        if joinGroupRequest.joinCode == "99999999" {
-            throw URLError(.badServerResponse)
-        }
+        // MARK: - TEST: 99999999 입력 시 에러 발생 테스트
+        if joinGroupRequest.joinCode == "99999999" { throw NetworkError.unknown }
         return JoinGroupResponse(name: "testGroup", maximumMemberCount: 10, startAt: "2025-01-01", endAt: "2025-01-04", durationOption: 3)
     }
     
