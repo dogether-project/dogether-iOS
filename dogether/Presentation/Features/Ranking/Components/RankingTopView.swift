@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class RankingTopView: BaseView {
-    private let ranking: RankingModel?
+    let ranking: RankingModel?
     
     init(ranking: RankingModel?) {
         self.ranking = ranking
@@ -77,7 +77,7 @@ final class RankingTopView: BaseView {
     override func configureAction() { }
     
     override func configureHierarchy() {
-        if let ranking {
+        if ranking != nil {
             [rankingView, rankingImageView].forEach { addSubview($0) }
             [profileImageView, nameLabel, certificationLabel].forEach { rankingView.addSubview($0) }
         } else {

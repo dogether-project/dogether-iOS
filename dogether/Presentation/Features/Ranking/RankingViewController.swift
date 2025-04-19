@@ -30,7 +30,7 @@ final class RankingViewController: BaseViewController {
         let imageView = UIImageView(image: .notice)
         
         let label = UILabel()
-        label.text = "달성률은 작성한 투두 중 완료한 비율을 의미합니다."
+        label.text = "달성률은 인증, 인정, 참여 기간을 기준으로 계산돼요."
         label.textColor = .grey400
         label.font = Fonts.body2S
         
@@ -108,7 +108,7 @@ final class RankingViewController: BaseViewController {
         }
         
         rankingTableView.snp.makeConstraints {
-            $0.top.equalTo(descriptionView.snp.bottom).offset(18)
+            $0.top.equalTo(descriptionView.snp.bottom).offset(16)
             $0.bottom.left.right.equalToSuperview()
         }
     }
@@ -121,6 +121,7 @@ extension RankingViewController {
         [1, 0, 2].forEach { index in
             let ranking = viewModel.rankings[safe: index]
             let topView = RankingTopView(ranking: ranking)
+            topView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedTopView(_:))))
             rankingTopStackView.addArrangedSubview(topView)
         }
         
@@ -144,5 +145,23 @@ extension RankingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.setExtraInfo(ranking: viewModel.rankings[indexPath.row + 3])
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        goMemberCertificationView(rankingIndex: indexPath.row + 3)
+    }
+}
+
+extension RankingViewController {
+    @objc private func tappedTopView(_ sender: UITapGestureRecognizer) {
+        if let rankingTopView = sender.view as? RankingTopView, let ranking = rankingTopView.ranking {
+            goMemberCertificationView(rankingIndex: ranking.rank - 1)
+        }
+    }
+    
+    private func goMemberCertificationView(rankingIndex: Int) {
+        let memberCertificationViewController = MemberCertificationViewController()
+        memberCertificationViewController.viewModel.memberInfo = viewModel.rankings[rankingIndex]
+        coordinator?.pushViewController(memberCertificationViewController)
     }
 }
