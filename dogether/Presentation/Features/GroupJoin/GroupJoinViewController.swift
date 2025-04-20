@@ -121,7 +121,7 @@ final class GroupJoinViewController: BaseViewController {
 
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(48)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(48)
             $0.height.equalTo(36)
         }
         
