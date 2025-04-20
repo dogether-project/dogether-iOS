@@ -191,8 +191,10 @@ extension GroupJoinViewController {
     private func updateUIForKeyboard() {
         UIView.animate(withDuration: 0.35) { [weak self] in
             guard let self = self else { return }
+            let safeAreaBottom = view.safeAreaInsets.bottom
+            let adjustedKeyboardHeight = max(keyboardHeight - safeAreaBottom, 0)
             if keyboardHeight > 0 {
-                joinButtonBottomConstraint?.update(inset: keyboardHeight + buttonBottomInset)
+                joinButtonBottomConstraint?.update(inset: adjustedKeyboardHeight + buttonBottomInset)
             } else {
                 joinButtonBottomConstraint?.update(inset: buttonBottomInset)
             }
