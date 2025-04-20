@@ -84,13 +84,12 @@ final class RankingViewController: BaseViewController {
     
     override func configureConstraints() {
         navigationHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         rankingTopStackView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(16)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(190)
         }
