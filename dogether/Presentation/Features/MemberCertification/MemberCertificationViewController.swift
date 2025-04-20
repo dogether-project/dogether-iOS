@@ -26,6 +26,7 @@ final class MemberCertificationViewController: BaseViewController {
     private let thumbnailStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
+        stackView.spacing = 8
         stackView.distribution = .fillEqually
         return stackView
     }()
@@ -52,6 +53,14 @@ final class MemberCertificationViewController: BaseViewController {
     override func configureView() {
         guard let memberInfo = viewModel.memberInfo else { return }
         memberInfoView.setExtraInfo(ranking: memberInfo)
+        
+        viewModel.todos
+            .map { _ in
+                ThumbnailView(thumbnailStatus: .pending)
+            }
+            .forEach {
+                thumbnailStackView.addArrangedSubview($0)
+            }
     }
     
     override func configureAction() {
@@ -63,7 +72,7 @@ final class MemberCertificationViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [navigationHeader, memberInfoView].forEach { view.addSubview($0) }
+        [navigationHeader, memberInfoView, thumbnailStackView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -76,6 +85,11 @@ final class MemberCertificationViewController: BaseViewController {
         memberInfoView.snp.makeConstraints {
             $0.top.equalTo(navigationHeader.snp.bottom).offset(34)
             $0.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        thumbnailStackView.snp.makeConstraints {
+            $0.top.equalTo(memberInfoView.snp.bottom).offset(32)
+            $0.left.equalToSuperview().inset(16)
         }
     }
 }
