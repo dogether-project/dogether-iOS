@@ -11,7 +11,7 @@ import SnapKit
 final class MyPageViewController: BaseViewController {
     private let viewModel = MyPageViewModel()
     
-    private let dogetherHeader = NavigationHeader(title: "마이페이지")
+    private let navigationHeader = NavigationHeader(title: "마이페이지")
     
     // FIXME: API 수정 후 내용 반영
     private let profileImageView = UIImageView(image: .profile2)
@@ -43,7 +43,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureAction() {
-        dogetherHeader.delegate = self
+        navigationHeader.delegate = self
         
         leaveGroupButton.addAction(
             UIAction { [weak self] _ in
@@ -86,18 +86,17 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, profileImageView, nameLabel, mypageButtonStackView].forEach { view.addSubview($0) }
+        [navigationHeader, profileImageView, nameLabel, mypageButtonStackView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+        navigationHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
 
         profileImageView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(56)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(6)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(100)
         }

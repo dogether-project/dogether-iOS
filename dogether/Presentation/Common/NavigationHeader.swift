@@ -51,9 +51,13 @@ final class NavigationHeader: BaseView{
     }
      
     override func configureConstraints() {
+        self.snp.makeConstraints {
+            $0.height.equalTo(56)
+        }
+        
         prevButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.left.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
             $0.width.height.equalTo(24)
         }
         

@@ -10,7 +10,7 @@ import UIKit
 final class GroupJoinViewController: BaseViewController {
     private let viewModel = GroupJoinViewModel()
     
-    private let dogetherHeader = NavigationHeader(title: "그룹 가입하기")
+    private let navigationHeader = NavigationHeader(title: "그룹 가입하기")
     
     private let titleLabel = {
         let label = UILabel()
@@ -73,7 +73,7 @@ final class GroupJoinViewController: BaseViewController {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         codeLabelStackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showKeyboard)))
         
-        dogetherHeader.delegate = self
+        navigationHeader.delegate = self
         
         textField.delegate = self
         textField.addAction(
@@ -110,19 +110,18 @@ final class GroupJoinViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, titleLabel, subTitleLabel, textField, codeLabelStackView, joinButton].forEach { view.addSubview($0) }
+        [navigationHeader, titleLabel, subTitleLabel, textField, codeLabelStackView, joinButton].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+        navigationHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
 
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(100)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(44)
             $0.height.equalTo(36)
         }
         
