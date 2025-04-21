@@ -72,8 +72,8 @@ final class CertificationInfoPopupView: BasePopupView {
         
         imageView = CertificationImageView(
             image: .logo,
-            certificationContent: todoInfo.certificationContent ?? "",
-            certificator: UserDefaultsManager.shared.userFullName ?? ""
+            certificationContent: todoInfo.certificationContent,
+            certificator: UserDefaultsManager.shared.userFullName
         )
         
         guard let status = TodoStatus(rawValue: todoInfo.status),

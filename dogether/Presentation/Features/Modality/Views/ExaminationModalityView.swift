@@ -14,11 +14,7 @@ final class ExaminationModalityView: BasePopupView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var imageView = CertificationImageView(
-        image: .logo,
-        certificationContent: "",
-        certificator: ""
-    )
+    private var imageView = CertificationImageView(image: .logo)
     
     private let contentLabel = {
         let label = UILabel()

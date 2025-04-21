@@ -8,10 +8,10 @@
 import UIKit
 
 final class CertificationImageView: BaseImageView {
-    private let certificationContent: String
-    private let certificator: String
+    private let certificationContent: String?
+    private let certificator: String?
     
-    init(image: UIImage?, certificationContent: String = "", certificator: String = "") {
+    init(image: UIImage?, certificationContent: String? = nil, certificator: String? = nil) {
         self.certificationContent = certificationContent
         self.certificator = certificator
         
@@ -57,12 +57,14 @@ final class CertificationImageView: BaseImageView {
     }
     
     override func configureView() {
+        contentMode = .scaleAspectFit
         backgroundColor = .grey900
         layer.cornerRadius = 12
-        contentMode = .scaleAspectFit
+        layer.borderColor = UIColor.grey700.cgColor
+        layer.borderWidth = 1
         
         certificationContentLabel.attributedText = NSAttributedString(
-            string: certificationContent,
+            string: certificationContent ?? "",
             attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
         )
         certificatorLabel.text = certificator
@@ -82,13 +84,17 @@ final class CertificationImageView: BaseImageView {
         certificationContentLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalTo(certificatorLabel.snp.top).inset(4)
+            if certificator == nil {
+                $0.bottom.equalToSuperview().inset(16)
+            } else {
+                $0.bottom.equalTo(certificatorLabel.snp.top).inset(4)
+            }
         }
         
         certificatorLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+            $0.height.equalTo(certificator == nil ? 0 : 28)
         }
     }
 }

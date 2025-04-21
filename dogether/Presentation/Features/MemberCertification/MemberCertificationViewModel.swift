@@ -13,7 +13,28 @@ final class MemberCertificationViewModel {
     // FIXME: API 추가 후 수정
     private(set) var todos: [TodoInfo] = [
         TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
+        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
+        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
         TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠")
     ]
     private(set) var currentIndex: Int = 0
+}
+
+extension MemberCertificationViewModel {
+    func setCurrentIndex(index: Int) {
+        self.currentIndex = index
+        print("index is \(index)")
+    }
 }
