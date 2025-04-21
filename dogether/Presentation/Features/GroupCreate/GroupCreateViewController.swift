@@ -255,7 +255,7 @@ final class GroupCreateViewController: BaseViewController {
         }
         
         stepLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(42)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(44)
             $0.left.equalToSuperview().inset(16)
             $0.height.equalTo(25)
         }

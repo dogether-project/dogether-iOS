@@ -96,7 +96,7 @@ final class MyPageViewController: BaseViewController {
         }
 
         profileImageView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(6)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(100)
         }

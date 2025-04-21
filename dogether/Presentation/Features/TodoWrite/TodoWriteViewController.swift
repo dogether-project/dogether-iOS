@@ -210,7 +210,7 @@ final class TodoWriteViewController: BaseViewController {
         }
         
         dateLabel.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(10)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
