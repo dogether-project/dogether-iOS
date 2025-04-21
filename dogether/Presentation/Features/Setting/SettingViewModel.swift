@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MyPageViewModel {
+final class SettingViewModel {
     private let authUseCase: AuthUseCase
     
     init() {
@@ -16,7 +16,7 @@ final class MyPageViewModel {
     }
 }
 
-extension MyPageViewModel {
+extension SettingViewModel {
     func leaveGroup() async throws {
         // FIXME: UI 수정 후 내용 반영
         try await NetworkManager.shared.request(GroupsRouter.leaveGroup)
