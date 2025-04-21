@@ -10,7 +10,7 @@ import Foundation
 final class GroupJoinViewModel {
     private let groupUseCase: GroupUseCase
     
-    let codeLength = 6
+    let codeLength = 8
     
     private(set) var code: String = ""
     private(set) var status: GroupJoinStatus = .normal

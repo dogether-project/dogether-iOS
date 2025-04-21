@@ -9,9 +9,9 @@ import UIKit
 import SnapKit
 
 final class MyPageViewController: BaseViewController {
-//    private let viewModel = SettingViewModel()
+    //    private let viewModel = SettingViewModel()
     
-    private let dogetherHeader = NavigationHeader(title: "마이페이지")
+    private let navigationHeader = NavigationHeader(title: "마이페이지")
     
     // FIXME: API 수정 후 내용 반영
     private let profileImageView = UIImageView(image: .profile2)
@@ -30,13 +30,13 @@ final class MyPageViewController: BaseViewController {
         stackView.spacing = 20
         return stackView
     }()
-
+    
     private let statsImageView: UIImageView = {
         let imageView = UIImageView(image: .happyDusik)
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-
+    
     private let statsLabel: UILabel = {
         let label = UILabel()
         label.text = "그룹별 진행 상황을 모아봤어요!"
@@ -45,7 +45,7 @@ final class MyPageViewController: BaseViewController {
         label.textAlignment = .center
         return label
     }()
-
+    
     private let statsButton: UIButton = {
         let button = UIButton()
         button.setTitle("통계 보러가기", for: .normal)
@@ -86,7 +86,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureAction() {
-        dogetherHeader.delegate = self
+        navigationHeader.delegate = self
         
         statsButton.addAction(
             UIAction { [weak self] _ in
@@ -118,23 +118,23 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, statsContainerView, userProfileStackView, mypageButtonStackView].forEach { view.addSubview($0) }
+        [navigationHeader, statsContainerView, userProfileStackView, mypageButtonStackView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+        navigationHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         profileImageView.snp.makeConstraints {
-              $0.width.height.equalTo(48)
-          }
-
+            $0.width.height.equalTo(48)
+        }
+        
         userProfileStackView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(28)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(28)
             $0.horizontalEdges.equalToSuperview().inset(16)
+            
         }
         
         statsContainerView.snp.makeConstraints {
@@ -142,19 +142,19 @@ final class MyPageViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(251)
         }
-
+        
         statsImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview().offset(33)
             $0.width.equalTo(86)
             $0.height.equalTo(94)
         }
-
+        
         statsLabel.snp.makeConstraints {
             $0.top.equalTo(statsImageView.snp.bottom).offset(13)
             $0.centerX.equalToSuperview()
         }
-
+        
         statsButton.snp.makeConstraints {
             $0.top.equalTo(statsLabel.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)

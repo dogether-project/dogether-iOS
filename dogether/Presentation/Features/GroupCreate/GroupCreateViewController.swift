@@ -11,7 +11,7 @@ import SnapKit
 final class GroupCreateViewController: BaseViewController {
     private let viewModel = GroupCreateViewModel()
     
-    private let dogetherHeader = NavigationHeader(title: "그룹 만들기")
+    private let navigationHeader = NavigationHeader(title: "그룹 만들기")
     
     private let currentStepLabel = {
         let label = UILabel()
@@ -182,7 +182,7 @@ final class GroupCreateViewController: BaseViewController {
     override func configureAction() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         
-        dogetherHeader.delegate = self
+        navigationHeader.delegate = self
         
         completeButton.addAction(
             UIAction { [weak self] _ in
@@ -237,7 +237,7 @@ final class GroupCreateViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [ dogetherHeader, stepLabelStackView, stepDescriptionLabel, completeButton,
+        [ navigationHeader, stepLabelStackView, stepDescriptionLabel, completeButton,
           stepOneView, stepTwoView, stepThreeView
         ].forEach { view.addSubview($0) }
         
@@ -249,14 +249,13 @@ final class GroupCreateViewController: BaseViewController {
     }
     
     override func configureConstraints() {
-        dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+        navigationHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         stepLabelStackView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(56)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(44)
             $0.left.equalToSuperview().inset(16)
             $0.height.equalTo(25)
         }
