@@ -65,8 +65,8 @@ final class MemberCertificationViewController: BaseViewController {
         memberInfoView.setExtraInfo(ranking: memberInfo)
         
         viewModel.todos
-            .map { _ in
-                ThumbnailView(thumbnailStatus: .pending)
+            .enumerated().map {
+                ThumbnailView(thumbnailStatus: $1.thumbnailStatus, isHighlighted: $0 == viewModel.currentIndex)
             }
             .forEach {
                 thumbnailStackView.addArrangedSubview($0)
@@ -74,7 +74,7 @@ final class MemberCertificationViewController: BaseViewController {
         
         viewModel.todos
             .map {
-                CertificationImageView(image: .logo, certificationContent: $0.certificationContent)
+                CertificationImageView(image: .embarrassedDosik, certificationContent: $0.certificationContent)
             }
             .forEach {
                 certificationStackView.addArrangedSubview($0)
@@ -92,8 +92,12 @@ final class MemberCertificationViewController: BaseViewController {
         navigationHeader.delegate = self
         
         thumbnailScrollView.delegate = self
+        let thumbnailScrollViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedThumbnailScrollView(_:)))
+        thumbnailScrollView.addGestureRecognizer(thumbnailScrollViewTapGesture)
         
         certificationScrollView.delegate = self
+        let certificationScrollViewTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedCertificationScrollView(_:)))
+        certificationScrollView.addGestureRecognizer(certificationScrollViewTapGesture)
     }
     
     override func configureHierarchy() {
@@ -157,6 +161,55 @@ extension MemberCertificationViewController: UIScrollViewDelegate {
             let index = Int(round(scrollView.contentOffset.x / view.frame.width))
             if index == viewModel.currentIndex { return }
             viewModel.setCurrentIndex(index: index)
+            updateView()
         }
+    }
+}
+
+extension MemberCertificationViewController {
+    private func updateView() {
+        thumbnailStackView.arrangedSubviews.enumerated().forEach { index, view in
+            guard let view = view as? ThumbnailView else { return }
+            // TODO: beforeIndex, currentIndex만 처리할지 고민해보기
+            view.setStatus(status: viewModel.todos[index].thumbnailStatus)
+            view.setIsHighlighted(isHighlighted: index == viewModel.currentIndex)
+        }
+        
+        certificationStackView.arrangedSubviews.enumerated().forEach { index, view in
+            let scrollViewWidth = certificationScrollView.bounds.width
+            let index = Int(round(certificationScrollView.contentOffset.x / scrollViewWidth))
+            
+            if index == viewModel.currentIndex { return }
+            
+            let newOffset = CGPoint(x: scrollViewWidth * CGFloat(viewModel.currentIndex), y: 0)
+            certificationScrollView.setContentOffset(newOffset, animated: false)
+        }
+    }
+    
+    @objc private func tappedThumbnailScrollView(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: thumbnailStackView)
+
+        for (index, view) in thumbnailStackView.arrangedSubviews.enumerated() {
+            if view.frame.contains(location) {
+                viewModel.setCurrentIndex(index: index)
+                updateView()
+                return
+            }
+        }
+    }
+    
+    @objc private func tappedCertificationScrollView(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: certificationScrollView)
+        let scrollViewWidth = certificationScrollView.bounds.width
+        
+        // MARK: view 중앙을 기준으로 direction 결정
+        let direction: Directions = location.x - certificationScrollView.contentOffset.x < scrollViewWidth / 2 ? .prev : .next
+        let index = Int(round(certificationScrollView.contentOffset.x / scrollViewWidth))
+        let nextIndex = index + direction.tag
+        
+        if nextIndex < 0 || certificationStackView.arrangedSubviews.count <= nextIndex { return }
+        
+        let newOffset = CGPoint(x: scrollViewWidth * CGFloat(nextIndex), y: 0)
+        certificationScrollView.setContentOffset(newOffset, animated: true)
     }
 }

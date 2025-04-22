@@ -7,20 +7,40 @@
 
 import UIKit
 
+enum ThumbnailStatus {
+    case yet
+    case done
+}
+
+// FIXME: 추후 BaseImageView로 수정
 final class ThumbnailView: BaseView {
     private(set) var thumbnailStatus: ThumbnailStatus
+    private(set) var isHighlighted: Bool
     
-    init(thumbnailStatus: ThumbnailStatus) {
+    init(thumbnailStatus: ThumbnailStatus, isHighlighted: Bool = false) {
         self.thumbnailStatus = thumbnailStatus
+        self.isHighlighted = isHighlighted
+        
         super.init(frame: .zero)
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let imageView = UIImageView(image: .embarrassedDosik)
+    // FIXME: 추후 기본 이미지 통일
+    private let imageView = UIImageView(image: .embarrassedDosikThumbnail)
+    
+    private let doneOverlay = {
+        let view = UIView()
+        view.backgroundColor = .grey800.withAlphaComponent(0.8)
+        view.layer.cornerRadius = 12
+        return view
+    }()
     
     override func configureView() {
-        layer.cornerRadius = 12
+        updateUI()
+        
         backgroundColor = .grey800
+        layer.cornerRadius = 12
+        layer.borderWidth = 1
     }
     
     override func configureAction() {
@@ -28,7 +48,7 @@ final class ThumbnailView: BaseView {
     }
     
     override func configureHierarchy() {
-        [imageView].forEach { addSubview($0) }
+        [imageView, doneOverlay].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -40,11 +60,28 @@ final class ThumbnailView: BaseView {
             $0.center.equalToSuperview()
             $0.width.height.equalToSuperview()
         }
+        
+        doneOverlay.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
 }
 
-enum ThumbnailStatus {
-    case done
-    case current
-    case pending
+extension ThumbnailView {
+    func setStatus(status: ThumbnailStatus) {
+        self.thumbnailStatus = status
+        
+        updateUI()
+    }
+    
+    func setIsHighlighted(isHighlighted: Bool) {
+        self.isHighlighted = isHighlighted
+        
+        updateUI()
+    }
+    
+    private func updateUI() {
+        doneOverlay.isHidden = thumbnailStatus != .done
+        layer.borderColor = isHighlighted ? UIColor.grey0.cgColor : UIColor.clear.cgColor
+    }
 }

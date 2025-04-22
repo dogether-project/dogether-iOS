@@ -11,30 +11,31 @@ final class MemberCertificationViewModel {
     var memberInfo: RankingModel?
     
     // FIXME: API 추가 후 수정
-    private(set) var todos: [TodoInfo] = [
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠"),
-        TodoInfo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING"),
-        TodoInfo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠")
+    private(set) var todos: [MemberCertificationInfo] = [
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .done),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .done),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .done),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .done),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
+        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet)
     ]
     private(set) var currentIndex: Int = 0
 }
 
 extension MemberCertificationViewModel {
     func setCurrentIndex(index: Int) {
+        todos[currentIndex].thumbnailStatus = .done
+        
         self.currentIndex = index
-        print("index is \(index)")
     }
 }
