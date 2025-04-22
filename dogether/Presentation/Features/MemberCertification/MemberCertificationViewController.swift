@@ -173,6 +173,13 @@ extension MemberCertificationViewController {
             // TODO: beforeIndex, currentIndex만 처리할지 고민해보기
             view.setStatus(status: viewModel.todos[index].thumbnailStatus)
             view.setIsHighlighted(isHighlighted: index == viewModel.currentIndex)
+            
+            if index == viewModel.currentIndex {
+                let scrollViewWidth = thumbnailScrollView.bounds.width
+                let idealOffset = view.frame.midX - scrollViewWidth / 2 + 16
+                let newOffset = max(0, min(idealOffset, thumbnailScrollView.contentSize.width - scrollViewWidth))
+                thumbnailScrollView.setContentOffset(CGPoint(x: newOffset, y: 0), animated: true)
+            }
         }
         
         certificationStackView.arrangedSubviews.enumerated().forEach { index, view in
