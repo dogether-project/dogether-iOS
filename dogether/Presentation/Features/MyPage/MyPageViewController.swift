@@ -98,7 +98,7 @@ final class MyPageViewController: BaseViewController {
         myTodosListButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                coordinator?.pushViewController(MyTodoListViewController())
+                coordinator?.pushViewController(CertificationListViewController())
             }, for: .touchUpInside
         )
         

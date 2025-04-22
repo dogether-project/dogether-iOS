@@ -7,12 +7,11 @@
 
 import Foundation
 
-final class StatsViewModel {
-    var statsViewStatus: StatsViewStatus = .empty
-
-}
-
 enum StatsViewStatus {
     case empty
     case hasData
+}
+
+final class StatsViewModel {
+    var statsViewStatus: StatsViewStatus = .hasData
 }
