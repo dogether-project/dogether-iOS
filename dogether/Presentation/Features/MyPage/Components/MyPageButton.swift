@@ -67,7 +67,7 @@ final class MyPageButton: BaseButton {
             } else {
                 buttonTitleLabel.snp.makeConstraints {
                     $0.centerY.equalToSuperview()
-                    $0.left.equalToSuperview().inset(16)
+                    $0.left.equalToSuperview().inset(8)
                 }
             }
         

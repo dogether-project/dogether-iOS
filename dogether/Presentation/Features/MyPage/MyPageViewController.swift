@@ -132,7 +132,7 @@ final class MyPageViewController: BaseViewController {
         }
         
         userProfileStackView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(28)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(14)
             $0.horizontalEdges.equalToSuperview().inset(16)
             
         }
@@ -162,7 +162,7 @@ final class MyPageViewController: BaseViewController {
         }
         
         mypageButtonStackView.snp.makeConstraints {
-            $0.top.equalTo(statsContainerView.snp.bottom).offset(27.5)
+            $0.top.equalTo(statsContainerView.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }

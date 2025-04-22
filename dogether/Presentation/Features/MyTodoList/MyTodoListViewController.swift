@@ -9,7 +9,7 @@ import Foundation
 
 final class MyTodoListViewController: BaseViewController {
     
-    private let dogetherHeader = NavigationHeader(title: "인증 목록")
+    private let navigationHeader = NavigationHeader(title: "인증 목록")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,19 +20,18 @@ final class MyTodoListViewController: BaseViewController {
     }
     
     override func configureAction() {
-        dogetherHeader.delegate = self
+        navigationHeader.delegate = self
         
     }
     
     override func configureHierarchy() {
-        [dogetherHeader].forEach { view.addSubview($0) }
+        [navigationHeader].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+        navigationHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
     }
 }

@@ -10,39 +10,40 @@ import UIKit
 final class SettingViewController: BaseViewController {
     private let viewModel = SettingViewModel()
     
-    private let dogetherHeader = NavigationHeader(title: "설정")
+    private let navigationHeader = NavigationHeader(title: "설정")
+    
     private let logoutButton = MyPageButton(icon: nil, title: "로그아웃")
     private let withdrawButton = MyPageButton(icon: nil, title: "회원탈퇴")
     private let appVersionView: UIView = {
-        let container = UIView()
+        let view = UIView()
         
-        let titleLabel = UILabel()
+        let titleLabel = UILabel() 
         titleLabel.text = "앱 버전"
         titleLabel.textColor = .grey100
         titleLabel.font = Fonts.body1R
         
         let versionLabel = UILabel()
         versionLabel.text = "1.0.0" // 앱버전 넣기
-        versionLabel.textColor = .grey100
+        versionLabel.textColor = .grey0
         versionLabel.font = Fonts.body1R
         
-        container.addSubview(titleLabel)
-        container.addSubview(versionLabel)
+        view.addSubview(titleLabel)
+        view.addSubview(versionLabel)
         
         titleLabel.snp.makeConstraints {
-            $0.left.equalToSuperview().inset(16)
+            $0.left.equalToSuperview().inset(8)
             $0.centerY.equalToSuperview()
         }
         versionLabel.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(16)
+            $0.right.equalToSuperview().inset(8)
             $0.centerY.equalToSuperview()
         }
         
-        container.snp.makeConstraints {
+        view.snp.makeConstraints {
             $0.height.equalTo(48)
         }
         
-        return container
+        return view
     }()
 
     
@@ -61,7 +62,7 @@ final class SettingViewController: BaseViewController {
     }
     
     override func configureAction() {
-        dogetherHeader.delegate = self
+        navigationHeader.delegate = self
         
         logoutButton.addAction(
             UIAction { [weak self] _ in
@@ -90,18 +91,17 @@ final class SettingViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, settingStackView].forEach { view.addSubview($0) }
+        [navigationHeader, settingStackView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
-        dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+        navigationHeader.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         settingStackView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(24)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(4)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
