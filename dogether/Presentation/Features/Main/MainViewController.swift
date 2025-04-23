@@ -299,6 +299,11 @@ extension MainViewController {
     @objc private func tappedGroupNameStackView() {
         presentBottomSheet()
     }
+    
+    @objc private func tappedGroupNameStackView() {
+        // FIXME: 추후 공용 컴포넌트 group sheet 추가되면 수정
+        print("show group sheet")
+    }
 }
 
 // MARK: - about pan gesture
