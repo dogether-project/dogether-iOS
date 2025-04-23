@@ -137,7 +137,7 @@ extension MainViewModel {
     func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
         switch sheetStatus {
         case .expand:
-            if translation > 0 { return min(SheetStatus.normal.offset, translation) }
+            if translation > 0 { return min(SheetStatus.normal.offset, SheetStatus.expand.offset + translation) }
             return currentOffset
         case .normal:
             if translation < 0 { return max(0, SheetStatus.normal.offset + translation) }

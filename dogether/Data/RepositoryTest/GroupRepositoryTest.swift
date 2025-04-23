@@ -25,7 +25,7 @@ final class GroupRepositoryTest: GroupProtocol {
     
     func getGroupInfo() async throws -> GetGroupInfoResponse {
         return GetGroupInfoResponse(
-            name: "Test Group Name",
+            name: "일이삼사오육칠팔구십",
             duration: 3,
             joinCode: "000000",
             maximumTodoCount: 10,

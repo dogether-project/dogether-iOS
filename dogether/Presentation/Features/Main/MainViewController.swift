@@ -16,6 +16,8 @@ final class MainViewController: BaseViewController {
     
     private let dogetherHeader = DogetherHeader()
     
+    private let dosikImageView = UIImageView(image: .noteDosik)
+    
     private let groupInfoView = GroupInfoView()
     
     private let rankingButton = {
@@ -27,7 +29,7 @@ final class MainViewController: BaseViewController {
         imageView.isUserInteractionEnabled = false
         
         let label = UILabel()
-        label.text = "순위 보러가기 !"
+        label.text = "그룹 활동 한눈에 보기 !"
         label.textColor = .grey100
         label.font = Fonts.body1S
         label.isUserInteractionEnabled = false
@@ -317,6 +319,9 @@ final class MainViewController: BaseViewController {
     override func configureAction() {
         dogetherHeader.delegate = self
         
+        let groupNameTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedGroupNameStackView))
+        groupInfoView.groupNameStackView.addGestureRecognizer(groupNameTapGesture)
+        
         rankingButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -356,7 +361,7 @@ final class MainViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
+        [dogetherHeader, dosikImageView, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
         [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView].forEach { dogetherSheet.addSubview($0) }
         
@@ -374,14 +379,20 @@ final class MainViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
         }
         
+        dosikImageView.snp.makeConstraints {
+            $0.top.equalTo(dogetherHeader.snp.bottom)
+            $0.right.equalToSuperview().inset(16)
+            $0.width.height.equalTo(120)
+        }
+        
         groupInfoView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(28)
+            $0.top.equalTo(dogetherHeader.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(97)
+            $0.height.equalTo(36 + 12 + 45 + 16 + 21)   // FIXME: GroupInfoView 자체를 StackView로 전환
         }
         
         rankingButton.snp.makeConstraints {
-            $0.top.equalTo(groupInfoView.snp.bottom).offset(28)
+            $0.top.equalTo(groupInfoView.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(48)
         }
@@ -475,11 +486,20 @@ final class MainViewController: BaseViewController {
 extension MainViewController {
     private func updateSheet(_ status: SheetStatus) {
         viewModel.setIsBlockPanGesture(true)
-        UIView.animate(withDuration: 0.3) {
-            self.dogetherSheetTopConstraint?.update(offset: status.offset)
-            self.view.layoutIfNeeded()
-        } completion: { _ in
-            self.viewModel.setIsBlockPanGesture(false)
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            dogetherSheetTopConstraint?.update(offset: status.offset)
+            updateAlpha(alpha: status == .normal ? 1 : 0)
+            view.layoutIfNeeded()
+        } completion: { [weak self] _ in
+            guard let self else { return }
+            viewModel.setIsBlockPanGesture(false)
+        }
+    }
+    
+    private func updateAlpha(alpha: CGFloat) {
+        [dosikImageView, groupInfoView.groupInfoStackView, groupInfoView.durationStackView, rankingButton].forEach {
+            $0.alpha = alpha
         }
     }
     
@@ -530,6 +550,11 @@ extension MainViewController {
         emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
         emptyDescriptionView.setType(viewModel.currentFilter)
     }
+    
+    @objc private func tappedGroupNameStackView() {
+        // FIXME: 추후 공용 컴포넌트 group sheet 추가되면 수정
+        print("show group sheet")
+    }
 }
 
 // MARK: - about pan gesture
@@ -540,12 +565,12 @@ extension MainViewController: UIGestureRecognizerDelegate {
         
         switch gesture.state {
         case .changed:
-            dogetherSheetTopConstraint?.update(
-                offset: viewModel.getNewOffset(
-                    from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
-                    with: translation.y
-                )
+            let newOffset = viewModel.getNewOffset(
+                from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
+                with: translation.y
             )
+            dogetherSheetTopConstraint?.update(offset: newOffset)
+            updateAlpha(alpha: 1 - (SheetStatus.normal.offset - newOffset) / (SheetStatus.normal.offset - SheetStatus.expand.offset))
             view.layoutIfNeeded()
             
         case .ended:
