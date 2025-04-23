@@ -370,9 +370,8 @@ final class MainViewController: BaseViewController {
     
     override func configureConstraints() {
         dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(24)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         groupInfoView.snp.makeConstraints {
