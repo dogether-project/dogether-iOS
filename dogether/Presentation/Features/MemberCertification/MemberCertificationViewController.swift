@@ -13,8 +13,6 @@ final class MemberCertificationViewController: BaseViewController {
     
     private let navigationHeader = NavigationHeader(title: "그룹원 인증 정보")
     
-    private let memberInfoView = RankingView(type: .memberInfoView)
-    
     private let thumbnailScrollView = {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
@@ -46,6 +44,16 @@ final class MemberCertificationViewController: BaseViewController {
         return stackView
     }()
     
+    private let statusContentView = UIView()
+    
+    private let statusContentStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        stackView.alignment = .center
+        return stackView
+    }()
+    
     private let statusView = FilterButton(type: .wait)
     
     private let contentLabel = {
@@ -62,7 +70,7 @@ final class MemberCertificationViewController: BaseViewController {
     
     override func configureView() {
         guard let memberInfo = viewModel.memberInfo else { return }
-        memberInfoView.setExtraInfo(ranking: memberInfo)
+        navigationHeader.setTitle(title: "\(memberInfo.name)님의 인증 정보")
         
         viewModel.todos
             .enumerated().map {
@@ -86,6 +94,8 @@ final class MemberCertificationViewController: BaseViewController {
             string: viewModel.todos[viewModel.currentIndex].content,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
+        
+        [statusView, contentLabel].forEach { statusContentStackView.addArrangedSubview($0) }
     }
     
     override func configureAction() {
@@ -101,12 +111,10 @@ final class MemberCertificationViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [ navigationHeader, memberInfoView,
-          thumbnailScrollView, certificationScrollView,
-          statusView, contentLabel
-        ].forEach { view.addSubview($0) }
+        [navigationHeader, thumbnailScrollView, certificationScrollView, statusContentView].forEach { view.addSubview($0) }
         [thumbnailStackView].forEach { thumbnailScrollView.addSubview($0) }
         [certificationStackView].forEach { certificationScrollView.addSubview($0) }
+        [statusContentStackView].forEach { statusContentView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -115,13 +123,8 @@ final class MemberCertificationViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        memberInfoView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-        }
-        
         thumbnailScrollView.snp.makeConstraints {
-            $0.top.equalTo(memberInfoView.snp.bottom).offset(32)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(2)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(48)
         }
@@ -142,14 +145,15 @@ final class MemberCertificationViewController: BaseViewController {
             $0.height.equalToSuperview()
         }
         
-        statusView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(certificationScrollView.snp.bottom).offset(32)
+        statusContentView.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.top.equalTo(certificationScrollView.snp.bottom)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
-        contentLabel.snp.makeConstraints {
-            $0.top.equalTo(statusView.snp.bottom).offset(8)
-            $0.horizontalEdges.equalToSuperview().inset(16)
+        statusContentStackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
         }
     }
 }

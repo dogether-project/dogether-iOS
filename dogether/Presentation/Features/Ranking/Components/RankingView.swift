@@ -8,10 +8,7 @@
 import UIKit
 
 final class RankingView: BaseView {
-    private let type: RankingViewTypes
-    
-    init(type: RankingViewTypes) {
-        self.type = type
+    init() {
         super.init(frame: .zero)
     }
     required init?(coder: NSCoder) { fatalError() }
@@ -54,24 +51,15 @@ final class RankingView: BaseView {
             $0.height.equalTo(50)
         }
         
-        switch type {
-        case .tableViewCell:
-            rankingLabel.snp.makeConstraints {
-                $0.centerY.equalToSuperview()
-                $0.left.equalToSuperview()
-            }
-            
-            profileImageView.snp.makeConstraints {
-                $0.centerY.equalToSuperview()
-                $0.left.equalTo(rankingLabel.snp.right).offset(20)
-                $0.width.height.equalTo(44)
-            }
-        case .memberInfoView:
-            profileImageView.snp.makeConstraints {
-                $0.centerY.equalToSuperview()
-                $0.left.equalToSuperview()
-                $0.width.height.equalTo(44)
-            }
+        rankingLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalToSuperview()
+        }
+        
+        profileImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalTo(rankingLabel.snp.right).offset(20)
+            $0.width.height.equalTo(44)
         }
         
         nameLabel.snp.makeConstraints {
@@ -100,9 +88,4 @@ extension RankingView {
         nameLabel.text = ranking.name
         certificationLabel.text = "\(Int(ranking.certificationRate))%"
     }
-}
-
-enum RankingViewTypes {
-    case tableViewCell
-    case memberInfoView
 }

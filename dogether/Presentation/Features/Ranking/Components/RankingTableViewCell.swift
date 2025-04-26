@@ -13,7 +13,7 @@ final class RankingTableViewCell: BaseTableViewCell, ReusableProtocol {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let tableViewCell = RankingView(type: .tableViewCell)
+    private let tableViewCell = RankingView()
     
     override func configureView() {
         selectionStyle = .none
