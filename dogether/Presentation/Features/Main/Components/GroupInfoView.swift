@@ -8,10 +8,10 @@
 import UIKit
 
 final class GroupInfoView: BaseView {
-    private(set) var groupInfo: GroupInfo
+    private(set) var challengeGroupInfo: ChallengeGroupInfo
     
-    init(groupInfo: GroupInfo = GroupInfo()) {
-        self.groupInfo = groupInfo
+    init(challengeGroupInfo: ChallengeGroupInfo = ChallengeGroupInfo()) {
+        self.challengeGroupInfo = challengeGroupInfo
         super.init(frame: .zero)
     }
     required init?(coder: NSCoder) { fatalError() }
@@ -160,27 +160,27 @@ final class GroupInfoView: BaseView {
  
 extension GroupInfoView {
     private func updateUI() {
-        nameLabel.text = groupInfo.name
+        nameLabel.text = challengeGroupInfo.name
         
         memberInfoLabel.attributedText = NSAttributedString(
-            string: "\(groupInfo.duration)일",   // FIXME: API 수정 후 memberInfo로 변경
+            string: "\(challengeGroupInfo.currentMember)/\(challengeGroupInfo.maximumMember)",
             attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
         joinCodeInfoLabel.attributedText = NSAttributedString(
-            string: groupInfo.joinCode,
+            string: challengeGroupInfo.joinCode,
             attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
         endDateInfoLabel.attributedText = NSAttributedString(
-            string: groupInfo.endAt,
+            string: challengeGroupInfo.endDate,
             attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
         
-        durationInfoLabel.text = "(\(groupInfo.duration)일차)" // FIXME: API 수정 후 변경
-        durationProgressView.progress = 0.5 // FIXME: API 수정 후 반영
+        durationInfoLabel.text = "(\(challengeGroupInfo.duration)일차)" // FIXME: API 수정 후 변경
+        durationProgressView.progress = challengeGroupInfo.progress
     }
     
-    func setGroupInfo(groupInfo: GroupInfo) {
-        self.groupInfo = groupInfo
+    func setChallengeGroupInfo(challengeGroupInfo: ChallengeGroupInfo) {
+        self.challengeGroupInfo = challengeGroupInfo
         
         updateUI()
     }

@@ -26,6 +26,10 @@ final class GroupRepository: GroupProtocol {
         try await groupsDataSource.joinGroup(joinGroupRequest: joinGroupRequest)
     }
     
+    func getGroups() async throws -> GetGroupsResponse {
+        try await groupsDataSource.getGroups()
+    }
+    
     func getGroupInfo() async throws -> GetGroupInfoResponse {
         try await groupsDataSource.getGroupInfo()
     }

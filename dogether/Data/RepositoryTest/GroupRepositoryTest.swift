@@ -23,6 +23,20 @@ final class GroupRepositoryTest: GroupProtocol {
         return JoinGroupResponse(name: "testGroup", maximumMemberCount: 10, startAt: "2025-01-01", endAt: "2025-01-04", durationOption: 3)
     }
     
+    func getGroups() async throws -> GetGroupsResponse {
+        return GetGroupsResponse(joinChallengeGroups: [
+            JoinChallengeGroup(
+                groupId: 0,
+                groupName: "폰트의 챌린지",
+                currentMemberCount: 1,
+                maximumMemberCount: 10,
+                joinCode: "G3hIj4kLm",
+                endAt: "25.05.04",
+                currentDay: 5
+            )
+        ])
+    }
+    
     func getGroupInfo() async throws -> GetGroupInfoResponse {
         return GetGroupInfoResponse(
             name: "일이삼사오육칠팔구십",

@@ -504,7 +504,7 @@ extension MainViewController {
     }
     
     private func updateView() {
-        groupInfoView.setGroupInfo(groupInfo: viewModel.groupInfo)
+        groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.challengeGroupInfos[viewModel.currentChallengeIndex])
         
         dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
         
@@ -554,6 +554,8 @@ extension MainViewController {
     @objc private func tappedGroupNameStackView() {
         // FIXME: 추후 공용 컴포넌트 group sheet 추가되면 수정
         print("show group sheet")
+//        viewModel.setChallengeIndex(index: viewModel.currentChallengeIndex + 1)
+//        updateView()
     }
 }
 

@@ -15,7 +15,9 @@ final class MainViewModel {
     
     private(set) var mainViewStatus: MainViewStatus = .emptyList
     
-    private(set) var groupInfo: GroupInfo = GroupInfo()
+    private(set) var groupInfo: GroupInfo = GroupInfo() // FIXME: API 수정 후 삭제
+    private(set) var challengeGroupInfos: [ChallengeGroupInfo] = []
+    private(set) var currentChallengeIndex: Int = 0
     
     private(set) var sheetStatus: SheetStatus = .normal
     private(set) var isBlockPanGesture: Bool = true
@@ -49,6 +51,7 @@ extension MainViewModel {
         let groupStatus = try await groupUseCase.getGroupStatus()
         mainViewStatus = try await mainUseCase.getMainViewStatus(groupStatus: groupStatus)
         groupInfo = try await groupUseCase.getGroupInfo()
+        challengeGroupInfos = try await groupUseCase.getChallengeGroupInfos()
     }
     
     func getReviews() async throws -> [ReviewModel] {
@@ -153,5 +156,9 @@ extension MainViewModel {
             sheetStatus = translation < -100 ? .expand : .normal
         }
         return sheetStatus
+    }
+    
+    func setChallengeIndex(index: Int) {
+        self.currentChallengeIndex = index
     }
 }
