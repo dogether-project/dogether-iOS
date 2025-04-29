@@ -34,16 +34,17 @@ final class GroupUseCase {
     
     func getChallengeGroupInfos() async throws -> [ChallengeGroupInfo] {
         let response = try await repository.getGroups()
-        return response.joinChallengeGroups.map {
+        return response.joiningChallengeGroups.map {
             ChallengeGroupInfo(
                 id: $0.groupId,
                 name: $0.groupName,
                 currentMember: $0.currentMemberCount,
                 maximumMember: $0.maximumMemberCount,
                 joinCode: $0.joinCode,
+                status: $0.status,
                 endDate: $0.endAt,
-                duration: $0.currentDay,
-                progress: 0.5   // FIXME: API 수정 후 반영
+                duration: $0.progressDay,
+                progress: $0.progressRate
             )
         }
     }

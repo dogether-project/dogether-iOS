@@ -72,6 +72,13 @@ extension MainViewModel {
     }
 }
 
+// MARK: - set
+extension MainViewModel {
+    func setDateOffset(offset: Int) {
+        self.dateOffset = offset
+    }
+}
+
 // MARK: - beforeStart
 extension MainViewModel {
     func startCountdown(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {

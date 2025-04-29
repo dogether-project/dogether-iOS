@@ -72,12 +72,7 @@ final class MainViewController: BaseViewController {
         return view
     }()
     
-    private let dogetherSheetHeaderLabel = {
-        let label = UILabel()
-        label.textColor = .grey0
-        label.font = Fonts.head2B
-        return label
-    }()
+    private let sheetHeaderView = SheetHeaderView()
     
     private let beforeStartView = UIView()
     private let emptyListView = UIView()
@@ -335,6 +330,18 @@ final class MainViewController: BaseViewController {
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
         
+        [sheetHeaderView.prevButton, sheetHeaderView.nextButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    let newOffset = viewModel.dateOffset + button.tag
+                    viewModel.setDateOffset(offset: newOffset)
+                    updateView()
+                    // TODO: 확인 필요
+                }, for: .touchUpInside
+            )
+        }
+        
         todoScrollView.delegate = self
         todoScrollView.bounces = false
         todoScrollView.showsVerticalScrollIndicator = false
@@ -363,7 +370,7 @@ final class MainViewController: BaseViewController {
     override func configureHierarchy() {
         [dogetherHeader, dosikImageView, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
-        [dogetherSheetHeaderLabel, beforeStartView, emptyListView, todoListView].forEach { dogetherSheet.addSubview($0) }
+        [sheetHeaderView, beforeStartView, emptyListView, todoListView].forEach { dogetherSheet.addSubview($0) }
         
         [timerView, timeProgress, timerLabel, timerDescription,].forEach { beforeStartView.addSubview($0) }
         
@@ -402,15 +409,15 @@ final class MainViewController: BaseViewController {
             $0.bottom.left.right.equalToSuperview()
         }
         
-        dogetherSheetHeaderLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(dogetherSheet).offset(24)
-            $0.height.equalTo(28)
+        sheetHeaderView.snp.makeConstraints {
+            $0.top.equalTo(dogetherSheet).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(32)
         }
         
         // MARK: - beforeStart
         beforeStartView.snp.makeConstraints {
-            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom).offset(24)
+            $0.top.equalTo(sheetHeaderView.snp.bottom).offset(24)
             $0.left.right.bottom.equalToSuperview()
         }
         
@@ -437,7 +444,7 @@ final class MainViewController: BaseViewController {
         
         // MARK: - emptyList
         emptyListView.snp.makeConstraints {
-            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom)
+            $0.top.equalTo(sheetHeaderView.snp.bottom)
             $0.bottom.left.right.equalToSuperview()
         }
         
@@ -453,12 +460,12 @@ final class MainViewController: BaseViewController {
         
         // MARK: - todoList
         todoListView.snp.makeConstraints {
-            $0.top.equalTo(dogetherSheetHeaderLabel.snp.bottom)
+            $0.top.equalTo(sheetHeaderView.snp.bottom)
             $0.bottom.left.right.equalToSuperview()
         }
         
         filterStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(24)
+            $0.top.equalToSuperview().offset(20)
             $0.left.equalToSuperview().offset(16)
         }
         
@@ -506,7 +513,7 @@ extension MainViewController {
     private func updateView() {
         groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.challengeGroupInfos[viewModel.currentChallengeIndex])
         
-        dogetherSheetHeaderLabel.text = DateFormatterManager.formattedDate(viewModel.dateOffset)
+        sheetHeaderView.setDate(date: DateFormatterManager.formattedDate(viewModel.dateOffset))
         
         beforeStartView.isHidden = viewModel.mainViewStatus != .beforeStart
         emptyListView.isHidden = viewModel.mainViewStatus != .emptyList

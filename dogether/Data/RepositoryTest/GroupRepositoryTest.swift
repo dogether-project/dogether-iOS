@@ -24,15 +24,17 @@ final class GroupRepositoryTest: GroupProtocol {
     }
     
     func getGroups() async throws -> GetGroupsResponse {
-        return GetGroupsResponse(joinChallengeGroups: [
-            JoinChallengeGroup(
+        return GetGroupsResponse(joiningChallengeGroups: [
+            JoiningChallengeGroups(
                 groupId: 0,
                 groupName: "폰트의 챌린지",
                 currentMemberCount: 1,
                 maximumMemberCount: 10,
                 joinCode: "G3hIj4kLm",
+                status: "RUNNING",
                 endAt: "25.05.04",
-                currentDay: 5
+                progressDay: 5,
+                progressRate: 0.3
             )
         ])
     }

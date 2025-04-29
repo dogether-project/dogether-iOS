@@ -8,15 +8,17 @@
 import Foundation
 
 struct GetGroupsResponse: Decodable {
-    let joinChallengeGroups: [JoinChallengeGroup]
+    let joiningChallengeGroups: [JoiningChallengeGroups]
 }
 
-struct JoinChallengeGroup: Decodable {
+struct JoiningChallengeGroups: Decodable {
     let groupId: Int
     let groupName: String
     let currentMemberCount: Int
     let maximumMemberCount: Int
     let joinCode: String
+    let status: String
     let endAt: String
-    let currentDay: Int
+    let progressDay: Int
+    let progressRate: Float
 }
