@@ -81,3 +81,27 @@ extension FilterButton {
         updateUI()
     }
 }
+
+extension FilterButton {
+    func update(type: FilterTypes, isColorful: Bool = true) {
+        // icon, label, 색, width 전부 갱신
+        self.icon.image = type.image?.withRenderingMode(.alwaysTemplate)
+        self.label.text = type.rawValue
+        self.isColorful = isColorful
+        
+        backgroundColor = isColorful ? type.backgroundColor : .grey800
+        layer.borderColor = isColorful ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
+        icon.tintColor = isColorful ? .grey900 : .grey400
+        label.textColor = isColorful ? .grey900 : .grey400
+        
+        // 아이콘 크기 바꾸기 (기존과 동일한 로직 유지)
+        icon.snp.updateConstraints {
+            $0.width.height.equalTo(type == .wait ? 18 : type == .reject ? 22 : 24)
+        }
+        
+        // 너비도 갱신
+        self.snp.updateConstraints {
+            $0.width.equalTo(type.width)
+        }
+    }
+}

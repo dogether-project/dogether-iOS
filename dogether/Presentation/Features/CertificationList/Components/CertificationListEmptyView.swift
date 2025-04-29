@@ -8,7 +8,6 @@
 import UIKit
 
 final class CertificationListEmptyView: BaseView {
-    
     private let emptyStateView = EmptyStateView(
         title: "아직 작성된 투두가 없어요",
         description: "오늘 하루 이루고 싶은 목표를 입력해보세요!"

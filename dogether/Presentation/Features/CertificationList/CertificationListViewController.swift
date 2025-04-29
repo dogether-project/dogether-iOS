@@ -12,7 +12,7 @@ final class CertificationListViewController: BaseViewController {
     
     private let navigationHeader = NavigationHeader(title: "인증 목록")
     private let certificationListEmptyView = CertificationListEmptyView()
-    private let certificationListContentView = CertificationListContentView()
+    private lazy var certificationListContentView = CertificationListContentView(viewModel: viewModel)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,4 +54,3 @@ extension CertificationListViewController {
         certificationListContentView.isHidden = viewModel.certificationListViewStatus != .hasData
     }
 }
-
