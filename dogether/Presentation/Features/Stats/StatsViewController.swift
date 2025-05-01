@@ -12,7 +12,7 @@ final class StatsViewController: BaseViewController {
     
     private let navigationHeader = NavigationHeader(title: "통계")
     private let statsEmptyView = StatsEmptyView()
-    private let statsContentView = StatsContentView()
+    private lazy var statsContentView = StatsContentView(viewModel: viewModel)
     
     override func viewDidLoad() {
         super.viewDidLoad()
