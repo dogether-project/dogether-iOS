@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 final class MyRankView: BaseView {
-    var viewModel: StatsViewModel
-
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "chart2")
@@ -37,7 +35,6 @@ final class MyRankView: BaseView {
 
     private let rankBaseLabel: UILabel = {
         let label = UILabel()
-        label.text = "10명 중"
         label.font = Fonts.body1S
         label.textColor = .grey200
         label.textAlignment = .center
@@ -46,16 +43,14 @@ final class MyRankView: BaseView {
 
     private let rankLabel: UILabel = {
         let label = UILabel()
-        label.text = "5등"
         label.font = Fonts.emphasis2B
         label.textColor = .blue300
         label.textAlignment = .center
         return label
     }()
-
-    init(viewModel: StatsViewModel) {
-        self.viewModel = viewModel
-        super.init(frame: .zero)
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -96,5 +91,10 @@ final class MyRankView: BaseView {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(36)
         }
+    }
+    
+    func configure(count: Int, rank: Int) {
+        rankBaseLabel.text = "\(count)명 중"
+        rankLabel.text = "\(rank)등"
     }
 }

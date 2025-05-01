@@ -9,45 +9,41 @@ import UIKit
 
 final class StatsViewController: BaseViewController {
     var viewModel = StatsViewModel()
-    
     private let navigationHeader = NavigationHeader(title: "통계")
     private let statsEmptyView = StatsEmptyView()
-    private lazy var statsContentView = StatsContentView(viewModel: viewModel)
+    private var statsContentView: StatsContentView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.loadMockDataFromFile()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         displayViewForCurrentStatus()
     }
-    
-    override func configureView() {
-    }
-    
+
     override func configureAction() {
         navigationHeader.delegate = self
+        
         statsEmptyView.createButtonTapHandler = { [weak self] in
             guard let self else { return }
             coordinator?.pushViewController(GroupCreateViewController())
         }
     }
-    
+
     override func configureHierarchy() {
         view.addSubview(navigationHeader)
         view.addSubview(statsEmptyView)
-        view.addSubview(statsContentView)
     }
-    
+
     override func configureConstraints() {
         navigationHeader.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
         }
-        
+
         statsEmptyView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom)
-            $0.left.right.bottom.equalToSuperview()
-        }
-        
-        statsContentView.snp.makeConstraints {
             $0.top.equalTo(navigationHeader.snp.bottom)
             $0.left.right.bottom.equalToSuperview()
         }
@@ -56,7 +52,16 @@ final class StatsViewController: BaseViewController {
 
 extension StatsViewController {
     private func displayViewForCurrentStatus() {
-        statsEmptyView.isHidden = viewModel.statsViewStatus != .empty
-        statsContentView.isHidden = viewModel.statsViewStatus != .hasData
+        if viewModel.statsViewStatus == .hasData,
+           statsContentView == nil {
+            let contentView = StatsContentView(viewModel: viewModel)
+            self.statsContentView = contentView
+            view.addSubview(contentView)
+            contentView.snp.makeConstraints {
+                $0.top.equalTo(navigationHeader.snp.bottom)
+                $0.left.right.bottom.equalToSuperview()
+            }
+            statsContentView?.isHidden = false
+        }
     }
 }

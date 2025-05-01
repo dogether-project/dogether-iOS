@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 final class StatsSummaryView: BaseView {
-    var viewModel: StatsViewModel
-    
     private let titleIconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "chart3")
@@ -27,26 +25,114 @@ final class StatsSummaryView: BaseView {
     }()
     
     private lazy var titleStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [titleIconImageView,
-                                                   titleLabel])
+        let stack = UIStackView(arrangedSubviews: [titleIconImageView, titleLabel])
         stack.axis = .horizontal
         stack.spacing = 4
         stack.alignment = .center
         return stack
     }()
     
-    private lazy var achievedStackView = makeSummaryRow(imageName: "certification2",
-                                                        title: "달성",
-                                                        titleWidth: 25,
-                                                        count: "123개")
-    private lazy var acknowledgedStackView = makeSummaryRow(imageName: "approve",
-                                                            title: "인정",
-                                                            titleWidth: 25,
-                                                            count: "123개")
-    private lazy var notAcknowledgedStackView = makeSummaryRow(imageName: "reject",
-                                                               title: "노인정",
-                                                               titleWidth: 37,
-                                                               count: "123개")
+    // 달성 Row
+    private let achievedIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "certification2")
+        imageView.contentMode = .scaleAspectFit
+        imageView.snp.makeConstraints { $0.size.equalTo(24) }
+        return imageView
+    }()
+    
+    private let achievedTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "달성"
+        label.font = Fonts.body2S
+        label.textColor = .grey200
+        label.snp.makeConstraints { $0.width.equalTo(25) }
+        return label
+    }()
+    
+    private let certificatedCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = Fonts.body2S
+        label.textColor = .grey0
+        return label
+    }()
+    
+    private lazy var achievedStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [achievedIconImageView, achievedTitleLabel, certificatedCountLabel])
+        stack.axis = .horizontal
+        stack.spacing = 4
+        stack.setCustomSpacing(8, after: achievedTitleLabel)
+        stack.alignment = .center
+        return stack
+    }()
+    
+    // 인정 Row
+    private let acknowledgedIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "approve")
+        imageView.contentMode = .scaleAspectFit
+        imageView.snp.makeConstraints { $0.size.equalTo(24) }
+        return imageView
+    }()
+    
+    private let acknowledgedTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "인정"
+        label.font = Fonts.body2S
+        label.textColor = .grey200
+        label.snp.makeConstraints { $0.width.equalTo(25) }
+        return label
+    }()
+    
+    private let approvedCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = Fonts.body2S
+        label.textColor = .grey0
+        return label
+    }()
+    
+    private lazy var acknowledgedStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [acknowledgedIconImageView, acknowledgedTitleLabel, approvedCountLabel])
+        stack.axis = .horizontal
+        stack.spacing = 4
+        stack.setCustomSpacing(8, after: acknowledgedTitleLabel)
+        stack.alignment = .center
+        return stack
+    }()
+    
+    // 노인정 Row
+    private let notAcknowledgedIconImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "reject")
+        imageView.contentMode = .scaleAspectFit
+        imageView.snp.makeConstraints { $0.size.equalTo(24) }
+        return imageView
+    }()
+    
+    private let notAcknowledgedTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "노인정"
+        label.font = Fonts.body2S
+        label.textColor = .grey200
+        label.snp.makeConstraints { $0.width.equalTo(37) }
+        return label
+    }()
+    
+    private let rejectedCountLabel: UILabel = {
+        let label = UILabel()
+        label.font = Fonts.body2S
+        label.textColor = .grey0
+        return label
+    }()
+    
+    private lazy var notAcknowledgedStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [notAcknowledgedIconImageView, notAcknowledgedTitleLabel, rejectedCountLabel])
+        stack.axis = .horizontal
+        stack.spacing = 4
+        stack.setCustomSpacing(8, after: notAcknowledgedTitleLabel)
+        stack.alignment = .center
+        return stack
+    }()
     
     private lazy var summaryStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [
@@ -59,9 +145,8 @@ final class StatsSummaryView: BaseView {
         return stack
     }()
     
-    init(viewModel: StatsViewModel) {
-        self.viewModel = viewModel
-        super.init(frame: .zero)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
     }
     
     required init?(coder: NSCoder) {
@@ -102,32 +187,9 @@ final class StatsSummaryView: BaseView {
 }
 
 extension StatsSummaryView {
-    private func makeSummaryRow(imageName: String,
-                                title: String,
-                                titleWidth: CGFloat,
-                                count: String) -> UIStackView {
-        let icon = UIImageView()
-        icon.image = UIImage(named: imageName)
-        icon.contentMode = .scaleAspectFit
-        icon.snp.makeConstraints { $0.width.height.equalTo(24) }
-        
-        let titleLabel = UILabel()
-        titleLabel.text = title
-        titleLabel.font = Fonts.body2S
-        titleLabel.textColor = .grey200
-        titleLabel.snp.makeConstraints { $0.width.equalTo(titleWidth) }
-        
-        let countLabel = UILabel()
-        countLabel.text = count
-        countLabel.font = Fonts.body2S
-        countLabel.textColor = .grey0
-        
-        let stack = UIStackView(arrangedSubviews: [icon, titleLabel, countLabel])
-        stack.axis = .horizontal
-        stack.spacing = 4
-        stack.setCustomSpacing(8, after: titleLabel)
-        stack.alignment = .center
-        
-        return stack
+    func configure(certificatedCount: Int, approvedCount: Int, rejectedCount: Int) {
+        certificatedCountLabel.text = "\(certificatedCount)개"
+        approvedCountLabel.text = "\(approvedCount)개"
+        rejectedCountLabel.text = "\(rejectedCount)개"
     }
 }
