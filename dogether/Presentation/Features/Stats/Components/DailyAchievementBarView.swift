@@ -137,7 +137,12 @@ extension DailyAchievementBarView {
             }
             
             let backgroundBar = UIView()
-            backgroundBar.backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
+            let backgroundImageView = UIImageView()
+            backgroundImageView.image = UIImage(named:"background2")
+            backgroundImageView.contentMode = .scaleAspectFill
+            backgroundImageView.clipsToBounds = true
+            backgroundBar.addSubview(backgroundImageView)
+            backgroundImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
             backgroundBar.layer.cornerRadius = 4
             backgroundBar.clipsToBounds = true
             barContainer.addSubview(backgroundBar)

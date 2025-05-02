@@ -9,7 +9,8 @@ import UIKit
 
 final class StatsContentView: BaseView {
     private let viewModel: StatsViewModel
-    private let groupInfoView = GroupInfoView()
+    //    private let groupInfoView = GroupInfoView()
+    private let groupInfoView = StatsGroupInfoView()
     private let dailyAchievementBarView = DailyAchievementBarView()
     private let myRankView = MyRankView()
     private let statsSummaryView = StatsSummaryView()
@@ -30,6 +31,11 @@ final class StatsContentView: BaseView {
         self.statsSummaryView.configure(certificatedCount: viewModel.statsSummary?.certificatedCount ?? 0,
                                         approvedCount: viewModel.statsSummary?.approvedCount ?? 0,
                                         rejectedCount: viewModel.statsSummary?.rejectedCount ?? 0)
+        self.groupInfoView.configure(groupName: viewModel.groupName,
+                                     currentMemberCount: viewModel.currentMemberCount,
+                                     maximumMemberCount: viewModel.maximumMemberCount,
+                                     joinCode: viewModel.joinCode,
+                                     endDate: viewModel.endDate)
         super.init(frame: .zero)
     }
     
@@ -39,7 +45,13 @@ final class StatsContentView: BaseView {
         backgroundColor = .clear
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        groupInfoView.onGroupSelectorTapped = { [weak self] in
+            guard let self else { return }
+            print("StatsContentView에서 그룹 선택 버튼 눌림 처리")
+            // 예: delegate 호출이나 뷰모델에 알리기 등
+        }
+    }
     
     override func configureHierarchy() {
         addSubview(groupInfoView)
@@ -51,9 +63,11 @@ final class StatsContentView: BaseView {
     
     override func configureConstraints() {
         groupInfoView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(28)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(97)
+            $0.top.equalToSuperview().offset(22)
+                        $0.horizontalEdges.equalToSuperview().inset(16)
+//            $0.leading.equalToSuperview().inset(16)
+//            $0.trailing.equalToSuperview().inset(133)
+            $0.height.equalTo(94) // 36 21 25 12
         }
         
         mascotImageView.snp.makeConstraints {
