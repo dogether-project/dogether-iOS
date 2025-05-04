@@ -54,7 +54,7 @@ final class MemberCertificationViewController: BaseViewController {
         return stackView
     }()
     
-    private let statusView = FilterButton(type: .wait)
+    private var statusView = FilterButton(type: .wait)
     
     private let contentLabel = {
         let label = UILabel()
@@ -66,36 +66,21 @@ final class MemberCertificationViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Task {
+            try await viewModel.loadMemberCertificationView()
+            await MainActor.run { setUI() }
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        // FIXME: setUI가 끝나는 지점에서 updateView()를 호출해 스크롤 위치를 조정해주려고 시도했으나, scrollViewWidth가 0.0으로 잡히면서 나눗셈이 불가능, 추후 수정
+        updateView()
     }
     
     override func configureView() {
         guard let memberInfo = viewModel.memberInfo else { return }
         navigationHeader.setTitle(title: "\(memberInfo.name)님의 인증 정보")
-        
-        viewModel.todos
-            .enumerated().map {
-                ThumbnailView(thumbnailStatus: $1.thumbnailStatus, isHighlighted: $0 == viewModel.currentIndex)
-            }
-            .forEach {
-                thumbnailStackView.addArrangedSubview($0)
-            }
-        
-        viewModel.todos
-            .map {
-                CertificationImageView(image: .embarrassedDosik, certificationContent: $0.certificationContent)
-            }
-            .forEach {
-                certificationStackView.addArrangedSubview($0)
-            }
-        
-        // TODO: set statusView
-        
-        contentLabel.attributedText = NSAttributedString(
-            string: viewModel.todos[viewModel.currentIndex].content,
-            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
-        )
-        
-        [statusView, contentLabel].forEach { statusContentStackView.addArrangedSubview($0) }
     }
     
     override func configureAction() {
@@ -122,11 +107,43 @@ final class MemberCertificationViewController: BaseViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
         }
+    }
+}
+
+// MARK: - scroll
+extension MemberCertificationViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView === certificationScrollView {
+            let index = Int(round(scrollView.contentOffset.x / view.frame.width))
+            if index == viewModel.currentIndex { return }
+            viewModel.setCurrentIndex(index: index)
+            updateView()
+        }
+    }
+}
+
+extension MemberCertificationViewController {
+    private func setUI() {
+        viewModel.todos
+            .enumerated().map {
+                ThumbnailView(thumbnailStatus: $1.thumbnailStatus, isHighlighted: $0 == viewModel.currentIndex)
+            }
+            .forEach {
+                thumbnailStackView.addArrangedSubview($0)
+            }
+        
+        viewModel.todos
+            .map {
+                CertificationImageView(image: .embarrassedDosik, certificationContent: $0.certificationContent)
+            }
+            .forEach {
+                certificationStackView.addArrangedSubview($0)
+            }
         
         thumbnailScrollView.snp.makeConstraints {
             $0.top.equalTo(navigationHeader.snp.bottom).offset(2)
             $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(48)
+            $0.height.equalTo(54)
         }
         
         thumbnailStackView.snp.makeConstraints {
@@ -146,8 +163,8 @@ final class MemberCertificationViewController: BaseViewController {
         }
         
         statusContentView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.top.equalTo(certificationScrollView.snp.bottom)
+            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
@@ -156,21 +173,7 @@ final class MemberCertificationViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview()
         }
     }
-}
-
-// MARK: - scroll
-extension MemberCertificationViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView === certificationScrollView {
-            let index = Int(round(scrollView.contentOffset.x / view.frame.width))
-            if index == viewModel.currentIndex { return }
-            viewModel.setCurrentIndex(index: index)
-            updateView()
-        }
-    }
-}
-
-extension MemberCertificationViewController {
+    
     private func updateView() {
         thumbnailStackView.arrangedSubviews.enumerated().forEach { index, view in
             guard let view = view as? ThumbnailView else { return }
@@ -195,6 +198,17 @@ extension MemberCertificationViewController {
             let newOffset = CGPoint(x: scrollViewWidth * CGFloat(viewModel.currentIndex), y: 0)
             certificationScrollView.setContentOffset(newOffset, animated: false)
         }
+        
+        statusView.isHidden = true  // FIXME: 메모리가 계속 쌓이는 문제가 생길 수 있음. 추후 개선 필요
+        statusView = FilterButton(type: viewModel.todos[viewModel.currentIndex].status.filterType)
+        
+        contentLabel.attributedText = NSAttributedString(
+            string: viewModel.todos[viewModel.currentIndex].content,
+            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
+        )
+        
+        statusContentStackView.subviews.forEach { statusContentStackView.removeArrangedSubview($0) }
+        [statusView, contentLabel].forEach { statusContentStackView.addArrangedSubview($0) }
     }
     
     @objc private func tappedThumbnailScrollView(_ gesture: UITapGestureRecognizer) {

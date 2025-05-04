@@ -10,7 +10,7 @@ import UIKit
 final class MainViewModel {
     private let mainUseCase: MainUseCase
     private let groupUseCase: GroupUseCase
-    private let todoUseCase: TodoUseCase
+    private let challengeGroupsUseCase: ChallengeGroupUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
     private(set) var mainViewStatus: MainViewStatus = .emptyList
@@ -33,12 +33,12 @@ final class MainViewModel {
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
-        let todoRepository = DIManager.shared.getTodoRepository()
+        let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
         let todoCertificationsRepository = DIManager.shared.getTodoCertificationsRepository()
         
         self.mainUseCase = MainUseCase()
         self.groupUseCase = GroupUseCase(repository: groupRepository)
-        self.todoUseCase = TodoUseCase(repository: todoRepository)
+        self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
         self.todoCertificationsUseCase = TodoCertificationsUseCase(repository: todoCertificationsRepository)
     }
 }
@@ -106,7 +106,7 @@ extension MainViewModel {
     private func updateListInfo(updateList: @escaping () -> Void) {
         Task {
             let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-            todoList = try await todoUseCase.getMyTodos(date: date, status: status)
+            todoList = try await challengeGroupsUseCase.getMyTodos(date: date, status: status)
             mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
             isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
             await MainActor.run { updateList() }
@@ -122,7 +122,7 @@ extension MainViewModel {
     
     func updateListInfo() async throws {
         let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-        todoList = try await todoUseCase.getMyTodos(date: date, status: status)
+        todoList = try await challengeGroupsUseCase.getMyTodos(date: date, status: status)
         mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
         isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }

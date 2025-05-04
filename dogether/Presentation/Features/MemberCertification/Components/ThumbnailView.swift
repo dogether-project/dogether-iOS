@@ -53,7 +53,7 @@ final class ThumbnailView: BaseView {
     
     override func configureConstraints() {
         self.snp.makeConstraints {
-            $0.width.height.equalTo(48)
+            $0.width.height.equalTo(54)
         }
         
         imageView.snp.makeConstraints {

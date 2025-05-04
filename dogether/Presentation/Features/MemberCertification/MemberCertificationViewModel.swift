@@ -8,28 +8,17 @@
 import Foundation
 
 final class MemberCertificationViewModel {
+    private let challengeGroupsUseCase: ChallengeGroupUseCase
+    
     var memberInfo: RankingModel?
     
-    // FIXME: API 추가 후 수정
-    private(set) var todos: [MemberCertificationInfo] = [
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .done),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .done),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .done),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .done),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 1, content: "신규 기능 개발", thumbnailStatus: .yet),
-        MemberCertificationInfo(id: 2, content: "치킨 먹기", certificationContent: "치킨 냠냠", thumbnailStatus: .yet)
-    ]
+    private(set) var todos: [MemberCertificationInfo] = []
     private(set) var currentIndex: Int = 0
+    
+    init() {
+        let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
+        self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
+    }
 }
 
 extension MemberCertificationViewModel {
@@ -37,5 +26,12 @@ extension MemberCertificationViewModel {
         todos[currentIndex].thumbnailStatus = .done
         
         self.currentIndex = index
+    }
+}
+
+extension MemberCertificationViewModel {
+    func loadMemberCertificationView() async throws {
+        (currentIndex, todos) = try await challengeGroupsUseCase.getMemberTodos(groupId: 0, memberId: 0)  // FIXME: 추후 수정
+        
     }
 }
