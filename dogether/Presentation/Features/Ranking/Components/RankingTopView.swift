@@ -25,7 +25,7 @@ final class RankingTopView: BaseView {
     }()
     
     private let rankingImageView = UIImageView()
-    private let profileImageView = UIImageView()
+    private let profileImageView = RankingImageView(viewType: .topView)
     
     private let nameLabel = {
         let label = UILabel()
@@ -68,14 +68,14 @@ final class RankingTopView: BaseView {
     override func configureView() {
         if let ranking {
             rankingImageView.image = ranking.rank == 1 ? .crown1 : ranking.rank == 2 ? .crown2 : .crown3
-            profileImageView.image = .logo
+            profileImageView.setReadStatus(readStatus: ranking.historyReadStatus)
             nameLabel.text = ranking.name
             certificationLabel.text = "달성률 \(ranking.achievementRate)%"
             
             Task { [weak self] in
                 guard let self, let url = URL(string: ranking.profileImageUrl) else { return }
                 let (data, _) = try await URLSession.shared.data(from: url)
-                profileImageView.image = UIImage(data: data)
+                profileImageView.setImage(image: UIImage(data: data))
             }
         }
     }
@@ -97,11 +97,11 @@ final class RankingTopView: BaseView {
             rankingView.snp.makeConstraints {
                 $0.top.equalToSuperview().offset(ranking.rank == 1 ? 20 : 40)
                 $0.width.equalTo(107)
-                $0.height.equalTo(150)
+                $0.height.equalTo(158)
             }
             
             rankingImageView.snp.makeConstraints {
-                $0.centerX.equalToSuperview()
+                $0.centerX.equalToSuperview()   // TODO: 살짝 오른쪽으로 치우쳐진 느낌이 드는데 추후 확인 필요
                 $0.centerY.equalTo(rankingView.snp.top)
                 $0.width.height.equalTo(36)
             }
@@ -109,7 +109,7 @@ final class RankingTopView: BaseView {
             profileImageView.snp.makeConstraints {
                 $0.centerX.equalToSuperview()
                 $0.top.equalToSuperview().offset(20)
-                $0.width.height.equalTo(52)
+                $0.width.height.equalTo(60)
             }
             
             nameLabel.snp.makeConstraints {
@@ -127,13 +127,13 @@ final class RankingTopView: BaseView {
             rankingView.snp.makeConstraints {
                 $0.top.equalToSuperview().offset(40)
                 $0.width.equalTo(107)
-                $0.height.equalTo(150)
+                $0.height.equalTo(158)
             }
             
             emptyProfileView.snp.makeConstraints {
                 $0.centerX.equalToSuperview()
                 $0.top.equalToSuperview().offset(20)
-                $0.width.height.equalTo(52)
+                $0.width.height.equalTo(60)
             }
             
             emptyNameLabel.snp.makeConstraints {

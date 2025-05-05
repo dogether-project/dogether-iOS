@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class RankingViewController: BaseViewController {
-    private let viewModel = RankingViewModel()
+    var viewModel = RankingViewModel()
     
     private let navigationHeader = NavigationHeader(title: "순위")
     

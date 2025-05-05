@@ -20,7 +20,7 @@ final class RankingView: BaseView {
         return label
     }()
     
-    private let profileImageView = UIImageView(image: .profile4)
+    private let profileImageView = RankingImageView(viewType: .tableView)
     
     private let nameLabel = {
         let label = UILabel()
@@ -59,7 +59,7 @@ final class RankingView: BaseView {
         profileImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(rankingLabel.snp.right).offset(20)
-            $0.width.height.equalTo(44)
+            $0.width.height.equalTo(50)
         }
         
         nameLabel.snp.makeConstraints {
@@ -84,14 +84,14 @@ final class RankingView: BaseView {
 extension RankingView {
     func setExtraInfo(ranking: RankingModel) {
         rankingLabel.text = String(ranking.rank)
-        profileImageView.image = .logo
+        profileImageView.setReadStatus(readStatus: ranking.historyReadStatus)
         nameLabel.text = ranking.name
         certificationLabel.text = "\(ranking.achievementRate)%"
         
         Task { [weak self] in
             guard let self, let url = URL(string: ranking.profileImageUrl) else { return }
             let (data, _) = try await URLSession.shared.data(from: url)
-            profileImageView.image = UIImage(data: data)
+            profileImageView.setImage(image: UIImage(data: data))
         }
     }
 }

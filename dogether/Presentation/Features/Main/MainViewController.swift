@@ -320,7 +320,9 @@ final class MainViewController: BaseViewController {
         rankingButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                coordinator?.pushViewController(RankingViewController())
+                let rankingViewController = RankingViewController()
+                rankingViewController.viewModel.groupId = 0 // FIXME: API 수정 후 반영
+                coordinator?.pushViewController(rankingViewController)
             }, for: .touchUpInside
         )
         
