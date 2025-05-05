@@ -39,8 +39,16 @@ final class GroupRepositoryTest: GroupProtocol {
         return GetGroupStatusResponse(status: "RUNNING")
     }
     
-    func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        let rankings = (1 ... 20).map { RankingModel(rank: $0, name: "testName \($0)", certificationRate: Double($0)) }
-        return GetTeamSummaryResponse(ranking: rankings)
+    func getRanking(groupId: String) async throws -> GetRankingResponse {
+        let rankings = (1 ... 20).map {
+            RankingResponse(
+                memberId: $0,
+                rank: $0,
+                profileImageUrl: "",
+                name: "testName \($0)",
+                historyReadStatus: "NULL",
+                achievementRate: $0)
+        }
+        return GetRankingResponse(ranking: rankings)
     }
 }

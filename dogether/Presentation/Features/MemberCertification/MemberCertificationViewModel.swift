@@ -10,6 +10,7 @@ import Foundation
 final class MemberCertificationViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     
+    var groupId: Int?
     var memberInfo: RankingModel?
     
     private(set) var todos: [MemberCertificationInfo] = []
@@ -31,7 +32,8 @@ extension MemberCertificationViewModel {
 
 extension MemberCertificationViewModel {
     func loadMemberCertificationView() async throws {
-        (currentIndex, todos) = try await challengeGroupsUseCase.getMemberTodos(groupId: 0, memberId: 0)  // FIXME: 추후 수정
+        guard let groupId, let memberInfo else { return }
+        (currentIndex, todos) = try await challengeGroupsUseCase.getMemberTodos(groupId: groupId, memberId: memberInfo.memberId)
         
     }
 }

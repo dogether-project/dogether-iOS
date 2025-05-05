@@ -160,7 +160,10 @@ extension RankingViewController {
     }
     
     private func goMemberCertificationView(rankingIndex: Int) {
+        if viewModel.rankings[rankingIndex].historyReadStatus == nil { return }
+        
         let memberCertificationViewController = MemberCertificationViewController()
+        memberCertificationViewController.viewModel.groupId = viewModel.groupId
         memberCertificationViewController.viewModel.memberInfo = viewModel.rankings[rankingIndex]
         coordinator?.pushViewController(memberCertificationViewController)
     }

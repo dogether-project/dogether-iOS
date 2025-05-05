@@ -1,5 +1,5 @@
 //
-//  RankingModel.swift
+//  GetRankingResponse.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/4/25.
@@ -7,16 +7,15 @@
 
 import Foundation
 
-enum HistoryReadStatus: String {
-    case readYet = "READYET"
-    case readAll = "READALL"
+struct GetRankingResponse: Decodable {
+    let ranking: [RankingResponse]
 }
 
-struct RankingModel {
+struct RankingResponse: Decodable {
     let memberId: Int
     let rank: Int
     let profileImageUrl: String
     let name: String
-    let historyReadStatus: HistoryReadStatus?
+    let historyReadStatus: String
     let achievementRate: Int
 }

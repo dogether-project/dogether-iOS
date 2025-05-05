@@ -10,6 +10,7 @@ import UIKit
 final class RankingViewModel {
     private let groupUseCase: GroupUseCase
     
+    private(set) var groupId: Int?   // FIXME: 메인 뷰에서 넘어올 때 지정해주도록 수정
     private(set) var rankings: [RankingModel] = []
     
     init() {
@@ -26,6 +27,7 @@ extension RankingViewModel {
 
 extension RankingViewModel {
     func getRankings() async throws {
-        rankings = try await groupUseCase.getRankings()
+        guard let groupId else { return }
+        rankings = try await groupUseCase.getRankings(groupId: groupId)
     }
 }
