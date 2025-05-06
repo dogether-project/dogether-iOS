@@ -7,93 +7,67 @@
 
 import UIKit
 
-final class CertificationListViewModel {
-    var certificationListViewStatus: CertificationListViewStatus = .hasData
-    
-    var certificationSummary: CertificationSummary = .init(certifiedCount: 5, rejectedCount: 7)
-    
-    // 인증 목록의 mock 데이터
-    private let certifications: [Certification] = [
-        Certification(id: UUID(),
-                      title: "1회차 검사",
-                      completionDate: Date(),
-                      status: .waitingForInspection,
-                      image: UIImage(named: "sample")!),
-        Certification(id: UUID(),
-                      title: "2회차 검사",
-                      completionDate: Date().addingTimeInterval(-86400),
-                      status: .approved,
-                      image: UIImage(named: "sample")!),
-        Certification(id: UUID(),
-                      title: "3회차 검사",
-                      completionDate: Date().addingTimeInterval(-172800),
-                      status: .rejected,
-                      image: UIImage(named: "sample")!),
-        Certification(id: UUID(),
-                      title: "4회차 검사",
-                      completionDate: Date().addingTimeInterval(-172800),
-                      status: .approved,
-                      image: UIImage(named: "sample")!),
-        Certification(id: UUID(),
-                      title: "5회차 검사",
-                      completionDate: Date().addingTimeInterval(-172800),
-                      status: .approved,
-                      image: UIImage(named: "sample")!),
-        Certification(id: UUID(),
-                      title: "6회차 검사",
-                      completionDate: Date().addingTimeInterval(-172800),
-                      status: .rejected,
-                      image: UIImage(named: "sample")!)
-    ]
-    
-    // 인증을 날짤별로 나눈 섹션 데이터
-    private(set) var certificationSections: [CertificationSection] = []
+protocol CertificationListViewModelDelegate: AnyObject {
+    func didFetchSucceed()
 }
 
-extension CertificationListViewModel {
-    // 필터 처리
-    func applyFilter(_ filter: FilterTypes) {
-        let filtered: [Certification]
-        switch filter {
-        case .all:
-            filtered = certifications.sorted { $0.completionDate > $1.completionDate }
-        case .wait :
-            filtered = certifications.filter { $0.status == .waitingForInspection }
-        case .approve:
-            filtered = certifications.filter { $0.status == .approved }
-        case .reject:
-            filtered = certifications.filter { $0.status == .rejected }
-        default:
-            filtered = certifications
+final class CertificationListViewModel {
+    
+    private let useCase: CertificationListUseCase
+    weak var delegate: CertificationListViewModelDelegate?
+    
+    private var rawSections: [CertificationSection] = []
+    var sections: [CertificationSection] = []
+    
+    var viewStatus: CertificationListViewStatus = .empty
+    
+    var totalCertificatedCount: Int = 0
+    var totalApprovedCount: Int = 0
+    var totalRejectedCount: Int = 0
+    
+    var currentFilter: FilterTypes = .all {
+        didSet {
+            applyFilter()
+        }
+    }
+    
+    init() {
+        let repository = DIManager.shared.getCertificationListRepository()
+        self.useCase = CertificationListUseCase(repository: repository)
+    }
+    
+    func executeSort(option: SortOption) {
+        Task {
+            do {
+                let result = try await useCase.fetchSortedList(option: option)
+                
+                self.rawSections = result.sections
+                
+                self.totalCertificatedCount = result.stats.totalCertificatedCount
+                self.totalApprovedCount = result.stats.totalApprovedCount
+                self.totalRejectedCount = result.stats.totalRejectedCount
+                self.viewStatus = .hasData
+                
+                self.applyFilter()
+            } catch {
+                print("❌ 데이터 로딩 실패: \(error)")
+                self.viewStatus = .empty
+            }
+        }
+    }
+    
+    private func applyFilter() {
+        sections = rawSections.compactMap { section in
+            let filtered = section.certifications.filter { cert in
+                guard let filterType = FilterTypes(status: cert.status) else { return false }
+                return currentFilter == .all || currentFilter == filterType
+            }
+            
+            return filtered.isEmpty ? nil : CertificationSection(type: section.type, certifications: filtered)
         }
         
-        generateSections(from: filtered)
+        DispatchQueue.main.async { [weak self] in
+            self?.delegate?.didFetchSucceed()
+        }
     }
-    
-    private func generateSections(from certifications: [Certification]) {
-        let grouped = Dictionary(grouping: certifications) { $0.completionDate.formattedDateString() }
-        let sortedKeys = grouped.keys.sorted(by: >)
-        certificationSections = sortedKeys.map { CertificationSection(dateString: $0, certifications: grouped[$0] ?? []) }
-    }
-}
-
-struct CertificationSummary {
-    let certifiedCount: Int // 인정
-    let rejectedCount: Int  // 노인정
-    var achievedCount: Int {
-        return certifiedCount + rejectedCount
-    }
-}
-
-extension CertificationListViewModel {
-//    func applySortOption(_ sortOption: String) {
-//        switch sortOption {
-//        case "그룹 생성일순":
-//            certifications.sort { $0.creationDate < $1.creationDate }
-//        case "투두 완료일순":
-//            certifications.sort { $0.dueDate < $1.dueDate }
-//        default:
-//            break
-//        }
-//    }
 }

@@ -12,12 +12,11 @@ class CustomSheetViewController: BaseViewController {
     // MARK: - Properties
     
     var onDismiss: (() -> Void)?
-    var selectedOption: String? // 선택된 옵션을 저장할 변수
-    var didSelectOption: ((String) -> Void)?
-    
+    var selectedOption: SortOption?
+    var didSelectOption: ((SortOption) -> Void)?
     
     private let titleText: String
-    private var filterOptions: [String]
+    private var filterOptions: [SortOption]
     private weak var overlayView: UIView?
     
     // UI Components
@@ -67,10 +66,10 @@ class CustomSheetViewController: BaseViewController {
     
     // MARK: - Initializer
     
-    init(titleText: String, filterOptions: [String]) {
+    init(titleText: String, filterOptions: [SortOption], selectedOption: SortOption) {
         self.titleText = titleText
         self.filterOptions = filterOptions
-        self.selectedOption = filterOptions.first
+        self.selectedOption = selectedOption
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -99,9 +98,7 @@ class CustomSheetViewController: BaseViewController {
     
     override func configureView() {
         view.backgroundColor = .clear
-        
         titleLabel.text = titleText
-        
         tableView.register(CustomSheetCell.self, forCellReuseIdentifier: "CustomSheetCell")
         tableView.dataSource = self
         tableView.delegate = self
@@ -228,7 +225,7 @@ extension CustomSheetViewController: UITableViewDataSource, UITableViewDelegate 
         let cell = tableView.dequeueReusableCell(withIdentifier: "CustomSheetCell", for: indexPath) as! CustomSheetCell
         let option = filterOptions[indexPath.row]
         let isSelected = option == selectedOption
-        cell.configure(option: option, isSelected: isSelected)
+        cell.configure(option: option.rawValue, isSelected: isSelected)
         return cell
     }
     

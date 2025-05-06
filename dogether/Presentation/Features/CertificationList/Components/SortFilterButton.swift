@@ -7,13 +7,23 @@
 
 import UIKit
 
+enum SortOption: String, CaseIterable {
+    case todoCompletionDate = "투두 완료일순"
+    case groupCreationDate = "그룹 생성일순"
+
+    var displayName: String {
+        return self.rawValue
+    }
+}
+
 /// SortFilterButton은 필터 옵션을 선택하는 버튼을 나타냅니다.
 final class SortFilterButton: BaseButton {
     
-    var sortSelected: ((String) -> Void)?
+    var sortSelected: ((SortOption) -> Void)?
     
-    // 필터 옵션 목록
-    let filterOptions = ["투두 완료일순", "그룹 생성일순", "1그룹", "2그룹", "3그룹"]
+    private var selectedOption: SortOption = .todoCompletionDate
+    
+    let filterOptions: [SortOption] = [.todoCompletionDate, .groupCreationDate]
     
     let sortTitleLabel: UILabel = {
         let label = UILabel()
@@ -35,7 +45,10 @@ final class SortFilterButton: BaseButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        sortTitleLabel.text = filterOptions.first
+        if let firstOption = filterOptions.first {
+            selectedOption = firstOption
+            sortTitleLabel.text = firstOption.displayName
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -108,17 +121,18 @@ extension SortFilterButton {
     func presentCustomSheet() {
         guard let parentVC = findViewController() else { return }
 
-        let sheetVC = CustomSheetViewController(titleText: "정렬", filterOptions: filterOptions)
+        let sheetVC = CustomSheetViewController(titleText: "정렬", filterOptions: filterOptions, selectedOption: selectedOption)
         sheetVC.modalPresentationStyle = .overCurrentContext
         sheetVC.modalTransitionStyle = .coverVertical
-
-        sheetVC.selectedOption = sortTitleLabel.text
+        
         sheetVC.didSelectOption = { [weak self] selectedOption in
-            self?.sortTitleLabel.text = selectedOption
+            //self?.sortTitleLabel.text = selectedOption
+            self?.selectedOption = selectedOption
+            self?.sortTitleLabel.text = selectedOption.displayName
             self?.setIsSelectedFilter(true)
             self?.sortSelected?(selectedOption) // 정렬 옵션을 filterView에 전달
         }
-
+        
         parentVC.present(sheetVC, animated: true)
     }
     

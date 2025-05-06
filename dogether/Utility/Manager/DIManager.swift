@@ -65,4 +65,13 @@ extension DIManager {
             return TodoCertificationsRepository()
         }
     }
+    
+    func getCertificationListRepository(buildMode: BuildModes? = nil) -> CertificationListProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return CertificationListRepositoryTest()
+        case .live:
+            return CertificationListRepository()
+        }
+    }
 }

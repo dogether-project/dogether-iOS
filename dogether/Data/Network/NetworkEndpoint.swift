@@ -34,6 +34,7 @@ enum Path {
     
     static let summary = "/summary"
     static let tokens = "/tokens"
+    static let myActivity = "/my/activity"
 }
 
 enum Header {

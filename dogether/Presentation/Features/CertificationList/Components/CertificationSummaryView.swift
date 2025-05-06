@@ -8,20 +8,18 @@
 import UIKit
 
 final class CertificationSummaryView: BaseView {
-    private let viewModel: CertificationListViewModel
+//    private let viewModel: CertificationListViewModel
     private let stackView = UIStackView()
-    private lazy var achievedView = SummaryStatView(icon: UIImage(named: "certification")!,
-                                                    title: "달성",
-                                                    count: viewModel.certificationSummary.achievedCount)
-    private lazy var certifiedView = SummaryStatView(icon: UIImage(named: "approve")!,
-                                                     title: "인정",
-                                                     count: viewModel.certificationSummary.certifiedCount)
-    private lazy var notCertifiedView = SummaryStatView(icon: UIImage(named: "reject")!,
-                                                        title: "노인정",
-                                                        count: viewModel.certificationSummary.rejectedCount)
+    private let achievedView = SummaryStatView(icon: UIImage(named: "certification")!,
+                                               title: "달성")
+    private let certifiedView = SummaryStatView(icon: UIImage(named: "approve")!,
+                                                title: "인정")
+    private let notCertifiedView = SummaryStatView(icon: UIImage(named: "reject")!,
+                                                   title: "노인정")
     
-    init(viewModel: CertificationListViewModel) {
-        self.viewModel = viewModel
+//    init(viewModel: CertificationListViewModel) {
+    init() {
+//        self.viewModel = viewModel
         super.init(frame: .zero)
     }
     
@@ -45,5 +43,15 @@ final class CertificationSummaryView: BaseView {
         stackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+}
+
+extension CertificationSummaryView {
+    func configure(totalCertificatedCount: Int,
+                   totalApprovedCount: Int,
+                   totalRejectedCount: Int) {
+        achievedView.countLabel.text = "\(totalCertificatedCount)개"
+        certifiedView.countLabel.text = "\(totalApprovedCount)개"
+        notCertifiedView.countLabel.text = "\(totalRejectedCount)개"
     }
 }

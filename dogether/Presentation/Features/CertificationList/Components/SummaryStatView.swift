@@ -10,7 +10,7 @@ import UIKit
 final class SummaryStatView: BaseView {
     private let icon: UIImage
     private let title: String
-    private let count: Int
+//    private let count: Int
     
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView(image: icon)
@@ -28,19 +28,20 @@ final class SummaryStatView: BaseView {
         return label
     }()
     
-    private lazy var countLabel: UILabel = {
+    lazy var countLabel: UILabel = {
         let label = UILabel()
         label.font = Fonts.head2B
         label.textColor = .grey0
         label.textAlignment = .center
-        label.text = "\(count)개"
+//        label.text = "\(count)개"
         return label
     }()
     
-    init(icon: UIImage, title: String, count: Int) {
+//    init(icon: UIImage, title: String, count: Int) {
+    init(icon: UIImage, title: String) {
         self.icon = icon
         self.title = title
-        self.count = count
+//        self.count = count
         super.init(frame: .zero)
     }
     

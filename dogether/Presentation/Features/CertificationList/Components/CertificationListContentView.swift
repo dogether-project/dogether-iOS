@@ -7,7 +7,14 @@
 
 import UIKit
 
+protocol CertificationListContentViewDelegate: AnyObject {
+    func didTapFilter(selectedFilter: FilterTypes)
+    func didTapSort(option: SortOption)
+    func didTapCertificationFilterView()
+}
+
 final class CertificationListContentView: BaseView {
+    weak var delegate: CertificationListContentViewDelegate?
     private let viewModel: CertificationListViewModel
     
     private let headerLabel: UILabel = {
@@ -18,7 +25,7 @@ final class CertificationListContentView: BaseView {
         return label
     }()
     
-    private lazy var summaryView = CertificationSummaryView(viewModel: viewModel)
+    private lazy var summaryView = CertificationSummaryView()
     
     private let filterView = CertificationFilterView()
     
@@ -36,6 +43,13 @@ final class CertificationListContentView: BaseView {
     init(viewModel: CertificationListViewModel) {
         self.viewModel = viewModel
         super.init(frame: .zero)
+        
+        self.summaryView.configure(totalCertificatedCount: viewModel.totalApprovedCount,
+                                   totalApprovedCount: viewModel.totalApprovedCount,
+                                   totalRejectedCount: viewModel.totalRejectedCount)
+        
+//        filterView.delegate = self
+        
     }
     
     required init?(coder: NSCoder) { fatalError() }
@@ -55,14 +69,14 @@ final class CertificationListContentView: BaseView {
     
     override func configureAction() {
         filterView.filterSelected = { [weak self] filter in
-            self?.viewModel.applyFilter(filter)
-            self?.collectionView.reloadData()
+//            self?.viewModel.currentFilter = filter
+//            self?.delegate?.didTapFilter()
+            self?.delegate?.didTapFilter(selectedFilter: filter)
+            //self?.collectionView.reloadData()
         }
         
         filterView.sortSelected = { [weak self] selectedOption in
-            print(selectedOption)
-//            self?.viewModel.applySortOption(selectedOption)
-            self?.collectionView.reloadData()
+            self?.delegate?.didTapSort(option: selectedOption)
         }
     }
     
@@ -95,9 +109,18 @@ final class CertificationListContentView: BaseView {
     }
 }
 
+// MARK: - 데이터 변경이 있으니 collectionview reload
+extension CertificationListContentView {
+    func reloadData() {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
+}
+
 extension CertificationListContentView {
     func setupHeaderLabelText() {
-        let count = viewModel.certificationSummary.achievedCount
+        let count = viewModel.totalCertificatedCount
         let fullText = "대단해요!\n총 \(count)개의 투두를 달성했어요"
         let attributedString = NSMutableAttributedString(string: fullText)
         let targetText = "\(count)개"
@@ -113,21 +136,21 @@ extension CertificationListContentView {
 
 extension CertificationListContentView: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel.certificationSections.count
+        return viewModel.sections.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.certificationSections[section].certifications.count
+        return viewModel.sections[section].certifications.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CertificationCell.reuseIdentifier, for: indexPath) as! CertificationCell
-        let certification = viewModel.certificationSections[indexPath.section].certifications[indexPath.item]
+        let certification = viewModel.sections[indexPath.section].certifications[indexPath.item]
         cell.configure(with: certification)
         return cell
     }
-    
 }
+   
 
 extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
@@ -138,7 +161,19 @@ extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
             ofKind: kind,
             withReuseIdentifier: CertificationSectionHeader.reuseIdentifier,
             for: indexPath) as! CertificationSectionHeader
-        let title = viewModel.certificationSections[indexPath.section].dateString
+        
+        let section = viewModel.sections[indexPath.section]
+        let title: String
+        
+        dump(section.type)
+        
+        switch section.type {
+        case .daily(let dateString):
+            title = dateString
+        case .group(let groupName):
+            title = groupName
+        }
+        
         header.configure(title: title)
         return header
     }
@@ -148,9 +183,10 @@ extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 40)
     }
-    
 }
 
-extension CertificationListContentView: UICollectionViewDelegate {
-    
-}
+//extension CertificationListContentView: CertificationFilterViewDelegate {
+//    func didTapAaction() {
+//        delegate?.didTapCertificationFilterView()
+//    }
+//}
