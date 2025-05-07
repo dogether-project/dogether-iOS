@@ -9,7 +9,6 @@ import UIKit
 
 final class StatsContentView: BaseView {
     private let viewModel: StatsViewModel
-    //    private let groupInfoView = GroupInfoView()
     private let groupInfoView = StatsGroupInfoView()
     private let dailyAchievementBarView = DailyAchievementBarView()
     private let myRankView = MyRankView()
@@ -65,9 +64,7 @@ final class StatsContentView: BaseView {
         groupInfoView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(22)
                         $0.horizontalEdges.equalToSuperview().inset(16)
-//            $0.leading.equalToSuperview().inset(16)
-//            $0.trailing.equalToSuperview().inset(133)
-            $0.height.equalTo(94) // 36 21 25 12
+            $0.height.equalTo(94)
         }
         
         mascotImageView.snp.makeConstraints {

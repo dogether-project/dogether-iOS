@@ -47,9 +47,6 @@ final class CertificationListContentView: BaseView {
         self.summaryView.configure(totalCertificatedCount: viewModel.totalApprovedCount,
                                    totalApprovedCount: viewModel.totalApprovedCount,
                                    totalRejectedCount: viewModel.totalRejectedCount)
-        
-//        filterView.delegate = self
-        
     }
     
     required init?(coder: NSCoder) { fatalError() }
@@ -69,10 +66,7 @@ final class CertificationListContentView: BaseView {
     
     override func configureAction() {
         filterView.filterSelected = { [weak self] filter in
-//            self?.viewModel.currentFilter = filter
-//            self?.delegate?.didTapFilter()
             self?.delegate?.didTapFilter(selectedFilter: filter)
-            //self?.collectionView.reloadData()
         }
         
         filterView.sortSelected = { [weak self] selectedOption in
@@ -184,9 +178,3 @@ extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.bounds.width, height: 40)
     }
 }
-
-//extension CertificationListContentView: CertificationFilterViewDelegate {
-//    func didTapAaction() {
-//        delegate?.didTapCertificationFilterView()
-//    }
-//}

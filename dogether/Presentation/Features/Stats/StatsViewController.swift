@@ -15,16 +15,12 @@ final class StatsViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.loadMockDataFromFile()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        displayViewForCurrentStatus()
+        viewModel.fetchStats(groupId: 1)
     }
 
     override func configureAction() {
         navigationHeader.delegate = self
+        viewModel.delegate = self
         
         statsEmptyView.createButtonTapHandler = { [weak self] in
             guard let self else { return }
@@ -62,6 +58,14 @@ extension StatsViewController {
                 $0.left.right.bottom.equalToSuperview()
             }
             statsContentView?.isHidden = false
+        }
+    }
+}
+
+extension StatsViewController: StatsViewModelDelegate {
+    func didFetchStatsSucceed() {
+        DispatchQueue.main.async {
+            self.displayViewForCurrentStatus()
         }
     }
 }

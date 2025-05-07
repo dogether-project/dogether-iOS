@@ -74,4 +74,13 @@ extension DIManager {
             return CertificationListRepository()
         }
     }
+    
+    func getStatsRepository(buildMode: BuildModes? = nil) -> StatsProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return StatsRepositoryTest()
+        case .live:
+            return StatsRepository()
+        }
+    }
 }
