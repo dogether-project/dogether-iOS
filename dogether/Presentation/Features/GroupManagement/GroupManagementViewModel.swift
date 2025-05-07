@@ -7,18 +7,33 @@
 
 import Foundation
 
-final class GroupManagementViewModel {
-    var groups: [GroupInfo] = [
-        GroupInfo(name: "test1"),
-        GroupInfo(name: "test2"),
-        GroupInfo(name: "test3"),
-    ]
+final class GroupManagementViewModel {    
+    private(set) var groups: [ChallengeGroup] = []
     
+    private let groupUseCase: GroupUseCase
     private let authUseCase: AuthUseCase
     
     init() {
+        let groupRepository = DIManager.shared.getGroupRepository()
         let authRepository = DIManager.shared.getAuthRepository()
+        self.groupUseCase = GroupUseCase(repository: groupRepository)
         self.authUseCase = AuthUseCase(repository: authRepository)
+    }
+}
+
+extension GroupManagementViewModel {
+    func fetchMyGroup(completion: @escaping () -> Void) {
+        Task {
+            do {
+                let response = try await groupUseCase.getMyGroup()
+                self.groups = response.data.joiningChallengeGroups
+                DispatchQueue.main.async {
+                    completion()  // 데이터 갱신 후 테이블 뷰 리로드
+                }
+            } catch {
+                print("에러 발생: \(error)")
+            }
+        }
     }
 }
 

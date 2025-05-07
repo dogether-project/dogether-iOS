@@ -13,7 +13,7 @@ enum StatsRouter: NetworkEndpoint {
     var path: String {
         switch self {
         case .fetchGroupStats(let groupId):
-            return Path.api + Path.groups + "/\(groupId)/activity"
+            return Path.api + "/my" + Path.groups + "/\(groupId)/activity"
         }
     }
     

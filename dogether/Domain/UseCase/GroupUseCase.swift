@@ -53,4 +53,9 @@ final class GroupUseCase {
         let response = try await repository.getTeamSummary()
         return response.ranking
     }
+    
+    func getMyGroup() async throws -> GetMyGroupResponse {
+        let response = try await repository.getMyGroup()
+        return response
+    }
 }

@@ -22,7 +22,7 @@ enum AlertTypes {
     var title: String {
         switch self {
         case .leaveGroup:
-            return "현재 그룹을 탈퇴하시겠어요?"
+            return "선택한 그룹을 탈퇴하시겠어요?"
         case .logout:
             return "로그아웃 하시겠어요?"
         case .withdraw:

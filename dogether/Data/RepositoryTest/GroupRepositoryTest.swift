@@ -43,4 +43,12 @@ final class GroupRepositoryTest: GroupProtocol {
         let rankings = (1 ... 20).map { RankingModel(rank: $0, name: "testName \($0)", certificationRate: Double($0)) }
         return GetTeamSummaryResponse(ranking: rankings)
     }
+    
+    func getMyGroup() async throws -> GetMyGroupResponse {
+        guard let url = Bundle.main.url(forResource: "GroupMock", withExtension: "json") else {
+                   throw URLError(.fileDoesNotExist)
+               }
+               let data = try Data(contentsOf: url)
+               return try JSONDecoder().decode(GetMyGroupResponse.self, from: data)
+    }
 }

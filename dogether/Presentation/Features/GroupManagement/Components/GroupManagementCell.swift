@@ -34,7 +34,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
 
     private let memberValueLabel: UILabel = {
         let label = UILabel()
-        label.text = "6/10" // 없애기
+        label.text = "" // 없애기
         label.font = Fonts.smallR
         label.textColor = .grey100
         return label
@@ -50,7 +50,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
 
     private let dateValueLabel: UILabel = {
         let label = UILabel()
-        label.text = "25.02.22" // 없애기
+        label.text = "" // 없애기
         label.font = Fonts.smallR
         label.textColor = .grey100
         return label
@@ -66,7 +66,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
 
     private let codeValueLabel: UILabel = {
         let label = UILabel()
-        label.text = "12345678" // 없애기
+        label.text = "" // 없애기
         label.font = Fonts.smallR
         label.textColor = .grey100
         return label
@@ -103,6 +103,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
             UIAction { [weak self] _ in
                 guard let self else { return }
                 onLeaveButtonTapped?()
+                print("탈퇴하기 버튼 Tapped")
             },
             for: .touchUpInside
         )
@@ -173,10 +174,10 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
 }
 
 extension GroupManagementCell {
-    func configure(with group: GroupInfo) {
-        titleLabel.text = group.name
-//        memberValueLabel.text = "\(group.memberCount)/\(group.maxMemberCount)"
-//        dateValueLabel.text = group.endDate
-//        codeValueLabel.text = group.inviteCode
+    func configure(with group: ChallengeGroup) {
+        titleLabel.text = group.groupName
+        memberValueLabel.text = "\(group.currentMemberCount)/\(group.maximumMemberCount)"
+        dateValueLabel.text = group.endAt
+        codeValueLabel.text = group.joinCode
     }
 }

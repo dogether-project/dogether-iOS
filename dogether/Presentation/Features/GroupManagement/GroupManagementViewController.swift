@@ -22,10 +22,15 @@ final class GroupManagementViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+
     
     override func configureView() {
         groupTableView.delegate = self
         groupTableView.dataSource = self
+        
+        viewModel.fetchMyGroup { [weak self] in
+            self?.groupTableView.reloadData()
+        }
     }
     
     override func configureAction() {
@@ -62,8 +67,14 @@ extension GroupManagementViewController: UITableViewDataSource, UITableViewDeleg
         let group = viewModel.groups[indexPath.row]
         cell.configure(with: group)
         cell.onLeaveButtonTapped = { [weak self] in
-            Task {
-                try? await self?.viewModel.leaveGroup()
+            guard let self else { return }
+            coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { _ in
+                Task {
+                    try await self.viewModel.leaveGroup()
+                    await MainActor.run {
+                        self.coordinator?.setNavigationController(StartViewController())
+                    }
+                }
             }
         }
         return cell
