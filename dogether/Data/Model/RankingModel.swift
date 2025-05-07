@@ -8,8 +8,8 @@
 import UIKit
 
 enum HistoryReadStatus: String {
-    case readYet = "READYET"
-    case readAll = "READALL"
+    case readYet = "READ_YET"
+    case readAll = "READ_ALL"
     
     var colors: [CGColor] {
         switch self {

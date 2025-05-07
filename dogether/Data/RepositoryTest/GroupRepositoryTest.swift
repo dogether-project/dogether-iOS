@@ -46,7 +46,7 @@ final class GroupRepositoryTest: GroupProtocol {
                 rank: $0,
                 profileImageUrl: "",
                 name: "testName \($0)",
-                historyReadStatus: $0 % 3 == 0 ? "NULL" : $0 % 3 == 1 ? "READYET" : "READALL",
+                historyReadStatus: $0 % 3 == 0 ? "NULL" : $0 % 3 == 1 ? "READ_YET" : "READ_ALL",
                 achievementRate: $0)
         }
         return GetRankingResponse(ranking: rankings)
