@@ -12,8 +12,6 @@ protocol GroupProtocol {
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse
     
     func getGroups() async throws -> GetGroupsResponse
-    func getGroupInfo() async throws -> GetGroupInfoResponse
-    func getGroupStatus() async throws -> GetGroupStatusResponse
     func getMyGroup() async throws -> GetMyGroupResponse
     func getRanking(groupId: String) async throws -> GetRankingResponse
 }

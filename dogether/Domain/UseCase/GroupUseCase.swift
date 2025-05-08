@@ -48,23 +48,6 @@ final class GroupUseCase {
         }
     }
     
-    func getGroupInfo() async throws -> GroupInfo {
-        let response = try await repository.getGroupInfo()
-        return GroupInfo(
-            name: response.name,
-            duration: response.duration,
-            joinCode: response.joinCode,
-            maximumTodoCount: response.maximumTodoCount,
-            endAt: response.endAt,
-            remainingDays: response.remainingDays
-        )
-    }
-    
-    func getGroupStatus() async throws -> String {
-        let response = try await repository.getGroupStatus()
-        return response.status
-    }
-    
     func getRankings(groupId: Int) async throws -> [RankingModel] {
         let response = try await repository.getRanking(groupId: String(groupId))
         return response.ranking.map {

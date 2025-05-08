@@ -117,7 +117,7 @@ extension MainViewModel {
     private func updateListInfo(updateList: @escaping () -> Void) {
         Task {
             let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-            todoList = try await todoUseCase.getMyTodos(date: date, status: status)
+            todoList = try await challengeGroupsUseCase.getMyTodos(date: date, status: status)
             isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
             await MainActor.run { updateList() }
         }
@@ -132,7 +132,7 @@ extension MainViewModel {
     
     func updateListInfo() async throws {
         let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-        todoList = try await todoUseCase.getMyTodos(date: date, status: status)
+        todoList = try await challengeGroupsUseCase.getMyTodos(date: date, status: status)
         isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }
 }

@@ -35,22 +35,6 @@ final class GroupRepositoryTest: GroupProtocol {
         ])
     }
     
-    func getGroupInfo() async throws -> GetGroupInfoResponse {
-        return GetGroupInfoResponse(
-            name: "일이삼사오육칠팔구십",
-            duration: 3,
-            joinCode: "000000",
-            maximumTodoCount: 10,
-            endAt: "25.01.01",
-            remainingDays: 2
-        )
-    }
-    
-    func getGroupStatus() async throws -> GetGroupStatusResponse {
-//        return GetGroupStatusResponse(status: "READY")
-        return GetGroupStatusResponse(status: "RUNNING")
-    }
-    
     func getRanking(groupId: String) async throws -> GetRankingResponse {
         let rankings = (1 ... 20).map {
             RankingResponse(
