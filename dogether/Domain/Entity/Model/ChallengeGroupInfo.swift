@@ -14,6 +14,7 @@ struct ChallengeGroupInfo {
     let maximumMember: Int
     let joinCode: String
     let status: MainViewStatus
+    let startDate: String
     let endDate: String
     let duration: Int
     let progress: Float
@@ -24,7 +25,8 @@ struct ChallengeGroupInfo {
         currentMember: Int = 0,
         maximumMember: Int = 0,
         joinCode: String = "00000000",
-        status: String = "READY",
+        status: MainViewStatus = .running,
+        startDate: String = "00.00.00",
         endDate: String = "00.00.00",
         duration: Int = 0,
         progress: Float = 0
@@ -34,7 +36,8 @@ struct ChallengeGroupInfo {
         self.currentMember = currentMember
         self.maximumMember = maximumMember
         self.joinCode = joinCode
-        self.status = status == "READY" ? .beforeStart : .emptyList // FIXME: 추후 수정
+        self.status = status
+        self.startDate = startDate
         self.endDate = endDate
         self.duration = duration
         self.progress = progress

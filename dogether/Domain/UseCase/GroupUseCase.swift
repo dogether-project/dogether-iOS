@@ -19,16 +19,14 @@ final class GroupUseCase {
         return response.joinCode
     }
     
-    func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> GroupInfo {
+    func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> ChallengeGroupInfo {
         let response = try await repository.joinGroup(joinGroupRequest: joinGroupRequest)
         // FIXME: API 수정 후 내용 반영
-        return GroupInfo(
+        return ChallengeGroupInfo(
             name: response.name,
-            duration: response.durationOption,
             joinCode: joinGroupRequest.joinCode,
-            maximumTodoCount: 10,
-            endAt: response.endAt,
-            remainingDays: 0
+            endDate: response.endAt,
+            duration: response.durationOption
         )
     }
     
@@ -41,7 +39,8 @@ final class GroupUseCase {
                 currentMember: $0.currentMemberCount,
                 maximumMember: $0.maximumMemberCount,
                 joinCode: $0.joinCode,
-                status: $0.status,
+                status: MainViewStatus(rawValue: $0.status) ?? .running,
+                startDate: $0.startAt,
                 endDate: $0.endAt,
                 duration: $0.progressDay,
                 progress: $0.progressRate

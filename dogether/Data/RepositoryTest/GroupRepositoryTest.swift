@@ -8,11 +8,6 @@
 import Foundation
 
 final class GroupRepositoryTest: GroupProtocol {
-    func getIsJoining() async throws -> GetIsJoiningResponse {
-//        return GetIsJoiningResponse(isJoining: false)
-        return GetIsJoiningResponse(isJoining: true)
-    }
-    
     func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
         return CreateGroupResponse(joinCode: "000000")
     }
@@ -32,6 +27,7 @@ final class GroupRepositoryTest: GroupProtocol {
                 maximumMemberCount: 10,
                 joinCode: "G3hIj4kLm",
                 status: "RUNNING",
+                startAt: "25.05.01",
                 endAt: "25.05.04",
                 progressDay: 5,
                 progressRate: 0.3

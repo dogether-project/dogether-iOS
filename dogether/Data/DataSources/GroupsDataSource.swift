@@ -12,10 +12,6 @@ final class GroupsDataSource {
     
     private init() { }
     
-    func getIsJoining() async throws -> GetIsJoiningResponse {
-        try await NetworkManager.shared.request(GroupsRouter.getIsJoining)
-    }
-    
     func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
         try await NetworkManager.shared.request(
             GroupsRouter.createGroup(createGroupRequest: createGroupRequest)

@@ -11,11 +11,7 @@ import SnapKit
 final class CompleteViewController: BaseViewController {
     var viewModel = CompleteViewModel()
     
-    private let firecrackerImageView = {
-        let imageView = UIImageView()
-        imageView.image = .firecracker
-        return imageView
-    }()
+    private let firecrackerImageView = UIImageView(image: .firecracker)
     
     private let titleLabel = {
         let label = UILabel()
@@ -100,7 +96,7 @@ final class CompleteViewController: BaseViewController {
                 memberCount: 10,
                 duration: GroupChallengeDurations(rawValue: viewModel.groupInfo.duration) ?? .threeDays,
                 startAtString: "2025-01-01",
-                endAtString: viewModel.groupInfo.endAt
+                endAtString: viewModel.groupInfo.endDate
             )
         case .create:
             joinCodeShareButton = joinCodeShareButton(joinCode: viewModel.joinCode)

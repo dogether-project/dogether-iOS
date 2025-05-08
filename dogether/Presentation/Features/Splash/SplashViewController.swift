@@ -38,7 +38,7 @@ final class SplashViewController: BaseViewController {
         
         Task {
             try await viewModel.launchApp()
-            guard let destination = viewModel.destination else { return }
+            let destination = try await viewModel.getDestination()
             await MainActor.run {
                 coordinator?.setNavigationController(destination)
             }

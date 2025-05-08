@@ -298,7 +298,7 @@ final class MainViewController: BaseViewController {
             try await viewModel.loadMainView()
             await MainActor.run { self.updateView() }
             
-            if viewModel.mainViewStatus == .beforeStart {
+            if viewModel.currentGroup.status == .ready {
                 viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
             } else {
                 try await viewModel.updateListInfo()
@@ -515,9 +515,9 @@ extension MainViewController {
         
         sheetHeaderView.setDate(date: DateFormatterManager.formattedDate(viewModel.dateOffset))
         
-        beforeStartView.isHidden = viewModel.mainViewStatus != .beforeStart
-        emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
-        todoListView.isHidden = viewModel.mainViewStatus != .todoList
+        beforeStartView.isHidden = !(viewModel.currentGroup.status == .ready)
+        emptyListView.isHidden = !(viewModel.currentGroup.status == .running && viewModel.todoList.isEmpty)
+        todoListView.isHidden = !(viewModel.currentGroup.status == .running && viewModel.todoList.count > 0)
     }
     
     private func updateTimer() {
@@ -527,15 +527,15 @@ extension MainViewController {
     
     func updateList() {
         // TODO: 추후 MainViewStatus와 GroupStatus를 통합할 때 개선 필요
-        emptyListView.isHidden = viewModel.mainViewStatus != .emptyList
-        todoListView.isHidden = viewModel.mainViewStatus != .todoList
+        emptyListView.isHidden = !(viewModel.currentGroup.status == .running && viewModel.todoList.isEmpty)
+        todoListView.isHidden = !(viewModel.currentGroup.status == .running && viewModel.todoList.count > 0)
         
         allButton.setIsColorful(viewModel.currentFilter == .all)
         waitButton.setIsColorful(viewModel.currentFilter == .wait)
         rejectButton.setIsColorful(viewModel.currentFilter == .reject)
         approveButton.setIsColorful(viewModel.currentFilter == .approve)
         
-        filterStackView.isHidden = viewModel.mainViewStatus != .todoList
+        filterStackView.isHidden = todoListView.isHidden
         
         todoListStackView.isHidden = viewModel.todoList.isEmpty
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
@@ -554,7 +554,8 @@ extension MainViewController {
             }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
-        emptyDescriptionView.isHidden = !(viewModel.mainViewStatus == .todoList && viewModel.todoList.isEmpty)
+        // TODO: todoListView가 hidden인데 todoList가 비어있을 때 보여줘야 하는데 해당 조건이 가능한지 확인 필요
+        emptyDescriptionView.isHidden = !(!todoListView.isHidden && viewModel.todoList.isEmpty)
         emptyDescriptionView.setType(viewModel.currentFilter)
     }
     

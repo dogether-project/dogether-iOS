@@ -18,6 +18,7 @@ struct JoiningChallengeGroups: Decodable {
     let maximumMemberCount: Int
     let joinCode: String
     let status: String
+    let startAt: String
     let endAt: String
     let progressDay: Int
     let progressRate: Float
