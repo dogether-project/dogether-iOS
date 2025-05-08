@@ -10,7 +10,7 @@ import Foundation
 enum ChallengeGroupsRouter: NetworkEndpoint {
     case createTodos(createTodosRequest: CreateTodosRequest)
     case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
-    case getMyTodos(date: String, status: TodoStatus?)
+    case getMyTodos(groupId: String, date: String, status: String?)
     case getMyYesterdayTodos
     case getMemberTodos(groupId: String, memberId: String)
     
@@ -20,8 +20,8 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
             return Path.api + Path.challengeGroups
         case .certifyTodo(let todoId, _):
             return Path.api + Path.challengeGroups + "/\(todoId)/certify"
-        case .getMyTodos:
-            return Path.api + Path.challengeGroups + "/my"
+        case .getMyTodos(let groupId, _, _):
+            return Path.api + Path.challengeGroups + "/\(groupId)/my-todos"
         case .getMyYesterdayTodos:
             return Path.api + Path.challengeGroups + "/my/yesterday"
         case .getMemberTodos(let groupId, let memberId):
@@ -40,9 +40,9 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
     
     var parameters: [URLQueryItem]? {
         switch self {
-        case .getMyTodos(let date, let status):
+        case .getMyTodos(_, let date, let status):
             var parameters: [URLQueryItem] = [.init(name: "date", value: date)]
-            if let status { parameters.append(.init(name: "status", value: status.rawValue)) }
+            if let status { parameters.append(.init(name: "status", value: status)) }
             return parameters
         default:
             return nil

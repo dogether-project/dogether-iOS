@@ -9,6 +9,6 @@ import Foundation
 
 protocol ChallengeGroupsProtocol {
     func createTodos(createTodosRequest: CreateTodosRequest) async throws
-    func getMyTodos(date: String, status: TodoStatus?) async throws -> GetMyTodosResponse
+    func getMyTodos(groupId: String, date: String, status: String?) async throws -> GetMyTodosResponse
     func getMemberTodos(groupId: String, memberId: String) async throws -> GetMemberTodosResponse
 }

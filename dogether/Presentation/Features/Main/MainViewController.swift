@@ -74,9 +74,9 @@ final class MainViewController: BaseViewController {
     
     private let sheetHeaderView = SheetHeaderView()
     
-    private let beforeStartView = UIView()
-    private let emptyListView = UIView()
-    private let todoListView = UIView()
+    private let readyView = UIView()
+    private let runningView = UIView()
+    private let dDayView = UIView()
     
     private let timerView = {
         let view = UIView()
@@ -155,6 +155,8 @@ final class MainViewController: BaseViewController {
         return stackView
     }()
     
+    private let emptyListView = UIView()
+    
     private let todoView = {
         let imageView = UIImageView(image: .todo)
         imageView.contentMode = .scaleAspectFit
@@ -198,6 +200,8 @@ final class MainViewController: BaseViewController {
     }()
     
     private let todoButton = DogetherButton(title: "투두 작성하기", status: .enabled)
+    
+    private let todoListView = UIView()
     
     private let allButton = FilterButton(type: .all)
     private let waitButton = FilterButton(type: .wait)
@@ -272,6 +276,41 @@ final class MainViewController: BaseViewController {
     }
     private var emptyDescriptionView = EmptyDescriptionView()
     
+    private let dDayStackView = {
+        let imageView = UIImageView(image: .embarrassedDosik)
+        imageView.contentMode = .scaleAspectFit
+        
+        let titleLabel = UILabel()
+        titleLabel.text = "그룹 활동 기간이 모두 끝났어요 !"
+        titleLabel.textColor = .grey0
+        titleLabel.font = Fonts.head2B
+        
+        let descriptionLabel = UILabel()
+        descriptionLabel.text = "오늘이 지나면 이 페이지는 더 이상 열 수 없어요"
+        descriptionLabel.textColor = .grey300
+        descriptionLabel.font = Fonts.body2R
+        
+        let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel, descriptionLabel])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.setCustomSpacing(16, after: imageView)
+        stackView.setCustomSpacing(4, after: titleLabel)
+        
+        imageView.snp.makeConstraints {
+            $0.width.equalTo(221)
+        }
+        
+        titleLabel.snp.makeConstraints {
+            $0.height.equalTo(28)
+        }
+        
+        descriptionLabel.snp.makeConstraints {
+            $0.height.equalTo(21)
+        }
+        
+        return stackView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -321,7 +360,7 @@ final class MainViewController: BaseViewController {
             UIAction { [weak self] _ in
                 guard let self else { return }
                 let rankingViewController = RankingViewController()
-                rankingViewController.viewModel.groupId = 0 // FIXME: API 수정 후 반영
+                rankingViewController.viewModel.groupId = viewModel.currentGroup.id
                 coordinator?.pushViewController(rankingViewController)
             }, for: .touchUpInside
         )
@@ -337,7 +376,6 @@ final class MainViewController: BaseViewController {
                     let newOffset = viewModel.dateOffset + button.tag
                     viewModel.setDateOffset(offset: newOffset)
                     updateView()
-                    // TODO: 확인 필요
                 }, for: .touchUpInside
             )
         }
@@ -370,14 +408,18 @@ final class MainViewController: BaseViewController {
     override func configureHierarchy() {
         [dogetherHeader, dosikImageView, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
-        [sheetHeaderView, beforeStartView, emptyListView, todoListView].forEach { dogetherSheet.addSubview($0) }
+        [sheetHeaderView, readyView, runningView, dDayView].forEach { dogetherSheet.addSubview($0) }
         
-        [timerView, timeProgress, timerLabel, timerDescription,].forEach { beforeStartView.addSubview($0) }
+        [timerView, timeProgress, timerLabel, timerDescription,].forEach { readyView.addSubview($0) }
+        
+        [emptyListView, todoListView].forEach { runningView.addSubview($0) }
         
         [todoView, todoButton].forEach { emptyListView.addSubview($0) }
         
         [todoScrollView, filterStackView, emptyDescriptionView].forEach { todoListView.addSubview($0) }
         [todoListStackView].forEach { todoScrollView.addSubview($0) }
+        
+        [dDayStackView].forEach { dDayView.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -415,8 +457,8 @@ final class MainViewController: BaseViewController {
             $0.height.equalTo(32)
         }
         
-        // MARK: - beforeStart
-        beforeStartView.snp.makeConstraints {
+        // MARK: - ready
+        readyView.snp.makeConstraints {
             $0.top.equalTo(sheetHeaderView.snp.bottom).offset(24)
             $0.left.right.bottom.equalToSuperview()
         }
@@ -442,10 +484,15 @@ final class MainViewController: BaseViewController {
             $0.centerX.equalToSuperview()
         }
         
+        // MARK: - running
+        runningView.snp.makeConstraints {
+            $0.top.equalTo(sheetHeaderView.snp.bottom)
+            $0.left.right.bottom.equalToSuperview()
+        }
+        
         // MARK: - emptyList
         emptyListView.snp.makeConstraints {
-            $0.top.equalTo(sheetHeaderView.snp.bottom)
-            $0.bottom.left.right.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
         
         todoView.snp.makeConstraints {
@@ -460,8 +507,7 @@ final class MainViewController: BaseViewController {
         
         // MARK: - todoList
         todoListView.snp.makeConstraints {
-            $0.top.equalTo(sheetHeaderView.snp.bottom)
-            $0.bottom.left.right.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
         
         filterStackView.snp.makeConstraints {
@@ -485,6 +531,18 @@ final class MainViewController: BaseViewController {
             $0.top.equalTo(filterStackView.snp.bottom).offset(125)
             $0.width.equalTo(233)
             $0.height.equalTo(98)
+        }
+        
+        // MARK: - dDay
+        dDayView.snp.makeConstraints {
+            $0.top.equalTo(sheetHeaderView.snp.bottom)
+            $0.left.right.bottom.equalToSuperview()
+        }
+        
+        dDayStackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-49)
+            $0.height.equalTo(290)  // ???: 높이가 정해지지 않으면 UILabel들이 나오지 않음, stackView인데 왜..?
         }
     }
 }
@@ -513,9 +571,15 @@ extension MainViewController {
     private func updateView() {
         groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.challengeGroupInfos[viewModel.currentChallengeIndex])
         
-        sheetHeaderView.setDate(date: DateFormatterManager.formattedDate(viewModel.dateOffset))
+        let currentDate = DateFormatterManager.formattedDate(viewModel.dateOffset)
+        sheetHeaderView.setDate(date: currentDate)
+        sheetHeaderView.prevButton.isEnabled = viewModel.dateOffset * -1 < viewModel.currentGroup.duration - 1
+        sheetHeaderView.nextButton.isEnabled = viewModel.dateOffset < 0
         
-        beforeStartView.isHidden = !(viewModel.currentGroup.status == .ready)
+        readyView.isHidden = !(viewModel.currentGroup.status == .ready)
+        runningView.isHidden = !(viewModel.currentGroup.status == .running)
+        dDayView.isHidden = !(viewModel.currentGroup.status == .dDay)
+        
         emptyListView.isHidden = !(viewModel.currentGroup.status == .running && viewModel.todoList.isEmpty)
         todoListView.isHidden = !(viewModel.currentGroup.status == .running && viewModel.todoList.count > 0)
     }
