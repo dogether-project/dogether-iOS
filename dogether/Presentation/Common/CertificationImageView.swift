@@ -11,11 +11,30 @@ final class CertificationImageView: BaseImageView {
     private let certificationContent: String?
     private let certificator: String?
     
-    init(image: UIImage?, certificationContent: String? = nil, certificator: String? = nil) {
-        self.certificationContent = certificationContent
+    init(image: UIImage? = nil, imageUrl: String? = nil, certificationContent: String? = nil, certificator: String? = nil) {
+        if imageUrl == nil { self.certificationContent = "아직 열심히 진행중이에요" }
+        else { self.certificationContent = certificationContent }
         self.certificator = certificator
         
-        super.init(image: image)
+        super.init(image: image ?? .embarrassedDosik.withAlignmentRectInsets(
+            UIEdgeInsets(top: -41, left: -62, bottom: -83, right: -62)
+        ))
+        
+        Task { [weak self] in
+            guard let self, let imageUrl, let url = URL(string: imageUrl) else { return }
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let image = UIImage(data: data)
+            
+            guard let image else {
+                // FIXME: 추후 개선
+                certificationContentLabel.attributedText = NSAttributedString(
+                    string: "아직 열심히 진행중이에요",
+                    attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
+                )
+                return
+            }
+            self.image = image
+        }
     }
     required init?(coder: NSCoder) { fatalError() }
     
@@ -59,14 +78,16 @@ final class CertificationImageView: BaseImageView {
     override func configureView() {
         contentMode = .scaleAspectFit
         backgroundColor = .grey900
-        layer.cornerRadius = 12
-        layer.borderColor = UIColor.grey700.cgColor
-        layer.borderWidth = 1
+        
+        gradientView.layer.cornerRadius = 12
+        gradientView.layer.borderColor = UIColor.grey700.cgColor
+        gradientView.layer.borderWidth = 1
         
         certificationContentLabel.attributedText = NSAttributedString(
             string: certificationContent ?? "",
             attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
         )
+        
         certificatorLabel.text = certificator
     }
     

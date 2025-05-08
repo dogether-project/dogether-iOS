@@ -126,7 +126,11 @@ extension MemberCertificationViewController {
     private func setUI() {
         viewModel.todos
             .enumerated().map {
-                ThumbnailView(thumbnailStatus: $1.thumbnailStatus, isHighlighted: $0 == viewModel.currentIndex)
+                ThumbnailView(
+                    imageUrl: $1.certificationMediaUrl,
+                    thumbnailStatus: $1.thumbnailStatus,
+                    isHighlighted: $0 == viewModel.currentIndex
+                )
             }
             .forEach {
                 thumbnailStackView.addArrangedSubview($0)
@@ -134,7 +138,7 @@ extension MemberCertificationViewController {
         
         viewModel.todos
             .map {
-                CertificationImageView(image: .embarrassedDosik, certificationContent: $0.certificationContent)
+                CertificationImageView(imageUrl: $0.certificationMediaUrl, certificationContent: $0.certificationContent)
             }
             .forEach {
                 certificationStackView.addArrangedSubview($0)
