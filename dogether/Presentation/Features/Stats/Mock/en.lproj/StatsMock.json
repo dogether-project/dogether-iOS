@@ -26,9 +26,9 @@
             "certificationRate" : 50
         }, {
             "day" : 4,
-            "createdCount" : 3,
-            "certificatedCount" : 3,
-            "certificationRate" : 100
+            "createdCount" : 2,
+            "certificatedCount" : 1,
+            "certificationRate" : 50
         } ],
         "ranking" : {
             "totalMemberCount" : 10,

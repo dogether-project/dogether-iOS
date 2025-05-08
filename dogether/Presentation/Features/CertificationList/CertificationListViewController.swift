@@ -82,3 +82,7 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
     func didTapCertificationFilterView() {
     }
 }
+
+extension CertificationListViewController {
+    
+}

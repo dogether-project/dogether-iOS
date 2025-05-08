@@ -16,8 +16,14 @@ enum SortOption: String, CaseIterable {
     }
 }
 
+protocol BottomSheetDelegate: AnyObject {
+    func didSelectSortOption(_ option: [SortOption])
+}
+
 /// SortFilterButton은 필터 옵션을 선택하는 버튼을 나타냅니다.
 final class SortFilterButton: BaseButton {
+    
+    weak var deelgate: BottomSheetDelegate?
     
     var sortSelected: ((SortOption) -> Void)?
     
@@ -68,6 +74,7 @@ final class SortFilterButton: BaseButton {
             UIAction { [weak self] _ in
                 guard let self = self, self.isSelectedFilter else { return }
                 self.presentCustomSheet()
+//                self.deelgate?.didSelectSortOption(<#T##option: [SortOption]##[SortOption]#>)
             },
             for: .touchUpInside
         )

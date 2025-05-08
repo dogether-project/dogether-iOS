@@ -18,7 +18,9 @@ protocol StatsViewModelDelegate: AnyObject {
 
 final class StatsViewModel {
 
-    private let useCase: StatsUseCase
+    private let statsUseCase: StatsUseCase
+    private let groupUseCase: GroupUseCase
+    
     weak var delegate: StatsViewModelDelegate?
     
     var statsViewStatus: StatsViewStatus = .empty
@@ -33,16 +35,20 @@ final class StatsViewModel {
     var myRank: Int = 0
     var totalMembers: Int = 0
     var statsSummary: Stats?
+    
+    var myGroups: [ChallengeGroup] = [] // 받아온 그룹 아이디를 통해 특정 그룹 활동 통계 조회
 
     init() {
-        let repository = DIManager.shared.getStatsRepository()
-        self.useCase = StatsUseCase(repository: repository)
+        let statsrepository = DIManager.shared.getStatsRepository()
+        let groupRepository = DIManager.shared.getGroupRepository()
+        self.statsUseCase = StatsUseCase(repository: statsrepository)
+        self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
 
-    func fetchStats(groupId: Int) {
+    private func fetchStats(groupId: Int) {
         Task {
             do {
-                let response = try await useCase.fetchGroupStats(groupId: groupId)
+                let response = try await statsUseCase.fetchGroupStats(groupId: groupId)
                 apply(response: response)
                 delegate?.didFetchStatsSucceed()
             } catch {
@@ -65,5 +71,27 @@ final class StatsViewModel {
         totalMembers = data.ranking.totalMemberCount
         statsSummary = data.stats
         dailyAchievements = data.certificationPeriods
+    }
+    
+    func fetchMyGroups() {
+        Task {
+            do {
+                let response = try await groupUseCase.getMyGroup()
+                let challengeGroups = response.data.joiningChallengeGroups
+                self.myGroups = challengeGroups // 참여중인 그룹 목록 저장
+                
+                if let firstGroup = challengeGroups.first {
+                    fetchStats(groupId: firstGroup.groupId)
+                } else {
+                    statsViewStatus = .empty
+                }
+            } catch {
+                statsViewStatus = .empty
+            }
+        }
+    }
+    
+    func 그룹선택후_해당그룹통계_가져오기() {
+        
     }
 }

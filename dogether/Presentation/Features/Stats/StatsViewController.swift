@@ -15,7 +15,8 @@ final class StatsViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.fetchStats(groupId: 1)
+//        viewModel.fetchStats(groupId: 1) // 💥 참여중인 챌린지 그룹 정보 전체 조회 후 첫번째 그룹아이디 넣어줘야함
+        viewModel.fetchMyGroups()
     }
 
     override func configureAction() {

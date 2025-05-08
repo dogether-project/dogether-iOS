@@ -28,7 +28,7 @@ struct CertificationStats: Codable {
 
 // MARK: - API 응답 모델
 
-/// 🔴 [일일 인증 리스트 응답]
+/// 🔴 [투두 완료일순 리스트 응답]
 struct CertificationDailyListResponse: Codable {
     let code: String
     let message: String
@@ -38,7 +38,7 @@ struct CertificationDailyListResponse: Codable {
 /// 일일 인증 데이터
 struct CertificationDailyListData: Codable {
     let dailyTodoStats: CertificationStats
-    let dailyTodoCertifications: [DailyTodoCertification]
+    let dailyTodoCertifications: [DailyTodoCertification] // 여기!!
 }
 
 /// 인증 정보 + 생성일자
@@ -47,7 +47,7 @@ struct DailyTodoCertification: Codable {
     let certificationInfo: [CertificationInfo]
 }
 
-/// 🔵 [그룹 인증 리스트 응답]
+/// 🔵 [그룹 생성일순 리스트 응답]
 struct CertificationGroupListResponse: Codable {
     let code: String
     let message: String
@@ -57,7 +57,7 @@ struct CertificationGroupListResponse: Codable {
 /// 그룹 인증 데이터
 struct CertificationGroupListData: Codable {
     let dailyTodoStats: CertificationStats
-    let groupTodoCertifications: [GroupTodoCertification]
+    let groupTodoCertifications: [GroupTodoCertification] // 여기!!
 }
 
 /// 그룹명 + 인증 정보 + 생성일자
