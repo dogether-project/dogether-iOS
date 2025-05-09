@@ -31,13 +31,13 @@ final class DogetherGroupInfo: BaseView {
     init(
         groupName: String = "",
         memberCount: Int = 0,
-        duration: GroupChallengeDurations = .threeDays,
+        duration: Int = 3,
         startAtString: String,
         endAtString: String
     ) {
         self.groupName = groupName
         self.memberCount = memberCount
-        self.duration = duration
+        self.duration = GroupChallengeDurations(rawValue: duration) ?? .threeDays
         self.startAtString = startAtString
         self.endAtString = endAtString
         

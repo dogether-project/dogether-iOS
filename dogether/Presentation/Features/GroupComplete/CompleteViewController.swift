@@ -93,7 +93,7 @@ final class CompleteViewController: BaseViewController {
             groupInfoView = DogetherGroupInfo(
                 groupName: viewModel.groupInfo.name,
                 memberCount: viewModel.groupInfo.maximumMember,
-                duration: .threeDays,   // FIXME: API 수정 후 내용 반영
+                duration: viewModel.groupInfo.duration,
                 startAtString: viewModel.groupInfo.startDate,
                 endAtString: viewModel.groupInfo.endDate
             )

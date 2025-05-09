@@ -25,7 +25,8 @@ final class GroupUseCase {
             name: response.groupName,
             maximumMember: response.maximumMemberCount,
             startDate: response.startAt,
-            endDate: response.endAt
+            endDate: response.endAt,
+            duration: response.duration
         )
     }
     
