@@ -75,8 +75,16 @@ extension MainViewModel {
 
 // MARK: - set
 extension MainViewModel {
+    func setChallengeIndex(index: Int) {
+        self.currentChallengeIndex = index
+    }
+    
     func setDateOffset(offset: Int) {
         self.dateOffset = offset
+    }
+    
+    func setFilter(filter: FilterTypes) {
+        self.currentFilter = filter
     }
 }
 
@@ -126,10 +134,6 @@ extension MainViewModel {
     
 // MARK: - todoList
 extension MainViewModel {
-    func updateFilter(filter: FilterTypes) {
-        self.currentFilter = filter
-    }
-    
     func updateListInfo() async throws {
         let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
         todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
@@ -162,9 +166,5 @@ extension MainViewModel {
             sheetStatus = translation < -100 ? .expand : .normal
         }
         return sheetStatus
-    }
-    
-    func setChallengeIndex(index: Int) {
-        self.currentChallengeIndex = index
     }
 }
