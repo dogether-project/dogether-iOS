@@ -21,12 +21,11 @@ final class GroupUseCase {
     
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> ChallengeGroupInfo {
         let response = try await repository.joinGroup(joinGroupRequest: joinGroupRequest)
-        // FIXME: API 수정 후 내용 반영
         return ChallengeGroupInfo(
-            name: response.name,
-            joinCode: joinGroupRequest.joinCode,
-            endDate: response.endAt,
-            duration: response.durationOption
+            name: response.groupName,
+            maximumMember: response.maximumMemberCount,
+            startDate: response.startAt,
+            endDate: response.endAt
         )
     }
     

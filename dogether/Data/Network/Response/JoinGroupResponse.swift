@@ -8,10 +8,9 @@
 import Foundation
 
 struct JoinGroupResponse: Decodable {
-    let name: String
+    let groupName: String
     let maximumMemberCount: Int
     let startAt: String
     let endAt: String
-    let durationOption: Int
 }
 

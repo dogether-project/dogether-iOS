@@ -102,17 +102,14 @@ final class DogetherGroupInfo: BaseView {
         
         groupNameLabel.text = groupName
         
-        durationDescriptionLabel.text = "총 기간"
+        durationDescriptionLabel.text = "활동 기간"
         memberCountDescriptionLabel.text = "그룹원"
         startDayDescriptionLabel.text = "시작일"
         endDayDescriptionLabel.text = "종료일"
         
-        durationInfoLabel.text = "\(duration.rawValue)일"
+        durationInfoLabel.text = duration.text
         memberCountInfoLabel.text = "총 \(memberCount)명"
-        if let startAt {
-            startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
-            endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
-        } else if let startAtString, let endAtString {
+        if let startAtString, let endAtString {
             startDayInfoLabel.text = "\(startAtString)"
             endDayInfoLabel.text = "\(endAtString)"
         }
@@ -203,10 +200,11 @@ extension DogetherGroupInfo {
         self.duration = duration
         self.startAt = startAt
         
+        
         groupNameLabel.text = groupName
-        durationInfoLabel.text = "\(duration.rawValue)일"
+        durationInfoLabel.text = duration.text
         memberCountInfoLabel.text = "총 \(memberCount)명"
-        startDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday)) (\(startAt.text))"
-        endDayInfoLabel.text = "\(DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)) (D-\(duration.rawValue))"
+        startDayInfoLabel.text = DateFormatterManager.formattedDate(startAt.daysFromToday)
+        endDayInfoLabel.text = DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)
     }
 }

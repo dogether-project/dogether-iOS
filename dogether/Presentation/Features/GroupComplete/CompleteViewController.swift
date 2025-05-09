@@ -90,12 +90,11 @@ final class CompleteViewController: BaseViewController {
         
         switch viewModel.groupType {
         case .join:
-            // FIXME: API 수정 후 내용 반영
             groupInfoView = DogetherGroupInfo(
                 groupName: viewModel.groupInfo.name,
-                memberCount: 10,
-                duration: GroupChallengeDurations(rawValue: viewModel.groupInfo.duration) ?? .threeDays,
-                startAtString: "2025-01-01",
+                memberCount: viewModel.groupInfo.maximumMember,
+                duration: .threeDays,   // FIXME: API 수정 후 내용 반영
+                startAtString: viewModel.groupInfo.startDate,
                 endAtString: viewModel.groupInfo.endDate
             )
         case .create:

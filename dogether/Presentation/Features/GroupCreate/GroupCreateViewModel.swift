@@ -11,7 +11,7 @@ final class GroupCreateViewModel {
     private let groupUseCase: GroupUseCase
     
     let maxStep: Int = 3
-    let groupNameMaxLength: Int = 12
+    let groupNameMaxLength: Int = 10
     
     private(set) var joinCode: String?
     private(set) var currentStep: CreateGroupSteps = .one
