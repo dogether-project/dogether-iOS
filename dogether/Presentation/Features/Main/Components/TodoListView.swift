@@ -101,7 +101,7 @@ final class TodoListView: BaseView {
 }
 
 extension TodoListView {
-    func updateList(todoList: [TodoInfo], filter: FilterTypes) {
+    func updateList(todoList: [TodoInfo], filter: FilterTypes, isToday: Bool) {
         allButton.setIsColorful(filter == .all)
         waitButton.setIsColorful(filter == .wait)
         rejectButton.setIsColorful(filter == .reject)
@@ -112,7 +112,7 @@ extension TodoListView {
         
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
         todoList
-            .map { TodoListItemButton(todo: $0) }
+            .map { TodoListItemButton(todo: $0, isToday: isToday) }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
         emptyListLabel.text = filter.emptyDescription

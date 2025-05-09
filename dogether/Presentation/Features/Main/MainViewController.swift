@@ -101,21 +101,7 @@ final class MainViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        Task { [weak self] in
-            guard let self else { return }
-            try await viewModel.loadMainView()
-            
-            if viewModel.currentGroup.status == .ready {
-                viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
-                await MainActor.run { self.updateView() }
-            } else {
-                try await viewModel.updateListInfo()
-                await MainActor.run {
-                    self.updateView()
-                    self.updateList()
-                }
-            }
-        }
+        loadMainView()
     }
     
     override func configureView() { }
@@ -146,7 +132,13 @@ final class MainViewController: BaseViewController {
                     let newOffset = viewModel.dateOffset + button.tag
                     viewModel.setFilter(filter: .all)
                     viewModel.setDateOffset(offset: newOffset)
-                    updateView()
+                    Task {
+                        try await self.viewModel.updateListInfo()
+                        await MainActor.run {
+                            self.updateView()
+                            self.updateList()
+                        }
+                    }
                 }, for: .touchUpInside
             )
         }
@@ -225,6 +217,26 @@ final class MainViewController: BaseViewController {
     }
 }
 
+extension MainViewController {
+    private func loadMainView() {
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.loadMainView()
+            
+            if viewModel.currentGroup.status == .ready {
+                viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
+                await MainActor.run { self.updateView() }
+            } else {
+                try await viewModel.updateListInfo()
+                await MainActor.run {
+                    self.updateView()
+                    self.updateList()
+                }
+            }
+        }
+    }
+}
+
 // MARK: - update UI
 extension MainViewController {
     private func updateSheet(_ status: SheetStatus) {
@@ -247,7 +259,7 @@ extension MainViewController {
     }
     
     private func updateView() {
-        groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.challengeGroupInfos[viewModel.currentChallengeIndex])
+        groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.currentGroup)
         
         let currentDate = DateFormatterManager.formattedDate(viewModel.dateOffset)
         sheetHeaderView.setDate(date: currentDate)
@@ -266,15 +278,15 @@ extension MainViewController {
     }
     
     func updateList() {
-        todoListView.updateList(todoList: viewModel.todoList, filter: viewModel.currentFilter)
+        todoListView.updateList(todoList: viewModel.todoList, filter: viewModel.currentFilter, isToday: viewModel.dateOffset == 0)
         
         todoListView.todoListStackView.arrangedSubviews.forEach { todoListItemView in
             guard let todoListItemButton = todoListItemView as? TodoListItemButton else { return }
             todoListItemButton.addAction(
                 UIAction { [weak self, weak todoListItemButton] _ in
                     guard let self, let button = todoListItemButton else { return }
-                    let isWaitCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification
-                    let popupType: PopupTypes = isWaitCertification ? .certification : .certificationInfo
+                    let isCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification && button.isToday
+                    let popupType: PopupTypes = isCertification ? .certification : .certificationInfo
                         coordinator?.showPopup(self, type: popupType, todoInfo: button.todo)
                 }, for: .touchUpInside
             )
@@ -285,7 +297,8 @@ extension MainViewController {
         // FIXME: 추후 공용 컴포넌트 group sheet 추가되면 수정
         print("show group sheet")
 //        viewModel.setChallengeIndex(index: viewModel.currentChallengeIndex + 1)
-//        updateView()
+        viewModel.setDateOffset(offset: 0)
+        loadMainView()
     }
 }
 
