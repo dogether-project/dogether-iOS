@@ -107,6 +107,33 @@ final class MemberCertificationViewController: BaseViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
         }
+        
+        thumbnailScrollView.snp.makeConstraints {
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(2)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(54)
+        }
+        
+        thumbnailStackView.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        certificationScrollView.snp.makeConstraints {
+            $0.top.equalTo(thumbnailScrollView.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(view.frame.width - 32)
+        }
+        
+        statusContentView.snp.makeConstraints {
+            $0.top.equalTo(certificationScrollView.snp.bottom)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        statusContentStackView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+        }
     }
 }
 
@@ -144,37 +171,10 @@ extension MemberCertificationViewController {
                 certificationStackView.addArrangedSubview($0)
             }
         
-        thumbnailScrollView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(2)
-            $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(54)
-        }
-        
-        thumbnailStackView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
-        }
-        
-        certificationScrollView.snp.makeConstraints {
-            $0.top.equalTo(thumbnailScrollView.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(view.frame.width - 32)
-        }
-        
         certificationStackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.width.equalTo(view.frame.width * CGFloat(viewModel.todos.count) - 32)
             $0.height.equalToSuperview()
-        }
-        
-        statusContentView.snp.makeConstraints {
-            $0.top.equalTo(certificationScrollView.snp.bottom)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
-        
-        statusContentStackView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview()
         }
     }
     
