@@ -11,10 +11,11 @@ import SnapKit
 final class NavigationHeader: BaseView{
     weak var delegate: CoordinatorDelegate?
     
-    private var title: String
+    private(set) var title: String
     
     init(title: String) {
         self.title = title
+        
         super.init(frame: .zero)
     }
     required init?(coder: NSCoder) { fatalError() }
@@ -34,7 +35,7 @@ final class NavigationHeader: BaseView{
     }()
     
     override func configureView() {
-        titleLabel.text = title
+        updateUI()
     }
     
     override func configureAction() {
@@ -65,5 +66,17 @@ final class NavigationHeader: BaseView{
             $0.center.equalToSuperview()
             $0.height.equalTo(28)
         }
+    }
+}
+
+extension NavigationHeader {
+    private func updateUI() {
+        titleLabel.text = title
+    }
+    
+    func setTitle(title: String) {
+        self.title = title
+        
+        updateUI()
     }
 }

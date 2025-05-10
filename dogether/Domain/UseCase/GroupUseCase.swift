@@ -49,8 +49,16 @@ final class GroupUseCase {
         return response.status
     }
     
-    func getRankings() async throws -> [RankingModel] {
-        let response = try await repository.getTeamSummary()
-        return response.ranking
+    func getRankings(groupId: Int) async throws -> [RankingModel] {
+        let response = try await repository.getRanking(groupId: String(groupId))
+        return response.ranking.map {
+            RankingModel(
+                memberId: $0.memberId,
+                rank: $0.rank,
+                profileImageUrl: $0.profileImageUrl,
+                name: $0.name,
+                historyReadStatus: HistoryReadStatus(rawValue: $0.historyReadStatus),
+                achievementRate: $0.achievementRate)
+        }
     }
 }
