@@ -41,7 +41,7 @@ final class AlertPopupView: BasePopupView {
     
     private let cancelButton = {
         let button = UIButton()
-        button.setTitle("취소", for: .normal)
+        button.setTitle("뒤로가기", for: .normal)
         button.setTitleColor(.grey300, for: .normal)
         button.titleLabel?.font = Fonts.body1S
         button.layer.cornerRadius = 8

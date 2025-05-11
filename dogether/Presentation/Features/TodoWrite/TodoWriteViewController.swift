@@ -24,7 +24,6 @@ final class TodoWriteViewController: BaseViewController {
     
     private let todoLimitLabel = {
        let label = UILabel()
-//        label.text = "추가 가능 투두"
         label.attributedText = NSAttributedString(
             string: "추가 가능 투두",
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
@@ -83,34 +82,8 @@ final class TodoWriteViewController: BaseViewController {
         return button
     }()
     
-//    private let noticeView = {
-//        let imageView = UIImageView(image: .notice)
-//        
-//        let label = UILabel()
-//        label.text = "한 번 저장한 투두는 수정 및 삭제할 수 없어요"
-//        label.textColor = .grey400
-//        label.font = Fonts.body2S
-//        
-//        let stackView = UIStackView(arrangedSubviews: [imageView, label])
-//        stackView.axis = .horizontal
-//        stackView.spacing = 8
-//        stackView.alignment = .center
-//        stackView.layer.cornerRadius = 8
-//        stackView.layer.borderWidth = 1
-//        stackView.layer.borderColor = UIColor.grey600.cgColor
-//        stackView.isLayoutMarginsRelativeArrangement = true
-//        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
-//        
-//        imageView.snp.makeConstraints {
-//            $0.width.height.equalTo(24)
-//        }
-//        
-//        return stackView
-//    }()
-    
     private let emptyListView = {
         let imageView = UIImageView(image: .emptyDusik)
-//        imageView.backgroundColor = .blue
         imageView.contentMode = .scaleAspectFit
         
         let titleLabel = UILabel()
@@ -130,7 +103,6 @@ final class TodoWriteViewController: BaseViewController {
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel, subTitleLabel])
         stackView.axis = .vertical
         stackView.alignment = .center
-//        stackView.backgroundColor = .red
         
         stackView.setCustomSpacing(17, after: imageView)
         stackView.setCustomSpacing(0, after: titleLabel)
@@ -156,7 +128,6 @@ final class TodoWriteViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        todoTextField.becomeFirstResponder()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -165,11 +136,6 @@ final class TodoWriteViewController: BaseViewController {
     
     override func configureView() {
         updateView()
-        
-//        todoTextField.attributedPlaceholder = NSAttributedString(
-//            string: "투두를 입력해주세요 (최대 \(viewModel.maximumTodoCount)개)",
-//            attributes: [NSAttributedString.Key.foregroundColor: UIColor.grey300]
-//        )
         
         todoTextField.attributedPlaceholder = NSAttributedString(
             string: "예) 30분 걷기, 책 20페이지 읽기",
@@ -205,10 +171,12 @@ final class TodoWriteViewController: BaseViewController {
         saveButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                Task {
-                    try await self.viewModel.createTodos()
-                    await MainActor.run {
-                        self.coordinator?.popViewController()
+                coordinator?.showPopup(self, type: .alert, alertType: .saveTodo) { _ in
+                    Task {
+                        try await self.viewModel.createTodos()
+                        await MainActor.run {
+                            self.coordinator?.popViewController()
+                        }
                     }
                 }
             }, for: .touchUpInside
@@ -244,7 +212,6 @@ final class TodoWriteViewController: BaseViewController {
         
         todoTextField.snp.makeConstraints {
             $0.top.equalTo(todoLimitLabel.snp.bottom).offset(20)
-//            $0.horizontalEdges.equalToSuperview().inset(72)
             $0.leading.equalToSuperview().offset(16)
             $0.trailing.equalToSuperview().inset(72)
             $0.height.equalTo(50)
@@ -257,18 +224,10 @@ final class TodoWriteViewController: BaseViewController {
         
         addButton.snp.makeConstraints {
             $0.centerY.equalTo(todoTextField)
-//            $0.trailing.equalTo(todoTextField.snp.trailing).offset(-8)
-//            $0.horizontalEdges.equalToSuperview().inset(16)
             $0.leading.equalTo(todoTextField.snp.trailing).offset(8)
             $0.trailing.equalToSuperview().inset(16)
             $0.width.height.equalTo(48)
         }
-        
-//        noticeView.snp.makeConstraints {
-//            $0.top.equalTo(todoTextField.snp.bottom).offset(12)
-//            $0.horizontalEdges.equalToSuperview().inset(16)
-//            $0.height.equalTo(40)
-//        }
         
         emptyListView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -309,18 +268,15 @@ extension TodoWriteViewController {
         let current = "\(viewModel.todos.count)"
         let maximum = "\(viewModel.maximumTodoCount)"
         let fullText = "추가 가능 투두 \(current)/\(maximum)"
-        
-        // 기본 속성: 폰트 + 정렬 (예: Head1B, 왼쪽 정렬)
+    
         let baseAttributes = Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
         let attributedText = NSMutableAttributedString(string: fullText, attributes: baseAttributes)
 
-        // current count 색상 적용 (파란색)
         if let currentRange = fullText.range(of: current) {
             let nsRange = NSRange(currentRange, in: fullText)
             attributedText.addAttribute(.foregroundColor, value: UIColor.blue300, range: nsRange)
         }
 
-        // maximum count 색상 적용 (회색)
         if let maximumRange = fullText.range(of: maximum) {
             let nsRange = NSRange(maximumRange, in: fullText)
             attributedText.addAttribute(.foregroundColor, value: UIColor.grey600, range: nsRange)
