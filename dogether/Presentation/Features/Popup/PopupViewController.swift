@@ -62,6 +62,18 @@ extension PopupViewController {
             )
             return alertView
             
+        case .imageAlert:
+            guard let alertType = viewModel.alertType else { return BasePopupView() }
+            let alertView = ImageAlertPopupView(type: alertType)
+            alertView.confirmButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    completion?(())
+                    hidePopup()
+                }, for: .touchUpInside
+            )
+            return alertView
+            
         case .certification:
             let certificationPopupView = CertificationPopupView()
             certificationPopupView.setExtraInfo(todoInfo: viewModel.todoInfo)

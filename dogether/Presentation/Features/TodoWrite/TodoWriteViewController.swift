@@ -171,7 +171,7 @@ final class TodoWriteViewController: BaseViewController {
         saveButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                coordinator?.showPopup(self, type: .alert, alertType: .saveTodo) { _ in
+                coordinator?.showPopup(self, type: .imageAlert, alertType: .saveTodo) { _ in
                     Task {
                         try await self.viewModel.createTodos()
                         await MainActor.run {
