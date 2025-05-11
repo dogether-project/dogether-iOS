@@ -1,5 +1,5 @@
 //
-//  SummaryStatView.swift
+//  CertificationSummaryStatView.swift
 //  dogether
 //
 //  Created by yujaehong on 4/23/25.
@@ -7,10 +7,9 @@
 
 import UIKit
 
-final class SummaryStatView: BaseView {
+final class CertificationSummaryStatView: BaseView {
     private let icon: UIImage
     private let title: String
-//    private let count: Int
     
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView(image: icon)
@@ -33,15 +32,12 @@ final class SummaryStatView: BaseView {
         label.font = Fonts.head2B
         label.textColor = .grey0
         label.textAlignment = .center
-//        label.text = "\(count)개"
         return label
     }()
     
-//    init(icon: UIImage, title: String, count: Int) {
     init(icon: UIImage, title: String) {
         self.icon = icon
         self.title = title
-//        self.count = count
         super.init(frame: .zero)
     }
     
@@ -79,7 +75,7 @@ final class SummaryStatView: BaseView {
         }
         
         self.snp.makeConstraints {
-            $0.width.height.equalTo(107)
+            $0.height.equalTo(107)
         }
     }
 }

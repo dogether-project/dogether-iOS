@@ -1,5 +1,5 @@
 //
-//  CustomSheetViewController.swift
+//  BottomSheetViewController.swift
 //  dogether
 //
 //  Created by yujaehong on 4/28/25.
@@ -7,16 +7,28 @@
 
 import UIKit
 
-class CustomSheetViewController: BaseViewController {
+protocol BottomSheetItemRepresentable {
+    var bottomSheetItem: BottomSheetItem { get }
+}
+
+protocol BottomSheetDelegate: AnyObject {
+    func presentBottomSheet()
+}
+
+struct BottomSheetItem: Hashable {
+    let displayName: String
+    let value: AnyHashable
+}
+
+final class BottomSheetViewController: BaseViewController {
     
     // MARK: - Properties
-    
     var onDismiss: (() -> Void)?
-    var selectedOption: SortOption?
-    var didSelectOption: ((SortOption) -> Void)?
+    var didSelectOption: ((BottomSheetItem) -> Void)?
     
     private let titleText: String
-    private var filterOptions: [SortOption]
+    private var selectedItem: BottomSheetItem?
+    private let bottomSheetItem: [BottomSheetItem]
     private weak var overlayView: UIView?
     
     // UI Components
@@ -38,7 +50,7 @@ class CustomSheetViewController: BaseViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = .systemFont(ofSize: 18, weight: .medium)
         label.textColor = .grey0
         return label
     }()
@@ -46,7 +58,7 @@ class CustomSheetViewController: BaseViewController {
     private let confirmButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("확인", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.titleLabel?.font = Fonts.body1S
         button.setTitleColor(.grey0, for: .normal)
         return button
     }()
@@ -66,10 +78,14 @@ class CustomSheetViewController: BaseViewController {
     
     // MARK: - Initializer
     
-    init(titleText: String, filterOptions: [SortOption], selectedOption: SortOption) {
+    init(titleText: String, bottomSheetItem: [BottomSheetItem]) {
         self.titleText = titleText
-        self.filterOptions = filterOptions
-        self.selectedOption = selectedOption
+        self.bottomSheetItem = bottomSheetItem
+        
+        if let selectedItem = bottomSheetItem.first {
+            self.selectedItem = selectedItem
+        }
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -99,7 +115,7 @@ class CustomSheetViewController: BaseViewController {
     override func configureView() {
         view.backgroundColor = .clear
         titleLabel.text = titleText
-        tableView.register(CustomSheetCell.self, forCellReuseIdentifier: "CustomSheetCell")
+        tableView.register(BottomSheetCell.self, forCellReuseIdentifier: "BottomSheetCell")
         tableView.dataSource = self
         tableView.delegate = self
     }
@@ -124,7 +140,7 @@ class CustomSheetViewController: BaseViewController {
     }
     
     override func configureConstraints() {
-        let tableViewHeight = CGFloat(filterOptions.count * 49)
+        let tableViewHeight = CGFloat(bottomSheetItem.count * 49)
         let containerHeight = tableViewHeight + 28 + 25 + 48
         
         containerView.snp.makeConstraints {
@@ -161,18 +177,6 @@ class CustomSheetViewController: BaseViewController {
             $0.bottom.equalTo(containerView)
         }
     }
-}
-
-// MARK: - Actions
-
-extension CustomSheetViewController {
-    
-    private func didTapConfirmButton() {
-        if let selectedOption = selectedOption {
-            didSelectOption?(selectedOption)
-        }
-        dismiss(animated: true)
-    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -186,11 +190,19 @@ extension CustomSheetViewController {
     }
 }
 
-extension CustomSheetViewController {
-    
+// MARK: - Actions
+extension BottomSheetViewController {
+    private func didTapConfirmButton() {
+        if let selectedItem = selectedItem {
+            didSelectOption?(selectedItem)
+        }
+        dismiss(animated: true)
+    }
+}
+
+extension BottomSheetViewController {
     private func addOverlay() {
         guard let presentingView = presentingViewController?.view else { return }
-        
         let overlay = UIView(frame: presentingView.bounds)
         overlay.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         overlay.alpha = 0.0
@@ -214,23 +226,22 @@ extension CustomSheetViewController {
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
-
-extension CustomSheetViewController: UITableViewDataSource, UITableViewDelegate {
-    
+extension BottomSheetViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filterOptions.count
+        return bottomSheetItem.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CustomSheetCell", for: indexPath) as! CustomSheetCell
-        let option = filterOptions[indexPath.row]
-        let isSelected = option == selectedOption
-        cell.configure(option: option.rawValue, isSelected: isSelected)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BottomSheetCell", for: indexPath) as! BottomSheetCell
+        let option = bottomSheetItem[indexPath.row]
+        
+        let isSelected = option == selectedItem
+        cell.configure(option: option.displayName, isSelected: isSelected)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectedOption = filterOptions[indexPath.row]
+        selectedItem = bottomSheetItem[indexPath.row]
         tableView.reloadData()
     }
     

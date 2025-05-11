@@ -13,9 +13,10 @@ final class StatsViewController: BaseViewController {
     private let statsEmptyView = StatsEmptyView()
     private var statsContentView: StatsContentView?
     
+    private var bottomSheetViewController: BottomSheetViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        viewModel.fetchStats(groupId: 1) // 💥 참여중인 챌린지 그룹 정보 전체 조회 후 첫번째 그룹아이디 넣어줘야함
         viewModel.fetchMyGroups()
     }
 
@@ -59,6 +60,30 @@ extension StatsViewController {
                 $0.left.right.bottom.equalToSuperview()
             }
             statsContentView?.isHidden = false
+            
+            configureBottomSheetViewController()
+        }
+    }
+    
+    private func configureBottomSheetViewController() {
+        let bottomSheetItem = viewModel.groupSortOptions.map { $0.bottomSheetItem }
+        
+        guard !bottomSheetItem.isEmpty else { return }
+        
+        bottomSheetViewController = BottomSheetViewController(
+            titleText: "그룹 선택",
+            bottomSheetItem: bottomSheetItem
+        )
+        
+        bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
+        bottomSheetViewController?.modalTransitionStyle = .coverVertical
+        
+        bottomSheetViewController?.didSelectOption = { [weak self] selectedItem in
+            guard let self,
+                  let selectedGroup = selectedItem.value as? GroupSortOption else {
+                return
+            }
+            self.viewModel.fetchStatsForSelectedGroup(selectedGroup)
         }
     }
 }
@@ -67,6 +92,16 @@ extension StatsViewController: StatsViewModelDelegate {
     func didFetchStatsSucceed() {
         DispatchQueue.main.async {
             self.displayViewForCurrentStatus()
+            self.statsContentView?.delegate = self
+        }
+    }
+}
+
+extension StatsViewController: BottomSheetDelegate {
+    func presentBottomSheet() {
+        if presentedViewController == nil,
+           let bottomSheetViewController {
+            present(bottomSheetViewController, animated: true)
         }
     }
 }

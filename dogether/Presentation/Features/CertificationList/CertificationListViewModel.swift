@@ -35,8 +35,10 @@ final class CertificationListViewModel {
         let repository = DIManager.shared.getCertificationListRepository()
         self.useCase = CertificationListUseCase(repository: repository)
     }
-    
-    func executeSort(option: SortOption) {
+}
+
+extension CertificationListViewModel {
+    func executeSort(option: CertificationSortOption) {
         Task {
             do {
                 let result = try await useCase.fetchSortedList(option: option)

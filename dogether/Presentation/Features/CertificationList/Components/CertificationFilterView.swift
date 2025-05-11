@@ -11,11 +11,10 @@ import SnapKit
 final class CertificationFilterView: BaseView {
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView()
-    private let sortButton = SortFilterButton() // 투두 완료일순, 그룹 생성일순
+    let sortButton = CertificationSortButton() // 투두 완료일순, 그룹 생성일순
     private var filterButtons: [FilterButton] = [] // 검사대기, 인정, 노인정
     
     var filterSelected: ((FilterTypes) -> Void)?
-    var sortSelected: ((SortOption) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,10 +34,6 @@ final class CertificationFilterView: BaseView {
         // 뷰 초기화가 끝난 뒤, sortButton을 눌린 상태로 세팅
         DispatchQueue.main.async { [weak self] in
             self?.sortButtonTapped()
-        }
-        
-        sortButton.sortSelected = { [weak self] selectedOption in
-            self?.sortSelected?(selectedOption) // CertificationListContentView로 전달
         }
     }
     
@@ -116,7 +111,7 @@ extension CertificationFilterView {
         // 선택된 버튼은 활성화 상태로 설정
         if let selectedFilterButton = selectedButton as? FilterButton {
             selectedFilterButton.setIsColorful(true)
-        } else if let selectedSortButton = selectedButton as? SortFilterButton {
+        } else if let selectedSortButton = selectedButton as? CertificationSortButton {
             filterSelected?(.all) // '전체' 필터 상태로 변경
             selectedSortButton.setIsSelectedFilter(true)
         }

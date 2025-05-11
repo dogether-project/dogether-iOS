@@ -1,5 +1,5 @@
 //
-//  CustomSheetCell.swift
+//  BottomSheetCell.swift
 //  dogether
 //
 //  Created by yujaehong on 4/28/25.
@@ -7,19 +7,18 @@
 
 import UIKit
 
-class CustomSheetCell: UITableViewCell {
+final class BottomSheetCell: UITableViewCell {
     private let optionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textColor = .grey0
+        label.font = Fonts.body1B
+        label.textColor = .grey400
         label.backgroundColor = .clear
         return label
     }()
 
     private let checkmarkImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "checkmark")
-        imageView.tintColor = .blue300
+        imageView.image = UIImage(named: "checkmark")
         imageView.isHidden = true
         return imageView
     }()
@@ -51,6 +50,7 @@ class CustomSheetCell: UITableViewCell {
     
     func configure(option: String, isSelected: Bool) {
         optionLabel.text = option
+        optionLabel.textColor = isSelected ? .blue300 : .grey400
         checkmarkImageView.isHidden = !isSelected
     }
 }

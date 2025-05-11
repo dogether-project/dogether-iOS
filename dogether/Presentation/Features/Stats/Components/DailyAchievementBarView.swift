@@ -127,7 +127,6 @@ final class DailyAchievementBarView: BaseView {
 extension DailyAchievementBarView {
     // 막대 그래프 구성
     private func configureBars() {
-//        let data = viewModel.dailyAchievements.suffix(4)
         let data = dailyAchievements.suffix(4)
         
         for (index, achievement) in data.enumerated() {
@@ -178,12 +177,9 @@ extension DailyAchievementBarView {
         }
     }
     
-    
-    // 말풍선 추가
     private func addSpeechBubble(to container: UIView, ratio: CGFloat) {
         let bubbleContainer = UIView()
         bubbleContainer.backgroundColor = .blue300
-        bubbleContainer.layer.cornerRadius = 8
         bubbleContainer.clipsToBounds = true
         container.addSubview(bubbleContainer)
         
@@ -200,22 +196,37 @@ extension DailyAchievementBarView {
         
         bubbleContainer.snp.makeConstraints {
             $0.centerX.equalTo(container)
-            $0.bottom.equalTo(container.subviews[0].snp.top).offset(-8) // backgroundBar 기준
+            $0.bottom.equalTo(container.subviews[0].snp.top).offset(-20)
+            $0.height.equalTo(30)
+            $0.width.equalTo(89)
         }
         
-        let tailImageView = UIImageView(image: UIImage(named: "tail"))
+        bubbleContainer.layer.cornerRadius = 15
+        
+        let tailImageView = UIImageView(image: UIImage(named: "blueTail"))
         tailImageView.tintColor = .blue300
         tailImageView.contentMode = .scaleAspectFit
-        tailImageView.transform = CGAffineTransform(scaleX: 1, y: -1) // 아래 향하도록 반전
         container.addSubview(tailImageView)
         
         tailImageView.snp.makeConstraints {
-            $0.top.equalTo(bubbleContainer.snp.bottom)
+            $0.top.equalTo(bubbleContainer.snp.bottom).offset(-4)
             $0.centerX.equalTo(bubbleContainer)
             $0.size.equalTo(12)
         }
+        
+        let pointCircleImageView = UIImageView(image: UIImage(named: "pointCircle"))
+        pointCircleImageView.contentMode = .scaleAspectFit
+        container.addSubview(pointCircleImageView)
+        
+        pointCircleImageView.snp.makeConstraints {
+            $0.centerX.equalTo(tailImageView)
+            $0.top.equalTo(tailImageView.snp.bottom).offset(3)
+            $0.size.equalTo(12)
+        }
     }
-    
+}
+
+extension DailyAchievementBarView {
     func configure(achievements: [CertificationPeriod]) {
         dailyAchievements = achievements.suffix(4)
         configureBars()

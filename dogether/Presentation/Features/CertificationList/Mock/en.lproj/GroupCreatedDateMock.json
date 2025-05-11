@@ -7,7 +7,7 @@
       "totalApprovedCount": 5,
       "totalRejectedCount": 4
     },
-    "groupTodoCertifications": [
+    "certificationsGroupedByGroupCreatedAt": [
       {
         "groupName": "스쿼트 챌린지",
         "createdAt": "2025.05.03",

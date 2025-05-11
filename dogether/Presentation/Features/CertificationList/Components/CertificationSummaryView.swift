@@ -8,18 +8,15 @@
 import UIKit
 
 final class CertificationSummaryView: BaseView {
-//    private let viewModel: CertificationListViewModel
     private let stackView = UIStackView()
-    private let achievedView = SummaryStatView(icon: UIImage(named: "certification")!,
+    private let achievedView = CertificationSummaryStatView(icon: UIImage(named: "certification2")!,
                                                title: "달성")
-    private let certifiedView = SummaryStatView(icon: UIImage(named: "approve")!,
+    private let certifiedView = CertificationSummaryStatView(icon: UIImage(named: "approve")!,
                                                 title: "인정")
-    private let notCertifiedView = SummaryStatView(icon: UIImage(named: "reject")!,
+    private let notCertifiedView = CertificationSummaryStatView(icon: UIImage(named: "reject")!,
                                                    title: "노인정")
     
-//    init(viewModel: CertificationListViewModel) {
     init() {
-//        self.viewModel = viewModel
         super.init(frame: .zero)
     }
     

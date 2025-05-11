@@ -12,6 +12,7 @@ final class CertificationListViewController: BaseViewController {
     private let navigationHeader = NavigationHeader(title: "인증 목록")
     private let certificationListEmptyView = CertificationListEmptyView()
     private var certificationListContentView: CertificationListContentView?
+    private var bottomSheetViewController: BottomSheetViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +58,42 @@ extension CertificationListViewController {
             }
             certificationListContentView?.isHidden = false
             certificationListEmptyView.isHidden = true
+            
+            configureSortButtonTitle()
+            configureBottomSheetViewController()
+        }
+    }
+    
+    private func configureSortButtonTitle() {
+        let defaultOption: CertificationSortOption = .todoCompletionDate
+        certificationListContentView?
+            .filterView
+            .sortButton
+            .updateSelectedOption(defaultOption.bottomSheetItem)
+    }
+    
+    private func configureBottomSheetViewController() {
+        let bottomSheetItem = CertificationSortOption.allCases.map { $0.bottomSheetItem }
+        
+        bottomSheetViewController = BottomSheetViewController(
+            titleText: "정렬",
+            bottomSheetItem: bottomSheetItem
+        )
+        
+        bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
+        bottomSheetViewController?.modalTransitionStyle = .coverVertical
+        
+        bottomSheetViewController?.didSelectOption = { [weak self] selected in
+            guard let self else { return }
+            
+            self.certificationListContentView?
+                .filterView
+                .sortButton
+                .updateSelectedOption(selected)
+            
+            if let sortOption = selected.value as? CertificationSortOption {
+                self.viewModel.executeSort(option: sortOption)
+            }
         }
     }
 }
@@ -65,6 +102,7 @@ extension CertificationListViewController {
 extension CertificationListViewController: CertificationListViewModelDelegate {
     func didFetchSucceed() {
         displayViewForCurrentStatus()
+        self.certificationListContentView?.filterView.sortButton.delegate = self
         certificationListContentView?.reloadData()
     }
 }
@@ -75,14 +113,14 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
         viewModel.currentFilter = selectedFilter
     }
     
-    func didTapSort(option: SortOption) {
-        viewModel.executeSort(option: option)
-    }
-    
     func didTapCertificationFilterView() {
     }
 }
 
-extension CertificationListViewController {
-    
+extension CertificationListViewController: BottomSheetDelegate {
+    func presentBottomSheet() {
+        if presentedViewController == nil, let bottomSheetViewController {
+            present(bottomSheetViewController, animated: true)
+        }
+    }
 }

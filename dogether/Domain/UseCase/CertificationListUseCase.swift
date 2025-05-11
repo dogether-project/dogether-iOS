@@ -14,7 +14,7 @@ final class CertificationListUseCase {
         self.repository = repository
     }
     
-    func fetchSortedList(option: SortOption) async throws -> CertificationListResult {
+    func fetchSortedList(option: CertificationSortOption) async throws -> CertificationListResult {
         let result: CertificationListResult
         
         switch option {

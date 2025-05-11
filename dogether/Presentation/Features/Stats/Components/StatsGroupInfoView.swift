@@ -19,8 +19,8 @@ final class StatsGroupInfoView: UIView {
     }()
     
     private let groupSelectorButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: "chevron-down"), for: .normal)
         return button
     }()
     
@@ -138,7 +138,6 @@ final class StatsGroupInfoView: UIView {
         groupSelectorButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                print("groupSelectorButton Tapped")
                 onGroupSelectorTapped?()
             }, for: .touchUpInside
         )
@@ -160,9 +159,6 @@ final class StatsGroupInfoView: UIView {
             $0.leading.bottom.equalToSuperview()
         }
     }
-}
-
-extension StatsGroupInfoView {
 }
 
 extension StatsGroupInfoView {

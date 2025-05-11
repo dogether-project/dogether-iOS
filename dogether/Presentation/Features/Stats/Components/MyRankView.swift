@@ -16,7 +16,7 @@ final class MyRankView: BaseView {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "내 순위"
@@ -24,7 +24,7 @@ final class MyRankView: BaseView {
         label.textColor = .grey0
         return label
     }()
-
+    
     private lazy var titleStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [iconImageView, titleLabel])
         stack.axis = .horizontal
@@ -32,7 +32,7 @@ final class MyRankView: BaseView {
         stack.alignment = .center
         return stack
     }()
-
+    
     private let rankBaseLabel: UILabel = {
         let label = UILabel()
         label.font = Fonts.body1S
@@ -40,7 +40,7 @@ final class MyRankView: BaseView {
         label.textAlignment = .center
         return label
     }()
-
+    
     private let rankLabel: UILabel = {
         let label = UILabel()
         label.font = Fonts.emphasis2B
@@ -52,9 +52,9 @@ final class MyRankView: BaseView {
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
-
+    
     required init?(coder: NSCoder) { fatalError() }
-
+    
     override func configureView() {
         backgroundColor = .grey800
         layer.cornerRadius = 12
@@ -62,37 +62,39 @@ final class MyRankView: BaseView {
     }
     
     override func configureAction() { }
-
+    
     override func configureHierarchy() {
         addSubview(titleStackView)
         addSubview(rankBaseLabel)
         addSubview(rankLabel)
     }
-
+    
     override func configureConstraints() {
         titleStackView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(20)
             $0.leading.equalToSuperview().offset(16)
             $0.height.equalTo(25)
         }
-
+        
         iconImageView.snp.makeConstraints {
             $0.width.height.equalTo(20)
         }
-
+        
         rankBaseLabel.snp.makeConstraints {
             $0.top.equalTo(titleStackView.snp.bottom).offset(33.5)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(25)
         }
-
+        
         rankLabel.snp.makeConstraints {
             $0.top.equalTo(rankBaseLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(36)
         }
     }
-    
+}
+
+extension MyRankView {
     func configure(count: Int, rank: Int) {
         rankBaseLabel.text = "\(count)명 중"
         rankLabel.text = "\(rank)등"

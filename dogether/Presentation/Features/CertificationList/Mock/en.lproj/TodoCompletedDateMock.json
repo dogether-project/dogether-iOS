@@ -3,11 +3,11 @@
   "message": "사용자의 모든 인증 목록이 조회되었습니다.",
   "data": {
     "dailyTodoStats": {
-      "totalCertificatedCount": 20,
-      "totalApprovedCount": 8,
-      "totalRejectedCount": 6
+      "totalCertificatedCount": 17,
+      "totalApprovedCount": 4,
+      "totalRejectedCount": 8
     },
-    "dailyTodoCertifications": [
+    "certificationsGroupedByTodoCompletedAt": [
       {
         "createdAt": "2025.05.03",
         "certificationInfo": [

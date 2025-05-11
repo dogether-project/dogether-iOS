@@ -30,7 +30,7 @@ extension CertificationListRepositoryTest {
     }
     
     private func transformDailyResponse(_ response: CertificationDailyListResponse) -> CertificationListResult {
-        let items: [CertificationItem] = response.data.dailyTodoCertifications.flatMap { daily in
+        let items: [CertificationItem] = response.data.certificationsGroupedByTodoCompletedAt.flatMap { daily in
             daily.certificationInfo.map { info in
                 CertificationItem(id: info.id,
                                   content: info.content,
@@ -71,7 +71,7 @@ extension CertificationListRepositoryTest {
     }
     
     private func transformGroupResponse(_ response: CertificationGroupListResponse) -> CertificationListResult {
-        let sections: [CertificationSection] = response.data.groupTodoCertifications.map { group in
+        let sections: [CertificationSection] = response.data.certificationsGroupedByGroupCreatedAt.map { group in
             let items: [CertificationItem] = group.certificationInfo.map { info in
                 CertificationItem(
                     id: info.id,

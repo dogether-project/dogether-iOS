@@ -9,7 +9,6 @@ import UIKit
 
 protocol CertificationListContentViewDelegate: AnyObject {
     func didTapFilter(selectedFilter: FilterTypes)
-    func didTapSort(option: SortOption)
     func didTapCertificationFilterView()
 }
 
@@ -27,7 +26,7 @@ final class CertificationListContentView: BaseView {
     
     private lazy var summaryView = CertificationSummaryView()
     
-    private let filterView = CertificationFilterView()
+    let filterView = CertificationFilterView()
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -68,10 +67,6 @@ final class CertificationListContentView: BaseView {
         filterView.filterSelected = { [weak self] filter in
             self?.delegate?.didTapFilter(selectedFilter: filter)
         }
-        
-        filterView.sortSelected = { [weak self] selectedOption in
-            self?.delegate?.didTapSort(option: selectedOption)
-        }
     }
     
     override func configureHierarchy() {
@@ -103,7 +98,7 @@ final class CertificationListContentView: BaseView {
     }
 }
 
-// MARK: - 데이터 변경이 있으니 collectionview reload
+// 데이터 변경이 있으니 collectionview reload
 extension CertificationListContentView {
     func reloadData() {
         DispatchQueue.main.async {
@@ -158,8 +153,6 @@ extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
         
         let section = viewModel.sections[indexPath.section]
         let title: String
-        
-        dump(section.type)
         
         switch section.type {
         case .daily(let dateString):

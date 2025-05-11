@@ -38,7 +38,7 @@ struct CertificationDailyListResponse: Codable {
 /// 일일 인증 데이터
 struct CertificationDailyListData: Codable {
     let dailyTodoStats: CertificationStats
-    let dailyTodoCertifications: [DailyTodoCertification] // 여기!!
+    let certificationsGroupedByTodoCompletedAt: [DailyTodoCertification]
 }
 
 /// 인증 정보 + 생성일자
@@ -57,7 +57,7 @@ struct CertificationGroupListResponse: Codable {
 /// 그룹 인증 데이터
 struct CertificationGroupListData: Codable {
     let dailyTodoStats: CertificationStats
-    let groupTodoCertifications: [GroupTodoCertification] // 여기!!
+    let certificationsGroupedByGroupCreatedAt: [GroupTodoCertification]
 }
 
 /// 그룹명 + 인증 정보 + 생성일자
