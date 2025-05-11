@@ -118,6 +118,7 @@ final class BottomSheetViewController: BaseViewController {
         tableView.register(BottomSheetCell.self, forCellReuseIdentifier: "BottomSheetCell")
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isScrollEnabled = false 
     }
     
     override func configureAction() {
