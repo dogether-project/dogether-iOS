@@ -289,8 +289,13 @@ extension MainViewController {
                 UIAction { [weak self, weak todoListItemButton] _ in
                     guard let self, let button = todoListItemButton else { return }
                     let isCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification && button.isToday
-                    let popupType: PopupTypes = isCertification ? .certification : .certificationInfo
-                        coordinator?.showPopup(self, type: popupType, todoInfo: button.todo)
+                    if isCertification {
+                        coordinator?.showPopup(self, type: .certification, todoInfo: button.todo)
+                    } else {
+                        let certificationInfoViewController = CertificationInfoViewController()
+                        certificationInfoViewController.todoInfo = button.todo
+                        coordinator?.pushViewController(certificationInfoViewController)
+                    }
                 }, for: .touchUpInside
             )
         }

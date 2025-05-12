@@ -101,10 +101,6 @@ extension PopupViewController {
             certificationPopupView.certificationTextView.delegate = self
             return certificationPopupView
             
-        case .certificationInfo:
-            guard let todoInfo = viewModel.todoInfo else { return BasePopupView() }
-            return CertificationInfoPopupView(todoInfo: todoInfo)
-            
         case .rejectReason:
             let rejectReasonPopupView = RejectReasonPopupView()
             rejectReasonPopupView.rejectReasonTextView.delegate = self
