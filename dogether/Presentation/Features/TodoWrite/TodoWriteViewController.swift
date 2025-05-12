@@ -121,11 +121,7 @@ final class TodoWriteViewController: BaseViewController {
     }()
     
     private let saveButton = DogetherButton(title: "투두 저장", status: .disabled)
-    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//    }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         todoTextField.becomeFirstResponder()
     }
