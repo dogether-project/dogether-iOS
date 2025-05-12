@@ -24,10 +24,6 @@ final class TodoWriteViewController: BaseViewController {
     
     private let todoLimitLabel = {
        let label = UILabel()
-        label.attributedText = NSAttributedString(
-            string: "추가 가능 투두",
-            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
-        )
         label.textColor = .grey0
         return label
     }()
@@ -126,9 +122,9 @@ final class TodoWriteViewController: BaseViewController {
     
     private let saveButton = DogetherButton(title: "투두 저장", status: .disabled)
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//    }
     
     override func viewDidAppear(_ animated: Bool) {
         todoTextField.becomeFirstResponder()
@@ -206,7 +202,7 @@ final class TodoWriteViewController: BaseViewController {
         }
         
         todoLimitLabel.snp.makeConstraints {
-            $0.top.equalTo(dateLabel.snp.bottom).offset(0)
+            $0.top.equalTo(dateLabel.snp.bottom)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
