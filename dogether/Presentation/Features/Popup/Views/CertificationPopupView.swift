@@ -22,7 +22,7 @@ final class CertificationPopupView: BasePopupView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private var imageView = CertificationImageView(image: nil)
+    private var imageView = CertificationImageView(image: .logo)
     
     private let titleLabel = {
         let label = UILabel()
@@ -192,7 +192,7 @@ extension CertificationPopupView {
     }
     
     func uploadImage(image: UIImage) {
-        if imageView.image == nil {
+        if imageView.image == .logo {
             [imageView, nextButton].forEach { addSubview($0) }
             
             imageView.snp.makeConstraints {

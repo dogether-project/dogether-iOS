@@ -8,13 +8,13 @@
 import Foundation
 
 final class PopupRepository: PopupProtocol {
-    private let todosDataSource: TodosDataSource
+    private let challengeGroupsDataSource: ChallengeGroupsDataSource
     
-    init(todosDataSource: TodosDataSource = .shared) {
-        self.todosDataSource = todosDataSource
+    init(challengeGroupsDataSource: ChallengeGroupsDataSource = .shared) {
+        self.challengeGroupsDataSource = challengeGroupsDataSource
     }
     
     func certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest) async throws {
-        try await todosDataSource.certifyTodo(todoId: todoId, certifyTodoRequest: certifyTodoRequest)
+        try await challengeGroupsDataSource.certifyTodo(todoId: todoId, certifyTodoRequest: certifyTodoRequest)
     }
 }

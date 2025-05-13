@@ -36,8 +36,8 @@ final class GroupsDataSource {
         try await NetworkManager.shared.request(GroupsRouter.getGroupInfo)
     }
     
-    func getTeamSummary() async throws -> GetTeamSummaryResponse {
-        try await NetworkManager.shared.request(GroupsRouter.getTeamSummary)
+    func getRanking(groupId: String) async throws -> GetRankingResponse {
+        try await NetworkManager.shared.request(GroupsRouter.getRanking(groupId: groupId))
     }
     
     func getMyGroup() async throws -> GetMyGroupResponse {

@@ -39,12 +39,12 @@ extension DIManager {
         }
     }
     
-    func getTodoRepository(buildMode: BuildModes? = nil) -> TodoProtocol {
+    func getChallengeGroupsRepository(buildMode: BuildModes? = nil) -> ChallengeGroupsProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
-            return TodoRepositoryTest()
+            return ChallengeGroupsRepositoryTest()
         case .live:
-            return TodoRepository()
+            return ChallengeGroupsRepository()
         }
     }
     

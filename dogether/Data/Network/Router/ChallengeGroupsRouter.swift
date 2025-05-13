@@ -1,5 +1,5 @@
 //
-//  TodosRouter.swift
+//  ChallengeGroupsRouter.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/6/25.
@@ -7,28 +7,31 @@
 
 import Foundation
 
-enum TodosRouter: NetworkEndpoint {
+enum ChallengeGroupsRouter: NetworkEndpoint {
     case createTodos(createTodosRequest: CreateTodosRequest)
     case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
     case getMyTodos(date: String, status: TodoStatus?)
     case getMyYesterdayTodos
+    case getMemberTodos(groupId: String, memberId: String)
     
     var path: String {
         switch self {
         case .createTodos:
-            return Path.api + Path.todos
+            return Path.api + Path.challengeGroups
         case .certifyTodo(let todoId, _):
-            return Path.api + Path.todos + "/\(todoId)/certify"
+            return Path.api + Path.challengeGroups + "/\(todoId)/certify"
         case .getMyTodos:
-            return Path.api + Path.todos + "/my"
+            return Path.api + Path.challengeGroups + "/my"
         case .getMyYesterdayTodos:
-            return Path.api + Path.todos + "/my/yesterday"
+            return Path.api + Path.challengeGroups + "/my/yesterday"
+        case .getMemberTodos(let groupId, let memberId):
+            return Path.api + Path.challengeGroups + "/\(groupId)/challenge-group-members/\(memberId)/today-todo-history"
         }
     }
     
     var method: NetworkMethod {
         switch self {
-        case .getMyTodos, .getMyYesterdayTodos:
+        case .getMyTodos, .getMyYesterdayTodos, .getMemberTodos:
             return .get
         case .createTodos, .certifyTodo:
             return .post

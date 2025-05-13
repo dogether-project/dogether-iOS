@@ -12,7 +12,7 @@ enum GroupsRouter: NetworkEndpoint {
     case joinGroup(joinGroupRequest: JoinGroupRequest)
     case getGroupInfo
     case getMySummary
-    case getTeamSummary
+    case getRanking(groupId: String)
     case getIsJoining
     case leaveGroup
     case getGroupStatus
@@ -28,8 +28,8 @@ enum GroupsRouter: NetworkEndpoint {
             return Path.api + Path.groups + "/info/current"
         case .getMySummary:
             return Path.api + Path.groups + Path.summary + "/my"
-        case .getTeamSummary:
-            return Path.api + Path.groups + Path.summary + "/team"
+        case .getRanking(let groupId):
+            return Path.api + Path.groups + "/\(groupId)/ranking"
         case .getIsJoining:
             return Path.api + Path.groups + "/isJoining"
         case .leaveGroup:
@@ -43,7 +43,7 @@ enum GroupsRouter: NetworkEndpoint {
     
     var method: NetworkMethod {
         switch self {
-        case .getGroupInfo, .getMySummary, .getRanking, .getIsJoining, .getTeamSummary, .getGroupStatus, .getMyGroups:
+        case .getGroupInfo, .getMySummary, .getRanking, .getIsJoining, .getGroupStatus, .getMyGroups:
             return .get
         case .createGroup, .joinGroup:
             return .post
