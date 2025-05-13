@@ -9,8 +9,6 @@ import UIKit
 import SnapKit
 
 final class MyPageViewController: BaseViewController {
-    //    private let viewModel = SettingViewModel()
-    
     private let navigationHeader = NavigationHeader(title: "마이페이지")
     
     // FIXME: API 수정 후 내용 반영

@@ -22,7 +22,6 @@ final class GroupManagementViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
     
     override func configureView() {
         groupTableView.delegate = self
@@ -70,7 +69,7 @@ extension GroupManagementViewController: UITableViewDataSource, UITableViewDeleg
             guard let self else { return }
             coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { _ in
                 Task {
-                    try await self.viewModel.leaveGroup()
+                    try await self.viewModel.leaveGroup(groupId: group.groupId)
                     await MainActor.run {
                         self.coordinator?.setNavigationController(StartViewController())
                     }
