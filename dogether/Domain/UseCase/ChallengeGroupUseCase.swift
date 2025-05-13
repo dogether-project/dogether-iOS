@@ -14,9 +14,9 @@ final class ChallengeGroupUseCase {
         self.repository = repository
     }
     
-    func createTodos(todos: [String]) async throws {
+    func createTodos(groupId: Int, todos: [String]) async throws {
         let createTodosRequest = CreateTodosRequest(todos: todos)
-        try await repository.createTodos(createTodosRequest: createTodosRequest)
+        try await repository.createTodos(groupId: String(groupId), createTodosRequest: createTodosRequest)
     }
     
     func getMyTodos(groupId: Int, date: String, status: TodoStatus?) async throws -> [TodoInfo] {

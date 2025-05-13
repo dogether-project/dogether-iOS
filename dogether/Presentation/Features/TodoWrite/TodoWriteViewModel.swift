@@ -10,6 +10,8 @@ import Foundation
 final class TodoWriteViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     
+    var groupId: Int = 0
+    
     let maximumTodoCount: Int = 10
     let todoMaxLength: Int = 20
     
@@ -45,6 +47,6 @@ extension TodoWriteViewModel {
     }
     
     func createTodos() async throws {
-        try await challengeGroupsUseCase.createTodos(todos: todos)
+        try await challengeGroupsUseCase.createTodos(groupId: groupId, todos: todos)
     }
 }

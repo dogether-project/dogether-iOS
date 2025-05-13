@@ -163,7 +163,9 @@ final class MainViewController: BaseViewController {
         todayEmptyView.todoButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                coordinator?.pushViewController(TodoWriteViewController())
+                let todoWriteViewController = TodoWriteViewController()
+                todoWriteViewController.viewModel.groupId = viewModel.currentGroup.id
+                coordinator?.pushViewController(todoWriteViewController)
             }, for: .touchUpInside
         )
     }
