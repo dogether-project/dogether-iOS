@@ -14,8 +14,8 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
         self.challengeGroupsDataSource = challengeGroupsDataSource
     }
     
-    func createTodos(createTodosRequest: CreateTodosRequest) async throws {
-        try await challengeGroupsDataSource.createTodos(createTodosRequest: createTodosRequest)
+    func createTodos(groupId: String, createTodosRequest: CreateTodosRequest) async throws {
+        try await challengeGroupsDataSource.createTodos(groupId: groupId, createTodosRequest: createTodosRequest)
     }
     
     func getMyTodos(groupId: String, date: String, status: String?) async throws -> GetMyTodosResponse {

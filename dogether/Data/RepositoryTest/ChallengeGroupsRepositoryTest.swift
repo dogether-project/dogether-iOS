@@ -8,7 +8,7 @@
 import Foundation
 
 final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
-    func createTodos(createTodosRequest: CreateTodosRequest) async throws { }
+    func createTodos(groupId: String, createTodosRequest: CreateTodosRequest) async throws { }
     
     func getMyTodos(groupId: String, date: String, status: String?) async throws -> GetMyTodosResponse {
         let certify_pendings = (1 ... 2).map { TodoInfo(id: $0, content: "testTodo \($0)", status: "CERTIFY_PENDING") }

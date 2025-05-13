@@ -85,12 +85,13 @@ final class CertificationSupplyViewController: BaseViewController {
                 guard let self else { return }
                 Task {
                     guard let content = self.todoInfo.certificationContent, let mediaUrl = self.todoInfo.certificationMediaUrl else { return }
-                    let certifyTodoRequest = CertifyTodoRequest(content: content, mediaUrls: [mediaUrl])
+                    let certifyTodoRequest = CertifyTodoRequest(content: content, mediaUrl: mediaUrl)
                     try await NetworkManager.shared.request(    // FIXME: 추후 수정
                         ChallengeGroupsRouter.certifyTodo(todoId: String(self.todoInfo.id), certifyTodoRequest: certifyTodoRequest)
                     )
                     await MainActor.run {
                         self.coordinator?.popViewController()
+                        self.coordinator?.popViewController()   // FIXME: 추후 수정
                     }
                 }
             }, for: .touchUpInside

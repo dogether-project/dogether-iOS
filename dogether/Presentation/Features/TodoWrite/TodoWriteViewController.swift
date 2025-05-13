@@ -8,7 +8,7 @@
 import UIKit
 
 final class TodoWriteViewController: BaseViewController {
-    private let viewModel = TodoWriteViewModel()
+    var viewModel = TodoWriteViewModel()
     
     private let navigationHeader = NavigationHeader(title: "투두 작성")
     
