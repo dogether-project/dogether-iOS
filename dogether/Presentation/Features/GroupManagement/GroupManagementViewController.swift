@@ -71,7 +71,15 @@ extension GroupManagementViewController: UITableViewDataSource, UITableViewDeleg
                 Task {
                     try await self.viewModel.leaveGroup(groupId: group.groupId)
                     await MainActor.run {
-                        self.coordinator?.setNavigationController(StartViewController())
+                        self.viewModel.fetchMyGroup { [weak self] in
+                            guard let self else { return }
+                            self.groupTableView.reloadData()
+                            
+                            // 그룹이 비어 있으면 StartViewController로 이동
+                            if self.viewModel.groups.isEmpty {
+                                self.coordinator?.setNavigationController(StartViewController())
+                            }
+                        }
                     }
                 }
             }
