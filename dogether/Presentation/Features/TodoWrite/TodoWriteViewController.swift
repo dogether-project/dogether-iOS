@@ -305,7 +305,12 @@ extension TodoWriteViewController: UITableViewDelegate, UITableViewDataSource {
 // MARK: - abount keyboard (UITextFieldDelegate)
 extension TodoWriteViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
+        if viewModel.addTodo() {
+               todoTableView.reloadData()
+               viewModel.updateTodo(todo: "")
+               updateTextField()
+               updateView()
+           }
         return true
     }
     
