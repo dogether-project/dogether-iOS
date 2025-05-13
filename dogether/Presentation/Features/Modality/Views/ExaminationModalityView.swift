@@ -105,17 +105,16 @@ final class ExaminationModalityView: BasePopupView {
  
 extension ExaminationModalityView {
     func setReview(review: ReviewModel) {
-        Task { [weak self] in
-            guard let self, let url = URL(string: review.mediaUrls[0]) else { return }
-            let (data, _) = try await URLSession.shared.data(from: url)
-            imageView.image = UIImage(data: data)
-        }
-        
         imageView = CertificationImageView(
             image: .logo,
             certificationContent: review.content,
             certificator: review.doer
         )
+        
+        Task { [weak self] in
+            guard let self else { return }
+            try await imageView.loadImage(url: review.mediaUrls[0])
+        }
         
         contentLabel.attributedText = NSAttributedString(
             string: review.todoContent,
