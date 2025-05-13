@@ -79,7 +79,8 @@ final class TodoWriteViewController: BaseViewController {
     }()
     
     private let emptyListView = {
-        let imageView = UIImageView(image: .emptyDusik)
+//        let imageView = UIImageView(image: .emptyDusik)
+        let imageView = UIImageView(image: .embarrassedDosik)
         imageView.contentMode = .scaleAspectFit
         
         let titleLabel = UILabel()
@@ -163,7 +164,7 @@ final class TodoWriteViewController: BaseViewController {
         saveButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                coordinator?.showPopup(self, type: .imageAlert, alertType: .saveTodo) { _ in
+                coordinator?.showPopup(self, type: .alert, alertType: .saveTodo) { _ in
                     Task {
                         try await self.viewModel.createTodos()
                         await MainActor.run {
@@ -258,8 +259,8 @@ extension TodoWriteViewController {
     
     private func updateTodoLimitLabel() {
         let current = "\(viewModel.todos.count)"
-        let maximum = "\(viewModel.maximumTodoCount)"
-        let fullText = "추가 가능 투두 \(current)/\(maximum)"
+        let maximum = "/\(viewModel.maximumTodoCount)"
+        let fullText = "추가 가능 투두 \(current)\(maximum)"
     
         let baseAttributes = Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
         let attributedText = NSMutableAttributedString(string: fullText, attributes: baseAttributes)

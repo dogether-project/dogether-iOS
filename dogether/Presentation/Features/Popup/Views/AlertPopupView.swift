@@ -30,6 +30,13 @@ final class AlertPopupView: BasePopupView {
         return label
     }()
     
+    private let imageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     // MARK: - PopupViewController에서 action handling
     let confirmButton = {
         let button = UIButton()
@@ -77,6 +84,11 @@ final class AlertPopupView: BasePopupView {
             )
         }
         
+        if let image = type.image {
+            imageView.image = image
+            imageView.isHidden = false
+        }
+        
         confirmButton.setTitle(type.buttonText, for: .normal)
         confirmButton.backgroundColor = type.buttonColor
         
@@ -96,6 +108,9 @@ final class AlertPopupView: BasePopupView {
         )
     }
     override func configureHierarchy() {
+        if !imageView.isHidden {
+            addSubview(imageView)
+        }
         addSubview(contentStackView)
     }
 
@@ -103,11 +118,24 @@ final class AlertPopupView: BasePopupView {
         buttonStackView.snp.makeConstraints {
             $0.height.equalTo(48)
         }
-        
-        contentStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(32)
-            $0.bottom.equalToSuperview().inset(24)
-            $0.horizontalEdges.equalToSuperview().inset(20)
+ 
+        if !imageView.isHidden {
+            imageView.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(32)
+                $0.centerX.equalToSuperview()
+                $0.width.height.equalTo(48)
+            }
+            contentStackView.snp.makeConstraints {
+                $0.top.equalTo(imageView.snp.bottom).offset(12)
+                $0.bottom.equalToSuperview().inset(24)
+                $0.horizontalEdges.equalToSuperview().inset(20)
+            }
+        } else {
+            contentStackView.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(32)
+                $0.bottom.equalToSuperview().inset(24)
+                $0.horizontalEdges.equalToSuperview().inset(20)
+            }
         }
     }
 }

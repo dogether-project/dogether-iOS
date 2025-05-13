@@ -9,7 +9,6 @@ import UIKit
 
 enum PopupTypes {
     case alert
-    case imageAlert
     case certification
     case certificationInfo
     case rejectReason
@@ -64,6 +63,15 @@ enum AlertTypes {
             return .dogetherRed
         case .logout, .saveTodo:
             return .blue300
+        }
+    }
+    
+    var image: UIImage? {
+        switch self {
+        case .saveTodo:
+            return UIImage(named: "caution")
+        default:
+            return nil
         }
     }
 }
