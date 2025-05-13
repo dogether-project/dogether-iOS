@@ -20,8 +20,8 @@ final class ChallengeGroupsDataSource {
         try await NetworkManager.shared.request(ChallengeGroupsRouter.getMemberTodos(groupId: groupId, memberId: memberId))
     }
     
-    func createTodos(createTodosRequest: CreateTodosRequest) async throws {
-        try await NetworkManager.shared.request(ChallengeGroupsRouter.createTodos(createTodosRequest: createTodosRequest))
+    func createTodos(groupId: String, createTodosRequest: CreateTodosRequest) async throws {
+        try await NetworkManager.shared.request(ChallengeGroupsRouter.createTodos(groupId: groupId, createTodosRequest: createTodosRequest))
     }
     
     func certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest) async throws {
