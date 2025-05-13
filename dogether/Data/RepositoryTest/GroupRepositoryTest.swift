@@ -31,6 +31,17 @@ final class GroupRepositoryTest: GroupProtocol {
                 endAt: "25.05.04",
                 progressDay: 5,
                 progressRate: 0.3
+            ), JoiningChallengeGroups(
+                groupId: 22,
+                groupName: "폰트의 챌린지222",
+                currentMemberCount: 2,
+                maximumMemberCount: 10,
+                joinCode: "G3hIj4222",
+                status: "READY",
+                startAt: "25.05.01",
+                endAt: "25.05.04",
+                progressDay: 1,
+                progressRate: 0.3
             )
         ])
     }

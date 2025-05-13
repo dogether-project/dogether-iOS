@@ -20,6 +20,8 @@ final class MainViewController: BaseViewController {
     
     private let groupInfoView = GroupInfoView()
     
+    private var bottomSheetViewController: BottomSheetViewController?
+    
     private let rankingButton = {
         let button = UIButton()
         button.backgroundColor = .grey700
@@ -223,15 +225,16 @@ extension MainViewController {
             guard let self else { return }
             try await viewModel.loadMainView()
             
+            configureBottomSheetViewController()
+            
             if viewModel.currentGroup.status == .ready {
                 viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
-                await MainActor.run { self.updateView() }
-            } else {
-                try await viewModel.updateListInfo()
-                await MainActor.run {
-                    self.updateView()
-                    self.updateList()
-                }
+            }
+            
+            try await viewModel.updateListInfo()
+            await MainActor.run {
+                self.updateView()
+                self.updateList()
             }
         }
     }
@@ -294,11 +297,7 @@ extension MainViewController {
     }
     
     @objc private func tappedGroupNameStackView() {
-        // FIXME: 추후 공용 컴포넌트 group sheet 추가되면 수정
-        print("show group sheet")
-//        viewModel.setChallengeIndex(index: viewModel.currentChallengeIndex + 1)
-        viewModel.setDateOffset(offset: 0)
-        loadMainView()
+        presentBottomSheet()
     }
 }
 
@@ -348,6 +347,40 @@ extension MainViewController: UIScrollViewDelegate {
         if viewModel.sheetStatus == .normal || viewModel.isBlockPanGesture {
             scrollView.contentOffset.y = 0
             return
+        }
+    }
+}
+
+// MARK: - about bottom sheet
+extension MainViewController: BottomSheetDelegate {
+    private func configureBottomSheetViewController() {
+        let bottomSheetItem = viewModel.challengeGroupInfos.map { $0.bottomSheetItem }
+        
+        if bottomSheetItem.isEmpty { return }
+        
+        bottomSheetViewController = BottomSheetViewController(
+            titleText: "그룹 선택",
+            bottomSheetItem: bottomSheetItem
+        )
+        
+        bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
+        bottomSheetViewController?.modalTransitionStyle = .coverVertical
+        
+        bottomSheetViewController?.didSelectOption = { [weak self] selectedItem in
+            guard let self,
+                  let selectedGroup = selectedItem.value as? ChallengeGroupInfo,
+                  let selectedIndex = self.viewModel.challengeGroupInfos.firstIndex(of: selectedGroup) else { return }
+            
+            self.viewModel.setChallengeIndex(index: selectedIndex)
+            self.viewModel.setDateOffset(offset: 0)
+            self.loadMainView()
+        }
+    }
+    
+    func presentBottomSheet() {
+        if presentedViewController == nil,
+           let bottomSheetViewController {
+            present(bottomSheetViewController, animated: true)
         }
     }
 }

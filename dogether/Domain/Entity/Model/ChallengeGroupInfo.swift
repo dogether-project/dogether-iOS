@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChallengeGroupInfo {
+struct ChallengeGroupInfo: BottomSheetItemRepresentable, Hashable {
     let id: Int
     let name: String
     let currentMember: Int
@@ -41,5 +41,13 @@ struct ChallengeGroupInfo {
         self.endDate = endDate
         self.duration = duration
         self.progress = progress
+    }
+    
+    var displayName: String {
+        return name
+    }
+    
+    var bottomSheetItem: BottomSheetItem {
+        BottomSheetItem(displayName: displayName, value: self)
     }
 }
