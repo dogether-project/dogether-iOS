@@ -18,8 +18,8 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
         switch self {
         case .createTodos(let groupId, _):
             return Path.api + Path.challengeGroups + "/\(groupId)/todos"
-        case .certifyTodo(let todoId, _):
-            return Path.api + Path.challengeGroups + "/\(todoId)/certify"
+        case .certifyTodo(let todoId, _):   // FIXME: 추후 TodosRouter 분리
+            return Path.api + Path.todos + "/\(todoId)/certify"
         case .getMyTodos(let groupId, _, _):
             return Path.api + Path.challengeGroups + "/\(groupId)/my-todos"
         case .getMyYesterdayTodos:
