@@ -290,7 +290,9 @@ extension MainViewController {
                     guard let self, let button = todoListItemButton else { return }
                     let isCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification && button.isToday
                     if isCertification {
-                        coordinator?.showPopup(self, type: .certification, todoInfo: button.todo)
+                        let certificationViewController = CertificationViewController()
+                        certificationViewController.todoInfo = button.todo
+                        coordinator?.pushViewController(certificationViewController)
                     } else {
                         let certificationInfoViewController = CertificationInfoViewController()
                         certificationInfoViewController.todoInfo = button.todo

@@ -58,8 +58,8 @@ final class DogetherTextView: BaseTextView {
         layer.borderWidth = 1
         
         placeHolder.attributedText = NSAttributedString(
-            string: "팀원이 이해하기 쉽도록 인증에 대한 설명을 입력하세요.",
-            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .left)
+            string: "팀원이 이해하기 쉽도록 인증에 대한\n설명을 입력하세요.",
+            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
         
         maxLengthLabel.text = "/\(type.maxLength)"

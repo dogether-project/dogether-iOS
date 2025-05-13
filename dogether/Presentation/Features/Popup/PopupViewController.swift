@@ -8,8 +8,6 @@
 import UIKit
 import SnapKit
 
-import PhotosUI
-
 final class PopupViewController: BaseViewController {
     var viewModel = PopupViewModel()
     
@@ -62,45 +60,6 @@ extension PopupViewController {
             )
             return alertView
             
-        case .certification:
-            let certificationPopupView = CertificationPopupView()
-            certificationPopupView.setExtraInfo(todoInfo: viewModel.todoInfo)
-            
-            pickerCompletion = { [weak self] image in
-                guard let self else { return }
-                certificationPopupView.uploadImage(image: image)
-                viewModel.uploadImage(image: image)
-            }
-            
-            [certificationPopupView.galleryButton, certificationPopupView.cameraButton].forEach { button in
-                button.addAction(
-                    UIAction { [weak self, weak button] _ in
-                        guard let self, let button, let certificationMethod = CertificationMethods(rawValue: button.tag) else { return }
-                        switch certificationMethod {
-                        case .gallery:
-                            openGallery()
-                        case .camera:
-                            openCamera()
-                        }
-                    }, for: .touchUpInside
-                )
-            }
-            
-            certificationPopupView.certificationButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    Task {
-                        try await self.viewModel.certifyTodo()
-                        await MainActor.run {
-                            self.hidePopup()
-                        }
-                    }
-                }, for: .touchUpInside
-            )
-            
-            certificationPopupView.certificationTextView.delegate = self
-            return certificationPopupView
-            
         case .rejectReason:
             let rejectReasonPopupView = RejectReasonPopupView()
             rejectReasonPopupView.rejectReasonTextView.delegate = self
@@ -128,65 +87,6 @@ extension PopupViewController {
     }
 }
 
-// MARK: - about gallery
-extension PopupViewController: PHPickerViewControllerDelegate {
-    private func openGallery() {
-        var configuration = PHPickerConfiguration()
-        configuration.selectionLimit = 1
-        configuration.filter = .images
-
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true)
-    }
-    
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-
-        guard let provider = results.first?.itemProvider, provider.canLoadObject(ofClass: UIImage.self) else { return }
-        provider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
-            guard let self,
-                  let uiImage = image as? UIImage,
-                  let compressImage = uiImage.compressImage(),
-                  let pngData = compressImage.pngData(),
-                  let pngImage = UIImage(data: pngData) else { return }
-            Task { @MainActor in
-                self.pickerCompletion?(pngImage)
-            }
-        }
-    }
-}
-
-// MARK: - about camera
-extension PopupViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    private func openCamera() {
-        guard UIImagePickerController.isSourceTypeAvailable(.camera) else { return }
-        
-        let picker = UIImagePickerController()
-        picker.sourceType = .camera
-        picker.delegate = self
-        picker.allowsEditing = false
-        present(picker, animated: true)
-    }
-    
-    func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
-    ) {
-        picker.dismiss(animated: true)
-        
-        guard let uiImage = info[.originalImage] as? UIImage,
-              let compressImage = uiImage.compressImage(),
-              let pngData = compressImage.pngData(),
-              let pngImage = UIImage(data: pngData) else { return }
-        pickerCompletion?(pngImage)
-    }
-
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        picker.dismiss(animated: true)
-    }
-}
-
 // MARK: - about keyboard
 extension PopupViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -209,9 +109,6 @@ extension PopupViewController: UITextViewDelegate {
         textView.updateTextInfo()
         viewModel.setStringContent(textView.text)
         
-        if let popupView = popupView as? CertificationPopupView, textView.text.count > 0 {
-            popupView.certificationButton.setButtonStatus(status: .enabled)
-        }
         if let popupView = popupView as? RejectReasonPopupView, textView.text.count > 0 {
             popupView.rejectReasonButton.setButtonStatus(status: .enabled)
         }
@@ -221,7 +118,7 @@ extension PopupViewController: UITextViewDelegate {
         guard let textView = textView as? DogetherTextView else { return false }
         textView.focusOn()
         
-        if let popupView = popupView as? CertificationPopupView ?? popupView as? RejectReasonPopupView {
+        if let popupView = popupView as? RejectReasonPopupView {
             popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         }
         return true
@@ -231,7 +128,7 @@ extension PopupViewController: UITextViewDelegate {
         guard let textView = textView as? DogetherTextView else { return false }
         textView.focusOff()
         
-        if let popupView = popupView as? CertificationPopupView ?? popupView as? RejectReasonPopupView {
+        if let popupView = popupView as? RejectReasonPopupView {
             popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
         }
         return true

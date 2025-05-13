@@ -49,13 +49,16 @@ final class CertificationInfoViewController: BaseViewController {
     private var rejectReasonView = UIView()
     
     override func configureView() {
-        imageView.loadImage(url: todoInfo.certificationMediaUrl)
-        
         imageView = CertificationImageView(
             image: .logo,
             certificationContent: todoInfo.certificationContent
         )
         
+        Task { [weak self] in
+            guard let self else { return }
+            try await imageView.loadImage(url: todoInfo.certificationMediaUrl)
+        }
+            
         guard let status = TodoStatus(rawValue: todoInfo.status),
               let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
         statusView = FilterButton(type: filterType)
@@ -75,7 +78,7 @@ final class CertificationInfoViewController: BaseViewController {
     override func configureHierarchy() {
         [navigationHeader, imageView, statusView, contentLabel].forEach { view.addSubview($0) }
         
-        if let rejectReason = todoInfo.rejectReason { view.addSubview(rejectReasonView) }
+        if todoInfo.rejectReason != nil { view.addSubview(rejectReasonView) }
     }
      
     override func configureConstraints() {
@@ -101,7 +104,7 @@ final class CertificationInfoViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
-        if let rejectReason = todoInfo.rejectReason {
+        if todoInfo.rejectReason != nil {
             rejectReasonView.snp.makeConstraints {
                 $0.top.equalTo(contentLabel.snp.bottom).offset(16)
                 $0.horizontalEdges.equalToSuperview().inset(16)
