@@ -167,8 +167,4 @@ extension MainViewModel {
         }
         return sheetStatus
     }
-    
-    func setChallengeIndex(index: Int) {
-        self.currentChallengeIndex = index
-    }
 }
