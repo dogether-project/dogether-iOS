@@ -17,4 +17,5 @@ protocol GroupProtocol {
     func getGroupStatus() async throws -> GetGroupStatusResponse
     func getTeamSummary() async throws -> GetTeamSummaryResponse
     func getMyGroup() async throws -> GetMyGroupResponse
+    func getRanking(groupId: String) async throws -> GetRankingResponse
 }

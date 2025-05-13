@@ -43,7 +43,7 @@ enum GroupsRouter: NetworkEndpoint {
     
     var method: NetworkMethod {
         switch self {
-        case .getGroupInfo, .getMySummary, .getTeamSummary, .getIsJoining, .getGroupStatus, .getMyGroups:
+        case .getGroupInfo, .getMySummary, .getRanking, .getIsJoining, .getTeamSummary, .getGroupStatus, .getMyGroups:
             return .get
         case .createGroup, .joinGroup:
             return .post
