@@ -12,28 +12,17 @@ final class CertificationImageView: BaseImageView {
     private let certificator: String?
     
     init(image: UIImage? = nil, imageUrl: String? = nil, certificationContent: String? = nil, certificator: String? = nil) {
-        if imageUrl == nil { self.certificationContent = "아직 열심히 진행중이에요" }
-        else { self.certificationContent = certificationContent }
+        self.certificationContent = certificationContent
         self.certificator = certificator
         
-        super.init(image: image ?? .embarrassedDosik.withAlignmentRectInsets(
-            UIEdgeInsets(top: -41, left: -62, bottom: -83, right: -62)
-        ))
+        super.init(image: image)
         
         Task { [weak self] in
-            guard let self, let imageUrl, let url = URL(string: imageUrl) else { return }
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let image = UIImage(data: data)
-            
-            guard let image else {
-                // FIXME: 추후 개선
-                certificationContentLabel.attributedText = NSAttributedString(
-                    string: "아직 열심히 진행중이에요",
-                    attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
-                )
-                return
+            guard let self else { return }
+            do {
+                try await loadImage(url: imageUrl)
+                updateCertificationContentLabelConstraints()
             }
-            self.image = image
         }
     }
     required init?(coder: NSCoder) { fatalError() }
@@ -83,10 +72,7 @@ final class CertificationImageView: BaseImageView {
         gradientView.layer.borderColor = UIColor.grey700.cgColor
         gradientView.layer.borderWidth = 1
         
-        certificationContentLabel.attributedText = NSAttributedString(
-            string: certificationContent ?? "",
-            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
-        )
+        updateCertificationContent(certificationContent: certificationContent, updateConstraints: false)
         
         certificatorLabel.text = certificator
     }
@@ -106,7 +92,7 @@ final class CertificationImageView: BaseImageView {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
             if certificator == nil {
-                $0.bottom.equalToSuperview().inset(16)
+                $0.bottom.equalToSuperview().inset(32)  // MARK: 이미지 로드가 끝나면 재조정
             } else {
                 $0.bottom.equalTo(certificatorLabel.snp.top).inset(4)
             }
@@ -116,6 +102,25 @@ final class CertificationImageView: BaseImageView {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(16)
             $0.height.equalTo(certificator == nil ? 0 : 28)
+        }
+    }
+}
+
+extension CertificationImageView {
+    func updateCertificationContent(certificationContent: String? = nil, updateConstraints: Bool = true) {
+        certificationContentLabel.attributedText = NSAttributedString(
+            string: certificationContent ?? "",
+            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
+        )
+        
+        if updateConstraints { updateCertificationContentLabelConstraints() }
+    }
+    
+    private func updateCertificationContentLabelConstraints() {
+        if certificator == nil {
+            certificationContentLabel.snp.updateConstraints {
+                $0.bottom.equalToSuperview().inset(16)
+            }
         }
     }
 }

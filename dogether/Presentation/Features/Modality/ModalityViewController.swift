@@ -98,6 +98,7 @@ final class ModalityViewController: BaseViewController {
         
         todoExaminationModalityView.snp.makeConstraints {
             $0.center.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
         }
         
         closeButton.snp.makeConstraints {
