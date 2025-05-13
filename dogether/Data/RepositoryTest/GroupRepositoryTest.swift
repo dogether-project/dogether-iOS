@@ -8,11 +8,6 @@
 import Foundation
 
 final class GroupRepositoryTest: GroupProtocol {
-    func getIsJoining() async throws -> GetIsJoiningResponse {
-//        return GetIsJoiningResponse(isJoining: false)
-        return GetIsJoiningResponse(isJoining: true)
-    }
-    
     func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
         return CreateGroupResponse(joinCode: "000000")
     }
@@ -23,20 +18,32 @@ final class GroupRepositoryTest: GroupProtocol {
         return JoinGroupResponse(name: "testGroup", maximumMemberCount: 10, startAt: "2025-01-01", endAt: "2025-01-04", durationOption: 3)
     }
     
-    func getGroupInfo() async throws -> GetGroupInfoResponse {
-        return GetGroupInfoResponse(
-            name: "Test Group Name",
-            duration: 3,
-            joinCode: "000000",
-            maximumTodoCount: 10,
-            endAt: "25.01.01",
-            remainingDays: 2
-        )
-    }
-    
-    func getGroupStatus() async throws -> GetGroupStatusResponse {
-//        return GetGroupStatusResponse(status: "READY")
-        return GetGroupStatusResponse(status: "RUNNING")
+    func getGroups() async throws -> GetGroupsResponse {
+        return GetGroupsResponse(joiningChallengeGroups: [
+            JoiningChallengeGroups(
+                groupId: 0,
+                groupName: "폰트의 챌린지",
+                currentMemberCount: 1,
+                maximumMemberCount: 10,
+                joinCode: "G3hIj4kLm",
+                status: "RUNNING",
+                startAt: "25.05.01",
+                endAt: "25.05.04",
+                progressDay: 5,
+                progressRate: 0.3
+            ), JoiningChallengeGroups(
+                groupId: 22,
+                groupName: "폰트의 챌린지222",
+                currentMemberCount: 2,
+                maximumMemberCount: 10,
+                joinCode: "G3hIj4222",
+                status: "READY",
+                startAt: "25.05.01",
+                endAt: "25.05.04",
+                progressDay: 1,
+                progressRate: 0.3
+            )
+        ])
     }
     
     func getRanking(groupId: String) async throws -> GetRankingResponse {

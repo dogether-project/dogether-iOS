@@ -46,16 +46,20 @@ final class DogetherHeader: BaseView {
     }
     
     override func configureConstraints() {
+        self.snp.makeConstraints {
+            $0.height.equalTo(56)
+        }
+        
         dogetherIconTypo.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.left.equalToSuperview()
+            $0.left.equalToSuperview().inset(16)
             $0.width.equalTo(91)
             $0.height.equalTo(20)
         }
         
         myPageButton.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.right.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().inset(16)
             $0.width.height.equalTo(24)
         }
     }

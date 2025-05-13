@@ -155,9 +155,8 @@ final class StartViewController: BaseViewController {
     
     override func configureConstraints() {
         dogetherHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(28)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
         
         titleLabel.snp.makeConstraints {

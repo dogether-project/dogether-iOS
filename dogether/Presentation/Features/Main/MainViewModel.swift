@@ -13,9 +13,15 @@ final class MainViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
-    private(set) var mainViewStatus: MainViewStatus = .emptyList
+    private(set) var rankings: [RankingModel]?
     
-    private(set) var groupInfo: GroupInfo = GroupInfo()
+    var challengeGroupInfos: [ChallengeGroupInfo] = []
+    
+    var currentGroup: ChallengeGroupInfo {
+        challengeGroupInfos[currentChallengeIndex]
+    }
+    
+    private(set) var currentChallengeIndex: Int = 0
     
     private(set) var sheetStatus: SheetStatus = .normal
     private(set) var isBlockPanGesture: Bool = true
@@ -46,9 +52,7 @@ final class MainViewModel {
 // MARK: - load view
 extension MainViewModel {
     func loadMainView() async throws {
-        let groupStatus = try await groupUseCase.getGroupStatus()
-        mainViewStatus = try await mainUseCase.getMainViewStatus(groupStatus: groupStatus)
-        groupInfo = try await groupUseCase.getGroupInfo()
+        challengeGroupInfos = try await groupUseCase.getChallengeGroupInfos()
     }
     
     func getReviews() async throws -> [ReviewModel] {
@@ -69,7 +73,22 @@ extension MainViewModel {
     }
 }
 
-// MARK: - beforeStart
+// MARK: - set
+extension MainViewModel {
+    func setChallengeIndex(index: Int) {
+        self.currentChallengeIndex = index
+    }
+    
+    func setDateOffset(offset: Int) {
+        self.dateOffset = offset
+    }
+    
+    func setFilter(filter: FilterTypes) {
+        self.currentFilter = filter
+    }
+}
+
+// MARK: - ready
 extension MainViewModel {
     func startCountdown(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
         checkRemainTime(updateTimer: updateTimer, updateList: updateList)
@@ -106,8 +125,7 @@ extension MainViewModel {
     private func updateListInfo(updateList: @escaping () -> Void) {
         Task {
             let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-            todoList = try await challengeGroupsUseCase.getMyTodos(date: date, status: status)
-            mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
+            todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
             isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
             await MainActor.run { updateList() }
         }
@@ -116,14 +134,9 @@ extension MainViewModel {
     
 // MARK: - todoList
 extension MainViewModel {
-    func updateFilter(filter: FilterTypes) {
-        self.currentFilter = filter
-    }
-    
     func updateListInfo() async throws {
         let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-        todoList = try await challengeGroupsUseCase.getMyTodos(date: date, status: status)
-        mainViewStatus = currentFilter == .all && todoList.isEmpty ? .emptyList : .todoList
+        todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
         isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }
 }
@@ -137,7 +150,7 @@ extension MainViewModel {
     func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
         switch sheetStatus {
         case .expand:
-            if translation > 0 { return min(SheetStatus.normal.offset, translation) }
+            if translation > 0 { return min(SheetStatus.normal.offset, SheetStatus.expand.offset + translation) }
             return currentOffset
         case .normal:
             if translation < 0 { return max(0, SheetStatus.normal.offset + translation) }

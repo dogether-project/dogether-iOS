@@ -39,42 +39,6 @@ enum TodoStatus: String, CaseIterable {
         }
     }
     
-    var contentColor: UIColor {
-        switch self {
-        case .waitCertification:
-            return .grey50
-        default:
-            return .grey300
-        }
-    }
-    
-    var buttonText: String {
-        switch self {
-        case .waitCertification:
-            return "인증하기"
-        default:
-            return "인증완료"
-        }
-    }
-    
-    var buttonTextColor: UIColor {
-        switch self {
-        case .waitCertification:
-            return .grey900
-        default:
-            return .grey400
-        }
-    }
-    
-    var buttonColor: UIColor {
-        switch self {
-        case .waitCertification:
-            return .blue300
-        default:
-            return .grey800
-        }
-    }
-    
     var filterType: FilterTypes {
         switch self {
         case .waitCertification:

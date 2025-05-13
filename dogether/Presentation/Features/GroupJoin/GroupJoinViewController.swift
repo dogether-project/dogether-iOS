@@ -92,7 +92,7 @@ final class GroupJoinViewController: BaseViewController {
                 Task {
                     do {
                         try await self.viewModel.joinGroup()
-                        guard let groupInfo = self.viewModel.groupInfo else { return }
+                        guard let groupInfo = self.viewModel.challengeGroupInfo else { return }
                         await MainActor.run {
                             let completeViewController = CompleteViewController()
                             completeViewController.viewModel.groupType = .join

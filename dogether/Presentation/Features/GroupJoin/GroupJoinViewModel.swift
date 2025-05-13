@@ -14,7 +14,7 @@ final class GroupJoinViewModel {
     
     private(set) var code: String = ""
     private(set) var status: GroupJoinStatus = .normal
-    private(set) var groupInfo: GroupInfo?
+    private(set) var challengeGroupInfo: ChallengeGroupInfo?
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -44,6 +44,6 @@ extension GroupJoinViewModel {
     
     func joinGroup() async throws {
         let joinGroupRequest = JoinGroupRequest(joinCode: code)
-        groupInfo = try await groupUseCase.joinGroup(joinGroupRequest: joinGroupRequest)
+        challengeGroupInfo = try await groupUseCase.joinGroup(joinGroupRequest: joinGroupRequest)
     }
 }

@@ -8,10 +8,6 @@
 import Foundation
 
 final class MainUseCase {
-    func getMainViewStatus(groupStatus: String) async throws -> MainViewStatus {
-        return groupStatus == "READY" ? .beforeStart : .emptyList
-    }
-    
     func getTodosInfo(dateOffset: Int, currentFilter: FilterTypes) async throws -> (String, TodoStatus?) {
         let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
         let status: TodoStatus? = currentFilter == .all ? nil : TodoStatus.allCases.first(where: { $0.tag == currentFilter.tag })

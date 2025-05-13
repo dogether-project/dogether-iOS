@@ -105,7 +105,7 @@ final class OnboardingViewController: BaseViewController {
                 guard let self else { return }
                 Task {
                     try await self.viewModel.signInWithApple()
-                    guard let destination = self.viewModel.destination else { return }
+                    let destination = try await self.viewModel.getDestination()
                     await MainActor.run {
                         self.coordinator?.setNavigationController(destination)
                     }
