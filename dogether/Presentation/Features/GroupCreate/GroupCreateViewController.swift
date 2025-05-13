@@ -170,7 +170,7 @@ final class GroupCreateViewController: BaseViewController {
             self?.viewModel.updateMemberCount(count: $0)
         }
         
-        duration = componentTitleLabel(componentTitle: "기간")
+        duration = componentTitleLabel(componentTitle: "활동 기간")
         durationRow1 = horizontalStackView(buttons: [threeDaysButton, oneWeekButton])
         durationRow2 = horizontalStackView(buttons: [twoWeeksButton, fourWeeksButton])
         durationStack = verticalStackView(stacks: [durationRow1, durationRow2])
