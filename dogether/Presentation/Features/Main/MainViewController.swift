@@ -106,7 +106,9 @@ final class MainViewController: BaseViewController {
         loadMainView()
     }
     
-    override func configureView() { }
+    override func configureView() {
+        [timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { $0.isHidden = true }
+    }
     
     override func configureAction() {
         dogetherHeader.delegate = self
@@ -273,7 +275,7 @@ extension MainViewController {
         
         timerView.isHidden = !(viewModel.currentGroup.status == .ready)
         todoListView.isHidden = viewModel.todoList.isEmpty
-        todayEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset == 0) || viewModel.currentGroup.status == .dDay
+        todayEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset == 0) || viewModel.currentGroup.status != .running
         pastEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset < 0)
         doneView.isHidden = !(viewModel.currentGroup.status == .dDay && viewModel.dateOffset == 0)
     }
