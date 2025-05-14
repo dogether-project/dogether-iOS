@@ -29,6 +29,7 @@ enum Path {
     static let groups = "/groups"
     static let todos = "/todos"
     static let challengeGroups = "/challenge-groups"
+    static let todoHistory = "/todo-history"
     static let todoCertifications = "/todo-certifications"
     static let notification = "/notification"
     static let s3 = "/s3"

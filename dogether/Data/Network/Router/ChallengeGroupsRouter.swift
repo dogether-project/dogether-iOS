@@ -13,6 +13,7 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
     case getMyTodos(groupId: String, date: String, status: String?)
     case getMyYesterdayTodos
     case getMemberTodos(groupId: String, memberId: String)
+    case readTodo(todoId: String)
     
     var path: String {
         switch self {
@@ -26,6 +27,8 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
             return Path.api + Path.challengeGroups + "/my/yesterday"
         case .getMemberTodos(let groupId, let memberId):
             return Path.api + Path.challengeGroups + "/\(groupId)/challenge-group-members/\(memberId)/today-todo-history"
+        case .readTodo(let todoId): // FIXME: 추후 TodoHistoryRouter 분리
+            return Path.api + Path.todoHistory + todoId
         }
     }
     
@@ -33,7 +36,7 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
         switch self {
         case .getMyTodos, .getMyYesterdayTodos, .getMemberTodos:
             return .get
-        case .createTodos, .certifyTodo:
+        case .createTodos, .certifyTodo, .readTodo:
             return .post
         }
     }

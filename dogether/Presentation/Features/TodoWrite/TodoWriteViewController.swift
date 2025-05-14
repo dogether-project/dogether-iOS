@@ -139,6 +139,8 @@ final class TodoWriteViewController: BaseViewController {
     override func configureAction() {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         
+        navigationHeader.delegate = self
+        
         todoTextField.delegate = self
         todoTextField.addAction(
             UIAction { [weak self] _ in

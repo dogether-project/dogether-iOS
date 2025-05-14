@@ -38,4 +38,8 @@ final class ChallengeGroupUseCase {
         }
         return (currentIndex, memberTodos)
     }
+    
+    func readTodo(todoId: Int) async throws {
+        try await repository.readTodo(todoId: String(todoId))
+    }
 }

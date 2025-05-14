@@ -27,4 +27,8 @@ final class ChallengeGroupsDataSource {
     func certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest) async throws {
         try await NetworkManager.shared.request(ChallengeGroupsRouter.certifyTodo(todoId: todoId, certifyTodoRequest: certifyTodoRequest))
     }
+    
+    func readTodo(todoId: String) async throws {
+        try await NetworkManager.shared.request(ChallengeGroupsRouter.readTodo(todoId: todoId))
+    }
 }

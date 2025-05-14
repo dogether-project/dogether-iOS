@@ -34,6 +34,12 @@ extension MemberCertificationViewModel {
     func loadMemberCertificationView() async throws {
         guard let groupId, let memberInfo else { return }
         (currentIndex, todos) = try await challengeGroupsUseCase.getMemberTodos(groupId: groupId, memberId: memberInfo.memberId)
-        
+    }
+    
+    func readTodo() {
+        Task { [weak self] in
+            guard let self else { return }
+            try await challengeGroupsUseCase.readTodo(todoId: todos[currentIndex].id)
+        }
     }
 }

@@ -188,6 +188,8 @@ extension MemberCertificationViewController {
     }
     
     private func updateView() {
+        viewModel.readTodo()
+        
         thumbnailStackView.arrangedSubviews.enumerated().forEach { index, view in
             guard let view = view as? ThumbnailView else { return }
             // TODO: beforeIndex, currentIndex만 처리할지 고민해보기

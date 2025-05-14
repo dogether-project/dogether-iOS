@@ -25,4 +25,8 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
     func getMemberTodos(groupId: String, memberId: String) async throws -> GetMemberTodosResponse {
         try await challengeGroupsDataSource.getMemberTodos(groupId: groupId, memberId: memberId)
     }
+    
+    func readTodo(todoId: String) async throws {
+        try await challengeGroupsDataSource.readTodo(todoId: todoId)
+    }
 }

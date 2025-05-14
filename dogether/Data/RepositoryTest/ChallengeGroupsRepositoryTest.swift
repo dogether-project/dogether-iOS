@@ -56,4 +56,6 @@ final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
             MemberTodo(id: 2, content: "치킨 먹기", status: "REJECT", certificationContent: "치킨 냠냠", isRead: false)
         ])
     }
+    
+    func readTodo(todoId: String) async throws { }
 }
