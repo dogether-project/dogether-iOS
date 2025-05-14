@@ -93,7 +93,7 @@ extension StatsViewModel {
         Task {
             do {
                 let response = try await groupUseCase.getMyGroup()
-                let challengeGroups = response.data.joiningChallengeGroups
+                let challengeGroups = response.joiningChallengeGroups
                 self.myGroups = challengeGroups // 참여중인 그룹 목록 저장
                 
                 // GroupSortOption 배열로 변환

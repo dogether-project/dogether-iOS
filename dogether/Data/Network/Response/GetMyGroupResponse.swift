@@ -8,12 +8,6 @@
 import Foundation
 
 struct GetMyGroupResponse: Decodable {
-    let code: String
-    let message: String
-    let data: GroupData
-}
-
-struct GroupData: Decodable {
     let joiningChallengeGroups: [ChallengeGroup]
 }
 

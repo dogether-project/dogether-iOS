@@ -17,9 +17,8 @@ final class SettingViewModel {
 }
 
 extension SettingViewModel {
-    func leaveGroup() async throws {
-        // FIXME: UI 수정 후 내용 반영
-        try await NetworkManager.shared.request(GroupsRouter.leaveGroup)
+    func leaveGroup(groupId: Int) async throws {
+        try await NetworkManager.shared.request(GroupsRouter.leaveGroup(groupId: groupId))
     }
     
     func logout() {

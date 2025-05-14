@@ -26,7 +26,7 @@ extension GroupManagementViewModel {
         Task {
             do {
                 let response = try await groupUseCase.getMyGroup()
-                self.groups = response.data.joiningChallengeGroups
+                self.groups = response.joiningChallengeGroups
                 DispatchQueue.main.async {
                     completion()  // 데이터 갱신 후 테이블 뷰 리로드
                 }
@@ -38,9 +38,8 @@ extension GroupManagementViewModel {
 }
 
 extension GroupManagementViewModel {
-    func leaveGroup() async throws {
-        // FIXME: UI 수정 후 내용 반영
-        try await NetworkManager.shared.request(GroupsRouter.leaveGroup)
+    func leaveGroup(groupId: Int) async throws {
+        try await NetworkManager.shared.request(GroupsRouter.leaveGroup(groupId: groupId))
     }
 }
 
