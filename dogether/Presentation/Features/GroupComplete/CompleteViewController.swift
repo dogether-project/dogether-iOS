@@ -34,21 +34,24 @@ final class CompleteViewController: BaseViewController {
         label.text = joinCode
         label.textColor = .grey0
         label.font = Fonts.head1B
-        label.isUserInteractionEnabled = false
         
         let imageView = UIImageView()
         imageView.image = .share.withRenderingMode(.alwaysTemplate)
         imageView.tintColor = .grey400
-        imageView.isUserInteractionEnabled = false
         
         let stackView = UIStackView(arrangedSubviews: [label, imageView])
         stackView.axis = .horizontal
         stackView.spacing = 8
+        stackView.isUserInteractionEnabled = false
         
         [stackView].forEach { button.addSubview($0) }
         
         stackView.snp.makeConstraints {
             $0.center.equalToSuperview()
+        }
+        
+        label.snp.makeConstraints {
+            $0.height.equalTo(36)
         }
         
         imageView.snp.makeConstraints {
