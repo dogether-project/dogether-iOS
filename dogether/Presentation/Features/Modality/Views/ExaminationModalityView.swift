@@ -113,7 +113,7 @@ extension ExaminationModalityView {
         
         Task { [weak self] in
             guard let self else { return }
-            try await imageView.loadImage(url: review.mediaUrls[0])
+            try await imageView.loadImage(url: review.mediaUrl)
         }
         
         contentLabel.attributedText = NSAttributedString(
