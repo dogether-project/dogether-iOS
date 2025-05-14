@@ -72,9 +72,9 @@ final class CertificationImageView: BaseImageView {
         gradientView.layer.borderColor = UIColor.grey700.cgColor
         gradientView.layer.borderWidth = 1
         
-        updateCertificationContent(certificationContent: certificationContent, updateConstraints: false)
+        updateCertificator(certificator: certificator)
         
-        certificatorLabel.text = certificator
+        updateCertificationContent(certificationContent: certificationContent, updateConstraints: false)
     }
     
     override func configureAction() { }
@@ -107,6 +107,10 @@ final class CertificationImageView: BaseImageView {
 }
 
 extension CertificationImageView {
+    func updateCertificator(certificator: String? = nil) {
+        certificatorLabel.text = certificator
+    }
+    
     func updateCertificationContent(certificationContent: String? = nil, updateConstraints: Bool = true) {
         certificationContentLabel.attributedText = NSAttributedString(
             string: certificationContent ?? "",

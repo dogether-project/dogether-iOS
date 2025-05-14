@@ -105,11 +105,9 @@ final class ExaminationModalityView: BasePopupView {
  
 extension ExaminationModalityView {
     func setReview(review: ReviewModel) {
-        imageView = CertificationImageView(
-            image: .logo,
-            certificationContent: review.content,
-            certificator: review.doer
-        )
+        imageView.image = .logo
+        imageView.updateCertificator(certificator: review.doer)
+        imageView.updateCertificationContent(certificationContent: review.content)
         
         Task { [weak self] in
             guard let self else { return }
