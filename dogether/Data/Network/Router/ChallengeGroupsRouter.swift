@@ -28,7 +28,7 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
         case .getMemberTodos(let groupId, let memberId):
             return Path.api + Path.challengeGroups + "/\(groupId)/challenge-group-members/\(memberId)/today-todo-history"
         case .readTodo(let todoId): // FIXME: 추후 TodoHistoryRouter 분리
-            return Path.api + Path.todoHistory + todoId
+            return Path.api + Path.todoHistory + "/\(todoId)"
         }
     }
     

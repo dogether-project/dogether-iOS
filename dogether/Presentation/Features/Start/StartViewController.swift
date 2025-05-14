@@ -136,6 +136,7 @@ final class StartViewController: BaseViewController {
     override func configureView() {
         dogetherHeader.delegate = self
         
+        hideFloating()  // TODO: 추후 메인화면 말풍선 작업 시 이동
         floatingDescription.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
