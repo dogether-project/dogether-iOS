@@ -30,6 +30,7 @@ final class BottomSheetViewController: BaseViewController {
     private var selectedItem: BottomSheetItem?
     private let bottomSheetItem: [BottomSheetItem]
     private weak var overlayView: UIView?
+    private let shouldShowAddGroupButton: Bool
     
     // UI Components
     private let containerView: UIView = {
@@ -75,12 +76,28 @@ final class BottomSheetViewController: BaseViewController {
         view.backgroundColor = .clear
         return view
     }()
-    
+    private let addGroupButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("새 그룹 추가하기", for: .normal)
+        button.setTitleColor(.grey200, for: .normal)
+        button.titleLabel?.font = Fonts.body1S
+        button.backgroundColor = .clear
+        button.contentHorizontalAlignment = .leading
+        let image = UIImage(named: "plus2")
+        button.setImage(image, for: .normal)
+        button.tintColor = .grey200
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+        button.imageView?.contentMode = .scaleAspectFit
+        return button
+    }()
+
     // MARK: - Initializer
     
-    init(titleText: String, bottomSheetItem: [BottomSheetItem]) {
+    init(titleText: String, bottomSheetItem: [BottomSheetItem], shouldShowAddGroupButton: Bool = false) {
         self.titleText = titleText
         self.bottomSheetItem = bottomSheetItem
+        self.shouldShowAddGroupButton = shouldShowAddGroupButton
         
         if let selectedItem = bottomSheetItem.first {
             self.selectedItem = selectedItem
@@ -129,6 +146,11 @@ final class BottomSheetViewController: BaseViewController {
             },
             for: .touchUpInside
         )
+        
+        addGroupButton.addAction(
+              UIAction { [weak self] _ in self?.didTapAddGroupButton() },
+              for: .touchUpInside
+          )
     }
     
     override func configureHierarchy() {
@@ -137,6 +159,9 @@ final class BottomSheetViewController: BaseViewController {
         containerView.addSubview(titleLabel)
         containerView.addSubview(confirmButton)
         containerView.addSubview(tableView)
+        if shouldShowAddGroupButton {
+              containerView.addSubview(addGroupButton)
+          }
         containerView.addSubview(bottomSpacerView)
     }
     
@@ -172,10 +197,26 @@ final class BottomSheetViewController: BaseViewController {
             $0.height.equalTo(tableViewHeight)
         }
         
-        bottomSpacerView.snp.makeConstraints {
-            $0.leading.trailing.equalTo(containerView)
-            $0.height.equalTo(48)
-            $0.bottom.equalTo(containerView)
+        if shouldShowAddGroupButton {
+            addGroupButton.snp.makeConstraints {
+                $0.top.equalTo(tableView.snp.bottom)
+                $0.leading.trailing.equalTo(containerView).inset(24)
+                $0.height.equalTo(50)
+            }
+
+            bottomSpacerView.snp.makeConstraints {
+                $0.top.equalTo(addGroupButton.snp.bottom)
+                $0.leading.trailing.equalTo(containerView)
+                $0.height.equalTo(48)
+                $0.bottom.equalTo(containerView)
+            }
+        } else {
+            bottomSpacerView.snp.makeConstraints {
+                $0.top.equalTo(tableView.snp.bottom)
+                $0.leading.trailing.equalTo(containerView)
+                $0.height.equalTo(48)
+                $0.bottom.equalTo(containerView)
+            }
         }
     }
     
@@ -198,6 +239,15 @@ extension BottomSheetViewController {
             didSelectOption?(selectedItem)
         }
         dismiss(animated: true)
+    }
+    
+    private func didTapAddGroupButton() {
+        guard let coordinator = coordinator else { return }
+
+        dismiss(animated: false) {
+            // FIXME: 새 그룹 추가 페이지 (그룹 만들기/초대 코드로 참여하기)
+            coordinator.pushViewController(GroupCreateViewController())
+        }
     }
 }
 
