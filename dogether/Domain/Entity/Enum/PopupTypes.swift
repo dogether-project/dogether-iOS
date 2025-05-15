@@ -13,6 +13,7 @@ enum PopupTypes {
 }
 
 enum AlertTypes {
+    case pushNotice
     case leaveGroup
     case logout
     case withdraw
@@ -20,6 +21,8 @@ enum AlertTypes {
     
     var title: String {
         switch self {
+        case .pushNotice:
+            return "알림 권한이 꺼져 있어요."
         case .leaveGroup:
             return "선택한 그룹을 탈퇴하시겠어요?"
         case .logout:
@@ -33,6 +36,8 @@ enum AlertTypes {
     
     var message: String? {
         switch self {
+        case .pushNotice:
+            return "팀원들의 인증을 놓칠 수도 있어요!\n검사를 위해 설정에서 알림 권한을 켜주세요."
         case .leaveGroup:
             return "그룹을 탈퇴하면 그룹 내 모든 데이터가\n삭제되어 복구할 수 없어요."
         case .withdraw:
@@ -44,8 +49,19 @@ enum AlertTypes {
         }
     }
     
+    var cancelText: String {
+        switch self {
+        case .pushNotice:
+            return "나중에"
+        default:
+            return "뒤로가기"
+        }
+    }
+    
     var buttonText: String {
         switch self {
+        case .pushNotice:
+            return "설정 열기"
         case .leaveGroup, .withdraw:
             return "탈퇴하기"
         case .logout:
@@ -59,14 +75,14 @@ enum AlertTypes {
         switch self {
         case .leaveGroup, .withdraw:
             return .dogetherRed
-        case .logout, .saveTodo:
+        case .pushNotice, .logout, .saveTodo:
             return .blue300
         }
     }
     
     var image: UIImage? {
         switch self {
-        case .saveTodo:
+        case .pushNotice, .saveTodo:
             return UIImage(named: "caution")
         default:
             return nil

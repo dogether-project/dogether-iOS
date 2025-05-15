@@ -85,12 +85,12 @@ final class MainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        checkAuthorization()
+        
         // ???: 화면 전환을 고려하면 일부러 강한 참조를 걸어야할까
         // TODO: 알림 권한을 거부한 사용자에 대한 로직은 추후에 추가
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.checkAuthorization()
-            
             let reviews = try await viewModel.getReviews()
             if reviews.isEmpty { return }
             
@@ -246,6 +246,32 @@ extension MainViewController {
 
 // MARK: - update UI
 extension MainViewController {
+    private func checkAuthorization() {
+        Task { [weak self] in
+            guard let self else { return }
+            let userNoti = UNUserNotificationCenter.current()
+            let settings = await userNoti.notificationSettings()
+            
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                try await userNoti.requestAuthorization(options: [.alert, .badge, .sound])
+            case .denied:
+                await MainActor.run {
+                    self.coordinator?.showPopup(
+                        self,
+                        type: .alert,
+                        alertType: .pushNotice,
+                        completion:  { _ in
+                            SystemManager().openSettingApp()
+                        }
+                    )
+                }
+            default:    // MARK: .authorized, .provisional, .ephemeral
+                break
+            }
+        }
+    }
+    
     private func updateSheet(_ status: SheetStatus) {
         viewModel.setIsBlockPanGesture(true)
         UIView.animate(withDuration: 0.3) { [weak self] in

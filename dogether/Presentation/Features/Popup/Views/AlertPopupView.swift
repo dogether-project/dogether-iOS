@@ -16,6 +16,12 @@ final class AlertPopupView: BasePopupView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
+    private let imageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
     private let titleLabel = {
         let label = UILabel()
         label.textColor = .grey0
@@ -30,13 +36,6 @@ final class AlertPopupView: BasePopupView {
         return label
     }()
     
-    private let imageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = true
-        return imageView
-    }()
-    
     // MARK: - PopupViewController에서 action handling
     let confirmButton = {
         let button = UIButton()
@@ -48,7 +47,6 @@ final class AlertPopupView: BasePopupView {
     
     private let cancelButton = {
         let button = UIButton()
-        button.setTitle("뒤로가기", for: .normal)
         button.setTitleColor(.grey300, for: .normal)
         button.titleLabel?.font = Fonts.body1S
         button.layer.cornerRadius = 8
@@ -72,9 +70,11 @@ final class AlertPopupView: BasePopupView {
     }()
     
     override func configureView() {
+        imageView.image = type.image
+        
         titleLabel.attributedText = NSAttributedString(
             string: type.title,
-            attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
+            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         
         if let message = type.message {
@@ -84,10 +84,7 @@ final class AlertPopupView: BasePopupView {
             )
         }
         
-        if let image = type.image {
-            imageView.image = image
-            imageView.isHidden = false
-        }
+        cancelButton.setTitle(type.cancelText, for: .normal)
         
         confirmButton.setTitle(type.buttonText, for: .normal)
         confirmButton.backgroundColor = type.buttonColor
@@ -108,10 +105,7 @@ final class AlertPopupView: BasePopupView {
         )
     }
     override func configureHierarchy() {
-        if !imageView.isHidden {
-            addSubview(imageView)
-        }
-        addSubview(contentStackView)
+        [imageView, contentStackView].forEach { addSubview($0) }
     }
 
     override func configureConstraints() {
@@ -119,7 +113,13 @@ final class AlertPopupView: BasePopupView {
             $0.height.equalTo(48)
         }
  
-        if !imageView.isHidden {
+        if imageView.image == nil {
+            contentStackView.snp.makeConstraints {
+                $0.top.equalToSuperview().inset(32)
+                $0.bottom.equalToSuperview().inset(24)
+                $0.horizontalEdges.equalToSuperview().inset(20)
+            }
+        } else {
             imageView.snp.makeConstraints {
                 $0.top.equalToSuperview().inset(32)
                 $0.centerX.equalToSuperview()
@@ -127,12 +127,6 @@ final class AlertPopupView: BasePopupView {
             }
             contentStackView.snp.makeConstraints {
                 $0.top.equalTo(imageView.snp.bottom).offset(12)
-                $0.bottom.equalToSuperview().inset(24)
-                $0.horizontalEdges.equalToSuperview().inset(20)
-            }
-        } else {
-            contentStackView.snp.makeConstraints {
-                $0.top.equalToSuperview().inset(32)
                 $0.bottom.equalToSuperview().inset(24)
                 $0.horizontalEdges.equalToSuperview().inset(20)
             }

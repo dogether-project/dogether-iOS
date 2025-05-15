@@ -58,19 +58,6 @@ extension MainViewModel {
     func getReviews() async throws -> [ReviewModel] {
         try await todoCertificationsUseCase.getReviews()
     }
-    
-    func checkAuthorization() async throws {
-        let userNoti = UNUserNotificationCenter.current()
-        let settings = await userNoti.notificationSettings()
-        switch settings.authorizationStatus {
-        case .notDetermined:
-            try await userNoti.requestAuthorization(options: [.alert, .badge, .sound])
-        case .denied:
-            SystemManager().openSettingApp()    // FIXME: show AlertPopup
-        default:    // MARK: .authorized, .provisional, .ephemeral
-            break
-        }
-    }
 }
 
 // MARK: - set

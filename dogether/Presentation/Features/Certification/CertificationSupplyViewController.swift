@@ -78,6 +78,8 @@ final class CertificationSupplyViewController: BaseViewController {
     }
     
     override func configureAction() {
+        navigationHeader.delegate = self
+        
         certificationTextView.delegate = self
         
         certificationButton.addAction(
