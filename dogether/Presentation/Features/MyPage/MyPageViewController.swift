@@ -12,7 +12,7 @@ final class MyPageViewController: BaseViewController {
     private let navigationHeader = NavigationHeader(title: "마이페이지")
     
     // FIXME: API 수정 후 내용 반영
-    private let profileImageView = UIImageView(image: .profile2)
+    private let profileImageView = UIImageView(image: .profile5)
     
     private let nameLabel = {
         let label = UILabel()
