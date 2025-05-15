@@ -140,9 +140,7 @@ final class GroupCreateViewController: BaseViewController {
     
     private let dogetherGroupInfo = DogetherGroupInfo()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    override func viewDidAppear(_ animated: Bool) {
         groupNameTextField.becomeFirstResponder()
     }
     

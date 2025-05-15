@@ -390,12 +390,12 @@ extension MainViewController: BottomSheetDelegate {
         let bottomSheetItem = viewModel.challengeGroupInfos.map { $0.bottomSheetItem }
         
         if bottomSheetItem.isEmpty { return }
+
+        bottomSheetViewController = BottomSheetViewController(titleText: "그룹 선택",
+                                                              bottomSheetItem: bottomSheetItem,
+                                                              shouldShowAddGroupButton: true)
         
-        bottomSheetViewController = BottomSheetViewController(
-            titleText: "그룹 선택",
-            bottomSheetItem: bottomSheetItem
-        )
-        
+        bottomSheetViewController?.coordinator = self.coordinator
         bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
         bottomSheetViewController?.modalTransitionStyle = .coverVertical
         
