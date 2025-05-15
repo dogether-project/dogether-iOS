@@ -273,15 +273,11 @@ extension MainViewController {
     }
     
     private func updateSheet(_ status: SheetStatus) {
-        viewModel.setIsBlockPanGesture(true)
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
             dogetherSheetTopConstraint?.update(offset: status.offset)
             updateAlpha(alpha: status == .normal ? 1 : 0)
             view.layoutIfNeeded()
-        } completion: { [weak self] _ in
-            guard let self else { return }
-            viewModel.setIsBlockPanGesture(false)
         }
     }
     
@@ -341,7 +337,6 @@ extension MainViewController {
 // MARK: - about pan gesture
 extension MainViewController: UIGestureRecognizerDelegate {
     @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-        if viewModel.isBlockPanGesture { return }
         let translation = gesture.translation(in: view)
         
         switch gesture.state {
@@ -381,7 +376,8 @@ extension MainViewController: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if viewModel.sheetStatus == .normal || viewModel.isBlockPanGesture {
+//        if viewModel.sheetStatus == .normal || viewModel.isBlockPanGesture {
+        if viewModel.sheetStatus == .normal {
             scrollView.contentOffset.y = 0
             return
         }

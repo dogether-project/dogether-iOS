@@ -24,7 +24,6 @@ final class MainViewModel {
     private(set) var currentChallengeIndex: Int = 0
     
     private(set) var sheetStatus: SheetStatus = .normal
-    private(set) var isBlockPanGesture: Bool = true
     
     private(set) var timer: Timer?
     private(set) var time: String = "23:59:59"
@@ -113,7 +112,6 @@ extension MainViewModel {
         Task {
             let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
             todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
-            isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
             await MainActor.run { updateList() }
         }
     }
@@ -124,16 +122,11 @@ extension MainViewModel {
     func updateListInfo() async throws {
         let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
         todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
-        isBlockPanGesture = await todoListHeight < Int(UIScreen.main.bounds.height - (SheetStatus.normal.offset + 140 + 48))
     }
 }
 
 // MARK: - about sheet
 extension MainViewModel {
-    func setIsBlockPanGesture(_ isBlockPanGesture: Bool) {
-        self.isBlockPanGesture = isBlockPanGesture
-    }
-    
     func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
         switch sheetStatus {
         case .expand:
