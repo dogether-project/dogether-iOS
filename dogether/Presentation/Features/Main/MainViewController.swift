@@ -376,7 +376,6 @@ extension MainViewController: UIScrollViewDelegate {
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        if viewModel.sheetStatus == .normal || viewModel.isBlockPanGesture {
         if viewModel.sheetStatus == .normal {
             scrollView.contentOffset.y = 0
             return

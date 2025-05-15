@@ -188,7 +188,7 @@ extension MemberCertificationViewController {
     }
     
     private func updateView() {
-        viewModel.readTodo()
+        if viewModel.todos[viewModel.currentIndex].thumbnailStatus == .yet { viewModel.readTodo() }
         
         thumbnailStackView.arrangedSubviews.enumerated().forEach { index, view in
             guard let view = view as? ThumbnailView else { return }
