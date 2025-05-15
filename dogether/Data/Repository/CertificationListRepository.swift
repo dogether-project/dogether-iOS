@@ -28,7 +28,7 @@ final class CertificationListRepository: CertificationListProtocol {
 // MARK: - 투두완료일순
 extension CertificationListRepository {
     private static func transformDaily(response: CertificationDailyListResponse) -> CertificationListResult {
-        let items: [CertificationItem] = response.data.certificationsGroupedByTodoCompletedAt.flatMap { daily in
+        let items: [CertificationItem] = response.certificationsGroupedByTodoCompletedAt.flatMap { daily in
             daily.certificationInfo.map { info in
                 CertificationItem(
                     id: info.id,
@@ -52,9 +52,9 @@ extension CertificationListRepository {
         }
         
         let stats = CertificationStats(
-            totalCertificatedCount: response.data.dailyTodoStats.totalCertificatedCount,
-            totalApprovedCount: response.data.dailyTodoStats.totalApprovedCount,
-            totalRejectedCount: response.data.dailyTodoStats.totalRejectedCount
+            totalCertificatedCount: response.dailyTodoStats.totalCertificatedCount,
+            totalApprovedCount: response.dailyTodoStats.totalApprovedCount,
+            totalRejectedCount: response.dailyTodoStats.totalRejectedCount
         )
         
         return CertificationListResult(sections: sections, stats: stats)
@@ -64,7 +64,7 @@ extension CertificationListRepository {
 // MARK: - 그룹생성일순
 extension CertificationListRepository {
     private static func transformGroup(response: CertificationGroupListResponse) -> CertificationListResult {
-        let sections: [CertificationSection] = response.data.certificationsGroupedByGroupCreatedAt.map { group in
+        let sections: [CertificationSection] = response.certificationsGroupedByGroupCreatedAt.map { group in
             let items = group.certificationInfo.map { info in
                 CertificationItem(
                     id: info.id,
@@ -84,9 +84,9 @@ extension CertificationListRepository {
         }
         
         let stats = CertificationStats(
-            totalCertificatedCount: response.data.dailyTodoStats.totalCertificatedCount,
-            totalApprovedCount: response.data.dailyTodoStats.totalApprovedCount,
-            totalRejectedCount: response.data.dailyTodoStats.totalRejectedCount
+            totalCertificatedCount: response.dailyTodoStats.totalCertificatedCount,
+            totalApprovedCount: response.dailyTodoStats.totalApprovedCount,
+            totalRejectedCount: response.dailyTodoStats.totalRejectedCount
         )
         
         return CertificationListResult(sections: sections, stats: stats)

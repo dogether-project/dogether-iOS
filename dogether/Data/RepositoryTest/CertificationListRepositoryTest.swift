@@ -30,7 +30,7 @@ extension CertificationListRepositoryTest {
     }
     
     private func transformDailyResponse(_ response: CertificationDailyListResponse) -> CertificationListResult {
-        let items: [CertificationItem] = response.data.certificationsGroupedByTodoCompletedAt.flatMap { daily in
+        let items: [CertificationItem] = response.certificationsGroupedByTodoCompletedAt.flatMap { daily in
             daily.certificationInfo.map { info in
                 CertificationItem(id: info.id,
                                   content: info.content,
@@ -50,9 +50,9 @@ extension CertificationListRepositoryTest {
                                  certifications: grouped[date] ?? [])
         }
         
-        let stats = CertificationStats(totalCertificatedCount: response.data.dailyTodoStats.totalCertificatedCount,
-                                       totalApprovedCount: response.data.dailyTodoStats.totalApprovedCount,
-                                       totalRejectedCount: response.data.dailyTodoStats.totalRejectedCount)
+        let stats = CertificationStats(totalCertificatedCount: response.dailyTodoStats.totalCertificatedCount,
+                                       totalApprovedCount: response.dailyTodoStats.totalApprovedCount,
+                                       totalRejectedCount: response.dailyTodoStats.totalRejectedCount)
         
         return CertificationListResult(sections: sections, stats: stats)
     }
@@ -71,7 +71,7 @@ extension CertificationListRepositoryTest {
     }
     
     private func transformGroupResponse(_ response: CertificationGroupListResponse) -> CertificationListResult {
-        let sections: [CertificationSection] = response.data.certificationsGroupedByGroupCreatedAt.map { group in
+        let sections: [CertificationSection] = response.certificationsGroupedByGroupCreatedAt.map { group in
             let items: [CertificationItem] = group.certificationInfo.map { info in
                 CertificationItem(
                     id: info.id,
@@ -91,9 +91,9 @@ extension CertificationListRepositoryTest {
         }
         
         let stats = CertificationStats(
-            totalCertificatedCount: response.data.dailyTodoStats.totalCertificatedCount,
-            totalApprovedCount: response.data.dailyTodoStats.totalApprovedCount,
-            totalRejectedCount: response.data.dailyTodoStats.totalRejectedCount
+            totalCertificatedCount: response.dailyTodoStats.totalCertificatedCount,
+            totalApprovedCount: response.dailyTodoStats.totalApprovedCount,
+            totalRejectedCount: response.dailyTodoStats.totalRejectedCount
         )
         
         return CertificationListResult(sections: sections, stats: stats)
