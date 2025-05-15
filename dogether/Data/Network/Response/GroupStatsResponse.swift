@@ -8,12 +8,6 @@
 import Foundation
 
 struct GroupStatsResponse: Decodable {
-    let code: String
-    let message: String
-    let data: GroupStatsData
-}
-
-struct GroupStatsData: Decodable {
     let groupInfo: GroupInformation
     let certificationPeriods: [CertificationPeriod]
     let ranking: Ranking

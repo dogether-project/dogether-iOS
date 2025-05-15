@@ -75,7 +75,7 @@ extension StatsViewModel {
     }
     
     private func apply(response: GroupStatsResponse) {
-        let data = response.data
+        let data = response
         statsViewStatus = .hasData
         groupName = data.groupInfo.name
         endDate = data.groupInfo.endAt
