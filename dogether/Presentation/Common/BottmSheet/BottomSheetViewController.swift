@@ -83,12 +83,14 @@ final class BottomSheetViewController: BaseViewController {
         button.titleLabel?.font = Fonts.body1S
         button.backgroundColor = .clear
         button.contentHorizontalAlignment = .leading
+        
         let image = UIImage(named: "plus2")
         button.setImage(image, for: .normal)
         button.tintColor = .grey200
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
         button.imageView?.contentMode = .scaleAspectFit
+        
         return button
     }()
 
@@ -141,16 +143,22 @@ final class BottomSheetViewController: BaseViewController {
     override func configureAction() {
         confirmButton.addAction(
             UIAction { [weak self] _ in
-                guard let self = self else { return }
-                self.didTapConfirmButton()
-            },
-            for: .touchUpInside
+                guard let self, let selectedItem else { return }
+                didSelectOption?(selectedItem)
+                dismiss(animated: true)
+            }, for: .touchUpInside
         )
         
         addGroupButton.addAction(
-              UIAction { [weak self] _ in self?.didTapAddGroupButton() },
-              for: .touchUpInside
-          )
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                dismiss(animated: true) {
+                    let startViewController = StartViewController()
+                    startViewController.isFirst = false
+                    self.coordinator?.pushViewController(startViewController)
+                }
+            }, for: .touchUpInside
+        )
     }
     
     override func configureHierarchy() {
@@ -160,14 +168,15 @@ final class BottomSheetViewController: BaseViewController {
         containerView.addSubview(confirmButton)
         containerView.addSubview(tableView)
         if shouldShowAddGroupButton {
-              containerView.addSubview(addGroupButton)
-          }
+            containerView.addSubview(addGroupButton)
+        }
         containerView.addSubview(bottomSpacerView)
     }
     
     override func configureConstraints() {
         let tableViewHeight = CGFloat(bottomSheetItem.count * 49)
-        let containerHeight = tableViewHeight + 28 + 25 + 48
+        var containerHeight = tableViewHeight + 28 + 25 + 48
+        if shouldShowAddGroupButton { containerHeight += 50 }
         
         containerView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalToSuperview()
@@ -228,25 +237,6 @@ final class BottomSheetViewController: BaseViewController {
         let location = touch.location(in: view)
         if !containerView.frame.contains(location) {
             dismiss(animated: true)
-        }
-    }
-}
-
-// MARK: - Actions
-extension BottomSheetViewController {
-    private func didTapConfirmButton() {
-        if let selectedItem = selectedItem {
-            didSelectOption?(selectedItem)
-        }
-        dismiss(animated: true)
-    }
-    
-    private func didTapAddGroupButton() {
-        guard let coordinator = coordinator else { return }
-
-        dismiss(animated: false) {
-            // FIXME: 새 그룹 추가 페이지 (그룹 만들기/초대 코드로 참여하기)
-            coordinator.pushViewController(GroupCreateViewController())
         }
     }
 }

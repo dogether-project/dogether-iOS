@@ -401,11 +401,11 @@ extension MainViewController: BottomSheetDelegate {
         bottomSheetViewController?.didSelectOption = { [weak self] selectedItem in
             guard let self,
                   let selectedGroup = selectedItem.value as? ChallengeGroupInfo,
-                  let selectedIndex = self.viewModel.challengeGroupInfos.firstIndex(of: selectedGroup) else { return }
+                  let selectedIndex = viewModel.challengeGroupInfos.firstIndex(of: selectedGroup) else { return }
             
-            self.viewModel.setChallengeIndex(index: selectedIndex)
-            self.viewModel.setDateOffset(offset: 0)
-            self.loadMainView()
+            viewModel.setChallengeIndex(index: selectedIndex)
+            viewModel.setDateOffset(offset: 0)
+            loadMainView()
         }
     }
     
