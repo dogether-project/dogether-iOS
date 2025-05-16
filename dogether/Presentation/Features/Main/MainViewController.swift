@@ -314,11 +314,13 @@ extension MainViewController {
             todoListItemButton.addAction(
                 UIAction { [weak self, weak todoListItemButton] _ in
                     guard let self, let button = todoListItemButton else { return }
-                    let isCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification && button.isToday
+                    let isCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification
                     if isCertification {
-                        let certificationViewController = CertificationViewController()
-                        certificationViewController.todoInfo = button.todo
-                        coordinator?.pushViewController(certificationViewController)
+                        if button.isToday {
+                            let certificationViewController = CertificationViewController()
+                            certificationViewController.todoInfo = button.todo
+                            coordinator?.pushViewController(certificationViewController)
+                        } else { return }
                     } else {
                         let certificationInfoViewController = CertificationInfoViewController()
                         certificationInfoViewController.todoInfo = button.todo
