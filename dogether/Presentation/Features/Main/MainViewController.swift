@@ -18,6 +18,8 @@ final class MainViewController: BaseViewController {
     
     private let dosikImageView = UIImageView(image: .noteDosik)
     
+    private let dosikCommentButton = DosikCommentButton()
+    
     private let groupInfoView = GroupInfoView()
     
     private var bottomSheetViewController: BottomSheetViewController?
@@ -173,7 +175,7 @@ final class MainViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, dosikImageView, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
+        [dogetherHeader, dosikImageView, dosikCommentButton, groupInfoView, rankingButton, dogetherSheet].forEach { view.addSubview($0) }
         
         [sheetHeaderView, timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { dogetherSheet.addSubview($0) }
     }
@@ -188,6 +190,11 @@ final class MainViewController: BaseViewController {
             $0.top.equalTo(dogetherHeader.snp.bottom)
             $0.right.equalToSuperview().inset(16)
             $0.width.height.equalTo(120)
+        }
+        
+        dosikCommentButton.snp.makeConstraints {
+            $0.bottom.equalTo(dosikImageView.snp.top).offset(-6)
+            $0.right.equalTo(dosikImageView)
         }
         
         groupInfoView.snp.makeConstraints {
@@ -300,6 +307,11 @@ extension MainViewController {
         todayEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset == 0) || viewModel.currentGroup.status != .running
         pastEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset < 0)
         doneView.isHidden = !(viewModel.currentGroup.status == .dDay && viewModel.dateOffset == 0)
+        
+        dosikCommentButton.updateUI(
+            comment: viewModel.currentGroup.status == .dDay ? "그룹이 종료됐어요!" :
+                viewModel.currentGroup.progress >= 1.0 ? "마지막 인증일이에요!\n내일부터 인증이 불가능해요." : nil
+        )
     }
     
     private func updateTimer() {

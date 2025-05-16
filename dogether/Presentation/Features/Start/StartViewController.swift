@@ -26,50 +26,6 @@ final class StartViewController: BaseViewController {
         return label
     }()
     
-//    private let floatingDescription = {
-//        let button = UIButton()
-//        button.backgroundColor = .grey50
-//        button.layer.cornerRadius = 8
-//        button.layer.zPosition = 1
-//        
-//        let tail = UIImageView(image: .tail)
-//        
-//        let label = UILabel()
-//        label.text = "한 번에 하나의 그룹에서만 활동할 수 있어요"
-//        label.textColor = .grey800
-//        label.font = Fonts.smallS
-//        
-//        let icon = UIImageView(image: .close)
-//        icon.contentMode = .scaleAspectFit
-//        
-//        let stackView = UIStackView(arrangedSubviews: [label, icon])
-//        stackView.axis = .horizontal
-//        stackView.spacing = 4
-//        stackView.isUserInteractionEnabled = false
-//        
-//        [tail, stackView].forEach { button.addSubview($0) }
-//        
-//        tail.snp.makeConstraints {
-//            $0.top.equalToSuperview().offset(-7)
-//            $0.left.equalToSuperview().offset(25)
-//            $0.width.height.equalTo(14)
-//        }
-//        
-//        label.snp.makeConstraints {
-//            $0.height.equalTo(18)
-//        }
-//        
-//        icon.snp.makeConstraints {
-//            $0.width.equalTo(12)
-//        }
-//        
-//        stackView.snp.makeConstraints {
-//            $0.edges.equalToSuperview().inset(8)
-//        }
-//        
-//        return button
-//    }()
-    
     private func startButton(groupType: GroupTypes) -> UIButton {
         let button = UIButton()
         button.backgroundColor = .grey800
@@ -141,14 +97,6 @@ final class StartViewController: BaseViewController {
         dogetherHeader.delegate = self
         
         navigationHeader.delegate = self
-        
-        // TODO: 추후 메인화면 말풍선 작업 시 이동
-//        floatingDescription.addAction(
-//            UIAction { [weak self] _ in
-//                guard let self else { return }
-//                hideFloating()
-//            }, for: .touchUpInside
-//        )
         
         createButton = startButton(groupType: .create)
         joinButton = startButton(groupType: .join)
