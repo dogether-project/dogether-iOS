@@ -109,9 +109,9 @@ final class CertificationViewController: BaseViewController {
                     guard let self, let button, let certificationMethod = CertificationMethods(rawValue: button.tag) else { return }
                     switch certificationMethod {
                     case .gallery:
-                        openGallery()
+                        checkGalleryAuthorization()
                     case .camera:
-                        openCamera()
+                        checkCameraAuthorization()
                     }
                 }, for: .touchUpInside
             )
@@ -167,6 +167,29 @@ final class CertificationViewController: BaseViewController {
 
 // MARK: - about gallery
 extension CertificationViewController: PHPickerViewControllerDelegate {
+    private func checkGalleryAuthorization() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        
+        switch status {
+        case .authorized, .limited:
+            openGallery()
+            
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
+                Task { @MainActor in
+                    if status == .authorized || status == .limited { self.openGallery() }
+                    else { self.showPopup(type: .gallery) }
+                }
+            }
+            
+        case .denied, .restricted:
+            showPopup(type: .gallery)
+            
+        @unknown default:
+            break
+        }
+    }
+    
     private func openGallery() {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 1
@@ -196,6 +219,29 @@ extension CertificationViewController: PHPickerViewControllerDelegate {
 
 // MARK: - about camera
 extension CertificationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    private func checkCameraAuthorization() {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        
+        switch status {
+        case .authorized:
+            openCamera()
+            
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                Task { @MainActor in
+                    if granted { self.openCamera() }
+                    else { self.showPopup(type: .camera) }
+                }
+            }
+            
+        case .denied, .restricted:
+            showPopup(type: .camera)
+            
+        @unknown default:
+            break
+        }
+    }
+    
     private func openCamera() {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else { return }
         
@@ -226,6 +272,17 @@ extension CertificationViewController: UIImagePickerControllerDelegate, UINaviga
 
 // MARK: - completion
 extension CertificationViewController {
+    private func showPopup(type: AlertTypes) {
+        coordinator?.showPopup(
+            self,
+            type: .alert,
+            alertType: type,
+            completion:  { _ in
+                SystemManager().openSettingApp()
+            }
+        )
+    }
+    
     private func pickerCompletion(image: UIImage) {
         imageView.image = image
         imageView.updateCertificationContent()
