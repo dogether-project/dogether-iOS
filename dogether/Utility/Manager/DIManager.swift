@@ -83,4 +83,13 @@ extension DIManager {
             return StatsRepository()
         }
     }
+    
+    func getMyProfileRepository(buildMode: BuildModes? = nil) -> MyProfileProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return MyProfileRepositoryTest()
+        case .live:
+            return MyProfileRepository()
+        }
+    }
 }

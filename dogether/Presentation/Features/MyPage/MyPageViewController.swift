@@ -9,14 +9,13 @@ import UIKit
 import SnapKit
 
 final class MyPageViewController: BaseViewController {
+    private let viewModel = MyPageViewModel()
     private let navigationHeader = NavigationHeader(title: "마이페이지")
     
-    // FIXME: API 수정 후 내용 반영
-    private let profileImageView = UIImageView(image: .profile5)
+    private var profileImageView = UIImageView(image: .profile5)
     
     private let nameLabel = {
         let label = UILabel()
-        label.text = "\(UserDefaultsManager.shared.userFullName ?? "")"
         label.textColor = .grey0
         label.font = Fonts.head2B
         return label
@@ -75,6 +74,26 @@ final class MyPageViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        viewModel.getMyProfile {
+            self.nameLabel.text = self.viewModel.myProfile?.name
+
+            // FIXME: 이미지 처리 수정필요
+            if let urlString = self.viewModel.myProfile?.profileImageUrl,
+               let url = URL(string: urlString) {
+                Task { [weak self] in
+                    do {
+                        let (data, _) = try await URLSession.shared.data(from: url)
+                        let image = UIImage(data: data)
+                        await MainActor.run {
+                            self?.profileImageView.image = image
+                        }
+                    } catch {
+                        print("이미지 다운로드 실패: \(error)")
+                    }
+                }
+            }
+        }
     }
     
     override func configureView() {
