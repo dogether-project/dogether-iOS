@@ -67,12 +67,15 @@ extension StatsViewController {
     
     private func configureBottomSheetViewController() {
         let bottomSheetItem = viewModel.groupSortOptions.map { $0.bottomSheetItem }
+        // 선택된 그룹이 있는 경우 해당 항목 찾기
+        let selectedItem = viewModel.selectedGroup?.bottomSheetItem
         
         guard !bottomSheetItem.isEmpty else { return }
         
         bottomSheetViewController = BottomSheetViewController(
             titleText: "그룹 선택",
-            bottomSheetItem: bottomSheetItem
+            bottomSheetItem: bottomSheetItem,
+            selectedItem: selectedItem
         )
         
         bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
@@ -91,6 +94,8 @@ extension StatsViewController {
 extension StatsViewController: StatsViewModelDelegate {
     func didFetchStatsSucceed() {
         DispatchQueue.main.async {
+            self.statsContentView?.removeFromSuperview()
+            self.statsContentView = nil
             self.displayViewForCurrentStatus()
             self.statsContentView?.delegate = self
         }

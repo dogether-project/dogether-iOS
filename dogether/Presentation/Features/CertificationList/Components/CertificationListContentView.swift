@@ -43,7 +43,7 @@ final class CertificationListContentView: BaseView {
         self.viewModel = viewModel
         super.init(frame: .zero)
         
-        self.summaryView.configure(totalCertificatedCount: viewModel.totalApprovedCount,
+        self.summaryView.configure(totalCertificatedCount: viewModel.totalCertificatedCount,
                                    totalApprovedCount: viewModel.totalApprovedCount,
                                    totalRejectedCount: viewModel.totalRejectedCount)
     }

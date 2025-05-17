@@ -74,10 +74,12 @@ extension CertificationListViewController {
     
     private func configureBottomSheetViewController() {
         let bottomSheetItem = CertificationSortOption.allCases.map { $0.bottomSheetItem }
+        let selectedItem = viewModel.selectedGroup?.bottomSheetItem
         
         bottomSheetViewController = BottomSheetViewController(
             titleText: "정렬",
-            bottomSheetItem: bottomSheetItem
+            bottomSheetItem: bottomSheetItem,
+            selectedItem: selectedItem
         )
         
         bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
@@ -85,6 +87,8 @@ extension CertificationListViewController {
         
         bottomSheetViewController?.didSelectOption = { [weak self] selected in
             guard let self else { return }
+            
+            self.viewModel.selectedGroup = selected.value as? CertificationSortOption
             
             self.certificationListContentView?
                 .filterView
