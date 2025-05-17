@@ -33,6 +33,8 @@ final class MainViewModel {
     private(set) var currentFilter: FilterTypes = .all
     private(set) var todoList: [TodoInfo] = []
     
+    var selectedGroup: ChallengeGroupInfo? = nil
+
     // MARK: - Computed
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     

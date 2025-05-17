@@ -52,6 +52,8 @@ final class StatsViewModel {
     var myGroups: [ChallengeGroup] = [] // 받아온 그룹 아이디를 통해 특정 그룹 활동 통계 조회
     var groupSortOptions: [GroupSortOption] = []
     
+    var selectedGroup: GroupSortOption? // 현재 선택된 그룹
+    
     init() {
         let statsrepository = DIManager.shared.getStatsRepository()
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -61,6 +63,7 @@ final class StatsViewModel {
 }
 
 extension StatsViewModel {
+    /// 특정 그룹내 정보조회
     private func fetchStats(groupId: Int) {
         Task {
             do {
@@ -74,21 +77,7 @@ extension StatsViewModel {
         }
     }
     
-    private func apply(response: GroupStatsResponse) {
-        let data = response
-        statsViewStatus = .hasData
-        groupName = data.groupInfo.name
-        endDate = data.groupInfo.endAt
-        maximumMemberCount = data.groupInfo.maximumMemberCount
-        currentMemberCount = data.groupInfo.currentMemberCount
-        joinCode = data.groupInfo.joinCode
-        
-        myRank = data.ranking.myRank
-        totalMembers = data.ranking.totalMemberCount
-        statsSummary = data.stats
-        dailyAchievements = data.certificationPeriods
-    }
-    
+    /// 첫 진입시 참여중인 그룹정보 전체조회
     func fetchMyGroups() {
         Task {
             do {
@@ -102,6 +91,8 @@ extension StatsViewModel {
                 }
                 
                 if let firstGroup = challengeGroups.first {
+                    let selectedOption = GroupSortOption(groupId: firstGroup.groupId, groupName: firstGroup.groupName)
+                        selectedGroup = selectedOption
                     fetchStats(groupId: firstGroup.groupId)
                 } else {
                     statsViewStatus = .empty
@@ -112,7 +103,26 @@ extension StatsViewModel {
         }
     }
     
+    /// 특정 그룹 선택 후 해당그룹 정보조회
     func fetchStatsForSelectedGroup(_ option: GroupSortOption) {
+        selectedGroup = option
         fetchStats(groupId: option.groupId)
+    }
+}
+
+extension StatsViewModel {
+    private func apply(response: GroupStatsResponse) {
+        let data = response
+        statsViewStatus = .hasData
+        groupName = data.groupInfo.name
+        endDate = data.groupInfo.endAt
+        maximumMemberCount = data.groupInfo.maximumMemberCount
+        currentMemberCount = data.groupInfo.currentMemberCount
+        joinCode = data.groupInfo.joinCode
+        
+        myRank = data.ranking.myRank
+        totalMembers = data.ranking.totalMemberCount
+        statsSummary = data.stats
+        dailyAchievements = data.certificationPeriods
     }
 }

@@ -30,7 +30,9 @@ final class CertificationListViewModel {
             applyFilter()
         }
     }
-    
+
+    var selectedGroup: CertificationSortOption? = CertificationSortOption.allCases.first
+
     init() {
         let repository = DIManager.shared.getCertificationListRepository()
         self.useCase = CertificationListUseCase(repository: repository)

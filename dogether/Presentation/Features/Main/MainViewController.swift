@@ -402,11 +402,18 @@ extension MainViewController: BottomSheetDelegate {
     private func configureBottomSheetViewController() {
         let bottomSheetItem = viewModel.challengeGroupInfos.map { $0.bottomSheetItem }
         
+        if viewModel.selectedGroup == nil {
+              viewModel.selectedGroup = viewModel.challengeGroupInfos.first
+          }
+        
+        let selectedItem = viewModel.selectedGroup?.bottomSheetItem
+        
         if bottomSheetItem.isEmpty { return }
 
         bottomSheetViewController = BottomSheetViewController(titleText: "그룹 선택",
                                                               bottomSheetItem: bottomSheetItem,
-                                                              shouldShowAddGroupButton: viewModel.challengeGroupInfos.count < 5)
+                                                              shouldShowAddGroupButton: viewModel.challengeGroupInfos.count < 5,
+                                                              selectedItem: selectedItem)
         
         bottomSheetViewController?.coordinator = self.coordinator
         bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
@@ -417,6 +424,7 @@ extension MainViewController: BottomSheetDelegate {
                   let selectedGroup = selectedItem.value as? ChallengeGroupInfo,
                   let selectedIndex = viewModel.challengeGroupInfos.firstIndex(of: selectedGroup) else { return }
             
+            viewModel.selectedGroup = selectedItem.value as? ChallengeGroupInfo
             viewModel.setChallengeIndex(index: selectedIndex)
             viewModel.setDateOffset(offset: 0)
             loadMainView()

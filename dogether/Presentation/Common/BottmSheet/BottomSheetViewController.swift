@@ -96,15 +96,11 @@ final class BottomSheetViewController: BaseViewController {
 
     // MARK: - Initializer
     
-    init(titleText: String, bottomSheetItem: [BottomSheetItem], shouldShowAddGroupButton: Bool = false) {
+    init(titleText: String, bottomSheetItem: [BottomSheetItem], shouldShowAddGroupButton: Bool = false, selectedItem: BottomSheetItem?) {
         self.titleText = titleText
         self.bottomSheetItem = bottomSheetItem
         self.shouldShowAddGroupButton = shouldShowAddGroupButton
-        
-        if let selectedItem = bottomSheetItem.first {
-            self.selectedItem = selectedItem
-        }
-        
+        self.selectedItem = selectedItem
         super.init(nibName: nil, bundle: nil)
     }
     
