@@ -106,7 +106,7 @@ extension CertificationListViewController {
 extension CertificationListViewController: CertificationListViewModelDelegate {
     func didFetchSucceed() {
         displayViewForCurrentStatus()
-        self.certificationListContentView?.filterView.sortButton.delegate = self
+        self.certificationListContentView?.filterView.delegate = self
         certificationListContentView?.reloadData()
     }
 }
