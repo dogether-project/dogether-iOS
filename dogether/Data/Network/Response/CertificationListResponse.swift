@@ -53,7 +53,6 @@ struct CertificationGroupListResponse: Codable {
 /// 그룹명 + 인증 정보 + 생성일자
 struct GroupTodoCertification: Codable {
     let groupName: String
-    let createdAt: String
     let certificationInfo: [CertificationInfo]
 }
 
