@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class CertificationInfoViewController: BaseViewController {
     var todoInfo = TodoInfo(id: 0, content: "", status: "")
@@ -54,11 +55,10 @@ final class CertificationInfoViewController: BaseViewController {
             certificationContent: todoInfo.certificationContent
         )
         
-        Task { [weak self] in
-            guard let self else { return }
-            try await imageView.loadImage(url: todoInfo.certificationMediaUrl)
-        }
-            
+        guard let urlString = todoInfo.certificationMediaUrl,
+              let url = URL(string: urlString) else { return }
+        imageView.kf.setImage(with: url)
+        
         guard let status = TodoStatus(rawValue: todoInfo.status),
               let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
         statusView = FilterButton(type: filterType)

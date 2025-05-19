@@ -55,10 +55,8 @@ final class StatsContentView: BaseView {
     }
     
     override func configureAction() {
-        groupInfoView.onGroupSelectorTapped = { [weak self] in
-            guard let self else { return }
-            delegate?.presentBottomSheet()
-        }
+        let groupSelectorTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedGroupSelectorStackView))
+        groupInfoView.groupSelectorStackView.addGestureRecognizer(groupSelectorTapGesture)
     }
     
     override func configureHierarchy() {
@@ -111,5 +109,9 @@ final class StatsContentView: BaseView {
             $0.width.equalTo(myRankView.snp.width) // 너비 동일하게
             $0.height.equalTo(180)
         }
+    }
+    
+    @objc private func tappedGroupSelectorStackView() {
+        delegate?.presentBottomSheet()
     }
 }
