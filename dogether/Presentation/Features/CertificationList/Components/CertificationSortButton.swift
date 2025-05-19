@@ -7,19 +7,6 @@
 
 import UIKit
 
-enum CertificationSortOption: String, CaseIterable, BottomSheetItemRepresentable {
-    case todoCompletionDate = "투두 완료일순"
-    case groupCreationDate = "그룹 생성일순"
-
-    var displayName: String {
-        return self.rawValue
-    }
-    
-    var bottomSheetItem: BottomSheetItem {
-        BottomSheetItem(displayName: displayName, value: self)
-    }
-}
-
 final class CertificationSortButton: BaseButton {
     
     let sortTitleLabel: UILabel = {

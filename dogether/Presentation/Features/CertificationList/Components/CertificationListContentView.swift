@@ -97,9 +97,12 @@ final class CertificationListContentView: BaseView {
             $0.bottom.equalToSuperview()
         }
     }
+    
+    func makeContentOffset() {
+        collectionView.contentOffset = .zero
+    }
 }
 
-// 데이터 변경이 있으니 collectionview reload
 extension CertificationListContentView {
     func reloadData() {
         DispatchQueue.main.async {
