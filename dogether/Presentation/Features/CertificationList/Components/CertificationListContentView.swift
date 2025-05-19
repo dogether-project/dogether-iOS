@@ -10,6 +10,7 @@ import UIKit
 protocol CertificationListContentViewDelegate: AnyObject {
     func didTapFilter(selectedFilter: FilterTypes)
     func didTapCertificationFilterView()
+    func didTapCertification(_ certification: TodoInfo)
 }
 
 final class CertificationListContentView: BaseView {
@@ -169,5 +170,13 @@ extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 40)
+    }
+}
+
+extension CertificationListContentView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let certificationItem = viewModel.sections[indexPath.section].certifications[indexPath.item]
+            let todoInfo = TodoInfo(from: certificationItem)
+            delegate?.didTapCertification(todoInfo)
     }
 }

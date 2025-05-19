@@ -119,6 +119,12 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
     
     func didTapCertificationFilterView() {
     }
+    
+    func didTapCertification(_ certification: TodoInfo) {
+        let certificationInfoViewController = CertificationInfoViewController()
+        certificationInfoViewController.todoInfo = certification
+        navigationController?.pushViewController(certificationInfoViewController, animated: true)
+    }
 }
 
 extension CertificationListViewController: BottomSheetDelegate {

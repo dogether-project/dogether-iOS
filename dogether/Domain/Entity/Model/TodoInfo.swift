@@ -31,3 +31,15 @@ struct TodoInfo: Decodable {
         self.rejectReason = rejectReason
     }
 }
+
+extension TodoInfo {
+    init(from item: CertificationItem) {
+        self.id = item.id
+        self.content = item.content
+        self.status = item.status
+        self.certificationContent = item.certificationContent
+        self.certificationMediaUrl = item.certificationMediaUrl
+        self.rejectReason = item.rejectReason
+    }
+}
+

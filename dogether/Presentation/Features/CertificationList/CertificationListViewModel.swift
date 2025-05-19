@@ -44,7 +44,6 @@ extension CertificationListViewModel {
         Task {
             do {
                 let result = try await useCase.fetchSortedList(option: option)
-                
                 self.rawSections = result.sections
                 
                 self.totalCertificatedCount = result.stats.totalCertificatedCount
