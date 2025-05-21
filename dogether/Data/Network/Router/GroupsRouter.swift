@@ -10,6 +10,7 @@ import Foundation
 enum GroupsRouter: NetworkEndpoint {
     case createGroup(createGroupRequest: CreateGroupRequest)
     case joinGroup(joinGroupRequest: JoinGroupRequest)
+    case getIsParticipating
     case getGroups
     case getMySummary
     case getRanking(groupId: String)
@@ -22,6 +23,8 @@ enum GroupsRouter: NetworkEndpoint {
             return Path.api + Path.groups
         case .joinGroup:
             return Path.api + Path.groups + "/join"
+        case .getIsParticipating:
+            return Path.api + Path.groups + "/participating"
         case .getGroups:
             return Path.api + Path.groups + "/my"
         case .getMySummary:
@@ -37,7 +40,7 @@ enum GroupsRouter: NetworkEndpoint {
     
     var method: NetworkMethod {
         switch self {
-        case .getGroups, .getMySummary, .getRanking, .getMyGroups:
+        case .getIsParticipating, .getGroups, .getMySummary, .getRanking, .getMyGroups:
             return .get
         case .createGroup, .joinGroup:
             return .post

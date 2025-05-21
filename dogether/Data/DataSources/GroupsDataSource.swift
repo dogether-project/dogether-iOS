@@ -24,6 +24,10 @@ final class GroupsDataSource {
         )
     }
     
+    func getIsParticipating() async throws -> GetIsParticipatingResponse {
+        try await NetworkManager.shared.request(GroupsRouter.getIsParticipating)
+    }
+    
     func getGroups() async throws -> GetGroupsResponse {
         try await NetworkManager.shared.request(GroupsRouter.getGroups)
     }

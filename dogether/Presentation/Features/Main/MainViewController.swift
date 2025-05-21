@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class MainViewController: BaseViewController {
-    var viewModel = MainViewModel()
+    let viewModel = MainViewModel()
     
     private var dogetherPanGesture: UIPanGestureRecognizer!
     private var dogetherSheetTopConstraint: Constraint?

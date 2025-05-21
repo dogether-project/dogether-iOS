@@ -15,7 +15,7 @@ final class MainViewModel {
     
     private(set) var rankings: [RankingModel]?
     
-    var challengeGroupInfos: [ChallengeGroupInfo] = []
+    private(set) var challengeGroupInfos: [ChallengeGroupInfo] = []
     
     var currentGroup: ChallengeGroupInfo {
         challengeGroupInfos[currentChallengeIndex]

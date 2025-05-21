@@ -30,6 +30,11 @@ final class GroupUseCase {
         )
     }
     
+    func getIsParticipating() async throws -> Bool {
+        let response = try await repository.getIsParticipating()
+        return response.isParticipating
+    }
+    
     func getChallengeGroupInfos() async throws -> [ChallengeGroupInfo] {
         let response = try await repository.getGroups()
         return response.joiningChallengeGroups.map {
