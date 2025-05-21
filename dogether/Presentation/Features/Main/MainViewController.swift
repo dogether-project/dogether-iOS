@@ -118,6 +118,9 @@ final class MainViewController: BaseViewController {
         let groupNameTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedGroupNameStackView))
         groupInfoView.groupNameStackView.addGestureRecognizer(groupNameTapGesture)
         
+        let joinCodeTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedJoinCodeStackView))
+        groupInfoView.joinCodeStackView.addGestureRecognizer(joinCodeTapGesture)
+        
         rankingButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -345,6 +348,10 @@ extension MainViewController {
     
     @objc private func tappedGroupNameStackView() {
         presentBottomSheet()
+    }
+    
+    @objc private func tappedJoinCodeStackView() {
+        present(UIActivityViewController(activityItems: [viewModel.currentGroup.joinCode], applicationActivities: nil), animated: true)
     }
 }
 
