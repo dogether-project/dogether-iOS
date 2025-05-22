@@ -11,7 +11,7 @@ import SnapKit
 final class StatsSummaryView: BaseView {
     private let titleIconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "chart3")
+        imageView.image = .summary
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()

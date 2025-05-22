@@ -12,7 +12,7 @@ final class MyPageViewController: BaseViewController {
     private let viewModel = MyPageViewModel()
     private let navigationHeader = NavigationHeader(title: "마이페이지")
     
-    private var profileImageView = UIImageView(image: .profile5)
+    private var profileImageView = UIImageView(image: .profile)
     
     private let nameLabel = {
         let label = UILabel()
