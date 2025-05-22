@@ -44,11 +44,11 @@ final class ModalityViewController: BaseViewController {
                     switch type {
                     case .reject:
                         viewModel.setResult(.reject)
-                        viewModel.setRejectReason()
+                        viewModel.setReviewFeedback()
                         closeButton.setButtonStatus(status: .disabled)
-                        coordinator?.showPopup(self, type: .rejectReason) { rejectReason in
-                            guard let rejectReason = rejectReason as? String else { return }
-                            self.viewModel.setRejectReason(rejectReason)
+                        coordinator?.showPopup(self, type: .reviewFeedback) { reviewFeedback in
+                            guard let reviewFeedback = reviewFeedback as? String else { return }
+                            self.viewModel.setReviewFeedback(reviewFeedback)
                             self.closeButton.setButtonStatus(status: .enabled)
                         }
                         
@@ -74,7 +74,7 @@ final class ModalityViewController: BaseViewController {
                             self.coordinator?.hideModal()
                         } else {
                             self.viewModel.setResult()
-                            self.viewModel.setRejectReason()
+                            self.viewModel.setReviewFeedback()
                             self.todoExaminationModalityView.updateButtonBackgroundColor(type: .all)
                             self.closeButton.setButtonStatus(status: .disabled)
                             self.updateView()

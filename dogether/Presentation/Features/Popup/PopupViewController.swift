@@ -60,17 +60,17 @@ extension PopupViewController {
             )
             return alertView
             
-        case .rejectReason:
-            let rejectReasonPopupView = RejectReasonPopupView()
-            rejectReasonPopupView.rejectReasonTextView.delegate = self
-            rejectReasonPopupView.rejectReasonButton.addAction(
+        case .reviewFeedback:
+            let reviewFeedbackPopupView = ReviewFeedbackPopupView()
+            reviewFeedbackPopupView.reviewFeedbackTextView.delegate = self
+            reviewFeedbackPopupView.reviewFeedbackButton.addAction(
                 UIAction { [weak self] _ in
-                    guard let self, let rejectReason = viewModel.stringContent else { return }
-                    completion?(rejectReason)
+                    guard let self, let reviewFeedback = viewModel.stringContent else { return }
+                    completion?(reviewFeedback)
                     hidePopup()
                 }, for: .touchUpInside
             )
-            return rejectReasonPopupView
+            return reviewFeedbackPopupView
         }
     }
 }
@@ -109,8 +109,8 @@ extension PopupViewController: UITextViewDelegate {
         textView.updateTextInfo()
         viewModel.setStringContent(textView.text)
         
-        if let popupView = popupView as? RejectReasonPopupView, textView.text.count > 0 {
-            popupView.rejectReasonButton.setButtonStatus(status: .enabled)
+        if let popupView = popupView as? ReviewFeedbackPopupView, textView.text.count > 0 {
+            popupView.reviewFeedbackButton.setButtonStatus(status: .enabled)
         }
     }
     
@@ -118,7 +118,7 @@ extension PopupViewController: UITextViewDelegate {
         guard let textView = textView as? DogetherTextView else { return false }
         textView.focusOn()
         
-        if let popupView = popupView as? RejectReasonPopupView {
+        if let popupView = popupView as? ReviewFeedbackPopupView {
             popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         }
         return true
@@ -128,7 +128,7 @@ extension PopupViewController: UITextViewDelegate {
         guard let textView = textView as? DogetherTextView else { return false }
         textView.focusOff()
         
-        if let popupView = popupView as? RejectReasonPopupView {
+        if let popupView = popupView as? ReviewFeedbackPopupView {
             popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
         }
         return true
