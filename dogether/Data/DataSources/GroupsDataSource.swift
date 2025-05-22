@@ -32,11 +32,17 @@ final class GroupsDataSource {
         try await NetworkManager.shared.request(GroupsRouter.getGroups)
     }
     
-    func getRanking(groupId: String) async throws -> GetRankingResponse {
-        try await NetworkManager.shared.request(GroupsRouter.getRanking(groupId: groupId))
-    }
-    
     func getMyGroup() async throws -> GetMyGroupResponse {
         try await NetworkManager.shared.request(GroupsRouter.getMyGroups)
+    }
+    
+    func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws {
+        try await NetworkManager.shared.request(
+            GroupsRouter.saveLastSelectedGroup(saveLastSelectedGroupRequest: saveLastSelectedGroupRequest)
+        )
+    }
+    
+    func getRanking(groupId: String) async throws -> GetRankingResponse {
+        try await NetworkManager.shared.request(GroupsRouter.getRanking(groupId: groupId))
     }
 }

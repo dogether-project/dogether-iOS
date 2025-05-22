@@ -15,5 +15,8 @@ protocol GroupProtocol {
     
     func getGroups() async throws -> GetGroupsResponse
     func getMyGroup() async throws -> GetMyGroupResponse
+    
+    func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws
+    
     func getRanking(groupId: String) async throws -> GetRankingResponse
 }

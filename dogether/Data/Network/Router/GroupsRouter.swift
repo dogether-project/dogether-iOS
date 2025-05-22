@@ -13,6 +13,7 @@ enum GroupsRouter: NetworkEndpoint {
     case getIsParticipating
     case getGroups
     case getMySummary
+    case saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest)
     case getRanking(groupId: String)
     case leaveGroup(groupId: Int)
     case getMyGroups
@@ -29,6 +30,8 @@ enum GroupsRouter: NetworkEndpoint {
             return Path.api + Path.groups + "/my"
         case .getMySummary:
             return Path.api + Path.groups + Path.summary + "/my"
+        case .saveLastSelectedGroup:
+            return Path.api + Path.groups + "/last-selected"
         case .getRanking(let groupId):
             return Path.api + Path.groups + "/\(groupId)/ranking"
         case .leaveGroup(let groupId):
@@ -42,7 +45,7 @@ enum GroupsRouter: NetworkEndpoint {
         switch self {
         case .getIsParticipating, .getGroups, .getMySummary, .getRanking, .getMyGroups:
             return .get
-        case .createGroup, .joinGroup:
+        case .createGroup, .joinGroup, .saveLastSelectedGroup:
             return .post
         case .leaveGroup:
             return .delete
@@ -72,6 +75,8 @@ enum GroupsRouter: NetworkEndpoint {
             return createGroupRequest
         case .joinGroup(let joinGroupRequest):
             return joinGroupRequest
+        case .saveLastSelectedGroup(let saveLastSelectedGroupRequest):
+            return saveLastSelectedGroupRequest
         default:
             return nil
         }

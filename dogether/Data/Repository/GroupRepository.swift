@@ -30,11 +30,15 @@ final class GroupRepository: GroupProtocol {
         try await groupsDataSource.getGroups()
     }
     
-    func getRanking(groupId: String) async throws -> GetRankingResponse {
-        try await groupsDataSource.getRanking(groupId: groupId)
-    }
-    
     func getMyGroup() async throws -> GetMyGroupResponse {
         try await groupsDataSource.getMyGroup()
+    }
+    
+    func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws {
+        try await groupsDataSource.saveLastSelectedGroup(saveLastSelectedGroupRequest: saveLastSelectedGroupRequest)
+    }
+    
+    func getRanking(groupId: String) async throws -> GetRankingResponse {
+        try await groupsDataSource.getRanking(groupId: groupId)
     }
 }
