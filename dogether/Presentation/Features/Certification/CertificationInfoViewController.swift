@@ -56,7 +56,7 @@ final class CertificationInfoViewController: BaseViewController {
     override func configureHierarchy() {
         [navigationHeader, imageView, statusView, contentLabel].forEach { view.addSubview($0) }
         
-        if todoInfo.reviewFeedback != nil { view.addSubview(reviewFeedbackView) }
+        if let reviewFeedback = todoInfo.reviewFeedback, reviewFeedback.count > 0 { view.addSubview(reviewFeedbackView) }
     }
      
     override func configureConstraints() {
@@ -82,7 +82,7 @@ final class CertificationInfoViewController: BaseViewController {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
-        if todoInfo.reviewFeedback != nil {
+        if let reviewFeedback = todoInfo.reviewFeedback, reviewFeedback.count > 0 {
             reviewFeedbackView.snp.makeConstraints {
                 $0.top.equalTo(contentLabel.snp.bottom).offset(16)
                 $0.horizontalEdges.equalToSuperview().inset(16)
