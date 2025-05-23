@@ -25,29 +25,7 @@ final class CertificationInfoViewController: BaseViewController {
         return label
     }()
     
-    private func reviewFeedbackView(feedback: String) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .grey600
-        view.layer.cornerRadius = 8
-        
-        let label = UILabel()
-        label.attributedText = NSAttributedString(
-            string: feedback,
-            attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
-        )
-        label.textColor = .grey100
-        label.numberOfLines = 0
-        
-        view.addSubview(label)
-        
-        label.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.verticalEdges.equalToSuperview().inset(10)
-        }
-        
-        return view
-    }
-    private var reviewFeedbackView = UIView()
+    private var reviewFeedbackView = ReviewFeedbackView()
     
     override func configureView() {
         imageView = CertificationImageView(
@@ -68,7 +46,7 @@ final class CertificationInfoViewController: BaseViewController {
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         
-        if let reviewFeedback = todoInfo.reviewFeedback { reviewFeedbackView = reviewFeedbackView(feedback: reviewFeedback) }
+        if let reviewFeedback = todoInfo.reviewFeedback { reviewFeedbackView.updateFeedback(feedback: reviewFeedback) }
     }
     
     override func configureAction() {

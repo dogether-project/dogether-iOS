@@ -45,7 +45,7 @@ final class ReviewFeedbackPopupView: BasePopupView {
         let imageView = UIImageView(image: .notice)
         
         let label = UILabel()
-        label.text = "한번 등록한 피드백은 바꿀 수 없어요"
+        label.text = "검사가 완료된 피드백은 바꿀 수 없어요"
         label.textColor = .grey400
         label.font = Fonts.body2S
         
