@@ -10,7 +10,7 @@ import UIKit
 final class StatsViewController: BaseViewController {
     var viewModel = StatsViewModel()
     private let navigationHeader = NavigationHeader(title: "통계")
-    private let statsEmptyView = StatsEmptyView()
+    private let statsEmptyView = GroupEmptyView()
     private var statsContentView: StatsContentView?
     
     private var bottomSheetViewController: BottomSheetViewController?

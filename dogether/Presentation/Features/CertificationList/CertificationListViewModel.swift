@@ -49,9 +49,8 @@ extension CertificationListViewModel {
                 self.totalCertificatedCount = result.stats.totalCertificatedCount
                 self.totalApprovedCount = result.stats.totalApprovedCount
                 self.totalRejectedCount = result.stats.totalRejectedCount
-                self.viewStatus = .hasData
-                
                 self.applyFilter()
+                self.viewStatus = self.sections.isEmpty ? .empty : .hasData
             } catch {
                 print("❌ 데이터 로딩 실패: \(error)")
                 self.viewStatus = .empty
