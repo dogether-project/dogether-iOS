@@ -132,7 +132,8 @@ extension DailyAchievementBarView {
         for (index, achievement) in data.enumerated() {
             let barContainer = UIView()
             barContainer.snp.makeConstraints {
-                $0.size.equalTo(CGSize(width: 50, height: barMaxHeight))
+                $0.width.equalTo(50)
+                $0.height.equalTo(barMaxHeight)
             }
             
             let backgroundBar = UIView()
@@ -145,21 +146,27 @@ extension DailyAchievementBarView {
             backgroundBar.layer.cornerRadius = 4
             backgroundBar.clipsToBounds = true
             barContainer.addSubview(backgroundBar)
-            backgroundBar.snp.makeConstraints { $0.edges.equalToSuperview() }
+            
+            // 작성한 투두 갯수 비율 (10이 최대)
+            let backgroundRatio = CGFloat(achievement.createdCount) / 10.0
+            backgroundBar.snp.makeConstraints {
+                $0.leading.trailing.bottom.equalToSuperview()
+                $0.height.equalTo(barMaxHeight * backgroundRatio)
+            }
             
             let filledBar = UIView()
-            let ratio = CGFloat(achievement.certificationRate) / 100.0
+            let fillRatio = CGFloat(achievement.certificationRate) / 100.0
             filledBar.backgroundColor = (index == data.count - 1) ? .blue300 : .blue200
             filledBar.layer.cornerRadius = 4
             filledBar.clipsToBounds = true
             backgroundBar.addSubview(filledBar)
             filledBar.snp.makeConstraints {
                 $0.leading.trailing.bottom.equalToSuperview()
-                $0.height.equalTo(barMaxHeight * ratio)
+                $0.height.equalTo(barMaxHeight * fillRatio)
             }
             
             if index == data.count - 1 {
-                addSpeechBubble(to: barContainer, ratio: ratio)
+                addSpeechBubble(to: barContainer, ratio: fillRatio)
             }
             
             barStackView.addArrangedSubview(barContainer)
