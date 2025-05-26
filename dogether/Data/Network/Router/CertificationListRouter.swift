@@ -35,7 +35,7 @@ enum CertificationListRouter: NetworkEndpoint {
     var header: [String: String]? {
         return [
             Header.Key.contentType: Header.Value.applicationJson,
-            Header.Key.authorization: Header.Value.bearer + Header.Value.accessToken
+            Header.Key.authorization: Header.Value.bearer + (UserDefaultsManager.shared.accessToken ?? "")
         ]
     }
 
