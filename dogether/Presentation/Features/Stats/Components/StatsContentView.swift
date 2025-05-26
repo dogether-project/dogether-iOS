@@ -18,7 +18,7 @@ final class StatsContentView: BaseView {
     
     private let dusikImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "glassDusik")
+        imageView.image = .glassDusik
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = false
         return imageView
@@ -26,7 +26,7 @@ final class StatsContentView: BaseView {
     
     private let dusikArmView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "dusikArm")
+        imageView.image = .dusikArm
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = false
         return imageView

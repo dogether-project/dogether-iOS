@@ -20,7 +20,7 @@ final class StatsGroupInfoView: BaseView {
     
     private let groupSelectorButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: "chevron-down"), for: .normal)
+        button.setImage(.chevronDown, for: .normal)
         return button
     }()
     

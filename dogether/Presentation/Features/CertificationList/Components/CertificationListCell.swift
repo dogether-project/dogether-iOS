@@ -54,8 +54,8 @@ final class CertificationCell: UICollectionViewCell {
     }
     
     func configure(with certificationItem: CertificationItem) {
-        guard let url = URL(string: certificationItem.certificationMediaUrl) else { return }
-        imageView.kf.setImage(with: url)
+        imageView.loadImage(url: certificationItem.certificationMediaUrl)
+        
         if let filterType = FilterTypes(status: certificationItem.status) {
             statusButton.update(type: filterType)
         }

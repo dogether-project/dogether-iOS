@@ -140,13 +140,9 @@ final class ExaminationModalityView: BaseView {
 extension ExaminationModalityView {
     func setReview(review: ReviewModel) {
         imageView.image = .logo
+        imageView.loadImage(url: review.mediaUrl)
         imageView.updateCertificator(certificator: review.doer)
         imageView.updateCertificationContent(certificationContent: review.content)
-        
-        Task { [weak self] in
-            guard let self else { return }
-            try await imageView.loadImage(url: review.mediaUrl)
-        }
         
         contentLabel.attributedText = NSAttributedString(
             string: review.todoContent,

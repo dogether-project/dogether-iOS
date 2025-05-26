@@ -76,8 +76,7 @@ final class BottomSheetViewController: BaseViewController {
         button.backgroundColor = .clear
         button.contentHorizontalAlignment = .leading
         
-        let image = UIImage(named: "plus2")
-        button.setImage(image, for: .normal)
+        button.setImage(.plus2, for: .normal)
         button.tintColor = .grey200
         button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
         button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)

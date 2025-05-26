@@ -15,7 +15,7 @@ final class DailyAchievementBarView: BaseView {
     
     private let titleIconImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "today2")
+        imageView.image = .today2
         imageView.tintColor = .grey0
         imageView.contentMode = .scaleAspectFit
         return imageView
@@ -138,7 +138,7 @@ extension DailyAchievementBarView {
             
             let backgroundBar = UIView()
             let backgroundImageView = UIImageView()
-            backgroundImageView.image = UIImage(named:"background2")
+            backgroundImageView.image = .background2
             backgroundImageView.contentMode = .scaleAspectFill
             backgroundImageView.clipsToBounds = true
             backgroundBar.addSubview(backgroundImageView)
@@ -210,7 +210,7 @@ extension DailyAchievementBarView {
         
         bubbleContainer.layer.cornerRadius = 15
         
-        let tailImageView = UIImageView(image: UIImage(named: "blueTail"))
+        let tailImageView = UIImageView(image: .blueTail)
         tailImageView.tintColor = .blue300
         tailImageView.contentMode = .scaleAspectFit
         container.addSubview(tailImageView)
@@ -221,7 +221,7 @@ extension DailyAchievementBarView {
             $0.size.equalTo(12)
         }
         
-        let pointCircleImageView = UIImageView(image: UIImage(named: "pointCircle"))
+        let pointCircleImageView = UIImageView(image: .pointCircle)
         pointCircleImageView.contentMode = .scaleAspectFit
         container.addSubview(pointCircleImageView)
         

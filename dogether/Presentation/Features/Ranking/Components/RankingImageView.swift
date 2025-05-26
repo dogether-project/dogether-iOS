@@ -102,8 +102,8 @@ final class RankingImageView: BaseView {
         }
     }
     
-    func setImage(image: UIImage?) {
-        imageView.image = image
+    func loadImage(url: String?) {
+        imageView.loadImage(url: url)
     }
     
     func setReadStatus(readStatus: HistoryReadStatus?) {

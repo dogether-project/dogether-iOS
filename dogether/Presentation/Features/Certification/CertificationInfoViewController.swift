@@ -33,9 +33,7 @@ final class CertificationInfoViewController: BaseViewController {
             certificationContent: todoInfo.certificationContent
         )
         
-        guard let urlString = todoInfo.certificationMediaUrl,
-              let url = URL(string: urlString) else { return }
-        imageView.kf.setImage(with: url)
+        imageView.loadImage(url: todoInfo.certificationMediaUrl)
         
         guard let status = TodoStatus(rawValue: todoInfo.status),
               let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }

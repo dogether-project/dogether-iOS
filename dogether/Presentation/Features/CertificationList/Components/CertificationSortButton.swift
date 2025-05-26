@@ -18,7 +18,7 @@ final class CertificationSortButton: BaseButton {
     
     private let arrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "chevron-down-blue"), for: .normal)
+        button.setImage(.chevronDownBlue, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
