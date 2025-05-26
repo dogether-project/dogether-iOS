@@ -83,10 +83,8 @@ extension StatsViewController {
         
         bottomSheetViewController?.didSelectOption = { [weak self] selectedItem in
             guard let self,
-                  let selectedGroup = selectedItem.value as? GroupSortOption else {
-                return
-            }
-            self.viewModel.fetchStatsForSelectedGroup(selectedGroup)
+                  let selectedGroup = selectedItem.value as? GroupSortOption else { return }
+            viewModel.fetchStatsForSelectedGroup(selectedGroup)
         }
     }
 }
