@@ -105,14 +105,14 @@ final class DailyAchievementBarView: BaseView {
         
         yAxisStackView.snp.makeConstraints {
             $0.top.equalTo(titleStackView.snp.bottom).offset(57)
-            $0.leading.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview().offset(25)
             $0.width.equalTo(16)
             $0.height.equalTo(201)
         }
         
         barStackView.snp.makeConstraints {
             $0.top.equalTo(titleStackView.snp.bottom).offset(68)
-            $0.leading.equalTo(yAxisStackView.snp.trailing).offset(19)
+            $0.leading.equalTo(yAxisStackView.snp.trailing).offset(20)
             $0.height.equalTo(barMaxHeight)
         }
         
@@ -191,7 +191,7 @@ extension DailyAchievementBarView {
         container.addSubview(bubbleContainer)
         
         let bubbleLabel = UILabel()
-        bubbleLabel.text = "\(Int(ratio * 100))% 달성"
+        bubbleLabel.text = "\(Int(ratio * 100))% 달성중"
         bubbleLabel.font = Fonts.body2S
         bubbleLabel.textColor = .grey0
         bubbleLabel.textAlignment = .center

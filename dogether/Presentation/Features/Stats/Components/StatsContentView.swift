@@ -91,8 +91,7 @@ final class StatsContentView: BaseView {
         
         dailyAchievementBarView.snp.makeConstraints {
             $0.top.equalTo(groupInfoView.snp.bottom).offset(12)
-            $0.leading.equalToSuperview().inset(16)
-            $0.trailing.equalToSuperview().inset(32)
+            $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(343)
         }
         
@@ -104,9 +103,9 @@ final class StatsContentView: BaseView {
 
         statsSummaryView.snp.makeConstraints {
             $0.top.equalTo(dailyAchievementBarView.snp.bottom).offset(16)
-            $0.leading.equalTo(myRankView.snp.trailing).offset(18) // 두 뷰 사이 간격 18
+            $0.leading.equalTo(myRankView.snp.trailing).offset(18)
             $0.trailing.equalToSuperview().inset(16)
-            $0.width.equalTo(myRankView.snp.width) // 너비 동일하게
+            $0.width.equalTo(myRankView.snp.width)
             $0.height.equalTo(180)
         }
     }
