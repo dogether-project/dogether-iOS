@@ -204,7 +204,7 @@ extension DailyAchievementBarView {
             $0.centerX.equalTo(container)
             $0.bottom.equalTo(container.subviews[0].snp.top).offset(-20)
             $0.height.equalTo(30)
-            $0.width.equalTo(89)
+            $0.width.greaterThanOrEqualTo(89)
         }
         
         bubbleContainer.layer.cornerRadius = 15
