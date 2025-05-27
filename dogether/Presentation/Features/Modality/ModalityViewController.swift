@@ -61,6 +61,8 @@ final class ModalityViewController: BaseViewController {
                         } else {
                             self.viewModel.setResult()
                             self.viewModel.setReviewFeedback()
+                            
+                            self.todoExaminationModalityView.removeFeedback()
                             self.todoExaminationModalityView.updateButtonBackgroundColor(type: .all)
                             self.todoExaminationModalityView.closeButton.setButtonStatus(status: .disabled)
                             self.updateView()
