@@ -354,7 +354,8 @@ extension MainViewController {
     }
     
     @objc private func tappedJoinCodeStackView() {
-        present(UIActivityViewController(activityItems: [viewModel.currentGroup.joinCode], applicationActivities: nil), animated: true)
+        let inviteGroup = SystemManager.inviteGroup(groupName: viewModel.currentGroup.name, joinCode: viewModel.currentGroup.joinCode)
+        present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
     }
 }
 
