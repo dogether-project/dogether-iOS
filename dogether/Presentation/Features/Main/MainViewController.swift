@@ -412,11 +412,6 @@ extension MainViewController: UIScrollViewDelegate {
 extension MainViewController: BottomSheetDelegate {
     private func configureBottomSheetViewController() {
         let bottomSheetItem = viewModel.challengeGroupInfos.map { $0.bottomSheetItem }
-        
-        if viewModel.selectedGroup == nil {
-            viewModel.selectedGroup = viewModel.currentGroup
-        }
-        
         let selectedItem = viewModel.selectedGroup?.bottomSheetItem
         
         if bottomSheetItem.isEmpty { return }

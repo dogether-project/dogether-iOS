@@ -58,6 +58,7 @@ extension MainViewModel {
         if let groupIndex {
             currentChallengeIndex = selectedIndex ?? groupIndex
             challengeGroupInfos = newChallengeGroupInfos
+            selectedGroup = challengeGroupInfos[currentChallengeIndex]
         } else {
             noGroupAction()
         }
