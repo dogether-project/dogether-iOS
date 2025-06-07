@@ -64,6 +64,8 @@ final class MemberCertificationViewController: BaseViewController {
         return label
     }()
     
+    private let reviewFeedbackLabel = ReviewFeedbackView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -221,6 +223,8 @@ extension MemberCertificationViewController {
             string: viewModel.todos[viewModel.currentIndex].content,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
+        
+//        reviewFeedbackLabel.updateFeedback(feedback: viewModel.todos[viewModel.currentIndex].feedback)
         
         statusContentStackView.subviews.forEach { statusContentStackView.removeArrangedSubview($0) }
         [statusView, contentLabel].forEach { statusContentStackView.addArrangedSubview($0) }
