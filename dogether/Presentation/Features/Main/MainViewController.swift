@@ -412,7 +412,7 @@ extension MainViewController: UIScrollViewDelegate {
 extension MainViewController: BottomSheetDelegate {
     private func configureBottomSheetViewController() {
         let bottomSheetItem = viewModel.challengeGroupInfos.map { $0.bottomSheetItem }
-        let selectedItem = viewModel.selectedGroup?.bottomSheetItem
+        let selectedItem = viewModel.currentGroup.bottomSheetItem
         
         if bottomSheetItem.isEmpty { return }
 
@@ -430,9 +430,8 @@ extension MainViewController: BottomSheetDelegate {
                   let selectedGroup = selectedItem.value as? ChallengeGroupInfo,
                   let selectedIndex = viewModel.challengeGroupInfos.firstIndex(of: selectedGroup) else { return }
             
-            viewModel.selectedGroup = selectedItem.value as? ChallengeGroupInfo
-            viewModel.saveLastSelectedGroup()
             viewModel.setChallengeIndex(index: selectedIndex)
+            viewModel.saveLastSelectedGroup()
             viewModel.setDateOffset(offset: 0)
             loadMainView(selectedIndex: selectedIndex)
         }
