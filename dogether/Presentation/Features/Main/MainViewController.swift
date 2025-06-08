@@ -173,6 +173,7 @@ final class MainViewController: BaseViewController {
                     guard let self else { return }
                     let todoWriteViewController = TodoWriteViewController()
                     todoWriteViewController.viewModel.groupId = viewModel.currentGroup.id
+                    todoWriteViewController.viewModel.todos = viewModel.todoList.map { WriteTodoInfo(content: $0.content, enabled: false) }
                     coordinator?.pushViewController(todoWriteViewController)
                 }, for: .touchUpInside
             )
