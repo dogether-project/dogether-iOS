@@ -89,16 +89,16 @@ extension CertificationListViewController {
         bottomSheetViewController?.didSelectOption = { [weak self] selected in
             guard let self else { return }
             
-            self.viewModel.selectedGroup = selected.value as? CertificationSortOption
+            viewModel.selectedGroup = selected.value as? CertificationSortOption
             
-            self.certificationListContentView?
+            certificationListContentView?
                 .filterView
                 .sortButton
                 .updateSelectedOption(selected)
             
             if let sortOption = selected.value as? CertificationSortOption {
-                self.viewModel.executeSort(option: sortOption)
-                self.certificationListContentView?.makeContentOffset()
+                viewModel.executeSort(option: sortOption)
+                certificationListContentView?.makeContentOffset()
             }
         }
     }
