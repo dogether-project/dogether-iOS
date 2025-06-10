@@ -55,6 +55,23 @@ final class TodoListView: BaseView {
         return stackView
     }()
     
+    let addTodoButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("투두 추가하기", for: .normal)
+        button.setTitleColor(.grey200, for: .normal)
+        button.titleLabel?.font = Fonts.body1S
+        button.backgroundColor = .clear
+        button.contentHorizontalAlignment = .center
+        
+        button.setImage(.plus2, for: .normal)
+        button.tintColor = .grey200
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+        button.imageView?.contentMode = .scaleAspectFit
+        
+        return button
+    }()
+    
     override func configureView() {
         [allButton, waitButton, rejectButton, approveButton].forEach { filterStackView.addArrangedSubview($0) }
         [emptyListImageView, emptyListLabel].forEach { emptyListStackView.addArrangedSubview($0) }
@@ -114,6 +131,8 @@ extension TodoListView {
         todoList
             .map { TodoListItemButton(todo: $0, isToday: isToday) }
             .forEach { todoListStackView.addArrangedSubview($0) }
+        
+        if todoList.count < 10 { todoListStackView.addArrangedSubview(addTodoButton) }
         
         emptyListLabel.text = filter.emptyDescription
     }

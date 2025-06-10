@@ -167,14 +167,17 @@ final class MainViewController: BaseViewController {
             )
         }
         
-        todayEmptyView.todoButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                let todoWriteViewController = TodoWriteViewController()
-                todoWriteViewController.viewModel.groupId = viewModel.currentGroup.id
-                coordinator?.pushViewController(todoWriteViewController)
-            }, for: .touchUpInside
-        )
+        [todoListView.addTodoButton, todayEmptyView.todoButton].forEach { button in
+            button.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    let todoWriteViewController = TodoWriteViewController()
+                    todoWriteViewController.viewModel.groupId = viewModel.currentGroup.id
+                    todoWriteViewController.viewModel.todos = viewModel.todoList.map { WriteTodoInfo(content: $0.content, enabled: false) }
+                    coordinator?.pushViewController(todoWriteViewController)
+                }, for: .touchUpInside
+            )
+        }
     }
     
     override func configureHierarchy() {
