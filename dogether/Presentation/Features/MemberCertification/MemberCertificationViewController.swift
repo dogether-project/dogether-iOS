@@ -224,10 +224,15 @@ extension MemberCertificationViewController {
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         
-//        reviewFeedbackLabel.updateFeedback(feedback: viewModel.todos[viewModel.currentIndex].feedback)
-        
         statusContentStackView.subviews.forEach { statusContentStackView.removeArrangedSubview($0) }
         [statusView, contentLabel].forEach { statusContentStackView.addArrangedSubview($0) }
+        
+        reviewFeedbackLabel.isHidden = true
+        guard let feedback = viewModel.todos[viewModel.currentIndex].feedback, feedback.count > 0 else { return }
+        reviewFeedbackLabel.isHidden = false
+        reviewFeedbackLabel.updateFeedback(feedback: feedback)
+        statusContentStackView.addArrangedSubview(reviewFeedbackLabel)
+        reviewFeedbackLabel.snp.makeConstraints { $0.horizontalEdges.equalToSuperview() }
     }
     
     @objc private func tappedThumbnailScrollView(_ gesture: UITapGestureRecognizer) {

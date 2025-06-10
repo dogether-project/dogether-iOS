@@ -39,8 +39,8 @@ final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
     func getMemberTodos(groupId: String, memberId: String) async throws -> GetMemberTodosResponse {
         GetMemberTodosResponse(currentTodoHistoryToReadIndex: 3, todos: [
             MemberTodo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING", isRead: true),
-            MemberTodo(id: 2, content: "치킨 먹기", status: "CERTIFY_PENDING", certificationContent: "치킨 냠냠", isRead: true),
-            MemberTodo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING", isRead: true),
+            MemberTodo(id: 2, content: "치킨 먹기", status: "CERTIFY_PENDING", certificationContent: "치킨 냠냠", isRead: true, reviewFeedback: ""),
+            MemberTodo(id: 1, content: "신규 기능 개발", status: "CERTIFY_PENDING", isRead: true, reviewFeedback: "test"),
             MemberTodo(id: 2, content: "치킨 먹기", status: "CERTIFY_PENDING", certificationContent: "치킨 냠냠", isRead: true),
             MemberTodo(id: 1, content: "신규 기능 개발", status: "REVIEW_PENDING", isRead: false),
             MemberTodo(id: 2, content: "치킨 먹기", status: "REVIEW_PENDING", certificationContent: "치킨 냠냠", certificationMediaUrl: "https://dogether-bucket-dev.s3.ap-northeast-2.amazonaws.com/daily-todo-proof-media/mock/e.png", isRead: false),
