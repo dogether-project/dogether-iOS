@@ -54,7 +54,7 @@ final class MemberCertificationViewController: BaseViewController {
         return stackView
     }()
     
-    private var statusView = FilterButton(type: .wait)
+    private var statusView = TodoStatusButton(type: .waitCertification)
     
     private let contentLabel = {
         let label = UILabel()
@@ -216,8 +216,7 @@ extension MemberCertificationViewController {
             certificationScrollView.setContentOffset(newOffset, animated: false)
         }
         
-        statusView.isHidden = true  // FIXME: 메모리가 계속 쌓이는 문제가 생길 수 있음. 추후 개선 필요
-        statusView = FilterButton(type: viewModel.todos[viewModel.currentIndex].status.filterType)
+        statusView.update(type: viewModel.todos[viewModel.currentIndex].status)
         
         contentLabel.attributedText = NSAttributedString(
             string: viewModel.todos[viewModel.currentIndex].content,
