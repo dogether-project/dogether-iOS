@@ -167,9 +167,13 @@ final class TodoWriteViewController: BaseViewController {
                 guard let self else { return }
                 coordinator?.showPopup(self, type: .alert, alertType: .saveTodo) { _ in
                     Task {
-                        try await self.viewModel.createTodos()
-                        await MainActor.run {
-                            self.coordinator?.popViewController()
+                        do {
+                            try await self.viewModel.createTodos()
+                            await MainActor.run {
+                                self.coordinator?.popViewController()
+                            }
+                        } catch {
+                            ErrorPresenter.show(error)
                         }
                     }
                 }

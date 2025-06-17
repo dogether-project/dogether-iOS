@@ -14,6 +14,7 @@ enum StatsViewStatus {
 
 protocol StatsViewModelDelegate: AnyObject {
     func didFetchStatsSucceed()
+    func didFetchStatsFail(with error: Error)
 }
 
 struct GroupSortOption: BottomSheetItemRepresentable, Hashable {
@@ -99,6 +100,7 @@ extension StatsViewModel {
                 }
             } catch {
                 statsViewStatus = .empty
+                delegate?.didFetchStatsFail(with: error)
             }
         }
     }

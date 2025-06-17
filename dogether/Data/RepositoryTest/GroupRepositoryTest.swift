@@ -14,7 +14,9 @@ final class GroupRepositoryTest: GroupProtocol {
     
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse {
         // MARK: - TEST: 99999999 입력 시 에러 발생 테스트
-        if joinGroupRequest.joinCode == "99999999" { throw NetworkError.unknown }
+        if joinGroupRequest.joinCode == "99999999" {
+            throw NetworkError.unknown(NSError(domain: "Test", code: -1, userInfo: [NSLocalizedDescriptionKey: "유효하지 않은 초대코드"]))
+        }
         return JoinGroupResponse(groupName: "testGroup", duration: 3, maximumMemberCount: 10, startAt: "2025-01-01", endAt: "2025-01-04")
     }
     

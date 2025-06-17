@@ -100,6 +100,7 @@ final class GroupJoinViewController: BaseViewController {
                             self.coordinator?.setNavigationController(completeViewController)
                         }
                     } catch {
+                        ErrorPresenter.show(error)
                         self.viewModel.handleCodeError()
                         
                         self.updateSubTitleLabel()

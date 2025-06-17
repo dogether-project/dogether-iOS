@@ -98,6 +98,10 @@ extension StatsViewController: StatsViewModelDelegate {
             self.statsContentView?.delegate = self
         }
     }
+    
+    func didFetchStatsFail(with error: Error) {
+        ErrorPresenter.show(error)
+    }
 }
 
 extension StatsViewController: BottomSheetDelegate {

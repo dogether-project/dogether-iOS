@@ -63,10 +63,6 @@ class NetworkService {
                 break
             case 400:
                 throw NetworkError.badRequest
-            case 401:
-                throw NetworkError.unauthorized
-            case 403:
-                throw NetworkError.forbidden
             case 404:
                 throw NetworkError.notFound
             case 408:
