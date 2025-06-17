@@ -34,7 +34,9 @@ final class ChallengeGroupUseCase {
                 status: TodoStatus(rawValue: $0.status) ?? .waitExamination,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
-                thumbnailStatus: $0.isRead ? .done : .yet)
+                feedback: $0.reviewFeedback,
+                thumbnailStatus: $0.isRead ? .done : .yet
+            )
         }
         return (currentIndex, memberTodos)
     }
