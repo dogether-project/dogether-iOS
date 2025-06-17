@@ -57,7 +57,6 @@ final class TodoListView: BaseView {
     
     let addTodoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("투두 추가하기", for: .normal)
         button.setTitleColor(.grey200, for: .normal)
         button.titleLabel?.font = Fonts.body1S
         button.backgroundColor = .clear
@@ -132,7 +131,10 @@ extension TodoListView {
             .map { TodoListItemButton(todo: $0, isToday: isToday) }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
-        if todoList.count < 10 { todoListStackView.addArrangedSubview(addTodoButton) }
+        if todoList.count < 10 {
+            addTodoButton.setTitle("투두 추가하기 (\(todoList.count)/10)", for: .normal)
+            todoListStackView.addArrangedSubview(addTodoButton)
+        }
         
         emptyListLabel.text = filter.emptyDescription
     }
