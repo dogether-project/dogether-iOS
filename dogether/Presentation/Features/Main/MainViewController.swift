@@ -246,21 +246,25 @@ extension MainViewController {
     private func loadMainView(selectedIndex: Int?) {
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.loadMainView(
-                selectedIndex: selectedIndex,
-                noGroupAction: { self.coordinator?.setNavigationController(StartViewController()) }
-            )
+            let (groupIndex, newChallengeGroupInfos) = try await viewModel.getChallengeGroupInfos()
             
-            configureBottomSheetViewController()
-            
-            if viewModel.currentGroup.status == .ready {
-                viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
-            }
-            
-            try await viewModel.updateListInfo()
-            await MainActor.run {
-                self.updateView()
-                self.updateList()
+            if newChallengeGroupInfos.isEmpty {
+                await MainActor.run { self.coordinator?.setNavigationController(StartViewController()) }
+            } else {
+                viewModel.setChallengeIndex(index: selectedIndex ?? groupIndex ?? 0)
+                viewModel.setChallengeGroupInfos(challengegroupInfos: newChallengeGroupInfos)
+                
+                configureBottomSheetViewController()
+                
+                if viewModel.currentGroup.status == .ready {
+                    viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
+                }
+                
+                try await viewModel.updateListInfo()
+                await MainActor.run {
+                    self.updateView()
+                    self.updateList()
+                }
             }
         }
     }

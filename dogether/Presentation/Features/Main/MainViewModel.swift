@@ -49,17 +49,10 @@ final class MainViewModel {
     }
 }
 
-// MARK: - load view
+// MARK: - get
 extension MainViewModel {
-    func loadMainView(selectedIndex: Int? = nil, noGroupAction: @escaping () -> Void) async throws {
-        let (groupIndex, newChallengeGroupInfos) = try await groupUseCase.getChallengeGroupInfos()
-        
-        if let groupIndex {
-            currentChallengeIndex = selectedIndex ?? groupIndex
-            challengeGroupInfos = newChallengeGroupInfos
-        } else {
-            noGroupAction()
-        }
+    func getChallengeGroupInfos() async throws -> (groupIndex: Int?, challengeGroupInfos: [ChallengeGroupInfo]) {
+        return try await groupUseCase.getChallengeGroupInfos()
     }
     
     func getReviews() async throws -> [ReviewModel] {
@@ -71,6 +64,10 @@ extension MainViewModel {
 extension MainViewModel {
     func setChallengeIndex(index: Int) {
         self.currentChallengeIndex = index
+    }
+    
+    func setChallengeGroupInfos(challengegroupInfos: [ChallengeGroupInfo]) {
+        self.challengeGroupInfos = challengegroupInfos
     }
     
     func setDateOffset(offset: Int) {
