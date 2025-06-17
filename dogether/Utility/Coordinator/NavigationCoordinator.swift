@@ -141,7 +141,7 @@ extension NavigationCoordinator: NotificationHandler {
             
         case .review:
             guard let currentViewController = navigationController.viewControllers.last,
-                  let mainViewController = currentViewController as? MainViewController else { return }
+                  let _ = currentViewController as? MainViewController else { return }
             
             updateViewController?()
             
