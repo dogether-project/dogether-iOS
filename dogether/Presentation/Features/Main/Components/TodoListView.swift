@@ -132,7 +132,7 @@ extension TodoListView {
             .map { TodoListItemButton(todo: $0, isToday: isToday) }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
-        if todoList.count < 10 {
+        if todoList.count < 10 && isToday {
             addTodoButton.setTitle("투두 추가하기 (\(todoList.count)/10)", for: .normal)
             todoListStackView.addArrangedSubview(addTodoButton)
         }
