@@ -8,7 +8,6 @@
 import UIKit
 
 final class MainViewModel {
-    private let mainUseCase: MainUseCase
     private let groupUseCase: GroupUseCase
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
@@ -42,7 +41,6 @@ final class MainViewModel {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
         let todoCertificationsRepository = DIManager.shared.getTodoCertificationsRepository()
         
-        self.mainUseCase = MainUseCase()
         self.groupUseCase = GroupUseCase(repository: groupRepository)
         self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
         self.todoCertificationsUseCase = TodoCertificationsUseCase(repository: todoCertificationsRepository)
@@ -103,7 +101,6 @@ extension MainViewModel {
             updateTimerInfo(remainTime: remainTime, updateTimer: updateTimer)
         } else {
             stopCountdown()
-            updateListInfo(updateList: updateList)
         }
     }
     
@@ -112,21 +109,13 @@ extension MainViewModel {
         self.timeProgress = remainTime.getTimeProgress()
         Task { @MainActor in updateTimer() }
     }
-    
-    private func updateListInfo(updateList: @escaping () -> Void) {
-        Task {
-            let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-            todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
-            await MainActor.run { updateList() }
-        }
-    }
 }
     
 // MARK: - todoList
 extension MainViewModel {
     func updateListInfo() async throws {
-        let (date, status) = try await mainUseCase.getTodosInfo(dateOffset: dateOffset, currentFilter: currentFilter)
-        todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date, status: status)
+        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
+        todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date)
     }
 }
 

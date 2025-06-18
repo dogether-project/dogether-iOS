@@ -10,7 +10,7 @@ import Foundation
 final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
     func createTodos(groupId: String, createTodosRequest: CreateTodosRequest) async throws { }
     
-    func getMyTodos(groupId: String, date: String, status: String?) async throws -> GetMyTodosResponse {
+    func getMyTodos(groupId: String, date: String) async throws -> GetMyTodosResponse {
         let certify_pendings = (1 ... 2).map { TodoInfo(id: $0, content: "testTodo \($0)", status: "CERTIFY_PENDING") }
         let review_pendings = (3 ... 4).map {
             TodoInfo(id: $0, content: "testTodo \($0)", status: "REVIEW_PENDING", certificationContent: "test todo content \($0)")
@@ -24,16 +24,7 @@ final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
                 certificationContent: "test todo content \($0)test todo content \($0)test todo content \($0)", reviewFeedback: "test todo reject reason \($0)test todo reject reason \($0)test todo reject reason \($0)test todo reject reason \($0)"
             )
         }
-        if status == nil {
-            let todos = certify_pendings + review_pendings + approves + rejects
-            return GetMyTodosResponse(todos: todos)
-        } else if status == "REVIEW_PENDING" {
-            return GetMyTodosResponse(todos: review_pendings)
-        } else if status == "APPROVE" {
-            return GetMyTodosResponse(todos: approves)
-        } else {
-            return GetMyTodosResponse(todos: [])
-        }
+        return GetMyTodosResponse(todos: certify_pendings + review_pendings + approves + rejects)
     }
     
     func getMemberTodos(groupId: String, memberId: String) async throws -> GetMemberTodosResponse {

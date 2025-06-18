@@ -123,11 +123,12 @@ extension TodoListView {
         rejectButton.setIsColorful(filter == .reject)
         approveButton.setIsColorful(filter == .approve)
         
-        todoListStackView.isHidden = todoList.isEmpty
-        emptyListStackView.isHidden = !todoList.isEmpty
+        let currentTodoList = todoList.filter { filter == .all || filter == FilterTypes(status: $0.status) }
+        todoListStackView.isHidden = currentTodoList.isEmpty
+        emptyListStackView.isHidden = !currentTodoList.isEmpty
         
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
-        todoList
+        currentTodoList
             .map { TodoListItemButton(todo: $0, isToday: isToday) }
             .forEach { todoListStackView.addArrangedSubview($0) }
         

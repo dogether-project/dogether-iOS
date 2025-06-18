@@ -161,7 +161,6 @@ final class MainViewController: BaseViewController {
                     guard let self, let button else { return }
                     Task {
                         self.viewModel.setFilter(filter: button.type)
-                        try await self.viewModel.updateListInfo()
                         await MainActor.run { self.updateList() }
                     }
                 }, for: .touchUpInside
