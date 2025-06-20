@@ -52,19 +52,6 @@ enum TodoStatus: String, CaseIterable {
         }
     }
     
-    var filterType: FilterTypes {
-        switch self {
-        case .waitCertification:
-            return .all // FIXME: 추후 미인증으로 수정
-        case .waitExamination:
-            return .wait
-        case .approve:
-            return .approve
-        case .reject:
-            return .reject
-        }
-    }
-    
     var backgroundColor: UIColor {
         switch self {
         case .waitCertification:

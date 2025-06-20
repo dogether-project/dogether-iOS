@@ -57,7 +57,6 @@ final class TodoListView: BaseView {
     
     let addTodoButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("투두 추가하기", for: .normal)
         button.setTitleColor(.grey200, for: .normal)
         button.titleLabel?.font = Fonts.body1S
         button.backgroundColor = .clear
@@ -124,15 +123,19 @@ extension TodoListView {
         rejectButton.setIsColorful(filter == .reject)
         approveButton.setIsColorful(filter == .approve)
         
-        todoListStackView.isHidden = todoList.isEmpty
-        emptyListStackView.isHidden = !todoList.isEmpty
+        let currentTodoList = todoList.filter { filter == .all || filter == FilterTypes(status: $0.status) }
+        todoListStackView.isHidden = currentTodoList.isEmpty
+        emptyListStackView.isHidden = !currentTodoList.isEmpty
         
         todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
-        todoList
+        currentTodoList
             .map { TodoListItemButton(todo: $0, isToday: isToday) }
             .forEach { todoListStackView.addArrangedSubview($0) }
         
-        if todoList.count < 10 { todoListStackView.addArrangedSubview(addTodoButton) }
+        if todoList.count < 10 && isToday {
+            addTodoButton.setTitle("투두 추가하기 (\(todoList.count)/10)", for: .normal)
+            todoListStackView.addArrangedSubview(addTodoButton)
+        }
         
         emptyListLabel.text = filter.emptyDescription
     }
