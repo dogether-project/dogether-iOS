@@ -11,6 +11,8 @@ final class SplashViewModel {
     private let appLaunchUseCase: AppLaunchUseCase
     private let groupUseCase: GroupUseCase
     
+    private(set) var needUpdate: Bool = true
+    
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
         
