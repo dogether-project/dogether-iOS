@@ -33,7 +33,7 @@ final class SplashViewController: BaseViewController {
         return stackView
     }()
     
-    private let updateView: UIView = UIView()
+    private let updateContainer: UIView = UIView()
     
     private let updateStackView: UIStackView = {
         let typoImage = UIImageView(image: .logoTypo)
@@ -87,19 +87,22 @@ final class SplashViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        Task {
-//            try await viewModel.launchApp()
-//            let destination = try await viewModel.getDestination()
-//            await MainActor.run {
-//                coordinator?.setNavigationController(destination)
-//            }
-//        }
+        Task {
+            try await viewModel.launchApp()
+            try await viewModel.checkUpdate()
+            if viewModel.needUpdate {
+                updateView()
+            } else {
+                let destination = try await viewModel.getDestination()
+                await MainActor.run {
+                    coordinator?.setNavigationController(destination)
+                }
+            }
+        }
     }
     
     override func configureView() {
-        logoView.isHidden = viewModel.needUpdate
-        updateView.isHidden = !viewModel.needUpdate
-        updateButton.isHidden = !viewModel.needUpdate
+        updateView()
     }
     
     override func configureAction() {
@@ -111,8 +114,8 @@ final class SplashViewController: BaseViewController {
     }
     
     override func configureHierarchy() {
-        [logoView, updateView, updateButton].forEach { view.addSubview($0) }
-        [updateStackView].forEach { updateView.addSubview($0) }
+        [logoView, updateContainer, updateButton].forEach { view.addSubview($0) }
+        [updateStackView].forEach { updateContainer.addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -120,7 +123,7 @@ final class SplashViewController: BaseViewController {
             $0.center.equalToSuperview()
         }
         
-        updateView.snp.makeConstraints {
+        updateContainer.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalTo(updateButton.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
@@ -134,5 +137,13 @@ final class SplashViewController: BaseViewController {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
+    }
+}
+
+extension SplashViewController {
+    func updateView() {
+        logoView.isHidden = viewModel.needUpdate
+        updateContainer.isHidden = !viewModel.needUpdate
+        updateButton.isHidden = !viewModel.needUpdate
     }
 }
