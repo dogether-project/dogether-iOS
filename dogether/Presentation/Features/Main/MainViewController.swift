@@ -159,9 +159,9 @@ final class MainViewController: BaseViewController {
             button.addAction(
                 UIAction { [weak self, weak button] _ in
                     guard let self, let button else { return }
-                    Task {
-                        self.viewModel.setFilter(filter: button.type)
-                        await MainActor.run { self.updateList() }
+                    self.viewModel.setFilter(filter: button.type)
+                    Task { @MainActor in
+                        self.updateList()
                     }
                 }, for: .touchUpInside
             )
