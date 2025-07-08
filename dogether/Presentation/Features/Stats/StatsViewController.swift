@@ -59,7 +59,7 @@ extension StatsViewController {
                 $0.top.equalTo(navigationHeader.snp.bottom)
                 $0.left.right.bottom.equalToSuperview()
             }
-            contentView?.isHidden = false
+            contentView.isHidden = false
             
             configureBottomSheetViewController()
         }
