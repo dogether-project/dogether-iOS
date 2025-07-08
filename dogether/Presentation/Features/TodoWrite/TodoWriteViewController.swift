@@ -173,7 +173,6 @@ final class TodoWriteViewController: BaseViewController {
                                 self.coordinator?.popViewController()
                             }
                         } catch {
-                            ErrorPresenter.show(error)
                         }
                     }
                 }
