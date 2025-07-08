@@ -14,7 +14,7 @@ enum StatsViewStatus {
 
 protocol StatsViewModelDelegate: AnyObject {
     func didFetchStatsSucceed()
-    func didFetchStatsFail(with error: Error)
+    func didFetchStatsFail(error: NetworkError)
 }
 
 struct GroupSortOption: BottomSheetItemRepresentable, Hashable {
@@ -98,9 +98,8 @@ extension StatsViewModel {
                     selectedGroup = GroupSortOption(groupId: currentGroup.groupId, groupName: currentGroup.groupName)
                     fetchStats(groupId: currentGroup.groupId)
                 }
-            } catch {
-                statsViewStatus = .empty
-                delegate?.didFetchStatsFail(with: error)
+            } catch let error as NetworkError {                
+                delegate?.didFetchStatsFail(error: error)
             }
         }
     }

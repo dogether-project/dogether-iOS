@@ -186,17 +186,7 @@ final class GroupCreateViewController: BaseViewController {
             UIAction { [weak self] _ in
                 guard let self else { return }
                 if viewModel.currentStep.rawValue == viewModel.maxStep {
-                    Task {
-                        try await self.viewModel.createGroup()
-                        guard let joinCode = self.viewModel.joinCode else { return }
-                        await MainActor.run {
-                            let completeViewController = CompleteViewController()
-                            completeViewController.viewModel.groupType = .create
-                            completeViewController.viewModel.joinCode = joinCode
-                            completeViewController.viewModel.groupInfo = ChallengeGroupInfo(name: self.viewModel.currentGroupName)
-                            self.coordinator?.setNavigationController(completeViewController)
-                        }
-                    }
+                    self.performCreateAction()
                 } else {
                     guard let nextStep = CreateGroupSteps(rawValue: viewModel.currentStep.rawValue + 1) else { return }
                     viewModel.updateStep(step: nextStep)
@@ -340,6 +330,47 @@ final class GroupCreateViewController: BaseViewController {
             $0.top.equalToSuperview()
             $0.width.equalToSuperview()
             $0.height.equalTo(267)
+        }
+    }
+}
+
+extension GroupCreateViewController {
+    private func performCreateAction() {
+        Task {
+            do {
+                try await self.viewModel.createGroup()
+                guard let joinCode = self.viewModel.joinCode else { return }
+                await MainActor.run {
+                    let completeViewController = CompleteViewController()
+                    completeViewController.viewModel.groupType = .create
+                    completeViewController.viewModel.joinCode = joinCode
+                    completeViewController.viewModel.groupInfo = ChallengeGroupInfo(name: self.viewModel.currentGroupName)
+                    self.coordinator?.setNavigationController(completeViewController)
+                }
+            } catch let error as NetworkError {
+                let config: ErrorTemplateConfig
+
+                switch error {
+                case .dogetherError(let code, _):
+                    config = ErrorConfigProvider.config(for: code)
+                default:
+                    config = ErrorConfigProvider.config(for: error)
+                }
+
+                let errorVC = ErrorViewController(config: config)
+                
+                errorVC.leftButtonAction = { [weak self] in
+                    if config.leftActionType == .goHome {
+                        self?.coordinator?.setNavigationController(MainViewController())
+                    } else if config.leftActionType == .retry {
+                        self?.performCreateAction()
+                    }
+                }
+
+                errorVC.rightButtonAction = nil
+
+                self.coordinator?.presentViewController(errorVC, animated: false)
+            }
         }
     }
 }
