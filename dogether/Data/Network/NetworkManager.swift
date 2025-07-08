@@ -38,10 +38,9 @@ class NetworkManager {
         
         do {
             let response: ServerResponse<EmptyData> = try await NetworkService.shared.request(endpoint)
-            
-            guard response.code != "99" else {
-                throw NetworkError.serverError(message: response.message)
-            }
+//            if let errorCode = DogetherCodes(rawValue: response.code) {
+//                throw NetworkError.dogetherError(code: errorCode, message: response.message)
+//            }
         } catch {
             throw mapError(error)
         }

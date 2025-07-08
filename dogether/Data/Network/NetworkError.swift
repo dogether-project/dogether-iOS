@@ -9,13 +9,15 @@ import Foundation
 
 enum NetworkError: Error {
     case invalidURL
-    case badRequest          // 400
-    case notFound            // 404
-    case timeout             // 408
-    case serverError(message: String)  // 500, 503 등
+    case badRequest
+    case unauthorized
+    case forbidden
+    case notFound
+    case serverError(message: String)
     case decodingFailed
     case noData
     case unknown(Error)
+    case dogetherError(code: DogetherCodes, message: String)
 }
 
 extension NetworkError {
@@ -25,10 +27,12 @@ extension NetworkError {
             return "유효하지 않은 URL입니다."
         case .badRequest:
             return "잘못된 요청입니다. 입력값을 확인해주세요."
+        case .unauthorized:
+            return "비인증 상태"
+        case .forbidden:
+            return "권한 거부"
         case .notFound:
             return "요청한 리소스를 찾을 수 없습니다."
-        case .timeout:
-            return "요청 시간이 초과되었습니다."
         case .serverError(let code):
             return "서버 오류가 발생했습니다. (코드: \(code))"
         case .decodingFailed:
@@ -37,6 +41,8 @@ extension NetworkError {
             return "데이터가 없습니다."
         case .unknown(let error):
             return "\(error.localizedDescription)"
+        case .dogetherError(code: let code, message: let message):
+            return "\(code.description) (\(message))"
         }
     }
 }
