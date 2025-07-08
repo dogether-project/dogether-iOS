@@ -87,6 +87,7 @@ final class TodoListItemButton: BaseButton {
         contentLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(isUncertified ? self : todoImageView.snp.right).offset(isUncertified ? 16 : 8)
+            $0.right.equalTo(isUncertified ? certificationLabel.snp.left : checkImageView.snp.left)
         }
         
         if isUncertified {
