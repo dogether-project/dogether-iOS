@@ -81,7 +81,7 @@ extension TodoStatusButton {
         }
         
         icon.snp.updateConstraints {
-            $0.width.height.equalTo(type == .waitExamination ? 18 : type == .reject ? 22 : 24)
+            $0.width.height.equalTo(18)
         }
     }
 }
