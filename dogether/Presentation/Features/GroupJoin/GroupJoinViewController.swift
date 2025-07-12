@@ -141,29 +141,15 @@ extension GroupJoinViewController {
                     self.coordinator?.setNavigationController(completeViewController)
                 }
             } catch let error as NetworkError {
-                let config: ErrorTemplateConfig
-
-                switch error {
-                case .dogetherError(let code, _):
-                    config = ErrorConfigProvider.config(for: code)
-                default:
-                    config = ErrorConfigProvider.config(for: error)
-                }
-
-                let errorVC = ErrorViewController(config: config)
-                
-                errorVC.leftButtonAction = { [weak self] in
-                    if config.leftActionType == .goHome {
-                        self?.coordinator?.setNavigationController(MainViewController())
-                    } else if config.leftActionType == .retry {
-                        self?.performJoinAction()
+                ErrorHandlingManager.handle(
+                    error: error,
+                    presentingViewController: self,
+                    coordinator: coordinator,
+                    retryHandler: { [weak self] in
+                        guard let self else { return }
+                        performJoinAction()
                     }
-                }
-                
-                errorVC.rightButtonAction = { [weak self] in
-                    self?.coordinator?.pushViewController(GroupCreateViewController())
-                }
-                self.coordinator?.presentViewController(errorVC, animated: false)
+                )
             }
         }
     }

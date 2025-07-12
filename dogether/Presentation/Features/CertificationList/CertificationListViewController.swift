@@ -117,28 +117,21 @@ extension CertificationListViewController: CertificationListViewModelDelegate {
     func didFetchFail(error: NetworkError) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-
+            
             contentView?.removeFromSuperview()
             contentView = nil
             emptyView.removeFromSuperview()
             errorView?.removeFromSuperview()
-
-            let config = ErrorConfigProvider.config(for: error)
-            let newErrorView = ErrorView(config: config)
-
-            view.addSubview(newErrorView)
-            newErrorView.snp.makeConstraints {
-                $0.top.equalTo(self.navigationHeader.snp.bottom)
-                $0.left.right.bottom.equalToSuperview()
-            }
-
-            newErrorView.leftButtonAction = { [weak self] in
-                guard let self else { return }
-                newErrorView.removeFromSuperview()
-                errorView = nil
-                viewModel.executeSort(option: .todoCompletionDate)
-            }
-
+            
+            let newErrorView = ErrorHandlingManager.embedErrorView(
+                in: self,
+                under: navigationHeader,
+                error: error,
+                retryHandler: { [weak self] in
+                    guard let self else { return }
+                    viewModel.executeSort(option: .todoCompletionDate)
+                }
+            )
             errorView = newErrorView
         }
     }
