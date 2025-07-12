@@ -7,18 +7,16 @@
 
 import UIKit
 
-final class ErrorView: UIView {
+final class ErrorView: BaseView {
 
-    // MARK: - Actions
     var leftButtonAction: (() -> Void)?
     var rightButtonAction: (() -> Void)?
 
-    // MARK: - Config
     private let config: ErrorTemplateConfig
 
-    // MARK: - UI Components
     private let imageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -74,22 +72,16 @@ final class ErrorView: UIView {
         return stack
     }()
 
-    // MARK: - Init
     init(config: ErrorTemplateConfig) {
         self.config = config
         super.init(frame: .zero)
-        configureView()
-        configureHierarchy()
-        configureConstraints()
-        configureActions()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Setup
-    private func configureView() {
+    override func configureView() {
         backgroundColor = .clear
 
         imageView.image = config.image
@@ -104,7 +96,7 @@ final class ErrorView: UIView {
         }
     }
 
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         addSubview(imageView)
         addSubview(titleLabel)
 
@@ -121,7 +113,7 @@ final class ErrorView: UIView {
         }
     }
 
-    private func configureConstraints() {
+    override func configureConstraints() {
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(141)
             $0.centerX.equalToSuperview()
@@ -156,13 +148,12 @@ final class ErrorView: UIView {
         }
     }
 
-    private func configureActions() {
+    override func configureAction() {
         leftButton.addTarget(self, action: #selector(didTapLeft), for: .touchUpInside)
         rightButton.addTarget(self, action: #selector(didTapRight), for: .touchUpInside)
         singleButton.addTarget(self, action: #selector(didTapLeft), for: .touchUpInside)
     }
 
-    // MARK: - Button Actions
     @objc private func didTapLeft() {
         leftButtonAction?()
     }
@@ -171,4 +162,3 @@ final class ErrorView: UIView {
         rightButtonAction?()
     }
 }
-

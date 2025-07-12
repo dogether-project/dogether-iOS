@@ -66,14 +66,18 @@ final class ErrorViewController: BaseViewController {
         closeButton.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
         
         errorView.leftButtonAction = { [weak self] in
-            self?.dismiss(animated: false) {
-                self?.leftButtonAction?()
+            guard let self else { return }
+            dismiss(animated: false) { [weak self] in
+                guard let self else { return }
+                leftButtonAction?()
             }
         }
         
         errorView.rightButtonAction = { [weak self] in
-            self?.dismiss(animated: false) {
-                self?.rightButtonAction?()
+            guard let self else { return }
+            dismiss(animated: false) { [weak self] in
+                guard let self else { return }
+                rightButtonAction?()
             }
         }
     }
