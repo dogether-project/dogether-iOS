@@ -44,4 +44,9 @@ final class ChallengeGroupUseCase {
     func readTodo(todoId: Int) async throws {
         try await repository.readTodo(todoId: String(todoId))
     }
+    
+    func certifyTodo(todoId: Int, content: String, mediaUrl: String) async throws {
+        let certifyTodoRequest = CertifyTodoRequest(content: content, mediaUrl: mediaUrl)
+        try await repository.certifyTodo(todoId: String(todoId), certifyTodoRequest: certifyTodoRequest)
+    }
 }
