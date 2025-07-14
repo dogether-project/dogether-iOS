@@ -11,6 +11,7 @@ final class GroupManagementViewController: BaseViewController {
     private let viewModel = GroupManagementViewModel()
     private let navigationHeader = NavigationHeader(title: "그룹 관리")
     private let emptyView = GroupEmptyView()
+    private var errorView: ErrorView?
     private let groupTableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
@@ -22,42 +23,30 @@ final class GroupManagementViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.delegate = self
+        viewModel.fetchMyGroup()
     }
     
     override func configureView() {
         groupTableView.delegate = self
         groupTableView.dataSource = self
-        
-        viewModel.fetchMyGroup { [weak self] in
-            self?.groupTableView.reloadData()
-            self?.updateEmptyViewVisibility()
-        }
     }
     
     override func configureAction() {
         navigationHeader.delegate = self
-        
         emptyView.createButtonTapHandler = { [weak self] in
-            guard let self else { return }
-            coordinator?.pushViewController(GroupCreateViewController())
+            self?.coordinator?.pushViewController(GroupCreateViewController())
         }
     }
     
     override func configureHierarchy() {
-        [navigationHeader, groupTableView].forEach { view.addSubview($0) }
-        view.addSubview(emptyView)
+        [navigationHeader, emptyView].forEach { view.addSubview($0) }
     }
     
     override func configureConstraints() {
         navigationHeader.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
-        }
-        
-        groupTableView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(4)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview()
         }
         
         emptyView.snp.makeConstraints {
@@ -84,11 +73,7 @@ extension GroupManagementViewController: UITableViewDataSource, UITableViewDeleg
                 Task {
                     try await self.viewModel.leaveGroup(groupId: group.groupId)
                     await MainActor.run {
-                        self.viewModel.fetchMyGroup { [weak self] in
-                            guard let self else { return }
-                            groupTableView.reloadData()
-                            updateEmptyViewVisibility()
-                        }
+                        self.viewModel.fetchMyGroup()
                     }
                 }
             }
@@ -98,7 +83,46 @@ extension GroupManagementViewController: UITableViewDataSource, UITableViewDeleg
 }
 
 extension GroupManagementViewController {
-    private func updateEmptyViewVisibility() {
-        emptyView.isHidden = viewModel.viewStatus == .hasData
+    private func displayViewForCurrentStatus() {
+        errorView?.removeFromSuperview()
+        
+        switch viewModel.viewStatus {
+        case .empty:
+            emptyView.isHidden = false
+            groupTableView.removeFromSuperview()
+        case .hasData:
+            if groupTableView.superview == nil {
+                view.addSubview(groupTableView)
+                groupTableView.snp.makeConstraints {
+                    $0.top.equalTo(navigationHeader.snp.bottom).offset(4)
+                    $0.horizontalEdges.equalToSuperview().inset(16)
+                    $0.bottom.equalToSuperview()
+                }
+            }
+            groupTableView.reloadData()
+            emptyView.isHidden = true
+        }
+    }
+}
+
+extension GroupManagementViewController: GroupManagementViewModelDelegate {
+    func didFetchSucceed() {
+        displayViewForCurrentStatus()
+    }
+    
+    func didFetchFail(error: NetworkError) {
+        emptyView.removeFromSuperview()
+        groupTableView.removeFromSuperview()
+        errorView?.removeFromSuperview()
+        
+        let newErrorView = ErrorHandlingManager.embedErrorView(
+            in: self,
+            under: navigationHeader,
+            error: error,
+            retryHandler: { [weak self] in
+                self?.viewModel.fetchMyGroup()
+            }
+        )
+        errorView = newErrorView
     }
 }
