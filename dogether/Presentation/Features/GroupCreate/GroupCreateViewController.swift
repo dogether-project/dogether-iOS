@@ -186,7 +186,7 @@ final class GroupCreateViewController: BaseViewController {
             UIAction { [weak self] _ in
                 guard let self else { return }
                 if viewModel.currentStep.rawValue == viewModel.maxStep {
-                    self.performCreateAction()
+                    tryCreateGroup()
                 } else {
                     guard let nextStep = CreateGroupSteps(rawValue: viewModel.currentStep.rawValue + 1) else { return }
                     viewModel.updateStep(step: nextStep)
@@ -335,11 +335,11 @@ final class GroupCreateViewController: BaseViewController {
 }
 
 extension GroupCreateViewController {
-    private func performCreateAction() {
+    private func tryCreateGroup() {
         Task {
             do {
-                try await self.viewModel.createGroup()
-                guard let joinCode = self.viewModel.joinCode else { return }
+                try await viewModel.createGroup()
+                guard let joinCode = viewModel.joinCode else { return }
                 await MainActor.run {
                     let completeViewController = CompleteViewController()
                     completeViewController.viewModel.groupType = .create
@@ -348,13 +348,13 @@ extension GroupCreateViewController {
                     coordinator?.setNavigationController(completeViewController)
                 }
             } catch let error as NetworkError {
-                ErrorHandlingManager.handle(
+                ErrorHandlingManager.presentErrorView(
                     error: error,
                     presentingViewController: self,
                     coordinator: coordinator,
                     retryHandler: { [weak self] in
                         guard let self else { return }
-                        performCreateAction()
+                        tryCreateGroup()
                     }
                 )
             }

@@ -9,7 +9,7 @@ import UIKit
 
 final class ErrorHandlingManager {
     // MARK: - 에러화면으로 전환
-    static func handle(
+    static func presentErrorView(
         error: NetworkError,
         presentingViewController viewController: UIViewController, // 에러 화면을 띄울 기준이 되는 UIViewController
         coordinator: NavigationCoordinator?,
@@ -84,8 +84,6 @@ extension ErrorHandlingManager {
             coordinator?.setNavigationController(MainViewController())
         case .retry:
             retryHandler?()
-            //        case .goGroupCreate:
-            //            coordinator.pushViewController(GroupCreateViewController())
         default:
             break
         }
@@ -106,8 +104,6 @@ extension ErrorHandlingManager {
             retryHandler?()
         case .goGroupCreate:
             coordinator?.pushViewController(GroupCreateViewController())
-            //        case .none:
-            //            break
         default:
             break
         }

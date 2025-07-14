@@ -269,6 +269,8 @@ extension MainViewController {
                 try await viewModel.updateListInfo()
 
                 await MainActor.run {
+                    self.errorView?.removeFromSuperview()
+                    self.errorView = nil
                     self.showMainContentViews()
                     self.updateView()
                     self.updateList()

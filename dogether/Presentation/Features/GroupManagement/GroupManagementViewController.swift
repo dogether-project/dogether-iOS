@@ -69,13 +69,9 @@ extension GroupManagementViewController: UITableViewDataSource, UITableViewDeleg
         cell.configure(with: group)
         cell.onLeaveButtonTapped = { [weak self] in
             guard let self else { return }
-            coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { _ in
-                Task {
-                    try await self.viewModel.leaveGroup(groupId: group.groupId)
-                    await MainActor.run {
-                        self.viewModel.fetchMyGroup()
-                    }
-                }
+            coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { [weak self] _ in
+                guard let self else { return }
+                tryLeaveGroup(groupId: group.groupId)
             }
         }
         return cell
@@ -120,9 +116,33 @@ extension GroupManagementViewController: GroupManagementViewModelDelegate {
             under: navigationHeader,
             error: error,
             retryHandler: { [weak self] in
-                self?.viewModel.fetchMyGroup()
+                guard let self else { return }
+                viewModel.fetchMyGroup()
             }
         )
         errorView = newErrorView
+    }
+}
+
+extension GroupManagementViewController {
+    private func tryLeaveGroup(groupId: Int) {
+        Task {
+            do {
+                try await viewModel.leaveGroup(groupId: groupId)
+                await MainActor.run {
+                    viewModel.fetchMyGroup()
+                }
+            } catch let error as NetworkError {
+                ErrorHandlingManager.presentErrorView(
+                    error: error,
+                    presentingViewController: self,
+                    coordinator: coordinator,
+                    retryHandler: { [weak self] in
+                        guard let self else { return }
+                        tryLeaveGroup(groupId: groupId)
+                    }
+                )
+            }
+        }
     }
 }

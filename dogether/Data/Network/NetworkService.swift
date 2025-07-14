@@ -52,8 +52,7 @@ class NetworkService {
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
-            print("✅ data: \(data)")
-            print("✅ response: \(response)")
+            
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw NetworkError.unknown(NSError(domain: "", code: -1, userInfo: nil))
             }
@@ -76,8 +75,6 @@ class NetworkService {
                 throw NetworkError.forbidden
             case 404:
                 throw NetworkError.notFound
-//            case 500:
-//                throw NetworkError.serverError(message: "서버 오류가 발생했습니다. (코드: \(statusCode))")
             default:
                 throw NetworkError.serverError(message: "서버 오류가 발생했습니다. (코드: \(statusCode))")
             }

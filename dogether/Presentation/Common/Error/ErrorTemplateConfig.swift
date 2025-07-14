@@ -22,6 +22,4 @@ enum ErrorActionType {
     case goHome
     case retry
     case goGroupCreate
-    case close
-    case none
 }

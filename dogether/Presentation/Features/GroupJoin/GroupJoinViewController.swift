@@ -88,7 +88,8 @@ final class GroupJoinViewController: BaseViewController {
         
         joinButton.addAction(
             UIAction { [weak self] _ in
-                self?.performJoinAction()
+                guard let self else { return }
+                tryJoinGroup()
             }, for: .touchUpInside
         )
     }
@@ -129,25 +130,25 @@ final class GroupJoinViewController: BaseViewController {
 }
 
 extension GroupJoinViewController {
-    private func performJoinAction() {
+    private func tryJoinGroup() {
         Task {
             do {
-                try await self.viewModel.joinGroup()
-                guard let groupInfo = self.viewModel.challengeGroupInfo else { return }
+                try await viewModel.joinGroup()
+                guard let groupInfo = viewModel.challengeGroupInfo else { return }
                 await MainActor.run {
                     let completeViewController = CompleteViewController()
                     completeViewController.viewModel.groupType = .join
                     completeViewController.viewModel.groupInfo = groupInfo
-                    self.coordinator?.setNavigationController(completeViewController)
+                    coordinator?.setNavigationController(completeViewController)
                 }
             } catch let error as NetworkError {
-                ErrorHandlingManager.handle(
+                ErrorHandlingManager.presentErrorView(
                     error: error,
                     presentingViewController: self,
                     coordinator: coordinator,
                     retryHandler: { [weak self] in
                         guard let self else { return }
-                        performJoinAction()
+                        tryJoinGroup()
                     }
                 )
             }
