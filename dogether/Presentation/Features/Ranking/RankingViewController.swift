@@ -196,7 +196,8 @@ extension RankingViewController {
             under: navigationHeader,
             error: error,
             retryHandler: { [weak self] in
-                self?.loadRankingView()
+                guard let self else { return }
+                loadRankingView()
             }
         )
     }
