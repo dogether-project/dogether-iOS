@@ -15,16 +15,17 @@ enum GroupManagementViewStatus {
 final class GroupManagementViewModel {    
     private(set) var groups: [ChallengeGroup] = []
     
-    private let groupUseCase: GroupUseCase
     private let authUseCase: AuthUseCase
+    private let groupUseCase: GroupUseCase
     
     var viewStatus: GroupManagementViewStatus = .empty
     
     init() {
-        let groupRepository = DIManager.shared.getGroupRepository()
         let authRepository = DIManager.shared.getAuthRepository()
-        self.groupUseCase = GroupUseCase(repository: groupRepository)
+        let groupRepository = DIManager.shared.getGroupRepository()
+        
         self.authUseCase = AuthUseCase(repository: authRepository)
+        self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
 }
 
@@ -40,7 +41,6 @@ extension GroupManagementViewModel {
                 }
             } catch {
                 self.viewStatus = .empty
-                print("에러 발생: \(error)")
             }
         }
     }
@@ -48,7 +48,7 @@ extension GroupManagementViewModel {
 
 extension GroupManagementViewModel {
     func leaveGroup(groupId: Int) async throws {
-        try await NetworkManager.shared.request(GroupsRouter.leaveGroup(groupId: groupId))
+        try await groupUseCase.leaveGroup(groupId: groupId)
     }
 }
 

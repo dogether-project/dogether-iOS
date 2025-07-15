@@ -15,7 +15,7 @@ enum GroupsRouter: NetworkEndpoint {
     case getMySummary
     case saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest)
     case getRanking(groupId: String)
-    case leaveGroup(groupId: Int)
+    case leaveGroup(groupId: String)
     case getMyGroups
     
     var path: String {

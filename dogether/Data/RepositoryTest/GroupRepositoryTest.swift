@@ -18,6 +18,8 @@ final class GroupRepositoryTest: GroupProtocol {
         return JoinGroupResponse(groupName: "testGroup", duration: 3, maximumMemberCount: 10, startAt: "2025-01-01", endAt: "2025-01-04")
     }
     
+    func leaveGroup(groupId: String) { }
+    
     func getIsParticipating() async throws -> GetIsParticipatingResponse {
         return GetIsParticipatingResponse(isParticipating: true)
     }

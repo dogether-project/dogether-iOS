@@ -42,6 +42,10 @@ final class GroupUseCase {
         )
     }
     
+    func leaveGroup(groupId: Int) async throws {
+        try await repository.leaveGroup(groupId: String(groupId))
+    }
+    
     func getIsParticipating() async throws -> Bool {
         let response = try await repository.getIsParticipating()
         return response.isParticipating
