@@ -63,6 +63,12 @@ extension NavigationCoordinator {
         
         navigationController.popViewController(animated: animated)
     }
+    
+    func dismissViewController(animated: Bool = true) {
+        updateViewController = nil
+
+        navigationController.presentedViewController?.dismiss(animated: animated)
+    }
 }
 
 // MARK: popup

@@ -49,7 +49,6 @@ final class ErrorViewController: BaseViewController {
     }
 
     override func configureConstraints() {
-//        errorView.snp.makeConstraints { $0.edges.equalToSuperview() }
         errorView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(56)
             $0.left.right.bottom.equalToSuperview()

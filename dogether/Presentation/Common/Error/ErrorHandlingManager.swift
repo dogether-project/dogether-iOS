@@ -79,7 +79,7 @@ extension ErrorHandlingManager {
     ) {
         switch type {
         case .goBack:
-            coordinator?.popViewController()
+            coordinator?.dismissViewController()
         case .goHome:
             coordinator?.setNavigationController(MainViewController())
         case .retry:
@@ -97,7 +97,7 @@ extension ErrorHandlingManager {
     ) {
         switch type {
         case .goBack:
-            coordinator?.popViewController()
+            coordinator?.dismissViewController()
         case .goHome:
             coordinator?.setNavigationController(MainViewController())
         case .retry:
@@ -114,7 +114,7 @@ extension ErrorHandlingManager {
 extension ErrorHandlingManager {
     private static func configForCode(code: DogetherCodes) -> ErrorTemplateConfig {
         switch code {
-        case .CGF0007:
+        case .CGF0002:
             return ErrorTemplateConfig(
                 image: .sweatDosik,
                 title: "이미 참여한 그룹이에요.",
@@ -124,7 +124,7 @@ extension ErrorHandlingManager {
                 leftActionType: .goHome,
                 rightActionType: .goGroupCreate
             )
-        case .CGF0008:
+        case .CGF0003:
             return ErrorTemplateConfig(
                 image: .sweatDosik,
                 title: "그룹 인원이 가득 찼어요.",
@@ -134,10 +134,30 @@ extension ErrorHandlingManager {
                 leftActionType: .goBack,
                 rightActionType: .goGroupCreate
             )
+        case .CGF0004:
+            return ErrorTemplateConfig(
+                image: .sweatDosik,
+                title: "참여할 수 없는 그룹이에요.",
+                subtitle: "이미 종료된 그룹이에요.",
+                leftButtonTitle: "뒤로가기",
+                rightButtonTitle: "새로운 그룹 생성",
+                leftActionType: .goBack,
+                rightActionType: .goGroupCreate
+            )
+        case .CGF0005:
+            return ErrorTemplateConfig(
+                image: .sweatDosik,
+                title: "참여할 수 없는 그룹이에요.",
+                subtitle: "존재하지 않는 그룹이에요.",
+                leftButtonTitle: "뒤로가기",
+                rightButtonTitle: "새로운 그룹 생성",
+                leftActionType: .goBack,
+                rightActionType: .goGroupCreate
+            )
         default:
             return ErrorTemplateConfig(
                 image: .iceDosik,
-                title: "예기치 않은 문제가 발생했어요.",
+                title: "예기치 못한 문제가 발생했어요.",
                 subtitle: nil,
                 leftButtonTitle: "뒤로가기",
                 rightButtonTitle: nil,
@@ -172,7 +192,7 @@ extension ErrorHandlingManager {
         default:
             return ErrorTemplateConfig(
                 image: .iceDosik,
-                title: "예기치 않은 문제가 발생했어요.",
+                title: "예기치 못한 문제가 발생했어요.",
                 subtitle: nil,
                 leftButtonTitle: "뒤로가기",
                 rightButtonTitle: nil,

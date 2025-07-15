@@ -24,36 +24,21 @@ enum DogetherCodes: String, Decodable {
     case NTS0002 = "NTS-0002"
 
     // MARK: - Failure Code
+    case CF0001 = "CF-0001"
+    case AUF0001 = "AUF-0001"
     case MF0001 = "MF-0001"
-    case MF0002 = "MF-0002"
-    case AIF0001 = "AIF-0001"
     case CGF0001 = "CGF-0001"
     case CGF0002 = "CGF-0002"
     case CGF0003 = "CGF-0003"
     case CGF0004 = "CGF-0004"
     case CGF0005 = "CGF-0005"
-    case CGF0006 = "CGF-0006"
-    case CGF0007 = "CGF-0007"
-    case CGF0008 = "CGF-0008"
-    case CGF0009 = "CGF-0009"
-    case CGF0010 = "CGF-0010"
-    case CGF0011 = "CGF-0011"
     case DTF0001 = "DTF-0001"
-    case DTF0002 = "DTF-0002"
-    case DTF0003 = "DTF-0003"
-    case DTF0004 = "DTF-0004"
-    case DTF0005 = "DTF-0005"
-    case DTF0006 = "DTF-0006"
-    case DTF0007 = "DTF-0007"
-    case DTF0008 = "DTF-0008"
-    case DTF0009 = "DTF-0009"
-    case DTF0010 = "DTF-0010"
-    case TCF0002 = "TCF-0002"
-    case TCF0003 = "TCF-0003"
-    case TCF0004 = "TCF-0004"
-    case TCF0005 = "TCF-0005"
-    case NTF0001 = "NTF-0001"
-
+    case DTCF0001 = "DTCF-0001"
+    case DTHF0001 = "DTHF-0001"
+    case MAF0001 = "MAF-0001"
+    case NF0001 = "NF-0001"
+    case AIF0001 = "AIF-0001"
+    
     // MARK: - Exception Code
     case IA001 = "IA-001"
 
@@ -75,35 +60,20 @@ enum DogetherCodes: String, Decodable {
         case .NTS0002: return "푸시 알림 토큰 삭제 성공"
 
         // MARK: - Failure
-        case .MF0001: return "유효하지 않은 회원 정보"
-        case .MF0002: return "존재하지 않는 회원 정보"
-        case .AIF0001: return "유효하지 않은 앱 버전 정보 요청"
-        case .CGF0001: return "회원이 챌린지 그룹에 속해 있지 않음"
-        case .CGF0002: return "챌린지 그룹에 충분한 인원이 없음"
-        case .CGF0003: return "현재 진행중인 챌린지 그룹이 아님" // 중복2
-        case .CGF0004: return "유효하지 않은 챌린지 그룹 정보" // 중복3
-        case .CGF0005: return "챌린지 그룹에 인원이 가득참" // 중복1
-        case .CGF0006: return "해당 챌린지 그룹이 존재하지 않음" // 중복3
-        case .CGF0007: return "이미 해당 챌린지 그룹에 가입함"
-        case .CGF0008: return "챌린지 그룹에 사람이 가득참" // 중복1
-        case .CGF0009: return "이미 종료된 챌린지 그룹" // 중복2
-        case .CGF0010: return "유효하지 않은 챌린지 그룹 기간"
-        case .CGF0011: return "유효하지 않은 챌린지 그룹 시작 날짜"
-        case .DTF0001: return "유효하지 않은 데일리 투두"
-        case .DTF0002: return "이미 당일 해당 그룹의 투두를 작성함"
-        case .DTF0003: return "데일리 투두가 존재하지 않음"
-        case .DTF0004: return "유효하지 않은 데일리 투두 상태"
-        case .DTF0005: return "데일리 투두 소유자가 아님"
-        case .DTF0006: return "유효하지 않은 데일리 투두 상태"
-        case .DTF0007: return "유효하지 않은 검사 결과"
-        case .DTF0008: return "리뷰 대기중인 데일리 투두가 아님"
-        case .DTF0009: return "이미 조회한 데일리 투두 히스토리"
-        case .DTF0010: return "데일리 투두 히스토리가 존재하지 않음"
-        case .TCF0002: return "유효하지 않은 데일리 투두 인증 혹은 존재하지 않음"
-        case .TCF0003: return "해당 데일리 투두 인증의 검사자가 아님"
-        case .TCF0004: return "유효하지 않은 데일리 투두 검사자"
-        case .TCF0005: return "유효하지 않은 데일리 투두 인증 상태"
-        case .NTF0001: return "유효하지 않은 알림 토큰"
+        case .CF0001: return "서버 애플리케이션에 예상치 못한 문제가 발생"
+        case .AUF0001: return "인증 & 인가 도메인 예기치 못한 문제 발생"
+        case .MF0001: return "회원 도메인 예기치 못한 문제 발생"
+        case .CGF0001: return "챌린지 그룹 도메인 예기치 못한 문제 발생"
+        case .CGF0002: return "사용자가 이미 참여한 그룹" //
+        case .CGF0003: return "그룹에 이미 사용자가 가득참" //
+        case .CGF0004: return "이미 종료된 그룹" //
+        case .CGF0005: return "존재하지 않는 그룹" //
+        case .DTF0001: return "데일리 투두 도메인 예기치 못한 문제 발생" //
+        case .DTCF0001: return "데일리 투두 인증 도메인 예기치 못한 문제 발생"
+        case .DTHF0001: return "데일리 투두 히스토리 도메인 예기치 못한 문제 발생"
+        case .MAF0001: return "사용자 활동 도메인 예기치 못한 문제 발생"
+        case .NF0001: return "푸시 알림 도메인 예기치 못한 문제 발생"
+        case .AIF0001: return "앱 정보 도메인 예기치 못한 문제 발생"
 
         // MARK: - Exception
         case .IA001: return "예기치 못한 문제 발생. 백엔드 팀에 즉시 문의"

@@ -28,19 +28,19 @@ final class GroupRepositoryTest: GroupProtocol {
         let code = joinGroupRequest.joinCode
         
         if code == "00000000" {
-            throw NetworkError.dogetherError(code: .CGF0004, message: "유효하지 않은 그룹입니다.")
+            throw NetworkError.dogetherError(code: .CGF0005, message: "유효하지 않은 그룹입니다.")
         }
         
         if code == "11111111" {
-            throw NetworkError.dogetherError(code: .CGF0007, message: "이미 참여한 그룹입니다.")
+            throw NetworkError.dogetherError(code: .CGF0002, message: "이미 참여한 그룹입니다.")
         }
         
         if code == "22222222" {
-            throw NetworkError.dogetherError(code: .CGF0009, message: "종료된 그룹입니다.")
+            throw NetworkError.dogetherError(code: .CGF0004, message: "종료된 그룹입니다.")
         }
         
         if code == "33333333" {
-            throw NetworkError.dogetherError(code: .CGF0008, message: "그룹 인원이 가득 찼습니다.")
+            throw NetworkError.dogetherError(code: .CGF0003, message: "그룹 인원이 가득 찼습니다.")
         }
         
         if code == "44444444" {
