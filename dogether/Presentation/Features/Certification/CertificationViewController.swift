@@ -286,10 +286,16 @@ extension CertificationViewController {
     private func pickerCompletion(image: UIImage) {
         imageView.image = image
         imageView.updateCertificationContent()
+        
+        // FIXME: 추후 S3Manager를 NetworkManager로 합치면서 loading 로직도 제거해요
         Task {
-            // TODO: 로딩 뷰 추가
+            certificationButton.setButtonStatus(status: .disabled)
+            LoadingManager.shared.showLoading()
+            
             todoInfo.certificationMediaUrl = try await S3Manager.shared.uploadImage(image: image)
+            
             certificationButton.setButtonStatus(status: .enabled)
+            LoadingManager.shared.hideLoading()
         }
     }
 }
