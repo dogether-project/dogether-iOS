@@ -12,13 +12,19 @@ enum GroupManagementViewStatus {
     case hasData
 }
 
-final class GroupManagementViewModel {    
+protocol GroupManagementViewModelDelegate: AnyObject {
+    func didFetchSucceed()
+    func didFetchFail(error: NetworkError)
+}
+
+final class GroupManagementViewModel {
     private(set) var groups: [ChallengeGroupInfo] = []
     
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     
     var viewStatus: GroupManagementViewStatus = .empty
+    weak var delegate: GroupManagementViewModelDelegate?
     
     init() {
         let authRepository = DIManager.shared.getAuthRepository()
@@ -30,17 +36,16 @@ final class GroupManagementViewModel {
 }
 
 extension GroupManagementViewModel {
-    func fetchMyGroup(completion: @escaping () -> Void) {
-        Task {
+    func fetchMyGroup() {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
             do {
                 let (_, groups) = try await groupUseCase.getChallengeGroupInfos()
                 self.groups = groups
                 viewStatus = groups.isEmpty ? .empty : .hasData
-                DispatchQueue.main.async {
-                    completion()  // 데이터 갱신 후 테이블 뷰 리로드
-                }
-            } catch {
-                self.viewStatus = .empty
+                delegate?.didFetchSucceed()
+            } catch let error as NetworkError {
+                delegate?.didFetchFail(error: error)
             }
         }
     }
