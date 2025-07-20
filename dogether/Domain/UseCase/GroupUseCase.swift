@@ -87,9 +87,4 @@ final class GroupUseCase {
                 achievementRate: $0.achievementRate)
         }
     }
-    
-    func getMyGroup() async throws -> GetMyGroupResponse {
-        let response = try await repository.getMyGroup()
-        return response
-    }
 }

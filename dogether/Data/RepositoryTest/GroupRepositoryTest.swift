@@ -55,14 +55,6 @@ final class GroupRepositoryTest: GroupProtocol {
         )
     }
     
-    func getMyGroup() async throws -> GetMyGroupResponse {
-        guard let url = Bundle.main.url(forResource: "GroupMock", withExtension: "json") else {
-            throw URLError(.fileDoesNotExist)
-        }
-        let data = try Data(contentsOf: url)
-        return try JSONDecoder().decode(GetMyGroupResponse.self, from: data)
-    }
-    
     func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws { }
     
     func getRanking(groupId: String) async throws -> GetRankingResponse {

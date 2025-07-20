@@ -36,10 +36,6 @@ final class GroupsDataSource {
         try await NetworkManager.shared.request(GroupsRouter.getGroups)
     }
     
-    func getMyGroup() async throws -> GetMyGroupResponse {
-        try await NetworkManager.shared.request(GroupsRouter.getMyGroups)
-    }
-    
     func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws {
         try await NetworkManager.shared.request(
             GroupsRouter.saveLastSelectedGroup(saveLastSelectedGroupRequest: saveLastSelectedGroupRequest)

@@ -34,10 +34,6 @@ final class GroupRepository: GroupProtocol {
         try await groupsDataSource.getGroups()
     }
     
-    func getMyGroup() async throws -> GetMyGroupResponse {
-        try await groupsDataSource.getMyGroup()
-    }
-    
     func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws {
         try await groupsDataSource.saveLastSelectedGroup(saveLastSelectedGroupRequest: saveLastSelectedGroupRequest)
     }

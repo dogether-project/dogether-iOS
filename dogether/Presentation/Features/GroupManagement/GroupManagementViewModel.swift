@@ -13,7 +13,7 @@ enum GroupManagementViewStatus {
 }
 
 final class GroupManagementViewModel {    
-    private(set) var groups: [ChallengeGroup] = []
+    private(set) var groups: [ChallengeGroupInfo] = []
     
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
@@ -33,8 +33,8 @@ extension GroupManagementViewModel {
     func fetchMyGroup(completion: @escaping () -> Void) {
         Task {
             do {
-                let response = try await groupUseCase.getMyGroup()
-                self.groups = response.joiningChallengeGroups
+                let (_, groups) = try await groupUseCase.getChallengeGroupInfos()
+                self.groups = groups
                 viewStatus = groups.isEmpty ? .empty : .hasData
                 DispatchQueue.main.async {
                     completion()  // 데이터 갱신 후 테이블 뷰 리로드

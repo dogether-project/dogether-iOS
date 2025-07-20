@@ -15,7 +15,6 @@ protocol GroupProtocol {
     func getIsParticipating() async throws -> GetIsParticipatingResponse
     
     func getGroups() async throws -> GetGroupsResponse
-    func getMyGroup() async throws -> GetMyGroupResponse
     
     func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws
     
