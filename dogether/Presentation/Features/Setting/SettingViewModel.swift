@@ -32,10 +32,7 @@ extension SettingViewModel {
     
     func withdraw() async throws {
         authUseCase.appleLogin()
-        guard let userInfo = try await authUseCase.userInfo else { return }
-        
-        let withdrawRequst = WithdrawRequest(authorizationCode: userInfo.authorizationCode)
-        try await NetworkManager.shared.request(AuthRouter.withdraw(withdrawRequest: withdrawRequst))
+        try await authUseCase.withdraw()
     }
 }
 
