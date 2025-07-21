@@ -67,7 +67,7 @@ extension AuthUseCase: ASAuthorizationControllerDelegate {
 
 extension AuthUseCase {
     func login(domain: LoginDomains) async throws {
-        switch(domain) {
+        switch domain {
         case .apple:
             guard let userInfo = try await userInfo else { return }
             let appleLoginRequest = AppleLoginRequest(name: userInfo.name, idToken: userInfo.idToken)
