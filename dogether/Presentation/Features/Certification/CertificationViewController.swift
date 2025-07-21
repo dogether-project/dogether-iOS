@@ -11,7 +11,7 @@ import SnapKit
 import PhotosUI
 
 final class CertificationViewController: BaseViewController {
-    var todoInfo = TodoInfo(id: 0, content: "", status: "")
+    var viewModel = CertificationViewModel()
     
     private let navigationHeader = NavigationHeader(title: "인증 하기")
     
@@ -89,7 +89,7 @@ final class CertificationViewController: BaseViewController {
     
     override func configureView() {
         todoContentLabel.attributedText = NSAttributedString(
-            string: todoInfo.content,
+            string: viewModel.todoInfo.content,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
         
@@ -121,7 +121,7 @@ final class CertificationViewController: BaseViewController {
             UIAction { [weak self] _ in
                 guard let self else { return }
                 let certificationSupplyViewController = CertificationSupplyViewController()
-                certificationSupplyViewController.todoInfo = todoInfo
+                certificationSupplyViewController.viewModel = viewModel
                 coordinator?.pushViewController(certificationSupplyViewController)
             }, for: .touchUpInside
         )
@@ -288,7 +288,7 @@ extension CertificationViewController {
         imageView.updateCertificationContent()
         Task {
             // TODO: 로딩 뷰 추가
-            todoInfo.certificationMediaUrl = try await S3Manager.shared.uploadImage(image: image)
+            try await viewModel.uploadImage(image: image)
             certificationButton.setButtonStatus(status: .enabled)
         }
     }
