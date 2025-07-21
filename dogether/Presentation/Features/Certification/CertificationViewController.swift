@@ -290,12 +290,16 @@ extension CertificationViewController {
         // FIXME: 추후 S3Manager를 NetworkManager로 합치면서 loading 로직도 제거해요
         Task {
             certificationButton.setButtonStatus(status: .disabled)
+            
             LoadingManager.shared.showLoading()
+            defer { LoadingManager.shared.hideLoading() }
             
-            todoInfo.certificationMediaUrl = try await S3Manager.shared.uploadImage(image: image)
-            
-            certificationButton.setButtonStatus(status: .enabled)
-            LoadingManager.shared.hideLoading()
+            do {
+                todoInfo.certificationMediaUrl = try await S3Manager.shared.uploadImage(image: image)
+                certificationButton.setButtonStatus(status: .enabled)
+            } catch {
+                // TODO: 예외 케이스 핸들링
+            }
         }
     }
 }
