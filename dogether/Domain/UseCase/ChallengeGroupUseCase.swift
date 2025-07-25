@@ -41,8 +41,9 @@ final class ChallengeGroupUseCase {
         return (currentIndex, memberTodos)
     }
     
-    func readTodo(todoId: Int) async throws {
-        try await repository.readTodo(todoId: String(todoId))
+    func readTodo(todo: MemberCertificationInfo) async throws {
+        if todo.thumbnailStatus == .done { return }
+        try await repository.readTodo(todoId: String(todo.id))
     }
     
     func certifyTodo(todoId: Int, content: String, mediaUrl: String) async throws {
