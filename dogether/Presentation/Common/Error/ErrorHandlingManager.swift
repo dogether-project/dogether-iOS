@@ -180,11 +180,21 @@ extension ErrorHandlingManager {
     
     private static func configForError(error: NetworkError) -> ErrorTemplateConfig {
         switch error {
-        case .serverError, .unknown:
+        case .connectionFailed:
             return ErrorTemplateConfig(
                 image: .headacheDosik,
                 title: "네트워크 연결이 불안정해요.",
                 subtitle: "연결 상태를 확인한 후 다시 시도해주세요.",
+                leftButtonTitle: "다시 시도",
+                rightButtonTitle: nil,
+                leftActionType: .retry,
+                rightActionType: nil
+            )
+        case .serverError, .sslError:
+            return ErrorTemplateConfig(
+                image: .headacheDosik,
+                title: "서버에 문제가 발생했어요.", // FIXME: 문구 수정필요
+                subtitle: "잠시 후 다시 시도해주세요.",
                 leftButtonTitle: "다시 시도",
                 rightButtonTitle: nil,
                 leftActionType: .retry,
