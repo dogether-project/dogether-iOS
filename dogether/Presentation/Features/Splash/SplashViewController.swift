@@ -19,15 +19,20 @@ final class SplashViewController: BaseViewController {
         super.viewDidLoad()
         Task {
             try await viewModel.launchApp()
+            
             try await viewModel.checkUpdate()
-//            if viewModel.needUpdate.value {
-//                updateView()
-//            } else {
-//                let destination = try await viewModel.getDestination()
-//                await MainActor.run {
-//                    coordinator?.setNavigationController(destination)
-//                }
-//            }
+            if viewModel.needUpdate.value { return }
+            
+            try await viewModel.checkLogin()
+            if viewModel.needLogin.value { return }
+            
+            try await viewModel.checkParticipating()
+            if !viewModel.isParticipating.value { return }
+            
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                coordinator?.setNavigationController(MainViewController())    // TODO: animated 고민
+            }
         }
     }
     
@@ -40,6 +45,32 @@ final class SplashViewController: BaseViewController {
                     Task { @MainActor [weak self] in
                         guard let self else { return }
                         coordinator?.setNavigationController(UpdateViewController())    // TODO: animated 고민
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.needLogin
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { isNeeded in
+                if isNeeded {
+                    Task { @MainActor [weak self] in
+                        guard let self else { return }
+                        coordinator?.setNavigationController(OnboardingViewController())    // TODO: animated 고민
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isParticipating
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { isParticipating in
+                if !isParticipating {
+                    Task { @MainActor [weak self] in
+                        guard let self else { return }
+                        coordinator?.setNavigationController(StartViewController())    // TODO: animated 고민
                     }
                 }
             })
