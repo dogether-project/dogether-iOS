@@ -1,15 +1,15 @@
 //
-//  BaseImageView.swift
+//  BasePage.swift
 //  dogether
 //
-//  Created by seungyooooong on 4/9/25.
+//  Created by 승용 on 7/31/25.
 //
 
 import UIKit
 
-class BaseImageView: UIImageView {
-    override init(image: UIImage? = nil) {
-        super.init(image: image)
+class BasePage: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         configureView()
         configureAction()

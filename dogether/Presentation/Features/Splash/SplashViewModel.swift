@@ -7,11 +7,13 @@
 
 import Foundation
 
+import RxRelay
+
 final class SplashViewModel {
     private let appLaunchUseCase: AppLaunchUseCase
     private let groupUseCase: GroupUseCase
     
-    private(set) var needUpdate: Bool = false
+    private(set) var needUpdate = BehaviorRelay<Bool>(value: false)
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -26,7 +28,7 @@ final class SplashViewModel {
     }
     
     func checkUpdate() async throws {
-        needUpdate = try await appLaunchUseCase.checkUpdate()
+        needUpdate.accept(try await appLaunchUseCase.checkUpdate())
     }
     
     func getDestination() async throws -> BaseViewController {
