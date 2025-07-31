@@ -14,6 +14,8 @@ final class SplashViewModel {
     private let groupUseCase: GroupUseCase
     
     private(set) var needUpdate = BehaviorRelay<Bool>(value: false)
+    private(set) var needLogin = BehaviorRelay<Bool>(value: false)
+    private(set) var isParticipating = BehaviorRelay<Bool>(value: true)
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -22,7 +24,9 @@ final class SplashViewModel {
         self.appLaunchUseCase = AppLaunchUseCase(repository: appInfoRepository)
         self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
-    
+}
+
+extension SplashViewModel {
     func launchApp() async throws {
         try await appLaunchUseCase.launchApp()
     }
@@ -31,11 +35,11 @@ final class SplashViewModel {
         needUpdate.accept(try await appLaunchUseCase.checkUpdate())
     }
     
-    func getDestination() async throws -> BaseViewController {
-        if UserDefaultsManager.shared.accessToken == nil { return await OnboardingViewController() }
-        
-        let isParticipating = try await groupUseCase.getIsParticipating()
-        let destination = try await appLaunchUseCase.getDestination(isParticipating: isParticipating)
-        return destination
+    func checkLogin() async throws {
+        needLogin.accept(UserDefaultsManager.shared.accessToken == nil)
+    }
+    
+    func checkParticipating() async throws {
+        isParticipating.accept(try await groupUseCase.getIsParticipating())
     }
 }
