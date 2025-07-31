@@ -1,5 +1,5 @@
 {
-  "originHash" : "7539a748b09aa6a36e5aacf5d8bd300ff741fc016373d49a6e0ddc57823b04fa",
+  "originHash" : "72b5afcd5bfaf5fc7ff9156a1d2822d67cfdc4013414e1b251f3fb5c12830343",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "5dd1907d64f0d36f158f61a466bab75067224893",
+        "version" : "6.9.0"
       }
     },
     {

@@ -1,22 +1,22 @@
 //
-//  BaseImageView.swift
+//  BaseStackView.swift
 //  dogether
 //
-//  Created by seungyooooong on 4/9/25.
+//  Created by 승용 on 7/31/25.
 //
 
 import UIKit
 
-class BaseImageView: UIImageView {
-    override init(image: UIImage? = nil) {
-        super.init(image: image)
+class BaseStackView: UIStackView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
         configureView()
         configureAction()
         configureHierarchy()
         configureConstraints()
     }
-    required init?(coder: NSCoder) { fatalError() }
+    required init(coder: NSCoder) { fatalError() }
     
     /// 뷰의 시각적인 속성을 설정하는 역할을 합니다
     func configureView() { }
