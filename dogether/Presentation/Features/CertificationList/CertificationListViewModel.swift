@@ -25,6 +25,8 @@ final class CertificationListViewModel {
     var totalCertificatedCount: Int = 0
     var totalApprovedCount: Int = 0
     var totalRejectedCount: Int = 0
+    private var currentPage: Int = 0
+    var isLastPage: Bool = false
     
     var currentFilter: FilterTypes = .all {
         didSet {
@@ -42,16 +44,21 @@ final class CertificationListViewModel {
 
 extension CertificationListViewModel {
     func executeSort(option: CertificationSortOption) {
+        currentPage = 0
+        isLastPage = false
+        
         Task {
             do {
-                let result = try await useCase.fetchSortedList(option: option)
+                let result = try await useCase.fetchSortedList(option: option, page: currentPage)
                 self.rawSections = result.sections
                 
                 self.totalCertificatedCount = result.stats.totalCertificatedCount
                 self.totalApprovedCount = result.stats.totalApprovedCount
                 self.totalRejectedCount = result.stats.totalRejectedCount
+                self.isLastPage = !result.hasNext
                 self.applyFilter()
                 self.viewStatus = self.sections.isEmpty ? .empty : .hasData
+                print("\(currentPage)번째 페이지 로드")
             } catch let error as NetworkError {
                 delegate?.didFetchFail(error: error)
             }
@@ -70,6 +77,31 @@ extension CertificationListViewModel {
         
         DispatchQueue.main.async { [weak self] in
             self?.delegate?.didFetchSucceed()
+        }
+    }
+    
+    func loadNextPage() {
+        guard !isLastPage else { return }
+        guard let option = selectedGroup else { return }
+        currentPage += 1
+        
+        Task {
+            do {
+                let result = try await useCase.fetchSortedList(option: option, page: currentPage)
+                self.rawSections.append(contentsOf: result.sections)
+                
+                self.totalCertificatedCount = result.stats.totalCertificatedCount
+                self.totalApprovedCount = result.stats.totalApprovedCount
+                self.totalRejectedCount = result.stats.totalRejectedCount
+                
+                self.isLastPage = !result.hasNext
+                
+                self.applyFilter()
+                print("\(currentPage)번째 페이지 로드")
+            } catch let error as NetworkError {
+                delegate?.didFetchFail(error: error)
+                currentPage -= 1
+            }
         }
     }
 }
