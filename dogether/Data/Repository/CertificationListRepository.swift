@@ -14,13 +14,13 @@ final class CertificationListRepository: CertificationListProtocol {
         self.dataSource = dataSource
     }
     
-    func fetchByTodoCompletionDate() async throws -> CertificationListResult {
-        let response = try await dataSource.fetchByTodoCompletionDate()
+    func fetchByTodoCompletionDate(page: Int) async throws -> CertificationListResult {
+        let response = try await dataSource.fetchByTodoCompletionDate(page: page)
         return Self.transformDaily(response: response)
     }
     
-    func fetchByGroupCreationDate() async throws -> CertificationListResult {
-        let response = try await dataSource.fetchByGroupCreationDate()
+    func fetchByGroupCreationDate(page: Int) async throws -> CertificationListResult {
+        let response = try await dataSource.fetchByGroupCreationDate(page: page)
         return Self.transformGroup(response: response)
     }
 }
@@ -57,7 +57,9 @@ extension CertificationListRepository {
             totalRejectedCount: response.dailyTodoStats.totalRejectedCount
         )
         
-        return CertificationListResult(sections: sections, stats: stats)
+        let hasNext = response.pageInfo.hasNext
+        
+        return CertificationListResult(sections: sections, stats: stats, hasNext: hasNext)
     }
 }
 
@@ -89,6 +91,8 @@ extension CertificationListRepository {
             totalRejectedCount: response.dailyTodoStats.totalRejectedCount
         )
         
-        return CertificationListResult(sections: sections, stats: stats)
+        let hasNext = response.pageInfo.hasNext
+        
+        return CertificationListResult(sections: sections, stats: stats, hasNext: hasNext)
     }
 }

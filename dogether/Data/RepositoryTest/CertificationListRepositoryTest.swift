@@ -8,12 +8,14 @@
 import Foundation
 
 final class CertificationListRepositoryTest: CertificationListProtocol {
-    func fetchByTodoCompletionDate() async throws -> CertificationListResult {
-        try await loadAndTransformDaily(from: "TodoCompletedDateMock")
+    func fetchByTodoCompletionDate(page: Int) async throws -> CertificationListResult {
+        let filename = "TodoCompletedDatePage\(page)Mock"
+        return try await loadAndTransformDaily(from: filename)
     }
     
-    func fetchByGroupCreationDate() async throws -> CertificationListResult {
-        try await loadAndTransformGroup(from: "GroupCreatedDateMock")
+    func fetchByGroupCreationDate(page: Int) async throws -> CertificationListResult {
+        let filename = "GroupCreatedDatePage\(page)Mock"
+        return try await loadAndTransformGroup(from: filename)
     }
 }
 
@@ -54,7 +56,9 @@ extension CertificationListRepositoryTest {
                                        totalApprovedCount: response.dailyTodoStats.totalApprovedCount,
                                        totalRejectedCount: response.dailyTodoStats.totalRejectedCount)
         
-        return CertificationListResult(sections: sections, stats: stats)
+        let hasNext = response.pageInfo.hasNext
+        
+        return CertificationListResult(sections: sections, stats: stats, hasNext: hasNext)
     }
 }
 
@@ -96,6 +100,8 @@ extension CertificationListRepositoryTest {
             totalRejectedCount: response.dailyTodoStats.totalRejectedCount
         )
         
-        return CertificationListResult(sections: sections, stats: stats)
+        let hasNext = response.pageInfo.hasNext
+        
+        return CertificationListResult(sections: sections, stats: stats, hasNext: hasNext)
     }
 }

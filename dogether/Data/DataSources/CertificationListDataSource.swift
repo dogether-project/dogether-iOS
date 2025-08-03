@@ -12,12 +12,12 @@ final class CertificationListDataSource {
     
     private init() {}
     
-    func fetchByTodoCompletionDate() async throws -> CertificationDailyListResponse {
-        try await NetworkManager.shared.request(CertificationListRouter.getMyActivity(sort: .todoCompletedAt))
+    func fetchByTodoCompletionDate(page: Int) async throws -> CertificationDailyListResponse {
+        try await NetworkManager.shared.request(CertificationListRouter.getMyActivity(sort: .todoCompletedAt, page: page))
         
     }
     
-    func fetchByGroupCreationDate() async throws -> CertificationGroupListResponse {
-        try await NetworkManager.shared.request(CertificationListRouter.getMyActivity(sort: .groupCreatedAt))
+    func fetchByGroupCreationDate(page: Int) async throws -> CertificationGroupListResponse {
+        try await NetworkManager.shared.request(CertificationListRouter.getMyActivity(sort: .groupCreatedAt, page: page))
     }
 }

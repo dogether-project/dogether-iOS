@@ -13,10 +13,10 @@ enum SortType: String {
 }
 
 enum CertificationListRouter: NetworkEndpoint {
-    case getMyActivity(sort: SortType)
+    case getMyActivity(sort: SortType, page: Int)
 
     var path: String {
-        return Path.api + Path.myActivity
+        return Path.apiV1 + Path.myActivity
     }
 
     var method: NetworkMethod {
@@ -25,9 +25,10 @@ enum CertificationListRouter: NetworkEndpoint {
 
     var parameters: [URLQueryItem]? {
         switch self {
-        case .getMyActivity(let sort):
+        case let .getMyActivity(sort, page):
             return [
-                URLQueryItem(name: "sort", value: sort.rawValue)
+                URLQueryItem(name: "sortBy", value: sort.rawValue),
+                URLQueryItem(name: "page", value: "\(page)")
             ]
         }
     }
