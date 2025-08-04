@@ -52,7 +52,7 @@ final class UpdatePage: BasePage {
     }
     
     override func configureHierarchy() {
-        [updateContainerView, updateButton].forEach { self.addSubview($0) }
+        [updateContainerView, updateButton].forEach { addSubview($0) }
         [updateStackView].forEach { updateContainerView.addSubview($0) }
     }
     

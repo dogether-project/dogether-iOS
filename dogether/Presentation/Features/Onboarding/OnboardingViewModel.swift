@@ -5,14 +5,14 @@
 //  Created by seungyooooong on 3/25/25.
 //
 
-import Foundation
+import RxRelay
 
 final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     private let appLaunchUseCase: AppLaunchUseCase
     
-    let onboardingStep: Int = 3
+    let onboardingStep = BehaviorRelay<Int>(value: 3)
     
     init() {
         let authRepository = DIManager.shared.getAuthRepository()

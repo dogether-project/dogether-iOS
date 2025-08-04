@@ -5,10 +5,12 @@
 //  Created by 승용 on 7/31/25.
 //
 
-import UIKit
-
 final class UpdateViewController: BaseViewController {
     private let updatePage = UpdatePage()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
     
     override func bindViewModel() { }
     

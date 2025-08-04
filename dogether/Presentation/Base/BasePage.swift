@@ -29,4 +29,17 @@ class BasePage: UIView {
     
     /// SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
     func configureConstraints() { }
+    
+    /// 뷰의 가변 요소들을 업데이트하는 역할을 합니다
+    func viewDidUpdate(_ data: Any?) {
+        updateView(data)
+        updateAction(data)
+        updateHierarchy(data)
+        updateConstraints(data)
+    }
+    
+    func updateView(_ data: Any?) { }
+    func updateAction(_ data: Any?) { }
+    func updateHierarchy(_ data: Any?) { }
+    func updateConstraints(_ data: Any?) { }
 }
