@@ -208,9 +208,7 @@ extension MemberCertificationViewController {
     
     private func updateView() {
         guard !viewModel.todos.isEmpty, viewModel.currentIndex < viewModel.todos.count else { return }
-        
         tryReadTodo()
-        updateUIAfterTodoRead()
     }
     
     private func tryReadTodo() {
