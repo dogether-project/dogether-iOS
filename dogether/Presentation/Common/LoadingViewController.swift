@@ -6,38 +6,40 @@
 //
 
 import UIKit
+import Lottie
 
 final class LoadingViewController: BaseViewController {
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    
+    private let animationView: LottieAnimationView = {
+        let view = LottieAnimationView(name: "dogetherLoading") // 두식이 로딩 애니메이션.json
+        view.loopMode = .loop
+        view.contentMode = .scaleAspectFit
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
+    deinit {
+        print("LoadingViewController deinitialized")
+    }
+    
     override func configureView() {
-        view.isHidden = true
         view.isUserInteractionEnabled = true
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        
-        Task { [weak self] in
-            guard let self else { return }
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            view.isHidden = false
-        }
-        
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.color = .white
-        activityIndicator.startAnimating()
+        animationView.play()
     }
     
     override func configureAction() { }
     
     override func configureHierarchy() {
-        view.addSubview(activityIndicator)
+        view.addSubview(animationView)
     }
-
+    
     override func configureConstraints() {
-        activityIndicator.snp.makeConstraints {
+        animationView.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
     }
