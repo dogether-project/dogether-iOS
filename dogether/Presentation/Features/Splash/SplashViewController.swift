@@ -5,8 +5,6 @@
 //  Created by seungyooooong on 2/15/25.
 //
 
-import UIKit
-
 import RxCocoa
 import RxSwift
 
@@ -40,12 +38,10 @@ final class SplashViewController: BaseViewController {
         viewModel.needUpdate
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { isNeeded in
+            .drive(onNext: { [weak self] isNeeded in
+                guard let self else { return }
                 if isNeeded {
-                    Task { @MainActor [weak self] in
-                        guard let self else { return }
-                        coordinator?.setNavigationController(UpdateViewController())    // TODO: animated 고민
-                    }
+                    coordinator?.setNavigationController(UpdateViewController())    // TODO: animated 고민
                 }
             })
             .disposed(by: disposeBag)
@@ -53,12 +49,10 @@ final class SplashViewController: BaseViewController {
         viewModel.needLogin
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { isNeeded in
+            .drive(onNext: { [weak self] isNeeded in
+                guard let self else { return }
                 if isNeeded {
-                    Task { @MainActor [weak self] in
-                        guard let self else { return }
-                        coordinator?.setNavigationController(OnboardingViewController())    // TODO: animated 고민
-                    }
+                    coordinator?.setNavigationController(OnboardingViewController())    // TODO: animated 고민
                 }
             })
             .disposed(by: disposeBag)
@@ -66,12 +60,10 @@ final class SplashViewController: BaseViewController {
         viewModel.isParticipating
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { isParticipating in
+            .drive(onNext: { [weak self] isParticipating in
+                guard let self else { return }
                 if !isParticipating {
-                    Task { @MainActor [weak self] in
-                        guard let self else { return }
-                        coordinator?.setNavigationController(StartViewController())    // TODO: animated 고민
-                    }
+                    coordinator?.setNavigationController(StartViewController())    // TODO: animated 고민
                 }
             })
             .disposed(by: disposeBag)

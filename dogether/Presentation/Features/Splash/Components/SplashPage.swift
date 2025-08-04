@@ -5,8 +5,6 @@
 //  Created by 승용 on 7/31/25.
 //
 
-import UIKit
-
 final class SplashPage: BasePage {
     private let logoImageView = BaseImageView()
     private let typoImageView = BaseImageView()
@@ -27,7 +25,7 @@ final class SplashPage: BasePage {
     override func configureAction() { }
     
     override func configureHierarchy() {
-        [logoStackView].forEach { self.addSubview($0) }
+        [logoStackView].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {

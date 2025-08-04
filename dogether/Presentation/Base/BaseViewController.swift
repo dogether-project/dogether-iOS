@@ -14,15 +14,17 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
         super.viewDidLoad()
         view.backgroundColor = .grey900
         
-        bindViewModel()
         configureView()
         configureAction()
         configureHierarchy()
         configureConstraints()
     }
     
-    /// ViewModel의 변화에 View가 반응하도록 바인딩하는 역할을 합니다
-    func bindViewModel() { }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        bindViewModel()
+    }
     
     /// 뷰의 시각적인 속성을 설정하는 역할을 합니다
     func configureView() { }
@@ -35,4 +37,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     
     /// SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
     func configureConstraints() { }
+    
+    /// ViewModel의 변화에 View가 반응하도록 바인딩하는 역할을 합니다
+    func bindViewModel() { }
 }
