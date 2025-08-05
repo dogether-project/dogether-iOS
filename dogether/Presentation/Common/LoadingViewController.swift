@@ -10,7 +10,6 @@ import UIKit
 import Lottie
 
 final class LoadingViewController: BaseViewController {
-    
     private let animationView: LottieAnimationView = {
         let view = LottieAnimationView(name: "dogetherLoading") // 두식이 로딩 애니메이션.json
         view.loopMode = .loop
@@ -24,8 +23,16 @@ final class LoadingViewController: BaseViewController {
     }
     
     override func configureView() {
+        view.isHidden = true
         view.isUserInteractionEnabled = true
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        Task { [weak self] in
+            guard let self else { return }
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            view.isHidden = false
+        }
+        
         animationView.play()
     }
     

@@ -15,25 +15,22 @@ final class LoadingManager {
     
     private init() { }
     
-    func showLoading(minimumDelay: TimeInterval = 0.3) {
+    func showLoading() {
         loadingCount += 1
         
-        if loadingWindow != nil { return }
-        
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            
-            try? await Task.sleep(nanoseconds: UInt64(minimumDelay * 1_000_000_000))
-            
-            guard loadingCount > 0, loadingWindow == nil,
-                  let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-            
-            let window = UIWindow(windowScene: windowScene)
-            window.frame = UIScreen.main.bounds
-            window.rootViewController = LoadingViewController()
-            window.windowLevel = .alert + 99
-            window.makeKeyAndVisible()
-            loadingWindow = window
+        if loadingWindow == nil {
+            Task { @MainActor [weak self] in
+                guard let self, let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+                let window = UIWindow(windowScene: windowScene)
+                let loadingViewController = LoadingViewController()
+                
+                window.frame = UIScreen.main.bounds
+                window.rootViewController = loadingViewController
+                window.windowLevel = .alert + 99
+                window.makeKeyAndVisible()
+                
+                loadingWindow = window
+            }
         }
     }
     
