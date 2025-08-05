@@ -23,10 +23,6 @@ final class LoadingViewController: BaseViewController {
         super.viewDidLoad()
     }
     
-    deinit {
-        print("LoadingViewController deinitialized")
-    }
-    
     override func configureView() {
         view.isUserInteractionEnabled = true
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
