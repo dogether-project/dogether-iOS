@@ -106,7 +106,7 @@ extension CertificationListViewController {
 
 // MARK: - ViewModel 로 부터 갱신된 데이터를 가져와서 ContentView 업데이트
 extension CertificationListViewController: CertificationListViewModelDelegate {
-    func didFetchSucceed() {
+    func updateContentView() {
         DispatchQueue.main.async {
             self.displayViewForCurrentStatus()
             self.contentView?.reloadData()

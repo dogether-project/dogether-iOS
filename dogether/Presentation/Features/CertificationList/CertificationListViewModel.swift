@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CertificationListViewModelDelegate: AnyObject {
-    func didFetchSucceed()
+    func updateContentView()
     func didFetchFail(error: NetworkError)
 }
 
@@ -69,12 +69,11 @@ extension CertificationListViewModel {
                 guard let filterType = FilterTypes(status: cert.status) else { return false }
                 return currentFilter == .all || currentFilter == filterType
             }
-            
             return filtered.isEmpty ? nil : CertificationSection(type: section.type, certifications: filtered)
         }
         
         DispatchQueue.main.async { [weak self] in
-            self?.delegate?.didFetchSucceed()
+            self?.delegate?.updateContentView()
         }
     }
     
