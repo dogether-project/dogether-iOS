@@ -8,6 +8,6 @@
 import Foundation
 
 protocol CertificationListProtocol {
-    func fetchByTodoCompletionDate(page: Int) async throws -> CertificationListResult
-    func fetchByGroupCreationDate(page: Int) async throws -> CertificationListResult
+    func fetchByTodoCompletionDate(sort: String, page: String) async throws -> CertificationListResult
+    func fetchByGroupCreationDate(sort: String, page: String) async throws -> CertificationListResult
 }

@@ -14,15 +14,15 @@ final class CertificationListRepository: CertificationListProtocol {
         self.dataSource = dataSource
     }
     
-    func fetchByTodoCompletionDate(page: Int) async throws -> CertificationListResult {
-        let response = try await dataSource.fetchByTodoCompletionDate(page: page)
-        return Self.transformDaily(response: response)
-    }
-    
-    func fetchByGroupCreationDate(page: Int) async throws -> CertificationListResult {
-        let response = try await dataSource.fetchByGroupCreationDate(page: page)
-        return Self.transformGroup(response: response)
-    }
+    func fetchByTodoCompletionDate(sort: String, page: String) async throws -> CertificationListResult {
+         let response = try await dataSource.fetchByTodoCompletionDate(sort: sort, page: page)
+         return Self.transformDaily(response: response)
+     }
+     
+     func fetchByGroupCreationDate(sort: String, page: String) async throws -> CertificationListResult {
+         let response = try await dataSource.fetchByGroupCreationDate(sort: sort, page: page)
+         return Self.transformGroup(response: response)
+     }
 }
 
 // MARK: - 투두완료일순

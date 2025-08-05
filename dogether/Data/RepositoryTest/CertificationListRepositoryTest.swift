@@ -8,15 +8,15 @@
 import Foundation
 
 final class CertificationListRepositoryTest: CertificationListProtocol {
-    func fetchByTodoCompletionDate(page: Int) async throws -> CertificationListResult {
-        let filename = "TodoCompletedDatePage\(page)Mock"
-        return try await loadAndTransformDaily(from: filename)
-    }
-    
-    func fetchByGroupCreationDate(page: Int) async throws -> CertificationListResult {
-        let filename = "GroupCreatedDatePage\(page)Mock"
-        return try await loadAndTransformGroup(from: filename)
-    }
+    func fetchByTodoCompletionDate(sort: String, page: String) async throws -> CertificationListResult {
+         let filename = "TodoCompletedDatePage\(page)Mock"
+         return try await loadAndTransformDaily(from: filename)
+     }
+     
+     func fetchByGroupCreationDate(sort: String, page: String) async throws -> CertificationListResult {
+         let filename = "GroupCreatedDatePage\(page)Mock"
+         return try await loadAndTransformGroup(from: filename)
+     }
 }
 
 // MARK: - 투두완료일순
