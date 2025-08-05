@@ -16,7 +16,7 @@ enum CertificationListRouter: NetworkEndpoint {
     case getMyActivity(sort: SortType, page: Int)
 
     var path: String {
-        return Path.apiV1 + Path.myActivity
+        return Path.api + Path.v1 + Path.myActivity
     }
 
     var method: NetworkMethod {
