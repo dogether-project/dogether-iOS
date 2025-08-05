@@ -50,15 +50,13 @@ extension CertificationListViewModel {
         Task {
             do {
                 let result = try await useCase.fetchSortedList(option: option, page: currentPage)
-                self.rawSections = result.sections
-                
-                self.totalCertificatedCount = result.stats.totalCertificatedCount
-                self.totalApprovedCount = result.stats.totalApprovedCount
-                self.totalRejectedCount = result.stats.totalRejectedCount
-                self.isLastPage = !result.hasNext
-                self.applyFilter()
-                self.viewStatus = self.sections.isEmpty ? .empty : .hasData
-                print("\(currentPage)번째 페이지 로드")
+                rawSections = result.sections
+                totalCertificatedCount = result.stats.totalCertificatedCount
+                totalApprovedCount = result.stats.totalApprovedCount
+                totalRejectedCount = result.stats.totalRejectedCount
+                isLastPage = !result.hasNext
+                applyFilter()
+                viewStatus = sections.isEmpty ? .empty : .hasData
             } catch let error as NetworkError {
                 delegate?.didFetchFail(error: error)
             }
@@ -88,16 +86,12 @@ extension CertificationListViewModel {
         Task {
             do {
                 let result = try await useCase.fetchSortedList(option: option, page: currentPage)
-                self.rawSections.append(contentsOf: result.sections)
-                
-                self.totalCertificatedCount = result.stats.totalCertificatedCount
-                self.totalApprovedCount = result.stats.totalApprovedCount
-                self.totalRejectedCount = result.stats.totalRejectedCount
-                
-                self.isLastPage = !result.hasNext
-                
-                self.applyFilter()
-                print("\(currentPage)번째 페이지 로드")
+                rawSections.append(contentsOf: result.sections)
+                totalCertificatedCount = result.stats.totalCertificatedCount
+                totalApprovedCount = result.stats.totalApprovedCount
+                totalRejectedCount = result.stats.totalRejectedCount
+                isLastPage = !result.hasNext
+                applyFilter()
             } catch let error as NetworkError {
                 delegate?.didFetchFail(error: error)
                 currentPage -= 1
