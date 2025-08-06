@@ -38,8 +38,15 @@ class BasePage: UIView {
         updateConstraints(data)
     }
     
+    /// 뷰의 시각적인 속성을 업데이트하는 역할을 합니다
     func updateView(_ data: Any?) { }
+    
+    /// 뷰의 동작 및 이벤트 처리를 업데이트하는 역할을 합니다
     func updateAction(_ data: Any?) { }
+    
+    /// 뷰 계층을 업데이트하는 역할을 합니다
     func updateHierarchy(_ data: Any?) { }
+    
+    /// SnapKit을 이용해 레이아웃을 업데이트하는 역할을 합니다
     func updateConstraints(_ data: Any?) { }
 }

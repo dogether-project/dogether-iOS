@@ -5,6 +5,8 @@
 //  Created by seungyooooong on 3/25/25.
 //
 
+import UIKit
+
 import RxSwift
 import RxCocoa
 
@@ -17,20 +19,26 @@ final class OnboardingViewController: BaseViewController {
         super.viewDidLoad()
     }
     
-    override func bindViewModel() {
-        viewModel.onboardingStep
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: 0)
-            .drive(onNext: { [weak self] step in
-                guard let self else { return }
-                onboardingPage.viewDidUpdate(step)
-            })
-            .disposed(by: disposeBag)
+    override func configureView() {
+        onboardingPage.frame = view.frame
     }
     
-    override func configureView() { }
-    
-    override func configureAction() { }
+    override func configureAction() {
+        onboardingPage.signInAction = UIAction { [weak self] _ in
+            guard let self else { return }
+            Task {
+                try await self.viewModel.signInWithApple()
+                
+                try await self.viewModel.checkParticipating()
+                if !self.viewModel.isParticipating.value { return }
+                
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    coordinator?.setNavigationController(MainViewController())
+                }
+            }
+        }
+    }
     
     override func configureHierarchy() {
         [onboardingPage].forEach { view.addSubview($0) }
@@ -40,5 +48,27 @@ final class OnboardingViewController: BaseViewController {
         onboardingPage.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
+    }
+    
+    override func bindViewModel() {
+        viewModel.onboardingStep
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: 0)
+            .drive(onNext: { [weak self] step in
+                guard let self else { return }
+                onboardingPage.viewDidUpdate(step)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isParticipating
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [weak self] isParticipating in
+                guard let self else { return }
+                if !isParticipating {
+                    coordinator?.setNavigationController(StartViewController())
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }

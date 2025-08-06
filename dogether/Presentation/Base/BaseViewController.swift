@@ -18,10 +18,6 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
         configureAction()
         configureHierarchy()
         configureConstraints()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
         bindViewModel()
     }
@@ -38,6 +34,6 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     /// SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
     func configureConstraints() { }
     
-    /// ViewModel의 변화에 View가 반응하도록 바인딩하는 역할을 합니다
+    /// ViewModel의 변화에 View(Page)가 반응하도록 바인딩하는 역할을 합니다
     func bindViewModel() { }
 }

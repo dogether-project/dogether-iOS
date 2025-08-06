@@ -19,6 +19,16 @@ final class SplashViewController: BaseViewController {
         onAppear()
     }
     
+    override func configureHierarchy() {
+        [splashPage].forEach { view.addSubview($0) }
+    }
+    
+    override func configureConstraints() {
+        splashPage.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
     override func bindViewModel() {
         viewModel.needUpdate
             .distinctUntilChanged()
@@ -26,7 +36,7 @@ final class SplashViewController: BaseViewController {
             .drive(onNext: { [weak self] isNeeded in
                 guard let self else { return }
                 if isNeeded {
-                    coordinator?.setNavigationController(UpdateViewController())    // TODO: animated 고민
+                    coordinator?.setNavigationController(UpdateViewController())
                 }
             })
             .disposed(by: disposeBag)
@@ -53,16 +63,6 @@ final class SplashViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
     }
-    
-    override func configureHierarchy() {
-        [splashPage].forEach { view.addSubview($0) }
-    }
-    
-    override func configureConstraints() {
-        splashPage.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
-        }
-    }
 }
 
 extension SplashViewController {
@@ -82,7 +82,7 @@ extension SplashViewController {
                 
                 await MainActor.run { [weak self] in
                     guard let self else { return }
-                    coordinator?.setNavigationController(MainViewController())    // TODO: animated 고민
+                    coordinator?.setNavigationController(MainViewController())
                 }
             } catch {
                 await MainActor.run {

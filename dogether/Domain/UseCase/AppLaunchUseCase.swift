@@ -22,9 +22,4 @@ final class AppLaunchUseCase {
         let response = try await repository?.checkUpdate(appVersion: SystemManager.appVersion ?? "1.0.0")
         return response?.forceUpdateRequired ?? false
     }
-    
-    func getDestination(isParticipating: Bool) async throws -> BaseViewController {
-        if isParticipating { return await MainViewController() }
-        else { return await StartViewController() }
-    }
 }

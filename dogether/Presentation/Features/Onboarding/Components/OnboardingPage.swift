@@ -8,60 +8,20 @@
 import AuthenticationServices
 
 final class OnboardingPage: BasePage {
-    private let scrollView = {
-        let scrollView = UIScrollView()
+    private let scrollView = UIScrollView()
+    private let onboardingStackView = UIStackView()
+    private let pageControl = UIPageControl()
+    private let signInButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
+    
+    var signInAction: UIAction?
+    
+    override func configureView() {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isPagingEnabled = true
-        return scrollView
-    }()
-    
-    private let onboardingStackView = {
-        let view = UIStackView()
-        view.axis = .horizontal
-        view.distribution = .fillEqually
-        return view
-    }()
-    
-    private func onboardingStepStackView(step: OnboardingSteps) -> UIStackView {
-        let titleLabel = UILabel()
-        titleLabel.attributedText = NSAttributedString(
-            string: step.title,
-            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
-        )
-        titleLabel.textColor = .grey0
-        titleLabel.numberOfLines = 0
         
-        let subTitleLabel = UILabel()
-        subTitleLabel.attributedText = NSAttributedString(
-            string: step.subTitle,
-            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
-        )
-        subTitleLabel.textColor = .grey200
-        subTitleLabel.numberOfLines = 0
-        
-        let imageView = UIImageView(image: step.image)
-        let aspectRatio = imageView.frame.height / imageView.frame.width
-        
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel, imageView])
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.setCustomSpacing(8, after: titleLabel)
-        
-        imageView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(imageView.snp.width).multipliedBy(aspectRatio)
-        }
-        
-        return stackView
-    }
-    
-    private let pageControl = UIPageControl()
-    
-    private var signInButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
-    
-    override func configureView() {
+        onboardingStackView.axis = .horizontal
+        onboardingStackView.distribution = .fillEqually
         
         signInButton.cornerRadius = 12
     }
@@ -76,19 +36,6 @@ final class OnboardingPage: BasePage {
                 let offset = CGPoint(x: CGFloat(page) * scrollView.frame.width, y: 0)
                 scrollView.setContentOffset(offset, animated: true)
             }, for: .valueChanged
-        )
-        
-        signInButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                Task {
-//                    try await self.viewModel.signInWithApple()
-//                    let destination = try await self.viewModel.getDestination()
-//                    await MainActor.run {
-//                        self.coordinator?.setNavigationController(destination)
-//                    }
-                }
-            }, for: .touchUpInside
         )
     }
     
@@ -123,10 +70,7 @@ final class OnboardingPage: BasePage {
     override func updateView(_ data: Any?) {
         guard let step = data as? Int else { return }
         
-        scrollView.contentSize = CGSize(
-            width: scrollView.frame.width * CGFloat(step),
-            height: scrollView.frame.height
-        )
+        scrollView.contentSize.width = frame.width * CGFloat(step)
         
         for pageIndex in 0 ..< step {
             guard let onboardingStep = OnboardingSteps(rawValue: pageIndex + 1) else { return }
@@ -134,6 +78,10 @@ final class OnboardingPage: BasePage {
         }
         
         pageControl.numberOfPages = step
+    }
+    
+    override func updateAction(_ data: Any?) {
+        if let signInAction { signInButton.addAction(signInAction, for: .touchUpInside) }
     }
     
     override func updateHierarchy(_ data: Any?) {
@@ -150,6 +98,42 @@ final class OnboardingPage: BasePage {
     }
 }
 
+// MARK: - private func
+extension OnboardingPage {
+    private func onboardingStepStackView(step: OnboardingSteps) -> UIStackView {
+        let titleLabel = UILabel()
+        titleLabel.attributedText = NSAttributedString(
+            string: step.title,
+            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
+        )
+        titleLabel.textColor = .grey0
+        titleLabel.numberOfLines = 0
+        
+        let subTitleLabel = UILabel()
+        subTitleLabel.attributedText = NSAttributedString(
+            string: step.subTitle,
+            attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
+        )
+        subTitleLabel.textColor = .grey200
+        subTitleLabel.numberOfLines = 0
+        
+        let imageView = UIImageView(image: step.image)
+        let aspectRatio = imageView.frame.height / imageView.frame.width
+        
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel, imageView])
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.setCustomSpacing(8, after: titleLabel)
+        
+        imageView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(imageView.snp.width).multipliedBy(aspectRatio)
+        }
+        
+        return stackView
+    }
+}
 
 // MARK: - scroll
 extension OnboardingPage: UIScrollViewDelegate {
