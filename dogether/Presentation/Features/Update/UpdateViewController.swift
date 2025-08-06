@@ -12,8 +12,6 @@ final class UpdateViewController: BaseViewController {
         super.viewDidLoad()
     }
     
-    override func bindViewModel() { }
-    
     override func configureView() { }
     
     override func configureAction() { }
@@ -27,4 +25,6 @@ final class UpdateViewController: BaseViewController {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
+    
+    override func bindViewModel() { }
 }

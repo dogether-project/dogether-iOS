@@ -10,9 +10,9 @@ import RxRelay
 final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
-    private let appLaunchUseCase: AppLaunchUseCase
     
     let onboardingStep = BehaviorRelay<Int>(value: 3)
+    private(set) var isParticipating = BehaviorRelay<Bool>(value: true)
     
     init() {
         let authRepository = DIManager.shared.getAuthRepository()
@@ -20,7 +20,6 @@ final class OnboardingViewModel {
         
         self.authUseCase = AuthUseCase(repository: authRepository)
         self.groupUseCase = GroupUseCase(repository: groupRepository)
-        self.appLaunchUseCase = AppLaunchUseCase()
     }
 
     func signInWithApple() async throws {
@@ -28,9 +27,7 @@ final class OnboardingViewModel {
         try await authUseCase.login(domain: .apple)
     }
     
-    func getDestination() async throws -> BaseViewController {
-        let isParticipating = try await groupUseCase.getIsParticipating()
-        let destination = try await appLaunchUseCase.getDestination(isParticipating: isParticipating)
-        return destination
+    func checkParticipating() async throws {
+        isParticipating.accept(try await groupUseCase.getIsParticipating())
     }
 }
