@@ -15,23 +15,8 @@ final class SplashViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Task {
-            try await viewModel.launchApp()
-            
-            try await viewModel.checkUpdate()
-            if viewModel.needUpdate.value { return }
-            
-            try await viewModel.checkLogin()
-            if viewModel.needLogin.value { return }
-            
-            try await viewModel.checkParticipating()
-            if !viewModel.isParticipating.value { return }
-            
-            await MainActor.run { [weak self] in
-                guard let self else { return }
-                coordinator?.setNavigationController(MainViewController())    // TODO: animated 고민
-            }
-        }
+        
+        onAppear()
     }
     
     override func bindViewModel() {
@@ -52,7 +37,7 @@ final class SplashViewController: BaseViewController {
             .drive(onNext: { [weak self] isNeeded in
                 guard let self else { return }
                 if isNeeded {
-                    coordinator?.setNavigationController(OnboardingViewController())    // TODO: animated 고민
+                    coordinator?.setNavigationController(OnboardingViewController())
                 }
             })
             .disposed(by: disposeBag)
@@ -63,7 +48,7 @@ final class SplashViewController: BaseViewController {
             .drive(onNext: { [weak self] isParticipating in
                 guard let self else { return }
                 if !isParticipating {
-                    coordinator?.setNavigationController(StartViewController())    // TODO: animated 고민
+                    coordinator?.setNavigationController(StartViewController())
                 }
             })
             .disposed(by: disposeBag)
@@ -81,45 +66,38 @@ final class SplashViewController: BaseViewController {
 }
 
 extension SplashViewController {
-    private func runSplashFlow() async {
-        do {
-            try await viewModel.launchApp()
-            try await viewModel.checkUpdate()
-            
-            if viewModel.needUpdate {
-                updateView()
-            } else {
-                try await navigateToInitialDestination()
+    private func onAppear() {
+        Task {
+            do {
+                try await viewModel.launchApp()
+                
+                try await viewModel.checkUpdate()
+                if viewModel.needUpdate.value { return }
+                
+                try await viewModel.checkLogin()
+                if viewModel.needLogin.value { return }
+                
+                try await viewModel.checkParticipating()
+                if !viewModel.isParticipating.value { return }
+                
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
+                    coordinator?.setNavigationController(MainViewController())    // TODO: animated 고민
+                }
+            } catch {
+                await MainActor.run {
+                    ErrorHandlingManager.presentErrorView(
+                        error: error,
+                        presentingViewController: self,
+                        coordinator: coordinator,
+                        retryHandler: { [weak self] in
+                            guard let self else { return }
+                            onAppear()
+                        },
+                        showCloseButton: false
+                    )
+                }
             }
-        } catch {
-            await MainActor.run {
-                ErrorHandlingManager.presentErrorView(
-                    error: error,
-                    presentingViewController: self,
-                    coordinator: coordinator,
-                    retryHandler: { [weak self] in
-                        guard let self else { return }
-                        Task {
-                            await self.runSplashFlow()
-                        }
-                    },
-                    showCloseButton: false
-                )
-            }
-        }
-    }
-    
-    @MainActor
-    func updateView() {
-        logoView.isHidden = viewModel.needUpdate
-        updateContainer.isHidden = !viewModel.needUpdate
-        updateButton.isHidden = !viewModel.needUpdate
-    }
-    
-    private func navigateToInitialDestination() async throws {
-        let destination = try await viewModel.getDestination()
-        await MainActor.run {
-            coordinator?.setNavigationController(destination)
         }
     }
 }

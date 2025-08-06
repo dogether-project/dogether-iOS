@@ -5,8 +5,6 @@
 //  Created by seungyooooong on 3/1/25.
 //
 
-import Foundation
-
 import RxRelay
 
 final class SplashViewModel {
