@@ -31,9 +31,8 @@ final class LoadingViewController: BaseViewController {
             guard let self else { return }
             try? await Task.sleep(nanoseconds: 1_000_000_000)
             view.isHidden = false
+            animationView.play()
         }
-        
-        animationView.play()
     }
     
     override func configureAction() { }
