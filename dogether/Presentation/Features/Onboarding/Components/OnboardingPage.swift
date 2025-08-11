@@ -67,6 +67,7 @@ final class OnboardingPage: BasePage {
         }
     }
     
+    // MARK: - viewDidUpdate
     override func updateView(_ data: Any?) {
         guard let step = data as? Int else { return }
         
