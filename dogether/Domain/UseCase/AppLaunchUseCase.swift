@@ -8,9 +8,9 @@
 import Foundation
 
 final class AppLaunchUseCase {
-    private let repository: AppInfoProtocol?
+    private let repository: AppInfoProtocol
     
-    init(repository: AppInfoProtocol? = nil) {
+    init(repository: AppInfoProtocol) {
         self.repository = repository
     }
     
@@ -19,7 +19,7 @@ final class AppLaunchUseCase {
     }
     
     func checkUpdate() async throws -> Bool {
-        let response = try await repository?.checkUpdate(appVersion: SystemManager.appVersion ?? "1.0.0")
-        return response?.forceUpdateRequired ?? false
+        let response = try await repository.checkUpdate(appVersion: SystemManager.appVersion ?? "1.0.0")
+        return response.forceUpdateRequired
     }
 }
