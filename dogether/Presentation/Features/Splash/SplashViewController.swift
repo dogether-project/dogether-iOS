@@ -52,12 +52,12 @@ final class SplashViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.isParticipating
+        viewModel.needParticipating
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isParticipating in
+            .drive(onNext: { [weak self] isNeeded in
                 guard let self else { return }
-                if !isParticipating {
+                if isNeeded {
                     coordinator?.setNavigationController(StartViewController())
                 }
             })
@@ -78,7 +78,7 @@ extension SplashViewController {
                 if viewModel.needLogin.value { return }
                 
                 try await viewModel.checkParticipating()
-                if !viewModel.isParticipating.value { return }
+                if viewModel.needParticipating.value { return }
                 
                 await MainActor.run { [weak self] in
                     guard let self else { return }

@@ -30,7 +30,7 @@ final class OnboardingViewController: BaseViewController {
                 try await self.viewModel.signInWithApple()
                 
                 try await self.viewModel.checkParticipating()
-                if !self.viewModel.isParticipating.value { return }
+                if self.viewModel.needParticipating.value { return }
                 
                 await MainActor.run { [weak self] in
                     guard let self else { return }
@@ -60,12 +60,12 @@ final class OnboardingViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.isParticipating
+        viewModel.needParticipating
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isParticipating in
+            .drive(onNext: { [weak self] isNeeded in
                 guard let self else { return }
-                if !isParticipating {
+                if isNeeded {
                     coordinator?.setNavigationController(StartViewController())
                 }
             })

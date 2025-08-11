@@ -13,7 +13,7 @@ final class SplashViewModel {
     
     private(set) var needUpdate = BehaviorRelay<Bool>(value: false)
     private(set) var needLogin = BehaviorRelay<Bool>(value: false)
-    private(set) var isParticipating = BehaviorRelay<Bool>(value: true)
+    private(set) var needParticipating = BehaviorRelay<Bool>(value: false)
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -38,6 +38,6 @@ extension SplashViewModel {
     }
     
     func checkParticipating() async throws {
-        isParticipating.accept(try await groupUseCase.getIsParticipating())
+        needParticipating.accept(try await groupUseCase.checkParticipating())
     }
 }

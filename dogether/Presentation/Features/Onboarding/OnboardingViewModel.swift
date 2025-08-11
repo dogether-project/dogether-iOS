@@ -11,8 +11,8 @@ final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     
-    let onboardingStep = BehaviorRelay<Int>(value: 3)
-    private(set) var isParticipating = BehaviorRelay<Bool>(value: true)
+    let onboardingStep = BehaviorRelay<Int>(value: 3)   // FIXME: OnboardingPage 내부로 이동
+    private(set) var needParticipating = BehaviorRelay<Bool>(value: false)
     
     init() {
         let authRepository = DIManager.shared.getAuthRepository()
@@ -28,6 +28,6 @@ final class OnboardingViewModel {
     }
     
     func checkParticipating() async throws {
-        isParticipating.accept(try await groupUseCase.getIsParticipating())
+        needParticipating.accept(try await groupUseCase.checkParticipating())
     }
 }
