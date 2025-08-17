@@ -60,7 +60,7 @@ final class TodoWriteViewController: BaseViewController {
     
     private let addButton = {
         let button = UIButton()
-        button.backgroundColor = .blue300
+        button.backgroundColor = .grey600 // FIXME: 디자이너분들과 상의필요
         button.layer.cornerRadius = 8
         
         let imageView = UIImageView()
@@ -129,7 +129,7 @@ final class TodoWriteViewController: BaseViewController {
     override func configureView() {
         updateView()
         todoTextField.attributedPlaceholder = NSAttributedString(
-            string: "예) 30분 걷기, 책 20페이지 읽기",
+            string: "예) 30분 걷기, 책 20페이지 읽기", // FIXME: 작성투두가 10/10일때 "더 이상 추가할 수 없습니다."로 수정하는거 어떨까요?
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.grey500]
         )
     }
@@ -145,6 +145,7 @@ final class TodoWriteViewController: BaseViewController {
                 guard let self else { return }
                 viewModel.updateTodo(todo: todoTextField.text)
                 updateTextField()
+                updateAddButtonStatus()
             }, for: .editingChanged
         )
         
@@ -157,6 +158,7 @@ final class TodoWriteViewController: BaseViewController {
                     viewModel.updateTodo(todo: "")
                     updateTextField()
                     updateView()
+                    updateAddButtonStatus()
                 }
             }, for: .touchUpInside
         )
@@ -240,16 +242,16 @@ extension TodoWriteViewController {
     private func updateView() {
         updateTextField()
         updateTodoLimitLabel()
-        
         emptyListView.isHidden = !viewModel.todos.isEmpty
         todoTableView.isHidden = viewModel.todos.isEmpty
         todoTableView.reloadData()
         
-        saveButton.setButtonStatus(status: viewModel.todos.isEmpty ? .disabled : .enabled)
+        saveButton.setButtonStatus(status: viewModel.todos.isEmpty ? .disabled : .enabled) // FIXME: 새로 작성한 투두 없을땐 disable되게 수정필요 (기존에 작성된 투두가 있을 경우 항상 enable상태임)
     }
     
     private func updateTextField() {
         todoTextField.text = viewModel.todo
+        todoTextField.isEnabled = viewModel.todos.count < viewModel.maximumTodoCount
         todoLimitTextCount.text = "\(viewModel.todo.count)/\(viewModel.todoMaxLength)"
     }
     
@@ -272,6 +274,12 @@ extension TodoWriteViewController {
         }
 
         todoLimitLabel.attributedText = attributedText
+    }
+    
+    private func updateAddButtonStatus() {
+        let trimmed = todoTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        addButton.isEnabled = !trimmed.isEmpty
+        addButton.backgroundColor = trimmed.isEmpty ? .grey600 : .blue300 // FIXME: 디자이너분들과 상의필요
     }
 }
 
@@ -306,6 +314,7 @@ extension TodoWriteViewController: UITextFieldDelegate {
                viewModel.updateTodo(todo: "")
                updateTextField()
                updateView()
+               updateAddButtonStatus()
            }
         return true
     }
@@ -336,7 +345,7 @@ extension TodoWriteViewController {
                     coordinator: self.coordinator,
                     retryHandler: { [weak self] in
                         guard let self else { return }
-                        trySaveTodo()  // 다시 시도 시, 팝업 없이 저장만 재시도
+                        trySaveTodo()
                     }
                 )
             }
