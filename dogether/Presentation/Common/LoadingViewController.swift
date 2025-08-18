@@ -11,7 +11,7 @@ import Lottie
 
 final class LoadingViewController: BaseViewController {
     private let animationView: LottieAnimationView = {
-        let view = LottieAnimationView(name: "dogetherLoading") // 두식이 로딩 애니메이션.json
+        let view = LottieAnimationView(name: "dogetherLoading")
         view.loopMode = .loop
         view.contentMode = .scaleAspectFit
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +44,7 @@ final class LoadingViewController: BaseViewController {
     override func configureConstraints() {
         animationView.snp.makeConstraints {
             $0.center.equalToSuperview()
+            $0.width.height.equalTo(120) 
         }
     }
 }
