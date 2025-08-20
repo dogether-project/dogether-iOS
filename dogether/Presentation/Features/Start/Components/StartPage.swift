@@ -15,6 +15,12 @@ final class StartPage: BasePage {
     private let titleLabel = UILabel()
     private let buttonStackView = UIStackView()
     
+    private let startButtonHeight: CGFloat = 100
+    private let buttonStackViewSpacing: CGFloat = 16
+    private var buttonStackViewHeight: CGFloat {
+        startButtonHeight * CGFloat(GroupTypes.allCases.count) + buttonStackViewSpacing
+    }
+    
     override func configureView() {
         dogetherHeader.delegate = coordinatorDelegate
         
@@ -29,7 +35,7 @@ final class StartPage: BasePage {
         titleLabel.numberOfLines = 0
         
         buttonStackView.axis = .vertical
-        buttonStackView.spacing = 16
+        buttonStackView.spacing = buttonStackViewSpacing
         buttonStackView.distribution = .fillEqually
         
         GroupTypes.allCases.forEach {
@@ -63,7 +69,7 @@ final class StartPage: BasePage {
         buttonStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(41)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(216)
+            $0.height.equalTo(buttonStackViewHeight)
         }
     }
     
@@ -85,7 +91,7 @@ final class StartPage: BasePage {
             $0.top.equalTo(isFirst ? titleLabel.snp.bottom : navigationHeader.snp.bottom)
                 .offset(isFirst ? 41 : 16)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(216)
+            $0.height.equalTo(buttonStackViewHeight)
         }
     }
 }
