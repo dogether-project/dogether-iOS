@@ -8,12 +8,12 @@
 import UIKit
 
 final class UpdatePage: BasePage {
-    private let typoImageView = BaseImageView()
-    private let titleLabel = BaseLabel()
-    private let descriptionLabel = BaseLabel()
-    private let updateImageView = BaseImageView()
-    private let updateStackView = BaseStackView()
-    private let updateContainerView = BaseView()
+    private let typoImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let updateImageView = UIImageView()
+    private let updateStackView = UIStackView()
+    private let updateContainerView = UIView()
     
     private let updateButton = DogetherButton(title: "업데이트 하러가기")
     
@@ -46,9 +46,12 @@ final class UpdatePage: BasePage {
     }
     
     override func configureAction() {
-        updateButton.onTapped {
-            SystemManager().openAppStore()
-        }
+        updateButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                SystemManager().openAppStore()
+            }, for: .touchUpInside
+        )
     }
     
     override func configureHierarchy() {
