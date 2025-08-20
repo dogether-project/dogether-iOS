@@ -29,13 +29,4 @@ class BaseButton: UIButton {
     
     /// SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
     func configureConstraints() { }
-    
-    /// touchUpInside case addAction을 넣어주는 역할을 합니다
-    func onTapped(_ action: @escaping () -> Void) {
-        self.addAction(
-            UIAction { _ in
-                action()
-            }, for: .touchUpInside
-        )
-    }
 }
