@@ -9,6 +9,7 @@ import UIKit
 
 class BaseViewController: UIViewController, CoordinatorDelegate {
     weak var coordinator: NavigationCoordinator?
+    var datas: AnyHashable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +20,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
         configureHierarchy()
         configureConstraints()
         
+        setViewDatas()
         bindViewModel()
     }
     
@@ -33,6 +35,9 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     
     /// SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
     func configureConstraints() { }
+    
+    /// View를 구성하는 필수 데이터를 세팅하는 역할을 합니다
+    func setViewDatas() { }
     
     /// ViewModel의 변화에 View(Page)가 반응하도록 바인딩하는 역할을 합니다
     func bindViewModel() { }

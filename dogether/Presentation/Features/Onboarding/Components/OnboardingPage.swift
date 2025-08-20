@@ -8,12 +8,12 @@
 import AuthenticationServices
 
 final class OnboardingPage: BasePage {
+    var signInAction: UIAction?
+    
     private let scrollView = UIScrollView()
     private let onboardingStackView = UIStackView()
     private let pageControl = UIPageControl()
     private let signInButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
-    
-    var signInAction: UIAction?
     
     override func configureView() {
         scrollView.showsHorizontalScrollIndicator = false
@@ -85,7 +85,7 @@ final class OnboardingPage: BasePage {
         if let signInAction { signInButton.addAction(signInAction, for: .touchUpInside) }
     }
     
-    override func updateHierarchy(_ data: Any?) {
+    override func updateConstraints(_ data: Any?) {
         guard let step = data as? Int else { return }
         
         let pageControlHeight: CGFloat = 26
