@@ -11,7 +11,6 @@ final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     
-    private(set) var appleLoginState = BehaviorRelay<BaseState?>(value: nil)
     private(set) var needParticipating = BehaviorRelay<Bool>(value: false)
     
     init() {

@@ -16,26 +16,11 @@ final class OnboardingViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
+        onboardingPage.delegate = self
+        
         pages = [onboardingPage]
         
         super.viewDidLoad()
-    }
-    
-    override func setViewDatas() {
-//        onboardingPage.signInAction = UIAction { [weak self] _ in
-//            guard let self else { return }
-//            Task {
-//                try await self.viewModel.signInWithApple()
-//                
-//                try await self.viewModel.checkParticipating()
-//                if self.viewModel.needParticipating.value { return }
-//                
-//                await MainActor.run { [weak self] in
-//                    guard let self else { return }
-//                    coordinator?.setNavigationController(MainViewController())
-//                }
-//            }
-//        }
     }
     
     override func bindViewModel() {
@@ -49,5 +34,27 @@ final class OnboardingViewController: BaseViewController {
                 }
             })
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - delegate
+protocol OnboardingDelegate {
+    func signInAction()
+}
+
+extension OnboardingViewController: OnboardingDelegate {
+    func signInAction() {
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.signInWithApple()
+            
+            try await viewModel.checkParticipating()
+            if viewModel.needParticipating.value { return }
+            
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                coordinator?.setNavigationController(MainViewController())
+            }
+        }
     }
 }

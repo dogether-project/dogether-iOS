@@ -8,6 +8,8 @@
 import UIKit
 
 final class UpdatePage: BasePage {
+    var delegate: UpdateDelegate?
+    
     private let typoImageView = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
@@ -47,8 +49,9 @@ final class UpdatePage: BasePage {
     
     override func configureAction() {
         updateButton.addAction(
-            UIAction { _ in
-                SystemManager().openAppStore()
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.updateAction()
             }, for: .touchUpInside
         )
     }

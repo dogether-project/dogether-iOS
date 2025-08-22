@@ -8,7 +8,8 @@
 import UIKit
 
 class BasePage: UIView {
-    var delegate: CoordinatorDelegate?
+    var coordinatorDelegate: CoordinatorDelegate?
+    
     /// 상위 뷰 컨트롤러의 viewDidLoad에서 호출됩니다
     func pageDidLoad() {
         configureView()

@@ -16,6 +16,8 @@ final class StartViewController: BaseViewController {
     private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
+        startPage.delegate = self
+        
         pages = [startPage]
         
         super.viewDidLoad()
@@ -23,17 +25,28 @@ final class StartViewController: BaseViewController {
     
     override func setViewDatas() {
         guard let datas = datas as? StartViewDatas else { return }
-        viewModel.isFirstGroup.accept(datas.isFirstGroup)
+        viewModel.startViewDatas.accept(datas)
     }
     
     override func bindViewModel() {
-        viewModel.isFirstGroup
+        viewModel.startViewDatas
             .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: true)
-            .drive(onNext: { [weak self] isFirst in
+            .asDriver(onErrorJustReturn: StartViewDatas())
+            .drive(onNext: { [weak self] datas in
                 guard let self else { return }
-                startPage.viewDidUpdate(isFirst)
+                startPage.viewDidUpdate(datas)
             })
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - delegate
+protocol StartDelegate {
+    func startAction(_ destination: BaseViewController)
+}
+
+extension StartViewController: StartDelegate {
+    func startAction(_ destination: BaseViewController) {
+        coordinator?.pushViewController(destination)
     }
 }

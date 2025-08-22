@@ -8,6 +8,8 @@
 import UIKit
 
 final class StartPage: BasePage {
+    var delegate: StartDelegate?
+    
     private let dogetherHeader = DogetherHeader()
     private let navigationHeader = NavigationHeader(title: "새 그룹 추가")
     private let titleLabel = UILabel()
@@ -39,9 +41,9 @@ final class StartPage: BasePage {
     }
     
     override func configureAction() {
-        dogetherHeader.delegate = delegate
+        dogetherHeader.delegate = coordinatorDelegate
         
-        navigationHeader.delegate = delegate
+        navigationHeader.delegate = coordinatorDelegate
     }
     
     override func configureHierarchy() {
@@ -74,21 +76,21 @@ final class StartPage: BasePage {
     
     // MARK: - viewDidUpdate
     override func updateHierarchy(_ data: Any?) {
-        guard let isFirst = data as? Bool else { return }
+        guard let datas = data as? StartViewDatas else { return }
         
-        dogetherHeader.isHidden = !isFirst
+        dogetherHeader.isHidden = !datas.isFirstGroup
         
-        navigationHeader.isHidden = isFirst
+        navigationHeader.isHidden = datas.isFirstGroup
         
-        titleLabel.isHidden = !isFirst
+        titleLabel.isHidden = !datas.isFirstGroup
     }
     
     override func updateConstraints(_ data: Any?) {
-        guard let isFirst = data as? Bool else { return }
+        guard let datas = data as? StartViewDatas else { return }
         
         buttonStackView.snp.remakeConstraints {
-            $0.top.equalTo(isFirst ? titleLabel.snp.bottom : navigationHeader.snp.bottom)
-                .offset(isFirst ? 41 : 16)
+            $0.top.equalTo(datas.isFirstGroup ? titleLabel.snp.bottom : navigationHeader.snp.bottom)
+                .offset(datas.isFirstGroup ? 41 : 16)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(buttonStackViewHeight)
         }
@@ -105,7 +107,7 @@ extension StartPage {
         button.addAction(
             UIAction { [weak self, weak button] _ in
                 guard let self, let button, let groupType = GroupTypes(rawValue: button.tag) else { return }
-                delegate?.coordinator?.pushViewController(groupType.destination)
+                delegate?.startAction(groupType.destination)
             }, for: .touchUpInside
         )
         

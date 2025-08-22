@@ -8,5 +8,5 @@
 import RxRelay
 
 final class StartViewModel {
-    private(set) var isFirstGroup = BehaviorRelay<Bool>(value: true)
+    private(set) var startViewDatas = BehaviorRelay<StartViewDatas>(value: StartViewDatas())
 }

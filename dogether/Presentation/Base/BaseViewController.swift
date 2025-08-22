@@ -44,7 +44,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     /// UI를 구성할 페이지들을 설정하는 역할을 합니다
     func configurePages(_ pages: [BasePage]) {
         pages.forEach { page in
-            page.delegate = self
+            page.coordinatorDelegate = self
             page.frame = view.frame
             
             view.addSubview(page)
