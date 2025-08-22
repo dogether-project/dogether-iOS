@@ -16,23 +16,9 @@ final class StartViewController: BaseViewController {
     private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
+        pages = [startPage]
+        
         super.viewDidLoad()
-    }
-    
-    override func configureView() {
-        startPage.coordinatorDelegate = self
-    }
-    
-    override func configureAction() { }
-    
-    override func configureHierarchy() {
-        [startPage].forEach { view.addSubview($0) }
-    }
-    
-    override func configureConstraints() {
-        startPage.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
-        }
     }
     
     override func setViewDatas() {

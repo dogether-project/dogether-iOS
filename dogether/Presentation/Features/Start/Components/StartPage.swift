@@ -8,8 +8,6 @@
 import UIKit
 
 final class StartPage: BasePage {
-    var coordinatorDelegate: CoordinatorDelegate?
-    
     private let dogetherHeader = DogetherHeader()
     private let navigationHeader = NavigationHeader(title: "새 그룹 추가")
     private let titleLabel = UILabel()
@@ -22,9 +20,6 @@ final class StartPage: BasePage {
     }
     
     override func configureView() {
-        dogetherHeader.delegate = coordinatorDelegate
-        
-        navigationHeader.delegate = coordinatorDelegate
         navigationHeader.isHidden = true
         
         titleLabel.attributedText = NSAttributedString(
@@ -43,7 +38,11 @@ final class StartPage: BasePage {
         }
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        dogetherHeader.delegate = delegate
+        
+        navigationHeader.delegate = delegate
+    }
     
     override func configureHierarchy() {
         [dogetherHeader, navigationHeader, titleLabel, buttonStackView].forEach { addSubview($0) }
@@ -106,7 +105,7 @@ extension StartPage {
         button.addAction(
             UIAction { [weak self, weak button] _ in
                 guard let self, let button, let groupType = GroupTypes(rawValue: button.tag) else { return }
-                coordinatorDelegate?.coordinator?.pushViewController(groupType.destination)
+                delegate?.coordinator?.pushViewController(groupType.destination)
             }, for: .touchUpInside
         )
         

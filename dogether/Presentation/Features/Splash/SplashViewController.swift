@@ -14,19 +14,11 @@ final class SplashViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
+        pages = [splashPage]
+        
         super.viewDidLoad()
         
         onAppear()
-    }
-    
-    override func configureHierarchy() {
-        [splashPage].forEach { view.addSubview($0) }
-    }
-    
-    override func configureConstraints() {
-        splashPage.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
-        }
     }
     
     override func bindViewModel() {

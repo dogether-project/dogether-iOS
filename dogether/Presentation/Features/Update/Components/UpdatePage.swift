@@ -47,8 +47,7 @@ final class UpdatePage: BasePage {
     
     override func configureAction() {
         updateButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
+            UIAction { _ in
                 SystemManager().openAppStore()
             }, for: .touchUpInside
         )

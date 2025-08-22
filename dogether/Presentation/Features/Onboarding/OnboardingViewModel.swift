@@ -11,7 +11,7 @@ final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     
-    let onboardingStep = BehaviorRelay<Int>(value: 3)   // FIXME: OnboardingPage 내부로 이동
+    private(set) var appleLoginState = BehaviorRelay<BaseState?>(value: nil)
     private(set) var needParticipating = BehaviorRelay<Bool>(value: false)
     
     init() {

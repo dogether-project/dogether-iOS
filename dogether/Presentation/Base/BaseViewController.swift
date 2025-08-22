@@ -10,15 +10,20 @@ import UIKit
 class BaseViewController: UIViewController, CoordinatorDelegate {
     weak var coordinator: NavigationCoordinator?
     var datas: AnyHashable?
+    var pages: Array<BasePage>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .grey900
         
+        // FIXME: 추후 삭제
         configureView()
         configureAction()
         configureHierarchy()
         configureConstraints()
+        
+        guard let pages else { return }
+        configurePages(pages)
         
         setViewDatas()
         bindViewModel()
@@ -35,6 +40,21 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     
     /// SnapKit을 이용해 레이아웃을 설정하는 역할을 합니다
     func configureConstraints() { }
+    
+    /// UI를 구성할 페이지들을 설정하는 역할을 합니다
+    func configurePages(_ pages: [BasePage]) {
+        pages.forEach { page in
+            page.delegate = self
+            page.frame = view.frame
+            
+            view.addSubview(page)
+            page.snp.makeConstraints {
+                $0.edges.equalTo(view.safeAreaLayoutGuide)
+            }
+            
+            page.pageDidLoad()
+        }
+    }
     
     /// View를 구성하는 필수 데이터를 세팅하는 역할을 합니다
     func setViewDatas() { }

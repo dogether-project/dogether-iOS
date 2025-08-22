@@ -15,13 +15,26 @@ final class OnboardingPage: BasePage {
     private let pageControl = UIPageControl()
     private let signInButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
     
+    private let onboardingStep: Int = 3
+    private let pageControlHeight: CGFloat = 26
+    private let buttonBottomPadding: CGFloat = 16
+    private let buttonHeight: CGFloat = 50
+    
     override func configureView() {
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isPagingEnabled = true
+        scrollView.contentSize.width = frame.width * CGFloat(onboardingStep)
         
         onboardingStackView.axis = .horizontal
         onboardingStackView.distribution = .fillEqually
+        
+        for pageIndex in 0 ..< onboardingStep {
+            guard let onboardingStep = OnboardingSteps(rawValue: pageIndex + 1) else { return }
+            onboardingStackView.addArrangedSubview(onboardingStepStackView(step: onboardingStep))
+        }
+        
+        pageControl.numberOfPages = onboardingStep
         
         signInButton.cornerRadius = 12
     }
@@ -51,8 +64,8 @@ final class OnboardingPage: BasePage {
         }
         
         onboardingStackView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.width.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-(pageControlHeight + buttonBottomPadding + buttonHeight) / 2)
+            $0.width.equalToSuperview().multipliedBy(onboardingStep)
         }
         
         pageControl.snp.makeConstraints {
@@ -61,40 +74,9 @@ final class OnboardingPage: BasePage {
         }
         
         signInButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(buttonBottomPadding)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(50)
-        }
-    }
-    
-    // MARK: - viewDidUpdate
-    override func updateView(_ data: Any?) {
-        guard let step = data as? Int else { return }
-        
-        scrollView.contentSize.width = frame.width * CGFloat(step)
-        
-        for pageIndex in 0 ..< step {
-            guard let onboardingStep = OnboardingSteps(rawValue: pageIndex + 1) else { return }
-            onboardingStackView.addArrangedSubview(onboardingStepStackView(step: onboardingStep))
-        }
-        
-        pageControl.numberOfPages = step
-    }
-    
-    override func updateAction(_ data: Any?) {
-        if let signInAction { signInButton.addAction(signInAction, for: .touchUpInside) }
-    }
-    
-    override func updateConstraints(_ data: Any?) {
-        guard let step = data as? Int else { return }
-        
-        let pageControlHeight: CGFloat = 26
-        let buttonBottomPadding: CGFloat = 16
-        let buttonHeight: CGFloat = 50
-        
-        onboardingStackView.snp.remakeConstraints {
-            $0.centerY.equalToSuperview().offset(-(pageControlHeight + buttonBottomPadding + buttonHeight) / 2)
-            $0.width.equalToSuperview().multipliedBy(step)
+            $0.height.equalTo(buttonHeight)
         }
     }
 }

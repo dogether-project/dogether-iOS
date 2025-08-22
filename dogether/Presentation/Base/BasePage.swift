@@ -8,15 +8,14 @@
 import UIKit
 
 class BasePage: UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
+    var delegate: CoordinatorDelegate?
+    /// 상위 뷰 컨트롤러의 viewDidLoad에서 호출됩니다
+    func pageDidLoad() {
         configureView()
         configureAction()
         configureHierarchy()
         configureConstraints()
     }
-    required init?(coder: NSCoder) { fatalError() }
     
     /// 뷰의 시각적인 속성을 설정하는 역할을 합니다
     func configureView() { }

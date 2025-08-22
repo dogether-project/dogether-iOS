@@ -5,10 +5,12 @@
 //  Created by 승용 on 7/31/25.
 //
 
+import UIKit
+
 final class SplashPage: BasePage {
-    private let logoImageView = BaseImageView()
-    private let typoImageView = BaseImageView()
-    private let logoStackView = BaseStackView()
+    private let logoImageView = UIImageView()
+    private let typoImageView = UIImageView()
+    private let logoStackView = UIStackView()
     
     override func configureView() {
         logoImageView.image = .logo
