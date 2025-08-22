@@ -34,7 +34,7 @@ final class NavigationCoordinator: NSObject {
 
 // MARK: view
 extension NavigationCoordinator {
-    func setNavigationController(_ viewController: BaseViewController, datas: AnyHashable? = nil, animated: Bool = true) {
+    func setNavigationController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
         viewController.coordinator = self
         viewController.datas = datas
         updateViewController = nil
@@ -43,7 +43,7 @@ extension NavigationCoordinator {
         navigationController.interactivePopGestureRecognizer?.delegate = self
     }
     
-    func pushViewController(_ viewController: BaseViewController, datas: AnyHashable? = nil, animated: Bool = true) {
+    func pushViewController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
         viewController.coordinator = self
         viewController.datas = datas
         updateViewController = nil
@@ -51,7 +51,7 @@ extension NavigationCoordinator {
         navigationController.pushViewController(viewController, animated: animated)
     }
     
-    func presentViewController(_ viewController: BaseViewController, datas: AnyHashable? = nil, animated: Bool = true) {
+    func presentViewController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
         viewController.coordinator = self
         viewController.datas = datas
         updateViewController = nil

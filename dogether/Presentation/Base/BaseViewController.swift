@@ -9,7 +9,7 @@ import UIKit
 
 class BaseViewController: UIViewController, CoordinatorDelegate {
     weak var coordinator: NavigationCoordinator?
-    var datas: AnyHashable?
+    var datas: (any BaseEntity)?
     var pages: Array<BasePage>?
     
     override func viewDidLoad() {

@@ -75,7 +75,7 @@ final class StartPage: BasePage {
     }
     
     // MARK: - viewDidUpdate
-    override func updateHierarchy(_ data: Any?) {
+    override func updateHierarchy(_ data: (any BaseEntity)?) {
         guard let datas = data as? StartViewDatas else { return }
         
         dogetherHeader.isHidden = !datas.isFirstGroup
@@ -85,7 +85,7 @@ final class StartPage: BasePage {
         titleLabel.isHidden = !datas.isFirstGroup
     }
     
-    override func updateConstraints(_ data: Any?) {
+    override func updateConstraints(_ data: (any BaseEntity)?) {
         guard let datas = data as? StartViewDatas else { return }
         
         buttonStackView.snp.remakeConstraints {
