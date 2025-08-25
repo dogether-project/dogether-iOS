@@ -12,7 +12,7 @@ final class TodoListView: BaseView {
     required init?(coder: NSCoder) { fatalError() }
     
     var allButton = FilterButton(type: .all)
-    var waitButton = FilterButton(type: .wait)
+    var waitButton = FilterButton(type: .waitExamination)
     var rejectButton = FilterButton(type: .reject)
     var approveButton = FilterButton(type: .approve)
     
@@ -117,13 +117,13 @@ final class TodoListView: BaseView {
 }
 
 extension TodoListView {
-    func updateList(todoList: [TodoInfo], filter: FilterTypes, isToday: Bool) {
+    func updateList(todoList: [TodoInfo], filter: TodoFilterType, isToday: Bool) {
         allButton.setIsColorful(filter == .all)
-        waitButton.setIsColorful(filter == .wait)
+        waitButton.setIsColorful(filter == .waitExamination)
         rejectButton.setIsColorful(filter == .reject)
         approveButton.setIsColorful(filter == .approve)
         
-        let currentTodoList = todoList.filter { filter == .all || filter == FilterTypes(status: $0.status) }
+        let currentTodoList = todoList.filter { filter == .all || filter == TodoFilterType(rawValue: $0.status) }
         todoListStackView.isHidden = currentTodoList.isEmpty
         emptyListStackView.isHidden = !currentTodoList.isEmpty
         

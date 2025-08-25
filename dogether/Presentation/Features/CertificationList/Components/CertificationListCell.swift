@@ -19,7 +19,7 @@ final class CertificationCell: UICollectionViewCell {
     }()
     
     private let statusButton: FilterButton = {
-        let button = FilterButton(type: .wait)
+        let button = FilterButton(type: .waitExamination)
         button.isUserInteractionEnabled = false // 버튼처럼 보이지만 동작은 안 하게
         return button
     }()
@@ -56,8 +56,8 @@ final class CertificationCell: UICollectionViewCell {
     func configure(with certificationItem: CertificationItem) {
         imageView.loadImage(url: certificationItem.certificationMediaUrl)
         
-        if let filterType = FilterTypes(status: certificationItem.status) {
-            statusButton.update(type: filterType)
+        if let todoStatus = TodoFilterType(rawValue: certificationItem.status) {
+            statusButton.update(type: todoStatus)
         }
     }
 }
