@@ -16,7 +16,7 @@ final class TodoListItemButton: BaseButton {
     init(todo: TodoInfo, isToday: Bool) {
         self.todo = todo
         self.isToday = isToday
-        self.isUncertified = todo.status == TodoStatus.waitCertification.rawValue
+        self.isUncertified = todo.status == TodoFilterType.waitCertification.rawValue
         
         super.init(frame: .zero)
     }
@@ -53,7 +53,11 @@ final class TodoListItemButton: BaseButton {
         backgroundColor = .grey700
         layer.cornerRadius = 8
         
-        todoImageView.image = TodoStatus(rawValue: todo.status)?.image
+        if let status = TodoFilterType(rawValue: todo.status) {
+               todoImageView.image = status.image
+           } else {
+               todoImageView.image = nil
+           }
         
         contentLabel.text = todo.content
         contentLabel.textColor = isUncertified ? isToday ? .grey50 : .grey400 : .grey300
@@ -74,7 +78,7 @@ final class TodoListItemButton: BaseButton {
             $0.height.equalTo(64)
         }
         
-        if todo.status != TodoStatus.waitCertification.rawValue {
+        if todo.status != TodoFilterType.waitCertification.rawValue {
             todoImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.left.equalToSuperview().offset(16)

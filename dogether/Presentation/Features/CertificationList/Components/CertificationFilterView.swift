@@ -16,13 +16,13 @@ final class CertificationFilterView: BaseView {
     private let contentStackView = UIStackView()
     let sortButton = CertificationSortButton()
     
-    private var currentFilter: FilterTypes = .all   // FIXME: View에서 변수를 관리하는 건 좋지 않은 것 같아요 나중에 CertificationListViewModel로 빼주세요
+    private var currentFilter: TodoFilterType = .all   // FIXME: View에서 변수를 관리하는 건 좋지 않은 것 같아요 나중에 CertificationListViewModel로 빼주세요
     private var allButton = FilterButton(type: .all)
-    private var waitButton = FilterButton(type: .wait)
+    private var waitButton = FilterButton(type: .waitExamination)
     private var rejectButton = FilterButton(type: .reject)
     private var approveButton = FilterButton(type: .approve)
     
-    var filterSelected: ((FilterTypes) -> Void)?
+    var filterSelected: ((TodoFilterType) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -97,7 +97,7 @@ extension CertificationFilterView {
         [allButton, waitButton, approveButton, rejectButton].forEach { contentStackView.addArrangedSubview($0) }
     }
     
-    private func setFilter(filter: FilterTypes) {
+    private func setFilter(filter: TodoFilterType) {
         if currentFilter == filter {
             currentFilter = .all
         } else {
@@ -106,7 +106,7 @@ extension CertificationFilterView {
         
         filterSelected?(currentFilter)
         allButton.setIsColorful(currentFilter == .all)
-        waitButton.setIsColorful(currentFilter == .wait)
+        waitButton.setIsColorful(currentFilter == .waitExamination)
         rejectButton.setIsColorful(currentFilter == .reject)
         approveButton.setIsColorful(currentFilter == .approve)
     }

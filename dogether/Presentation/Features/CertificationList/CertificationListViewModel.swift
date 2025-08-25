@@ -28,7 +28,7 @@ final class CertificationListViewModel {
     private var currentPage: Int = 0
     var isLastPage: Bool = false
     
-    var currentFilter: FilterTypes = .all {
+    var currentFilter: TodoFilterType = .all {
         didSet {
             applyFilter()
         }
@@ -66,8 +66,8 @@ extension CertificationListViewModel {
     private func applyFilter() {
         sections = rawSections.compactMap { section in
             let filtered = section.certifications.filter { cert in
-                guard let filterType = FilterTypes(status: cert.status) else { return false }
-                return currentFilter == .all || currentFilter == filterType
+                guard let status = TodoFilterType(rawValue: cert.status) else { return false }
+                return currentFilter == .all || currentFilter == status
             }
             return filtered.isEmpty ? nil : CertificationSection(type: section.type, certifications: filtered)
         }

@@ -29,7 +29,7 @@ final class MainViewModel {
     private(set) var timeProgress: CGFloat = 0.0
     
     private(set) var dateOffset: Int = 0
-    private(set) var currentFilter: FilterTypes = .all
+    private(set) var currentFilter: TodoFilterType = .all
     private(set) var todoList: [TodoInfo] = []
     
 
@@ -72,7 +72,7 @@ extension MainViewModel {
         self.dateOffset = offset
     }
     
-    func setFilter(filter: FilterTypes) {
+    func setFilter(filter: TodoFilterType) {
         if self.currentFilter == filter {
             self.currentFilter = .all
         } else {

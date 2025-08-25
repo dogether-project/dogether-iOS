@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CertificationListContentViewDelegate: AnyObject {
-    func didTapFilter(selectedFilter: FilterTypes)
+    func didTapFilter(selectedFilter: TodoFilterType)
     func didTapCertificationFilterView()
     func didTapCertification(_ certification: TodoInfo)
     func didScrollToBottom()

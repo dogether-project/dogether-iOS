@@ -10,7 +10,7 @@ import Foundation
 struct MemberCertificationInfo {
     let id: Int
     let content: String
-    let status: TodoStatus
+    let status: TodoFilterType
     let certificationContent: String?
     let certificationMediaUrl: String?
     let feedback: String?
@@ -19,7 +19,7 @@ struct MemberCertificationInfo {
     init(
         id: Int = 0,
         content: String = "",
-        status: TodoStatus = .waitExamination,
+        status: TodoFilterType = .waitExamination,
         certificationContent: String? = nil,
         certificationMediaUrl: String? = nil,
         feedback: String? = nil,

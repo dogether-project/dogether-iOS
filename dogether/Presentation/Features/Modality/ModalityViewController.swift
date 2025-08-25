@@ -29,7 +29,7 @@ final class ModalityViewController: BaseViewController {
             button.addAction(
                 UIAction { [weak self, weak button] _ in
                     guard let self, let button,
-                          let type = FilterTypes.allCases.first(where: { $0.tag == button.tag }),
+                          let type = TodoFilterType.allCases.first(where: { $0.tag == button.tag }),
                           let reviewResult = type.reviewResult else { return }
                     
                     viewModel.setResult(reviewResult)

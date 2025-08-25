@@ -141,7 +141,7 @@ extension CertificationListViewController: CertificationListViewModelDelegate {
 
 // MARK: - ContentView 에서 전달하는 이벤트를 받기 위한 Delegate
 extension CertificationListViewController: CertificationListContentViewDelegate {
-    func didTapFilter(selectedFilter: FilterTypes) {
+    func didTapFilter(selectedFilter: TodoFilterType) {
         viewModel.currentFilter = selectedFilter
     }
     

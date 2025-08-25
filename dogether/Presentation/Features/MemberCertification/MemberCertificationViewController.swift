@@ -257,7 +257,7 @@ extension MemberCertificationViewController {
             certificationScrollView.setContentOffset(newOffset, animated: false)
         }
         
-        statusView.update(type: viewModel.todos[viewModel.currentIndex].status)
+        statusView.update(type: TodoFilterType(rawValue: viewModel.todos[viewModel.currentIndex].status.rawValue) ?? .waitExamination)
         
         contentLabel.attributedText = NSAttributedString(
             string: viewModel.todos[viewModel.currentIndex].content,

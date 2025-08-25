@@ -41,7 +41,7 @@ final class ExaminationModalityView: BaseView {
         return label
     }()
     
-    private func examinationButton(type: FilterTypes) -> UIButton {
+    private func examinationButton(type: TodoFilterType) -> UIButton {
         let button = UIButton()
         button.backgroundColor = .grey0
         button.layer.cornerRadius = 8
@@ -150,7 +150,7 @@ extension ExaminationModalityView {
         )
     }
     
-    func updateButtonBackgroundColor(type: FilterTypes) {
+    func updateButtonBackgroundColor(type: TodoFilterType) {
         rejectButton.backgroundColor = type == .reject ? .dogetherRed : .grey0
         approveButton.backgroundColor = type == .approve ? .blue300 : .grey0
     }

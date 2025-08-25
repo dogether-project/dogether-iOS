@@ -35,9 +35,9 @@ final class CertificationInfoViewController: BaseViewController {
         
         imageView.loadImage(url: todoInfo.certificationMediaUrl)
         
-        guard let status = TodoStatus(rawValue: todoInfo.status),
-              let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
-        statusView = FilterButton(type: filterType)
+        guard let status = TodoFilterType(rawValue: todoInfo.status) else { return }
+
+        statusView = FilterButton(type: status)
         
         contentLabel.attributedText = NSAttributedString(
             string: todoInfo.content,

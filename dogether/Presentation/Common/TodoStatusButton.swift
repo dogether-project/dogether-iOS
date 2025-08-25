@@ -8,9 +8,9 @@
 import UIKit
 
 final class TodoStatusButton: BaseButton {
-    let type: TodoStatus
+    let type: TodoFilterType
     
-    init(type: TodoStatus) {
+    init(type: TodoFilterType) {
         self.type = type
         
         super.init(frame: .zero)
@@ -66,7 +66,7 @@ final class TodoStatusButton: BaseButton {
 }
 
 extension TodoStatusButton {
-    func update(type: TodoStatus) {
+    func update(type: TodoFilterType) {
         backgroundColor = type.backgroundColor
         icon.image = type.image?.withRenderingMode(.alwaysTemplate)
         label.text = type.text
