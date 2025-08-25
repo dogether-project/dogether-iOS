@@ -60,7 +60,7 @@ final class TodoWriteViewController: BaseViewController {
     
     private let addButton = {
         let button = UIButton()
-        button.backgroundColor = .grey600 // FIXME: 디자이너분들과 상의필요
+        button.backgroundColor = .grey600
         button.layer.cornerRadius = 8
         button.tintColor = .grey400
         let imageView = UIImageView()
