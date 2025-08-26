@@ -75,7 +75,7 @@ final class StartPage: BasePage {
     }
     
     // MARK: - viewDidUpdate
-    override func updateHierarchy(_ data: (any BaseEntity)?) {
+    override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? StartViewDatas else { return }
         
         dogetherHeader.isHidden = !datas.isFirstGroup
