@@ -8,9 +8,9 @@
 import UIKit
 
 extension UIApplication {
-    static var bottomSafeAreaOffset: CGFloat {
+    static var safeAreaOffset: UIEdgeInsets {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first  else { return 0.0 }
-        return window.safeAreaInsets.bottom
+              let window = windowScene.windows.first  else { return UIEdgeInsets() }
+        return window.safeAreaInsets
     }
 }

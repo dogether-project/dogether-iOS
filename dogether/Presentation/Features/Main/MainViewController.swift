@@ -110,21 +110,6 @@ extension MainViewController {
         }
     }
     
-//    private func updateSheet(_ status: SheetStatus) {
-//        UIView.animate(withDuration: 0.3) { [weak self] in
-//            guard let self else { return }
-//            dogetherSheetTopConstraint?.update(offset: status.offset)
-//            updateAlpha(alpha: status == .normal ? 1 : 0)
-//            view.layoutIfNeeded()
-//        }
-//    }
-//    
-//    private func updateAlpha(alpha: CGFloat) {
-//        [dosikImageView, groupInfoView.groupInfoStackView, groupInfoView.durationStackView, rankingButton].forEach {
-//            $0.alpha = alpha
-//        }
-//    }
-//    
 //    private func updateView() {
 //        groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.currentGroup)
 //        
@@ -181,38 +166,6 @@ extension MainViewController {
 //    @objc private func tappedJoinCodeStackView() {
 //        let inviteGroup = SystemManager.inviteGroup(groupName: viewModel.currentGroup.name, joinCode: viewModel.currentGroup.joinCode)
 //        present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
-//    }
-}
-
-// MARK: - about pan gesture
-extension MainViewController: UIGestureRecognizerDelegate {
-//    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
-//        let translation = gesture.translation(in: view)
-//        
-//        switch gesture.state {
-//        case .changed:
-//            let newOffset = viewModel.getNewOffset(
-//                from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
-//                with: translation.y
-//            )
-//            dogetherSheetTopConstraint?.update(offset: newOffset)
-//            updateAlpha(alpha: 1 - (SheetStatus.normal.offset - newOffset) / (SheetStatus.normal.offset - SheetStatus.expand.offset))
-//            view.layoutIfNeeded()
-//            
-//        case .ended:
-//            updateSheet(viewModel.updateSheetStatus(with: translation.y))
-//            
-//        default:
-//            break
-//        }
-//    }
-//    
-//    func gestureRecognizer(
-//        _ gestureRecognizer: UIGestureRecognizer,
-//        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-//    ) -> Bool {
-//        if viewModel.sheetStatus == .expand && todoListView.todoScrollView.contentOffset.y > 0 { return false }
-//        return true
 //    }
 }
 

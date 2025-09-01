@@ -22,8 +22,6 @@ final class MainViewModel {
     
     private(set) var currentChallengeIndex: Int = 0
     
-    private(set) var sheetStatus: SheetStatus = .normal
-    
     private(set) var timer: Timer?
     private(set) var time: String = "23:59:59"
     private(set) var timeProgress: CGFloat = 0.0
@@ -120,30 +118,6 @@ extension MainViewModel {
     func updateListInfo() async throws {
         let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
         todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date)
-    }
-}
-
-// MARK: - about sheet
-extension MainViewModel {
-    func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
-        switch sheetStatus {
-        case .expand:
-            if translation > 0 { return min(SheetStatus.normal.offset, SheetStatus.expand.offset + translation) }
-            return currentOffset
-        case .normal:
-            if translation < 0 { return max(0, SheetStatus.normal.offset + translation) }
-            return currentOffset
-        }
-    }
-    
-    func updateSheetStatus(with translation: CGFloat) -> SheetStatus {
-        switch sheetStatus {
-        case .expand:
-            sheetStatus = translation > 100 ? .normal : .expand
-        case .normal:
-            sheetStatus = translation < -100 ? .expand : .normal
-        }
-        return sheetStatus
     }
 }
 

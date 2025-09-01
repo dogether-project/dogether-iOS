@@ -82,6 +82,8 @@ final class MainPage: BasePage {
     private let pastEmptyView = PastEmptyView()
     private let doneView = DoneView()
     
+    private(set) var sheetStatus: SheetStatus = .normal
+    
     override func configureView() {
         [timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { $0.isHidden = true }
     }
@@ -103,11 +105,11 @@ final class MainPage: BasePage {
 //                coordinator?.pushViewController(rankingViewController)
 //            }, for: .touchUpInside
 //        )
-//        
-//        dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-//        dogetherPanGesture.delegate = self
-//        dogetherSheet.addGestureRecognizer(dogetherPanGesture)
-//        
+        
+        dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        dogetherPanGesture.delegate = self
+        dogetherSheet.addGestureRecognizer(dogetherPanGesture)
+        
 //        [sheetHeaderView.prevButton, sheetHeaderView.nextButton].forEach { button in
 //            button.addAction(
 //                UIAction { [weak self] _ in
@@ -190,7 +192,7 @@ final class MainPage: BasePage {
         
         dogetherSheet.snp.makeConstraints {
             dogetherSheetTopConstraint = $0.top.equalToSuperview().offset(SheetStatus.normal.offset).constraint
-            $0.bottom.equalToSuperview().offset(UIApplication.bottomSafeAreaOffset)
+            $0.bottom.equalToSuperview().offset(UIApplication.safeAreaOffset.bottom)
             $0.left.right.equalToSuperview()
         }
         
@@ -207,5 +209,76 @@ final class MainPage: BasePage {
                 $0.horizontalEdges.equalToSuperview()
             }
         }
+    }
+}
+
+// MARK: - about pan gesture
+extension MainPage: UIGestureRecognizerDelegate {
+    @objc private func handlePanGesture(_ gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: self)
+
+        switch gesture.state {
+        case .changed:
+            let newOffset = getNewOffset(
+                from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
+                with: translation.y
+            )
+            dogetherSheetTopConstraint?.update(offset: newOffset)
+            updateAlpha(alpha: 1 - (SheetStatus.normal.offset - newOffset) / (SheetStatus.normal.offset - SheetStatus.expand.offset))
+            layoutIfNeeded()
+
+        case .ended:
+            updateSheet(updateSheetStatus(with: translation.y))
+
+        default:
+            break
+        }
+    }
+
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        if sheetStatus == .expand && todoListView.todoScrollView.contentOffset.y > 0 { return false }
+        return true
+    }
+}
+
+// MARK: - about sheet
+extension MainPage {
+    private func updateSheet(_ status: SheetStatus) {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            dogetherSheetTopConstraint?.update(offset: status.offset)
+            updateAlpha(alpha: status == .normal ? 1 : 0)
+            layoutIfNeeded()
+        }
+    }
+    
+    private func updateAlpha(alpha: CGFloat) {
+        [dosikImageView, groupInfoView.groupInfoStackView, groupInfoView.durationStackView, rankingButton].forEach {
+            $0.alpha = alpha
+        }
+    }
+    
+    private func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
+        switch sheetStatus {
+        case .expand:
+            if translation > 0 { return min(SheetStatus.normal.offset, SheetStatus.expand.offset + translation) }
+            return currentOffset
+        case .normal:
+            if translation < 0 { return max(0, SheetStatus.normal.offset + translation) }
+            return currentOffset
+        }
+    }
+    
+    private func updateSheetStatus(with translation: CGFloat) -> SheetStatus {
+        switch sheetStatus {
+        case .expand:
+            sheetStatus = translation > 100 ? .normal : .expand
+        case .normal:
+            sheetStatus = translation < -100 ? .expand : .normal
+        }
+        return sheetStatus
     }
 }
