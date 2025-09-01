@@ -7,6 +7,8 @@
 
 import AuthenticationServices
 
+import Lottie
+
 final class OnboardingPage: BasePage {
     var delegate: OnboardingDelegate?
     
@@ -107,18 +109,21 @@ extension OnboardingPage {
         subTitleLabel.textColor = .grey200
         subTitleLabel.numberOfLines = 0
         
-        let imageView = UIImageView(image: step.image)
-        let aspectRatio = imageView.frame.height / imageView.frame.width
+        let animationView = LottieAnimationView(name: step.lottieFileName)
+        animationView.loopMode = .loop
+        animationView.contentMode = .scaleAspectFit
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        animationView.play()
         
-        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel, imageView])
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subTitleLabel, animationView])
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.setCustomSpacing(8, after: titleLabel)
         
-        imageView.snp.makeConstraints {
+        animationView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(imageView.snp.width).multipliedBy(aspectRatio)
+            $0.height.equalTo(animationView.snp.width).multipliedBy(1.0)
         }
         
         return stackView
