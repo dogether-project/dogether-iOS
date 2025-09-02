@@ -174,6 +174,29 @@ final class GroupInfoView: BaseView {
             $0.height.equalTo(21)
         }
     }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let data = data as? GroupEntity {
+            nameLabel.text = data.name
+            
+            memberInfoLabel.attributedText = NSAttributedString(
+                string: "\(data.currentMember)/\(data.maximumMember)",
+                attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+            )
+            joinCodeInfoLabel.attributedText = NSAttributedString(
+                string: data.joinCode,
+                attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+            )
+            endDateInfoLabel.attributedText = NSAttributedString(
+                string: data.endDate,
+                attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
+            )
+            
+            durationInfoLabel.text = "(\(data.duration)일차)"
+            durationProgressView.progress = data.progress
+        }
+    }
 }
  
 extension GroupInfoView {

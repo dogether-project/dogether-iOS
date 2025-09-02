@@ -14,7 +14,9 @@ protocol GroupProtocol {
     
     func checkParticipating() async throws -> CheckParticipatingResponse
     
-    func getGroups() async throws -> GetGroupsResponse
+    // FIXME: 추후 삭제
+    func getGroupsBefore() async throws -> GetGroupsResponse
+    func getGroups() async throws -> GroupViewDatas
     
     func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws
     

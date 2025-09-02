@@ -210,6 +210,13 @@ final class MainPage: BasePage {
             }
         }
     }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
+            groupInfoView.viewDidUpdate(datas.groups[0])
+        }
+    }
 }
 
 // MARK: - about pan gesture

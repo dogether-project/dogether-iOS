@@ -28,6 +28,19 @@ final class MainViewController: BaseViewController {
         
         loadMainView()
     }
+    
+    override func setViewDatas() { }
+    
+    override func bindViewModel() {
+        viewModel.groupViewDatas
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: GroupViewDatas())
+            .drive(onNext: { [weak self] datas in
+                guard let self else { return }
+                mainPage.viewDidUpdate(datas)
+            })
+            .disposed(by: disposeBag)
+    }
 }
 
 extension MainViewController {
@@ -37,21 +50,22 @@ extension MainViewController {
     }
     
     private func loadMainView(selectedIndex: Int?) {
-//        Task { [weak self] in
-//            guard let self else { return }
-//            do {
-//                let (groupIndex, newChallengeGroupInfos) = try await viewModel.getChallengeGroupInfos()
-//
-//                if newChallengeGroupInfos.isEmpty {
-//                    await MainActor.run {
-//                        self.coordinator?.setNavigationController(StartViewController())
-//                    }
-//                    return
-//                }
-//
-//                viewModel.setChallengeIndex(index: selectedIndex ?? groupIndex ?? 0)
-//                viewModel.setChallengeGroupInfos(challengegroupInfos: newChallengeGroupInfos)
-//
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await viewModel.getGroups()
+                let (groupIndex, newChallengeGroupInfos) = try await viewModel.getChallengeGroupInfos()
+
+                if newChallengeGroupInfos.isEmpty {
+                    await MainActor.run {
+                        self.coordinator?.setNavigationController(StartViewController())
+                    }
+                    return
+                }
+
+                viewModel.setChallengeIndex(index: selectedIndex ?? groupIndex ?? 0)
+                viewModel.setChallengeGroupInfos(challengegroupInfos: newChallengeGroupInfos)
+
 //                configureBottomSheetViewController()
 //
 //                if viewModel.currentGroup.status == .ready {
@@ -64,21 +78,21 @@ extension MainViewController {
 //                    self.updateView()
 //                    self.updateList()
 //                }
-//            } catch let error as NetworkError {
-//                await MainActor.run {
-//                    ErrorHandlingManager.presentErrorView(
-//                        error: error,
-//                        presentingViewController: self,
-//                        coordinator: coordinator,
-//                        retryHandler: { [weak self] in
-//                            guard let self else { return }
-//                            loadMainView()
-//                        },
-//                        showCloseButton: false
-//                    )
-//                }
-//            }
-//        }
+            } catch let error as NetworkError {
+                await MainActor.run {
+                    ErrorHandlingManager.presentErrorView(
+                        error: error,
+                        presentingViewController: self,
+                        coordinator: coordinator,
+                        retryHandler: { [weak self] in
+                            guard let self else { return }
+                            loadMainView()
+                        },
+                        showCloseButton: false
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -111,8 +125,6 @@ extension MainViewController {
     }
     
 //    private func updateView() {
-//        groupInfoView.setChallengeGroupInfo(challengeGroupInfo: viewModel.currentGroup)
-//        
 //        let currentDate = DateFormatterManager.formattedDate(viewModel.dateOffset)
 //        sheetHeaderView.setDate(date: currentDate)
 //        sheetHeaderView.prevButton.isEnabled = viewModel.dateOffset * -1 < viewModel.currentGroup.duration - 1

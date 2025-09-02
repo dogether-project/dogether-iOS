@@ -7,10 +7,14 @@
 
 import UIKit
 
+import RxRelay
+
 final class MainViewModel {
     private let groupUseCase: GroupUseCase
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
+    
+    private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
     
     private(set) var rankings: [RankingModel]?
     
@@ -47,6 +51,10 @@ final class MainViewModel {
 
 // MARK: - get
 extension MainViewModel {
+    func getGroups() async throws {
+        groupViewDatas.accept(try await groupUseCase.getGroups())
+    }
+    
     func getChallengeGroupInfos() async throws -> (groupIndex: Int?, challengeGroupInfos: [ChallengeGroupInfo]) {
         return try await groupUseCase.getChallengeGroupInfos()
     }
