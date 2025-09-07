@@ -60,6 +60,10 @@ final class SplashViewController: BaseViewController {
 extension SplashViewController {
     private func onAppear() {
         Task {
+            // MARK: SplashView의 경우 API 호출에 순서가 정해져있어 동기 호출 방식 보다는 로딩바를 임시로 하나 더 추가해 제어함
+            LoadingManager.shared.showLoading()
+            defer { LoadingManager.shared.hideLoading() }
+            
             do {
                 try await viewModel.launchApp()
                 
