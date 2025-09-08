@@ -142,15 +142,23 @@ extension GroupJoinViewController {
                     coordinator?.setNavigationController(completeViewController)
                 }
             } catch let error as NetworkError {
-                ErrorHandlingManager.presentErrorView(
-                    error: error,
-                    presentingViewController: self,
-                    coordinator: coordinator,
-                    retryHandler: { [weak self] in
+                if case let .dogetherError(code, _) = error, code == .CGF0005 {
+                    await MainActor.run { [weak self] in
                         guard let self else { return }
-                        tryJoinGroup()
+                        viewModel.handleInvalidCode()
+                        updateSubTitleLabel()
                     }
-                )
+                } else {
+                    ErrorHandlingManager.presentErrorView(
+                        error: error,
+                        presentingViewController: self,
+                        coordinator: coordinator,
+                        retryHandler: { [weak self] in
+                            guard let self else { return }
+                            tryJoinGroup()
+                        }
+                    )
+                }
             }
         }
     }
