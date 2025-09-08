@@ -161,7 +161,7 @@ final class GroupInfoView: BaseView {
         }
         
         joinCodeCopyImageView.snp.makeConstraints {
-            $0.width.height.equalTo(18)
+            $0.width.height.equalTo(24)
         }
         
         durationProgressView.snp.makeConstraints {

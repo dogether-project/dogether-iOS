@@ -170,7 +170,7 @@ final class MainPage: BasePage {
         dosikImageView.snp.makeConstraints {
             $0.top.equalTo(dogetherHeader.snp.bottom)
             $0.right.equalToSuperview().inset(16)
-            $0.width.height.equalTo(120)
+            $0.width.height.equalTo(100)
         }
         
         dosikCommentButton.snp.makeConstraints {
