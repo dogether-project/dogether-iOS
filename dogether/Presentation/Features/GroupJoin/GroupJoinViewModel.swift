@@ -37,9 +37,8 @@ extension GroupJoinViewModel {
 }
 
 extension GroupJoinViewModel {
-    func handleCodeError() {
-        setGroupJoinStatus(.error)
-        setCode("")
+    func handleInvalidCode() {
+        setGroupJoinStatus(.invalidCode)
     }
     
     func joinGroup() async throws {
