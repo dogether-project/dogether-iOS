@@ -147,8 +147,8 @@ extension GroupJoinViewController {
                         guard let self else { return }
                         viewModel.handleInvalidCode()
                         UIView.performWithoutAnimation {
-                            updateSubTitleLabel()
-                            view.layoutIfNeeded()
+                            self.updateSubTitleLabel()
+                            self.view.layoutIfNeeded()
                         }
                     }
                 } else {
