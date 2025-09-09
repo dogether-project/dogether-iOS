@@ -146,7 +146,10 @@ extension GroupJoinViewController {
                     await MainActor.run { [weak self] in
                         guard let self else { return }
                         viewModel.handleInvalidCode()
-                        updateSubTitleLabel()
+                        UIView.performWithoutAnimation {
+                            updateSubTitleLabel()
+                            view.layoutIfNeeded()
+                        }
                     }
                 } else {
                     ErrorHandlingManager.presentErrorView(
