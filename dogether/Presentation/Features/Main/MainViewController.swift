@@ -16,6 +16,8 @@ final class MainViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
+        mainPage.delegate = self
+        
         pages = [mainPage]
 
         super.viewDidLoad()
@@ -237,7 +239,7 @@ extension MainViewController: UIScrollViewDelegate {
 
 // MARK: - delegate
 protocol MainDelegate {
-    func startAction(_ destination: BaseViewController)
+    func goRankingViewAction()
 }
 
 extension MainViewController: MainDelegate {
@@ -258,7 +260,10 @@ extension MainViewController: MainDelegate {
         }
     }
     
-    func startAction(_ destination: BaseViewController) {
-        coordinator?.pushViewController(destination)
+    func goRankingViewAction() {
+        let rankingViewController = RankingViewController()
+        // FIXME: rankingView RxSwift 도입 시 수정
+        rankingViewController.viewModel.groupId = viewModel.groupViewDatas.value.index
+        coordinator?.pushViewController(rankingViewController)
     }
 }

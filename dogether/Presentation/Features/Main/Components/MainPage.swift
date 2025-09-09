@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 
 final class MainPage: BasePage {
+    var delegate: MainDelegate?
+    
     private var dogetherPanGesture: UIPanGestureRecognizer!
     private var dogetherSheetTopConstraint: Constraint?
     
@@ -97,14 +99,12 @@ final class MainPage: BasePage {
 //        let joinCodeTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedJoinCodeStackView))
 //        groupInfoView.joinCodeStackView.addGestureRecognizer(joinCodeTapGesture)
 //        
-//        rankingButton.addAction(
-//            UIAction { [weak self] _ in
-//                guard let self else { return }
-//                let rankingViewController = RankingViewController()
-//                rankingViewController.viewModel.groupId = viewModel.currentGroup.id
-//                coordinator?.pushViewController(rankingViewController)
-//            }, for: .touchUpInside
-//        )
+        rankingButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.goRankingViewAction()
+            }, for: .touchUpInside
+        )
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
@@ -214,7 +214,7 @@ final class MainPage: BasePage {
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
-            groupInfoView.viewDidUpdate(datas.groups[0])
+            groupInfoView.viewDidUpdate(datas.groups[datas.index])
         }
     }
 }
