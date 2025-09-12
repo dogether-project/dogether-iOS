@@ -14,9 +14,9 @@ enum AuthRouter: NetworkEndpoint {
     var path: String {
         switch self {
         case .appleLogin:
-            return Path.api + Path.auth + "/login"
+            return Path.api + Path.v1 + Path.auth + "/login"
         case .withdraw:
-            return Path.api + Path.auth + "/withdraw"
+            return Path.api + Path.v1 + Path.auth + "/withdraw"
         }
     }
     
