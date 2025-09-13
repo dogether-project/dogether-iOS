@@ -8,10 +8,10 @@
 import UIKit
 
 final class FilterButton: BaseButton {
-    let type: FilterTypes
+    let type: TodoFilterType
     private(set) var isColorful: Bool
     
-    init(type: FilterTypes, isColorful: Bool = true) {
+    init(type: TodoFilterType, isColorful: Bool = true) {
         self.type = type
         self.isColorful = isColorful
         
@@ -39,7 +39,7 @@ final class FilterButton: BaseButton {
         
         icon.image = type.image?.withRenderingMode(.alwaysTemplate)
         
-        label.text = type.rawValue
+        label.text = type.text
         label.font = Fonts.body2S
         
         let views = icon.image == nil ? [label] : [icon, label]
@@ -83,10 +83,10 @@ extension FilterButton {
 }
 
 extension FilterButton {
-    func update(type: FilterTypes, isColorful: Bool = true) {
+    func update(type: TodoFilterType, isColorful: Bool = true) {
         // icon, label, 색, width 전부 갱신
         self.icon.image = type.image?.withRenderingMode(.alwaysTemplate)
-        self.label.text = type.rawValue
+        self.label.text = type.text
         self.isColorful = isColorful
         
         backgroundColor = isColorful ? type.backgroundColor : .grey800

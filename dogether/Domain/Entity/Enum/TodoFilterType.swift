@@ -1,23 +1,26 @@
 //
-//  FilterTypes.swift
+//  TodoFilterType.swift
 //  dogether
 //
-//  Created by seungyooooong on 2/14/25.
+//  Created by yujaehong on 8/25/25.
 //
 
 import UIKit
 
-enum FilterTypes: String, CaseIterable {
+enum TodoFilterType: String, CaseIterable {
     case all = "전체"
-    case wait = "검사 대기"
-    case reject = "노인정"
-    case approve = "인정"
+    case waitCertification = "CERTIFY_PENDING"
+    case waitExamination = "REVIEW_PENDING"
+    case reject = "REJECT"
+    case approve = "APPROVE"
     
     var tag: Int {
         switch self {
         case .all:
             return 0
-        case .wait:
+        case .waitCertification:
+            return 0
+        case .waitExamination:
             return 1
         case .reject:
             return 2
@@ -30,7 +33,9 @@ enum FilterTypes: String, CaseIterable {
         switch self {
         case .all:
             return nil
-        case .wait:
+        case .waitCertification:
+            return nil
+        case .waitExamination:
             return .wait
         case .reject:
             return .reject
@@ -43,7 +48,9 @@ enum FilterTypes: String, CaseIterable {
         switch self {
         case .all, .approve:
             return .blue300
-        case .wait:
+        case .waitCertification:
+            return .grey300
+        case .waitExamination:
             return .dogetherYellow
         case .reject:
             return .dogetherRed
@@ -54,7 +61,9 @@ enum FilterTypes: String, CaseIterable {
         switch self {
         case .all:
             return 48
-        case .wait:
+        case .waitCertification:
+            return 52
+        case .waitExamination:
             return 89
         case .reject:
             return 74
@@ -63,9 +72,24 @@ enum FilterTypes: String, CaseIterable {
         }
     }
     
+    var text: String {
+        switch self {
+        case .all:
+            return "전체"
+        case .waitCertification:
+            return "미인증"
+        case .waitExamination:
+            return "검사 대기"
+        case .reject:
+            return "노인정"
+        case .approve:
+            return "인정"
+        }
+    }
+    
     var emptyDescription: String {
         switch self {
-        case .wait:
+        case .waitExamination:
             return "검사 대기 중인 투두가 없어요"
         case .reject:
             return "노인정받은 투두가 없어요"
@@ -86,19 +110,5 @@ enum FilterTypes: String, CaseIterable {
             return nil
         }
     }
-}
-
-extension FilterTypes {
-    init?(status: String) {
-        switch status.uppercased() {
-        case "REVIEW_PENDING":
-            self = .wait
-        case "REJECT":
-            self = .reject
-        case "APPROVE":
-            self = .approve
-        default:
-            return nil
-        }
-    }
+    
 }

@@ -31,7 +31,7 @@ final class ChallengeGroupUseCase {
             MemberCertificationInfo(
                 id: $0.id,
                 content: $0.content,
-                status: TodoStatus(rawValue: $0.status) ?? .waitExamination,
+                status: TodoFilterType(rawValue: $0.status) ?? .waitExamination,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
                 feedback: $0.reviewFeedback,
