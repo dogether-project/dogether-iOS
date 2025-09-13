@@ -176,11 +176,6 @@ extension MainViewController {
 //    @objc private func tappedGroupNameStackView() {
 //        presentBottomSheet()
 //    }
-//    
-//    @objc private func tappedJoinCodeStackView() {
-//        let inviteGroup = SystemManager.inviteGroup(groupName: viewModel.currentGroup.name, joinCode: viewModel.currentGroup.joinCode)
-//        present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
-//    }
 }
 
 // MARK: - about scroll
@@ -240,6 +235,7 @@ extension MainViewController: UIScrollViewDelegate {
 // MARK: - delegate
 protocol MainDelegate {
     func goRankingViewAction()
+    func inviteAction()
 }
 
 extension MainViewController: MainDelegate {
@@ -265,5 +261,11 @@ extension MainViewController: MainDelegate {
         // FIXME: rankingView RxSwift 도입 시 수정
         rankingViewController.viewModel.groupId = viewModel.groupViewDatas.value.index
         coordinator?.pushViewController(rankingViewController)
+    }
+    
+    func inviteAction() {
+        let groupData = viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
+        let inviteGroup = SystemManager.inviteGroup(groupName: groupData.name, joinCode: groupData.joinCode)
+        present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
     }
 }

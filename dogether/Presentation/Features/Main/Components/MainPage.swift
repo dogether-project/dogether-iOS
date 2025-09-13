@@ -95,10 +95,10 @@ final class MainPage: BasePage {
         
 //        let groupNameTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedGroupNameStackView))
 //        groupInfoView.groupNameStackView.addGestureRecognizer(groupNameTapGesture)
-//        
-//        let joinCodeTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedJoinCodeStackView))
-//        groupInfoView.joinCodeStackView.addGestureRecognizer(joinCodeTapGesture)
-//        
+        
+        let joinCodeTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedJoinCodeStackView))
+        groupInfoView.joinCodeStackView.addGestureRecognizer(joinCodeTapGesture)
+        
         rankingButton.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -216,6 +216,13 @@ final class MainPage: BasePage {
         if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
             groupInfoView.viewDidUpdate(datas.groups[datas.index])
         }
+    }
+}
+
+// MARK: - about tap gesture
+extension MainPage {
+    @objc private func tappedJoinCodeStackView() {
+        delegate?.inviteAction()
     }
 }
 
