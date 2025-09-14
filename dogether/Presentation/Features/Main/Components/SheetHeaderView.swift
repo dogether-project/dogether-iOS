@@ -8,45 +8,43 @@
 import UIKit
 
 final class SheetHeaderView: BaseView {
-    private(set) var date: String
+    var delegate: MainDelegate?
     
-    init(date: String = "2000.01.01") {
-        self.date = date
-        
-        super.init(frame: .zero)
-    }
-    required init?(coder: NSCoder) { fatalError() }
+    private let dateLabel = UILabel()
     
-    private let dateLabel = {
-        let label = UILabel()
-        label.textColor = .grey0
-        label.font = Fonts.head2B
-        return label
-    }()
-    
-    let prevButton = {
-        let button = UIButton()
-        button.setImage(.prevButton, for: .normal)
-        button.setImage(.prevButtonDisabled, for: .disabled)
-        button.isEnabled = false
-        button.tag = Directions.prev.tag
-        return button
-    }()
-    
-    let nextButton = {
-        let button = UIButton()
-        button.setImage(.nextButton, for: .normal)
-        button.setImage(.nextButtonDisabled, for: .disabled)
-        button.isEnabled = false
-        button.tag = Directions.next.tag
-        return button
-    }()
+    private let prevButton = UIButton()
+    private let nextButton = UIButton()
     
     override func configureView() {
-        updateUI()
+        dateLabel.textColor = .grey0
+        dateLabel.font = Fonts.head2B
+        
+        prevButton.setImage(.prevButton, for: .normal)
+        prevButton.setImage(.prevButtonDisabled, for: .disabled)
+        prevButton.tag = Directions.prev.tag
+        prevButton.isEnabled = false
+        
+        nextButton.setImage(.nextButton, for: .normal)
+        nextButton.setImage(.nextButtonDisabled, for: .disabled)
+        nextButton.tag = Directions.next.tag
+        nextButton.isEnabled = false
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        prevButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.goPastAction()
+            }, for: .touchUpInside
+        )
+        
+        nextButton.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.goFutureAction()
+            }, for: .touchUpInside
+        )
+    }
     
     override func configureHierarchy() {
         [dateLabel, prevButton, nextButton].forEach { addSubview($0) }
@@ -67,16 +65,17 @@ final class SheetHeaderView: BaseView {
             $0.width.height.equalTo(32)
         }
     }
-}
-
-extension SheetHeaderView {
-    func setDate(date: String) {
-        self.date = date
-        
-        updateUI()
-    }
     
-    private func updateUI() {
-        dateLabel.text = date
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let data = data as? SheetHeaderViewDatas {
+            dateLabel.text = data.date
+            
+//            prevButton.isEnabled = viewModel.dateOffset * -1 < viewModel.currentGroup.duration - 1
+//            nextButton.isEnabled = viewModel.dateOffset < 0
+        }
+        
+//        let currentDate = DateFormatterManager.formattedDate(viewModel.dateOffset)
+//        sheetHeaderView.setDate(date: currentDate)
     }
 }

@@ -15,6 +15,7 @@ final class MainViewModel {
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
+    private(set) var sheetHeaderViewDatas = BehaviorRelay<SheetHeaderViewDatas>(value: SheetHeaderViewDatas())
     
     private(set) var rankings: [RankingModel]?
     
@@ -46,6 +47,12 @@ final class MainViewModel {
         self.groupUseCase = GroupUseCase(repository: groupRepository)
         self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
         self.todoCertificationsUseCase = TodoCertificationsUseCase(repository: todoCertificationsRepository)
+    }
+}
+
+extension MainViewModel {
+    func onAppear() {
+        sheetHeaderViewDatas.accept(groupUseCase.onSheetHeaderViewAppear())
     }
 }
 

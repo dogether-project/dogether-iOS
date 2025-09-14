@@ -110,24 +110,8 @@ final class MainPage: BasePage {
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
         
-//        [sheetHeaderView.prevButton, sheetHeaderView.nextButton].forEach { button in
-//            button.addAction(
-//                UIAction { [weak self] _ in
-//                    guard let self else { return }
-//                    let newOffset = viewModel.dateOffset + button.tag
-//                    viewModel.setFilter(filter: .all)
-//                    viewModel.setDateOffset(offset: newOffset)
-//                    Task {
-//                        try await self.viewModel.updateListInfo()
-//                        await MainActor.run {
-//                            self.updateView()
-//                            self.updateList()
-//                        }
-//                    }
-//                }, for: .touchUpInside
-//            )
-//        }
-//        
+        sheetHeaderView.delegate = delegate
+        
 //        todoListView.todoScrollView.delegate = self
 //        
 //        [todoListView.allButton, todoListView.waitButton, todoListView.rejectButton, todoListView.approveButton].forEach { button in
@@ -215,6 +199,10 @@ final class MainPage: BasePage {
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
             groupInfoView.viewDidUpdate(datas.groups[datas.index])
+        }
+        
+        if let datas = data as? SheetHeaderViewDatas {
+            sheetHeaderView.viewDidUpdate(datas)
         }
     }
 }

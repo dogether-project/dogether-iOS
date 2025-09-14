@@ -42,6 +42,15 @@ final class MainViewController: BaseViewController {
                 mainPage.viewDidUpdate(datas)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.sheetHeaderViewDatas
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: SheetHeaderViewDatas())
+            .drive(onNext: { [weak self] datas in
+                guard let self else { return }
+                mainPage.viewDidUpdate(datas)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -127,11 +136,6 @@ extension MainViewController {
     }
     
 //    private func updateView() {
-//        let currentDate = DateFormatterManager.formattedDate(viewModel.dateOffset)
-//        sheetHeaderView.setDate(date: currentDate)
-//        sheetHeaderView.prevButton.isEnabled = viewModel.dateOffset * -1 < viewModel.currentGroup.duration - 1
-//        sheetHeaderView.nextButton.isEnabled = viewModel.dateOffset < 0
-//        
 //        timerView.isHidden = !(viewModel.currentGroup.status == .ready)
 //        todoListView.isHidden = viewModel.todoList.isEmpty
 //        todayEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset == 0) || viewModel.currentGroup.status != .running
@@ -236,12 +240,16 @@ extension MainViewController: UIScrollViewDelegate {
 protocol MainDelegate {
     func goRankingViewAction()
     func inviteAction()
+    func goPastAction()
+    func goFutureAction()
 }
 
 extension MainViewController: MainDelegate {
     private func onAppear() {
         checkAuthorization()
         coordinator?.updateViewController = loadMainView
+        
+        viewModel.onAppear()
         
         // ???: 화면 전환을 고려하면 일부러 강한 참조를 걸어야할까
         // TODO: 알림 권한을 거부한 사용자에 대한 로직은 추후에 추가
@@ -267,5 +275,33 @@ extension MainViewController: MainDelegate {
         let groupData = viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
         let inviteGroup = SystemManager.inviteGroup(groupName: groupData.name, joinCode: groupData.joinCode)
         present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
+    }
+    
+    func goPastAction() {
+        // FIXME: 추후 수정
+//        viewModel.sheetHeaderViewDatas.update { $0.date = "test" }
+    }
+    
+    func goFutureAction() {
+        // FIXME: 추후 수정
+//        viewModel.sheetHeaderViewDatas.update { $0.date = "test" }
+        
+//        [sheetHeaderView.prevButton, sheetHeaderView.nextButton].forEach { button in
+//            button.addAction(
+//                UIAction { [weak self] _ in
+//                    guard let self else { return }
+//                    let newOffset = viewModel.dateOffset + button.tag
+//                    viewModel.setFilter(filter: .all)
+//                    viewModel.setDateOffset(offset: newOffset)
+//                    Task {
+//                        try await self.viewModel.updateListInfo()
+//                        await MainActor.run {
+//                            self.updateView()
+//                            self.updateList()
+//                        }
+//                    }
+//                }, for: .touchUpInside
+//            )
+//        }
     }
 }
