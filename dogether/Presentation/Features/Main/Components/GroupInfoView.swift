@@ -194,7 +194,10 @@ final class GroupInfoView: BaseView {
             )
             
             durationInfoLabel.text = "(\(data.duration)일차)"
-            durationProgressView.progress = data.progress
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut) { [weak self] in
+                guard let self else { return }
+                durationProgressView.setProgress(data.progress, animated: true)
+            }
         }
     }
 }
