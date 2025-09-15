@@ -8,6 +8,8 @@
 import UIKit
 
 final class GroupInfoView: BaseView {
+    var delegate: MainDelegate?
+    
     private let hasCopyImage: Bool
     private(set) var challengeGroupInfo: ChallengeGroupInfo
     
@@ -28,8 +30,7 @@ final class GroupInfoView: BaseView {
     
     private let changeGroupImageView = UIImageView(image: .chevronDown)
     
-    // MARK: 탭 액션 viewController에서 지정
-    let groupNameStackView = {
+    private let groupNameStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 4
@@ -51,7 +52,7 @@ final class GroupInfoView: BaseView {
     }()
     
     private var memberStackView = UIStackView()
-    var joinCodeStackView = UIStackView()   // MARK: 탭 액션 viewController에서 지정
+    private var joinCodeStackView = UIStackView()
     private var endDateStackView = UIStackView()
     private func infoStackView(description: String) -> UIStackView {
         let label = UILabel()
@@ -139,7 +140,17 @@ final class GroupInfoView: BaseView {
         durationProgressView.transform = CGAffineTransform(translationX: 0, y: 1)   // MARK: 디자인 디테일 반영
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        groupNameStackView.addTapAction { [weak self] in
+            guard let self else { return }
+            delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
+        }
+        
+        joinCodeStackView.addTapAction { [weak self] in
+            guard let self else { return }
+            delegate?.inviteAction()
+        }
+    }
     
     override func configureHierarchy() {
         [groupNameStackView, groupInfoStackView, durationStackView].forEach { self.addSubview($0) }

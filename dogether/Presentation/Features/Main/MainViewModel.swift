@@ -14,6 +14,7 @@ final class MainViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
+    private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
     private(set) var sheetHeaderViewDatas = BehaviorRelay<SheetHeaderViewDatas>(value: SheetHeaderViewDatas())
     

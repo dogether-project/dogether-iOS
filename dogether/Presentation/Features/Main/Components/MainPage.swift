@@ -22,7 +22,7 @@ final class MainPage: BasePage {
     
     private let groupInfoView = GroupInfoView()
     
-    private var bottomSheetViewController: BottomSheetViewController?
+    private let bottomSheetView = BottomSheetView()
     
     private let rankingButton = {
         let button = UIButton()
@@ -93,11 +93,8 @@ final class MainPage: BasePage {
     override func configureAction() {
         dogetherHeader.delegate = coordinatorDelegate
         
-//        let groupNameTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedGroupNameStackView))
-//        groupInfoView.groupNameStackView.addGestureRecognizer(groupNameTapGesture)
-        
-        let joinCodeTapGesture = UITapGestureRecognizer(target: self, action: #selector(tappedJoinCodeStackView))
-        groupInfoView.joinCodeStackView.addGestureRecognizer(joinCodeTapGesture)
+        bottomSheetView.delegate = delegate
+        groupInfoView.delegate = delegate
         
         rankingButton.addAction(
             UIAction { [weak self] _ in
@@ -140,7 +137,7 @@ final class MainPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, dosikImageView, dosikCommentButton, groupInfoView, rankingButton, dogetherSheet].forEach { addSubview($0) }
+        [dogetherHeader, dosikImageView, dosikCommentButton, groupInfoView, rankingButton, dogetherSheet, bottomSheetView].forEach { addSubview($0) }
         
         [sheetHeaderView, timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { dogetherSheet.addSubview($0) }
     }
@@ -193,24 +190,31 @@ final class MainPage: BasePage {
                 $0.horizontalEdges.equalToSuperview()
             }
         }
+        
+        bottomSheetView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? BottomSheetViewDatas {
+            bottomSheetView.viewDidUpdate(datas)
+        }
+        
         if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
+            bottomSheetView.viewDidUpdate(datas)
             groupInfoView.viewDidUpdate(datas.groups[datas.index])
         }
         
         if let datas = data as? SheetHeaderViewDatas {
             sheetHeaderView.viewDidUpdate(datas)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.bottomSheetView.viewDidUpdate(datas)
+            }
         }
-    }
-}
-
-// MARK: - about tap gesture
-extension MainPage {
-    @objc private func tappedJoinCodeStackView() {
-        delegate?.inviteAction()
+        
     }
 }
 

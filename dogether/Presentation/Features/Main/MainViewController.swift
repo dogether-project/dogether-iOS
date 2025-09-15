@@ -34,6 +34,15 @@ final class MainViewController: BaseViewController {
     override func setViewDatas() { }
     
     override func bindViewModel() {
+        viewModel.bottomSheetViewDatas
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: BottomSheetViewDatas())
+            .drive(onNext: { [weak self] datas in
+                guard let self else { return }
+                mainPage.viewDidUpdate(datas)
+            })
+            .disposed(by: disposeBag)
+        
         viewModel.groupViewDatas
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: GroupViewDatas())
@@ -176,10 +185,6 @@ extension MainViewController {
 //            )
 //        }
 //    }
-//    
-//    @objc private func tappedGroupNameStackView() {
-//        presentBottomSheet()
-//    }
 }
 
 // MARK: - about scroll
@@ -239,6 +244,9 @@ extension MainViewController: UIScrollViewDelegate {
 // MARK: - delegate
 protocol MainDelegate {
     func goRankingViewAction()
+    func updateBottomSheetVisibleAction(isShowSheet: Bool)
+    func selectGroupAction(index: Int)
+    func addGroupAction()
     func inviteAction()
     func goPastAction()
     func goFutureAction()
@@ -269,6 +277,20 @@ extension MainViewController: MainDelegate {
         // FIXME: rankingView RxSwift 도입 시 수정
         rankingViewController.viewModel.groupId = viewModel.groupViewDatas.value.index
         coordinator?.pushViewController(rankingViewController)
+    }
+    
+    func updateBottomSheetVisibleAction(isShowSheet: Bool) {
+        viewModel.bottomSheetViewDatas.update { $0.isShowSheet = isShowSheet }
+    }
+    
+    func selectGroupAction(index: Int) {
+        viewModel.groupViewDatas.update { $0.index = index }
+    }
+    
+    func addGroupAction() {
+        let startViewController = StartViewController()
+        let startViewDatas = StartViewDatas(isFirstGroup: false)
+        coordinator?.pushViewController(startViewController, datas: startViewDatas)
     }
     
     func inviteAction() {
