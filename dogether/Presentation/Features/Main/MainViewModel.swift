@@ -143,4 +143,10 @@ extension MainViewModel {
             try await groupUseCase.saveLastSelectedGroup(groupId: currentGroup.id)
         }
     }
+    
+    func saveLastSelectedGroupIndex(index: Int) {
+        Task {
+            try await groupUseCase.saveLastSelectedGroup(groupId: groupViewDatas.value.groups[index].id)
+        }
+    }
 }

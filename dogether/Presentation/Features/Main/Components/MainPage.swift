@@ -16,10 +16,6 @@ final class MainPage: BasePage {
     
     private let dogetherHeader = DogetherHeader()
     
-    private let dosikImageView = UIImageView(image: .noteDosik)
-    
-    private let dosikCommentButton = DosikCommentButton()
-    
     private let groupInfoView = GroupInfoView()
     
     private let bottomSheetView = BottomSheetView()
@@ -34,13 +30,13 @@ final class MainPage: BasePage {
         
         let label = UILabel()
         label.text = "그룹 활동 한눈에 보기 !"
-        label.textColor = .grey100
+        label.textColor = .grey200
         label.font = Fonts.body1S
         label.isUserInteractionEnabled = false
         
         let chevronImageView = UIImageView()
         chevronImageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        chevronImageView.tintColor = .grey100
+        chevronImageView.tintColor = .grey200
         chevronImageView.isUserInteractionEnabled = false
         
         [imageView, label, chevronImageView].forEach { button.addSubview($0) }
@@ -60,7 +56,7 @@ final class MainPage: BasePage {
         chevronImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.right.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(22)
+            $0.width.height.equalTo(24)
         }
         
         return button
@@ -137,7 +133,7 @@ final class MainPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, dosikImageView, dosikCommentButton, groupInfoView, rankingButton, dogetherSheet, bottomSheetView].forEach { addSubview($0) }
+        [dogetherHeader, groupInfoView, rankingButton, dogetherSheet, bottomSheetView].forEach { addSubview($0) }
         
         [sheetHeaderView, timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { dogetherSheet.addSubview($0) }
     }
@@ -148,21 +144,10 @@ final class MainPage: BasePage {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        dosikImageView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom)
-            $0.right.equalToSuperview().inset(16)
-            $0.width.height.equalTo(100)
-        }
-        
-        dosikCommentButton.snp.makeConstraints {
-            $0.bottom.equalTo(dosikImageView.snp.top).offset(-6)
-            $0.right.equalTo(dosikImageView)
-        }
-        
         groupInfoView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(8)
+            $0.top.equalTo(dogetherHeader.snp.bottom).offset(4)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(36 + 12 + 45 + 16 + 21)   // FIXME: GroupInfoView 자체를 StackView로 전환
+            $0.height.equalTo(143)
         }
         
         rankingButton.snp.makeConstraints {
@@ -262,7 +247,7 @@ extension MainPage {
     }
     
     private func updateAlpha(alpha: CGFloat) {
-        [dosikImageView, groupInfoView.groupInfoStackView, groupInfoView.durationStackView, rankingButton].forEach {
+        [groupInfoView.groupInfoStackView, groupInfoView.durationStackView, rankingButton].forEach {
             $0.alpha = alpha
         }
     }

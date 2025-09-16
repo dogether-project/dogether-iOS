@@ -285,6 +285,7 @@ extension MainViewController: MainDelegate {
     
     func selectGroupAction(index: Int) {
         viewModel.groupViewDatas.update { $0.index = index }
+        viewModel.saveLastSelectedGroupIndex(index: index)
     }
     
     func addGroupAction() {
