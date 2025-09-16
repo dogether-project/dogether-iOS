@@ -127,7 +127,8 @@ final class GroupInfoView: BaseView {
     
     override func configureConstraints() {
         dosikImageView.snp.makeConstraints {
-            $0.top.right.equalToSuperview()
+            $0.top.equalToSuperview().offset(56)
+            $0.right.equalToSuperview()
             $0.width.height.equalTo(100)
         }
         
@@ -137,7 +138,7 @@ final class GroupInfoView: BaseView {
         }
         
         groupNameStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(6)
+            $0.top.equalTo(dosikImageView).offset(6)
             $0.left.equalToSuperview()
             $0.height.equalTo(36)
         }

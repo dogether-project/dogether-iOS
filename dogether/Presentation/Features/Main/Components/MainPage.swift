@@ -145,9 +145,9 @@ final class MainPage: BasePage {
         }
         
         groupInfoView.snp.makeConstraints {
-            $0.top.equalTo(dogetherHeader.snp.bottom).offset(4)
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(143)
+            $0.height.equalTo(199)
         }
         
         rankingButton.snp.makeConstraints {
