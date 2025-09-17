@@ -22,7 +22,6 @@ final class GroupInfoView: BaseView {
     required init?(coder: NSCoder) { fatalError() }
     
     private let dosikImageView = UIImageView(image: .noteDosik)
-    private let dosikCommentButton = DosikCommentButton()
     
     private let nameLabel = UILabel()
     private let changeGroupImageView = UIImageView(image: .chevronDown)
@@ -121,24 +120,17 @@ final class GroupInfoView: BaseView {
     }
     
     override func configureHierarchy() {
-        [dosikImageView, dosikCommentButton,
-         groupNameStackView, groupInfoStackView, durationStackView].forEach { self.addSubview($0) }
+        [dosikImageView, groupNameStackView, groupInfoStackView, durationStackView].forEach { self.addSubview($0) }
     }
     
     override func configureConstraints() {
         dosikImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(56)
-            $0.right.equalToSuperview()
+            $0.top.right.equalToSuperview()
             $0.width.height.equalTo(100)
         }
         
-        dosikCommentButton.snp.makeConstraints {
-            $0.bottom.equalTo(dosikImageView.snp.top).offset(-6)
-            $0.right.equalTo(dosikImageView)
-        }
-        
         groupNameStackView.snp.makeConstraints {
-            $0.top.equalTo(dosikImageView).offset(6)
+            $0.top.equalToSuperview().offset(6)
             $0.left.equalToSuperview()
             $0.height.equalTo(36)
         }
@@ -170,11 +162,6 @@ final class GroupInfoView: BaseView {
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
         if let data = data as? GroupEntity {
-            dosikCommentButton.updateUI(
-                comment: data.status == .dDay ? "그룹이 종료됐어요!" :
-                    data.progress >= 1.0 ? "마지막 인증일이에요!\n내일부터 인증이 불가능해요." : nil
-            )
-            
             nameLabel.text = data.name
             
             memberInfoLabel.attributedText = NSAttributedString(

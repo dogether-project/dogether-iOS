@@ -16,6 +16,8 @@ final class MainPage: BasePage {
     
     private let dogetherHeader = DogetherHeader()
     
+    private let dosikCommentButton = DosikCommentButton()
+    
     private let groupInfoView = GroupInfoView()
     
     private let bottomSheetView = BottomSheetView()
@@ -133,7 +135,8 @@ final class MainPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [dogetherHeader, groupInfoView, rankingButton, dogetherSheet, bottomSheetView].forEach { addSubview($0) }
+        [dogetherHeader, groupInfoView, dosikCommentButton,
+         rankingButton, dogetherSheet, bottomSheetView].forEach { addSubview($0) }
         
         [sheetHeaderView, timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { dogetherSheet.addSubview($0) }
     }
@@ -145,9 +148,14 @@ final class MainPage: BasePage {
         }
         
         groupInfoView.snp.makeConstraints {
-            $0.top.equalToSuperview()
+            $0.top.equalTo(dogetherHeader.snp.bottom).offset(4)
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(199)
+            $0.height.equalTo(143)
+        }
+        
+        dosikCommentButton.snp.makeConstraints {
+            $0.bottom.equalTo(groupInfoView.snp.top).offset(-6)
+            $0.right.equalTo(groupInfoView)
         }
         
         rankingButton.snp.makeConstraints {
@@ -190,6 +198,7 @@ final class MainPage: BasePage {
         if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
             bottomSheetView.viewDidUpdate(datas)
             groupInfoView.viewDidUpdate(datas.groups[datas.index])
+            dosikCommentButton.viewDidUpdate(datas.groups[datas.index])
         }
         
         if let datas = data as? SheetHeaderViewDatas {
