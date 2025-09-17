@@ -39,14 +39,14 @@ final class GroupInfoView: BaseView {
     private var joinCodeStackView = UIStackView()
     private var endDateStackView = UIStackView()
     
-    let groupInfoStackView = UIStackView()
+    private let groupInfoStackView = UIStackView()
     
     // TODO: 추후 Label 전체 개선 시 다른 descriptionLabel들과 통일하도록 수정
     private let durationDescriptionLabel = UILabel()
     private let durationInfoLabel = UILabel()
     private let durationProgressView = UIProgressView()
     
-    let durationStackView = UIStackView()
+    private let durationStackView = UIStackView()
     
     override func configureView() {
         nameLabel.textColor = .blue300
@@ -182,6 +182,10 @@ final class GroupInfoView: BaseView {
                 guard let self else { return }
                 durationProgressView.setProgress(data.progress, animated: true)
             }
+        }
+        
+        if let datas = data as? SheetViewDatas {
+            [dosikImageView, groupInfoStackView, durationStackView].forEach { $0.alpha = datas.alpha }
         }
     }
 }

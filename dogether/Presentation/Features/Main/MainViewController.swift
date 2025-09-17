@@ -52,9 +52,9 @@ final class MainViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.sheetHeaderViewDatas
+        viewModel.sheetViewDatas
             .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: SheetHeaderViewDatas())
+            .asDriver(onErrorJustReturn: SheetViewDatas())
             .drive(onNext: { [weak self] datas in
                 guard let self else { return }
                 mainPage.viewDidUpdate(datas)
@@ -243,6 +243,7 @@ extension MainViewController: UIScrollViewDelegate {
 
 // MARK: - delegate
 protocol MainDelegate {
+    func updateAlphaBySheet(alpha: CGFloat)
     func goRankingViewAction()
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectGroupAction(index: Int)
@@ -270,6 +271,10 @@ extension MainViewController: MainDelegate {
                 self.coordinator?.showModal(reviews: reviews)
             }
         }
+    }
+    
+    func updateAlphaBySheet(alpha: CGFloat) {
+        viewModel.sheetViewDatas.update { $0.alpha = alpha }
     }
     
     func goRankingViewAction() {
@@ -302,12 +307,12 @@ extension MainViewController: MainDelegate {
     
     func goPastAction() {
         // FIXME: 추후 수정
-//        viewModel.sheetHeaderViewDatas.update { $0.date = "test" }
+//        viewModel.sheetViewDatas.update { $0.date = "test" }
     }
     
     func goFutureAction() {
         // FIXME: 추후 수정
-//        viewModel.sheetHeaderViewDatas.update { $0.date = "test" }
+//        viewModel.sheetViewDatas.update { $0.date = "test" }
         
 //        [sheetHeaderView.prevButton, sheetHeaderView.nextButton].forEach { button in
 //            button.addAction(

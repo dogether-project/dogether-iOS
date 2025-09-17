@@ -201,7 +201,11 @@ final class MainPage: BasePage {
             dosikCommentButton.viewDidUpdate(datas.groups[datas.index])
         }
         
-        if let datas = data as? SheetHeaderViewDatas {
+        if let datas = data as? SheetViewDatas {
+            groupInfoView.viewDidUpdate(datas)
+            // FIXME: 추후 rankingButton View로 분리
+//            rankingButton.viewDidUpdate(datas)
+            rankingButton.alpha = datas.alpha
             sheetHeaderView.viewDidUpdate(datas)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -224,7 +228,9 @@ extension MainPage: UIGestureRecognizerDelegate {
                 with: translation.y
             )
             dogetherSheetTopConstraint?.update(offset: newOffset)
-            updateAlpha(alpha: 1 - (SheetStatus.normal.offset - newOffset) / (SheetStatus.normal.offset - SheetStatus.expand.offset))
+            delegate?.updateAlphaBySheet(
+                alpha: 1 - (SheetStatus.normal.offset - newOffset) / (SheetStatus.normal.offset - SheetStatus.expand.offset)
+            )
             layoutIfNeeded()
 
         case .ended:
@@ -250,14 +256,8 @@ extension MainPage {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
             dogetherSheetTopConstraint?.update(offset: status.offset)
-            updateAlpha(alpha: status == .normal ? 1 : 0)
+            delegate?.updateAlphaBySheet(alpha: status == .normal ? 1 : 0)
             layoutIfNeeded()
-        }
-    }
-    
-    private func updateAlpha(alpha: CGFloat) {
-        [groupInfoView.groupInfoStackView, groupInfoView.durationStackView, rankingButton].forEach {
-            $0.alpha = alpha
         }
     }
     

@@ -68,7 +68,7 @@ final class SheetHeaderView: BaseView {
     
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
-        if let data = data as? SheetHeaderViewDatas {
+        if let data = data as? SheetViewDatas {
             dateLabel.text = data.date
             
 //            prevButton.isEnabled = viewModel.dateOffset * -1 < viewModel.currentGroup.duration - 1

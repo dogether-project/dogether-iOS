@@ -16,7 +16,7 @@ final class MainViewModel {
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
-    private(set) var sheetHeaderViewDatas = BehaviorRelay<SheetHeaderViewDatas>(value: SheetHeaderViewDatas())
+    private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(value: SheetViewDatas())
     
     private(set) var rankings: [RankingModel]?
     
@@ -53,7 +53,7 @@ final class MainViewModel {
 
 extension MainViewModel {
     func onAppear() {
-        sheetHeaderViewDatas.accept(groupUseCase.onSheetHeaderViewAppear())
+        sheetViewDatas.accept(groupUseCase.onSheetViewAppear())
     }
 }
 

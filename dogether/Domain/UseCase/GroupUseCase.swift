@@ -95,7 +95,7 @@ final class GroupUseCase {
 }
 
 extension GroupUseCase {
-    func onSheetHeaderViewAppear() -> SheetHeaderViewDatas {
-        return SheetHeaderViewDatas(date: DateFormatterManager.formattedDate(), dateOffset: 0)
+    func onSheetViewAppear() -> SheetViewDatas {
+        return SheetViewDatas(date: DateFormatterManager.formattedDate())
     }
 }
