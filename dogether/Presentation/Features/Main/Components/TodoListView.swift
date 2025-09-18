@@ -117,7 +117,7 @@ final class TodoListView: BaseView {
 }
 
 extension TodoListView {
-    func updateList(todoList: [TodoInfo], filter: FilterTypes, isToday: Bool) {
+    func updateList(todoList: [TodoEntity], filter: FilterTypes, isToday: Bool) {
         allButton.setIsColorful(filter == .all)
         waitButton.setIsColorful(filter == .wait)
         rejectButton.setIsColorful(filter == .reject)

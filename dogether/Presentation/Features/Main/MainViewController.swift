@@ -73,37 +73,40 @@ extension MainViewController {
         Task { [weak self] in
             guard let self else { return }
             do {
-                try await viewModel.getGroups()
-                let (groupIndex, newChallengeGroupInfos) = try await viewModel.getChallengeGroupInfos()
-
-                if newChallengeGroupInfos.isEmpty {
-                    await MainActor.run {
-                        self.coordinator?.setNavigationController(StartViewController())
-                    }
+                let groupViewDatas = try await viewModel.getGroups()
+                viewModel.groupViewDatas.accept(groupViewDatas)
+                
+                if groupViewDatas.groups.isEmpty {
+                    coordinator?.setNavigationController(StartViewController())
                     return
                 }
+                
+                let currentGroup = groupViewDatas.groups[groupViewDatas.index]
+                if currentGroup.status == .ready {
+                    viewModel.sheetViewDatas.update { $0.status = .timer }
+                    return
+                }
+                
+                let dateOffset = viewModel.sheetViewDatas.value.dateOffset
+                if currentGroup.status == .finished && dateOffset == 0 {
+                    viewModel.sheetViewDatas.update { $0.status = .done }
+                    return
+                }
+                
+                let todoList = try await viewModel.getTodoList(dateOffset: dateOffset, groupId: currentGroup.id)
+                viewModel.sheetViewDatas.update {
+                    $0.todoList = todoList
+                    $0.status = dateOffset == 0 && todoList.isEmpty ? .createTodo :
+                    dateOffset == 0 && todoList.count > 0 ? .certificateTodo :
+                    dateOffset < 0 && todoList.isEmpty ? .emptyList : .todoList
+                }
 
-                viewModel.setChallengeIndex(index: selectedIndex ?? groupIndex ?? 0)
-                viewModel.setChallengeGroupInfos(challengegroupInfos: newChallengeGroupInfos)
-
-//                configureBottomSheetViewController()
-//
-//                if viewModel.currentGroup.status == .ready {
-//                    viewModel.startCountdown(updateTimer: updateTimer, updateList: updateList)
-//                }
-//
-//                try await viewModel.updateListInfo()
-//
-//                await MainActor.run {
-//                    self.updateView()
-//                    self.updateList()
-//                }
             } catch let error as NetworkError {
                 await MainActor.run {
                     ErrorHandlingManager.presentErrorView(
                         error: error,
                         presentingViewController: self,
-                        coordinator: coordinator,
+                        coordinator: self.coordinator,
                         retryHandler: { [weak self] in
                             guard let self else { return }
                             loadMainView()
@@ -258,8 +261,6 @@ extension MainViewController: MainDelegate {
         checkAuthorization()
         coordinator?.updateViewController = loadMainView
         
-        viewModel.onAppear()
-        
         // ???: 화면 전환을 고려하면 일부러 강한 참조를 걸어야할까
         // TODO: 알림 권한을 거부한 사용자에 대한 로직은 추후에 추가
         Task { [weak self] in
@@ -291,6 +292,7 @@ extension MainViewController: MainDelegate {
     func selectGroupAction(index: Int) {
         viewModel.groupViewDatas.update { $0.index = index }
         viewModel.saveLastSelectedGroupIndex(index: index)
+//        viewModel.sheetViewDatas.update { $0.status = viewModel.groupViewDatas.value.groups[index].status }
     }
     
     func addGroupAction() {

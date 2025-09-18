@@ -10,7 +10,7 @@ import SnapKit
 import Kingfisher
 
 final class CertificationInfoViewController: BaseViewController {
-    var todoInfo = TodoInfo(id: 0, content: "", status: "")
+    var todoInfo = TodoEntity(id: 0, content: "", status: "")
     
     private let navigationHeader = NavigationHeader(title: "내 인증 정보")
     

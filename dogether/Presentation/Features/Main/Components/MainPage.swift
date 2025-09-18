@@ -93,6 +93,7 @@ final class MainPage: BasePage {
         
         bottomSheetView.delegate = delegate
         groupInfoView.delegate = delegate
+        sheetHeaderView.delegate = delegate
         
         rankingButton.addAction(
             UIAction { [weak self] _ in
@@ -104,8 +105,6 @@ final class MainPage: BasePage {
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
-        
-        sheetHeaderView.delegate = delegate
         
 //        todoListView.todoScrollView.delegate = self
 //        
@@ -207,10 +206,6 @@ final class MainPage: BasePage {
 //            rankingButton.viewDidUpdate(datas)
             rankingButton.alpha = datas.alpha
             sheetHeaderView.viewDidUpdate(datas)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.bottomSheetView.viewDidUpdate(datas)
-            }
         }
         
     }

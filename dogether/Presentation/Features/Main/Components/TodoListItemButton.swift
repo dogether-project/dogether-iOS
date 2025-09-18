@@ -9,11 +9,11 @@ import UIKit
 import SnapKit
 
 final class TodoListItemButton: BaseButton {
-    private(set) var todo: TodoInfo
+    private(set) var todo: TodoEntity
     private(set) var isToday: Bool
     private(set) var isUncertified: Bool
     
-    init(todo: TodoInfo, isToday: Bool) {
+    init(todo: TodoEntity, isToday: Bool) {
         self.todo = todo
         self.isToday = isToday
         self.isUncertified = todo.status == TodoStatus.waitCertification.rawValue

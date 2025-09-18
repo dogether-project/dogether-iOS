@@ -16,17 +16,9 @@ final class MainViewModel {
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
-    private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(value: SheetViewDatas())
-    
-    private(set) var rankings: [RankingModel]?
-    
-    private(set) var challengeGroupInfos: [ChallengeGroupInfo] = []
-    
-    var currentGroup: ChallengeGroupInfo {
-        challengeGroupInfos[currentChallengeIndex]
-    }
-    
-    private(set) var currentChallengeIndex: Int = 0
+    private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(
+        value: SheetViewDatas(date: DateFormatterManager.formattedDate())
+    )
     
     private(set) var timer: Timer?
     private(set) var time: String = "23:59:59"
@@ -34,7 +26,7 @@ final class MainViewModel {
     
     private(set) var dateOffset: Int = 0
     private(set) var currentFilter: FilterTypes = .all
-    private(set) var todoList: [TodoInfo] = []
+    private(set) var todoList: [TodoEntity] = []
     
 
     // MARK: - Computed
@@ -51,20 +43,16 @@ final class MainViewModel {
     }
 }
 
-extension MainViewModel {
-    func onAppear() {
-        sheetViewDatas.accept(groupUseCase.onSheetViewAppear())
-    }
-}
 
 // MARK: - get
 extension MainViewModel {
-    func getGroups() async throws {
-        groupViewDatas.accept(try await groupUseCase.getGroups())
+    func getGroups() async throws -> GroupViewDatas {
+        return try await groupUseCase.getGroups()
     }
     
-    func getChallengeGroupInfos() async throws -> (groupIndex: Int?, challengeGroupInfos: [ChallengeGroupInfo]) {
-        return try await groupUseCase.getChallengeGroupInfos()
+    func getTodoList(dateOffset: Int, groupId: Int) async throws -> [TodoEntity] {
+        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
+        return try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date)
     }
     
     func getReviews() async throws -> [ReviewModel] {
@@ -74,14 +62,6 @@ extension MainViewModel {
 
 // MARK: - set
 extension MainViewModel {
-    func setChallengeIndex(index: Int) {
-        self.currentChallengeIndex = index
-    }
-    
-    func setChallengeGroupInfos(challengegroupInfos: [ChallengeGroupInfo]) {
-        self.challengeGroupInfos = challengegroupInfos
-    }
-    
     func setDateOffset(offset: Int) {
         self.dateOffset = offset
     }
@@ -128,22 +108,8 @@ extension MainViewModel {
         Task { @MainActor in updateTimer() }
     }
 }
-    
-// MARK: - todoList
-extension MainViewModel {
-    func updateListInfo() async throws {
-        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
-        todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date)
-    }
-}
 
 extension MainViewModel {
-    func saveLastSelectedGroup() {
-        Task {
-            try await groupUseCase.saveLastSelectedGroup(groupId: currentGroup.id)
-        }
-    }
-    
     func saveLastSelectedGroupIndex(index: Int) {
         Task {
             try await groupUseCase.saveLastSelectedGroup(groupId: groupViewDatas.value.groups[index].id)

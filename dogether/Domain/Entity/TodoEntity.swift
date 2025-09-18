@@ -1,5 +1,5 @@
 //
-//  TodoInfo.swift
+//  TodoEntity.swift
 //  dogether
 //
 //  Created by seungyooooong on 2/14/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TodoInfo: Decodable {
+struct TodoEntity: Decodable, BaseEntity {
     let id: Int
     let content: String
     var status: String
@@ -32,7 +32,7 @@ struct TodoInfo: Decodable {
     }
 }
 
-extension TodoInfo {
+extension TodoEntity {
     init(from item: CertificationItem) {
         self.id = item.id
         self.content = item.content

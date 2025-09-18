@@ -93,9 +93,3 @@ final class GroupUseCase {
         }
     }
 }
-
-extension GroupUseCase {
-    func onSheetViewAppear() -> SheetViewDatas {
-        return SheetViewDatas(date: DateFormatterManager.formattedDate())
-    }
-}
