@@ -43,7 +43,6 @@ final class MainViewModel {
     }
 }
 
-
 // MARK: - get
 extension MainViewModel {
     func getGroups() async throws -> GroupViewDatas {
@@ -71,6 +70,27 @@ extension MainViewModel {
             self.currentFilter = .all
         } else {
             self.currentFilter = filter
+        }
+    }
+    
+    func setSheetViewDatasForCurrentGroup(currentGroup: GroupEntity) async throws {
+        if currentGroup.status == .ready {
+            sheetViewDatas.update { $0.status = .timer }
+            return
+        }
+        
+        let dateOffset = sheetViewDatas.value.dateOffset
+        if currentGroup.status == .dDay && dateOffset == 0 {
+            sheetViewDatas.update { $0.status = .done }
+            return
+        }
+        
+        let todoList = try await getTodoList(dateOffset: dateOffset, groupId: currentGroup.id)
+        sheetViewDatas.update {
+            $0.todoList = todoList
+            $0.status = dateOffset == 0 && todoList.isEmpty ? .createTodo :
+            dateOffset == 0 && todoList.count > 0 ? .certificateTodo :
+            dateOffset < 0 && todoList.isEmpty ? .emptyList : .todoList
         }
     }
 }

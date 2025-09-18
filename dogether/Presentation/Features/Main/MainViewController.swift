@@ -81,25 +81,9 @@ extension MainViewController {
                     return
                 }
                 
-                let currentGroup = groupViewDatas.groups[groupViewDatas.index]
-                if currentGroup.status == .ready {
-                    viewModel.sheetViewDatas.update { $0.status = .timer }
-                    return
-                }
-                
-                let dateOffset = viewModel.sheetViewDatas.value.dateOffset
-                if currentGroup.status == .finished && dateOffset == 0 {
-                    viewModel.sheetViewDatas.update { $0.status = .done }
-                    return
-                }
-                
-                let todoList = try await viewModel.getTodoList(dateOffset: dateOffset, groupId: currentGroup.id)
-                viewModel.sheetViewDatas.update {
-                    $0.todoList = todoList
-                    $0.status = dateOffset == 0 && todoList.isEmpty ? .createTodo :
-                    dateOffset == 0 && todoList.count > 0 ? .certificateTodo :
-                    dateOffset < 0 && todoList.isEmpty ? .emptyList : .todoList
-                }
+                try await viewModel.setSheetViewDatasForCurrentGroup(
+                    currentGroup: groupViewDatas.groups[groupViewDatas.index]
+                )
 
             } catch let error as NetworkError {
                 await MainActor.run {
@@ -292,7 +276,12 @@ extension MainViewController: MainDelegate {
     func selectGroupAction(index: Int) {
         viewModel.groupViewDatas.update { $0.index = index }
         viewModel.saveLastSelectedGroupIndex(index: index)
-//        viewModel.sheetViewDatas.update { $0.status = viewModel.groupViewDatas.value.groups[index].status }
+        
+        Task {
+            try await viewModel.setSheetViewDatasForCurrentGroup(
+                currentGroup: viewModel.groupViewDatas.value.groups[index]
+            )
+        }
     }
     
     func addGroupAction() {

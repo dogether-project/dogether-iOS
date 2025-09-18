@@ -178,7 +178,7 @@ final class MainPage: BasePage {
         [timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach {
             $0.snp.makeConstraints {
                 $0.top.equalTo(sheetHeaderView.snp.bottom)
-                $0.bottom.equalToSuperview()
+                $0.bottom.equalToSuperview().inset(UIApplication.safeAreaOffset.bottom)
                 $0.horizontalEdges.equalToSuperview()
             }
         }
@@ -206,6 +206,12 @@ final class MainPage: BasePage {
 //            rankingButton.viewDidUpdate(datas)
             rankingButton.alpha = datas.alpha
             sheetHeaderView.viewDidUpdate(datas)
+            
+            timerView.isHidden = !(datas.status == .timer)
+            todoListView.isHidden = !(datas.status == .certificateTodo || datas.status == .todoList)
+            todayEmptyView.isHidden = !(datas.status == .createTodo)
+            pastEmptyView.isHidden = !(datas.status == .emptyList)
+            doneView.isHidden = !(datas.status == .done)
         }
         
     }
