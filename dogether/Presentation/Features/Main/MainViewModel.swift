@@ -20,6 +20,8 @@ final class MainViewModel {
         value: SheetViewDatas(date: DateFormatterManager.formattedDate())
     )
     
+    private(set) var timerViewDatas = BehaviorRelay<TimerViewDatas>(value: TimerViewDatas())
+    
     private(set) var timer: Timer?
     private(set) var time: String = "23:59:59"
     private(set) var timeProgress: CGFloat = 0.0
@@ -97,35 +99,32 @@ extension MainViewModel {
 
 // MARK: - ready
 extension MainViewModel {
-    func startCountdown(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
-        checkRemainTime(updateTimer: updateTimer, updateList: updateList)
+    func startTimer() {
+        calculateRemainTime()
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                self.checkRemainTime(updateTimer: updateTimer, updateList: updateList)
+                self.calculateRemainTime()
             }
         }
     }
     
-    private func stopCountdown() {
+    func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
     
-    private func checkRemainTime(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
+    private func calculateRemainTime() {
         let remainTime = Date().getRemainTime()
         
         if remainTime > 0 {
-            updateTimerInfo(remainTime: remainTime, updateTimer: updateTimer)
+            timerViewDatas.update {
+                $0.time = remainTime.formatToHHmmss()
+                $0.timeProgress = remainTime.getTimeProgress()
+            }
         } else {
-            stopCountdown()
+            stopTimer()
         }
-    }
-    
-    private func updateTimerInfo(remainTime: TimeInterval, updateTimer: @escaping () -> Void) {
-        self.time = remainTime.formatToHHmmss()
-        self.timeProgress = remainTime.getTimeProgress()
-        Task { @MainActor in updateTimer() }
     }
 }
 

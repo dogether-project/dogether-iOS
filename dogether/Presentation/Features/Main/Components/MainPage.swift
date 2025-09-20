@@ -212,8 +212,17 @@ final class MainPage: BasePage {
             todayEmptyView.isHidden = !(datas.status == .createTodo)
             pastEmptyView.isHidden = !(datas.status == .emptyList)
             doneView.isHidden = !(datas.status == .done)
+            
+            if datas.status == .timer {
+                delegate?.startTimerAction()
+            } else {
+                delegate?.stopTimerAction()
+            }
         }
         
+        if let datas = data as? TimerViewDatas {
+            timerView.viewDidUpdate(datas)
+        }
     }
 }
 

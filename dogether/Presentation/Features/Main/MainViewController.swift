@@ -60,6 +60,15 @@ final class MainViewController: BaseViewController {
                 mainPage.viewDidUpdate(datas)
             })
             .disposed(by: disposeBag)
+        
+        viewModel.timerViewDatas
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: TimerViewDatas())
+            .drive(onNext: { [weak self] datas in
+                guard let self else { return }
+                mainPage.viewDidUpdate(datas)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -238,6 +247,8 @@ protocol MainDelegate {
     func inviteAction()
     func goPastAction()
     func goFutureAction()
+    func startTimerAction()
+    func stopTimerAction()
 }
 
 extension MainViewController: MainDelegate {
@@ -322,5 +333,13 @@ extension MainViewController: MainDelegate {
 //                }, for: .touchUpInside
 //            )
 //        }
+    }
+    
+    func startTimerAction() {
+        viewModel.startTimer()
+    }
+    
+    func stopTimerAction() {
+        viewModel.stopTimer()
     }
 }
