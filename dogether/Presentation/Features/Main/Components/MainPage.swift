@@ -17,7 +17,6 @@ final class MainPage: BasePage {
     private let dogetherHeader = DogetherHeader()
     
     private let dosikCommentButton = DosikCommentButton()
-    
     private let groupInfoView = GroupInfoView()
     
     private let bottomSheetView = BottomSheetView()
@@ -101,6 +100,8 @@ final class MainPage: BasePage {
                 delegate?.goRankingViewAction()
             }, for: .touchUpInside
         )
+        
+        todayEmptyView.delegate = delegate
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self

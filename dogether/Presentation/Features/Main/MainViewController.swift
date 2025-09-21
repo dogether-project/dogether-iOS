@@ -249,6 +249,7 @@ protocol MainDelegate {
     func goFutureAction()
     func startTimerAction()
     func stopTimerAction()
+    func goWriteTodoViewAction()
 }
 
 extension MainViewController: MainDelegate {
@@ -341,5 +342,14 @@ extension MainViewController: MainDelegate {
     
     func stopTimerAction() {
         viewModel.stopTimer()
+    }
+    
+    func goWriteTodoViewAction() {
+        // FIXME: TodoWriteView RxSwift 도입 시 수정
+        let todoWriteViewController = TodoWriteViewController()
+        let groupId = viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index].id
+        todoWriteViewController.viewModel.groupId = groupId
+//        todoWriteViewController.viewModel.todos = viewModel.todoList.map { WriteTodoInfo(content: $0.content, enabled: false) }
+        coordinator?.pushViewController(todoWriteViewController)
     }
 }
