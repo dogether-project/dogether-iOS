@@ -250,6 +250,7 @@ protocol MainDelegate {
     func startTimerAction()
     func stopTimerAction()
     func goWriteTodoViewAction()
+    func selectFilterAction(filterType: FilterTypes)
 }
 
 extension MainViewController: MainDelegate {
@@ -351,5 +352,9 @@ extension MainViewController: MainDelegate {
         todoWriteViewController.viewModel.groupId = groupId
 //        todoWriteViewController.viewModel.todos = viewModel.todoList.map { WriteTodoInfo(content: $0.content, enabled: false) }
         coordinator?.pushViewController(todoWriteViewController)
+    }
+    
+    func selectFilterAction(filterType: FilterTypes) {
+        viewModel.sheetViewDatas.update { $0.filter = filterType }
     }
 }

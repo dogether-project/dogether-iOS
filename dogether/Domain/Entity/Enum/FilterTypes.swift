@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum FilterTypes: String, CaseIterable {
+enum FilterTypes: String, CaseIterable, BaseEntity {
     case all = "전체"
     case wait = "검사 대기"
     case reject = "노인정"

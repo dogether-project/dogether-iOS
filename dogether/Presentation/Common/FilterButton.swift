@@ -8,6 +8,8 @@
 import UIKit
 
 final class FilterButton: BaseButton {
+    var delegate: MainDelegate?
+    
     let type: FilterTypes
     private(set) var isColorful: Bool
     
@@ -46,7 +48,14 @@ final class FilterButton: BaseButton {
         views.forEach { stackView.addArrangedSubview($0) }
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                delegate?.selectFilterAction(filterType: type)
+            }, for: .touchUpInside
+        )
+    }
     
     override func configureHierarchy() {
         [stackView].forEach { addSubview($0) }
@@ -63,6 +72,17 @@ final class FilterButton: BaseButton {
         
         icon.snp.makeConstraints {
             $0.width.height.equalTo(18)
+        }
+    }
+    
+    override func updateView(_ data: any BaseEntity) {
+        if let datas = data as? FilterTypes {
+            let isColorful = type == datas
+            
+            backgroundColor = isColorful ? type.backgroundColor : .clear
+            layer.borderColor = isColorful ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
+            icon.tintColor = isColorful ? .grey900 : .grey400
+            label.textColor = isColorful ? .grey900 : .grey400
         }
     }
 }

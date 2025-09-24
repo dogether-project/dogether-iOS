@@ -13,18 +13,21 @@ struct SheetViewDatas: BaseEntity {
     var dateOffset: Int
     var status: SheetViewStatus?
     var todoList: [TodoEntity]
+    var filter: FilterTypes
     
     init(
         alpha: CGFloat = 1.0,
         date: String = "2000.01.01",
         dateOffset: Int = 0,
         status: SheetViewStatus? = nil,
-        todoList: [TodoEntity] = []
+        todoList: [TodoEntity] = [],
+        filter: FilterTypes = .all
     ) {
         self.alpha = alpha
         self.date = date
         self.dateOffset = dateOffset
         self.status = status
         self.todoList = todoList
+        self.filter = filter
     }
 }

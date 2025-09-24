@@ -102,6 +102,7 @@ final class MainPage: BasePage {
         )
         
         todayEmptyView.delegate = delegate
+        todoListView.delegate = delegate
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
@@ -219,6 +220,10 @@ final class MainPage: BasePage {
             } else {
                 delegate?.stopTimerAction()
             }
+            
+            if datas.status == .certificateTodo || datas.status == .todoList {
+                todoListView.viewDidUpdate(datas)
+            }
         }
         
         if let datas = data as? TimerViewDatas {
@@ -256,7 +261,8 @@ extension MainPage: UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        if sheetStatus == .expand && todoListView.todoScrollView.contentOffset.y > 0 { return false }
+        // FIXME: offset 을 sheetViewDatas 에 두는 것이 꺼려짐, 우선 없이 테스트해보고 필요한 경우 isScrollOnTop 도 고려해보기
+//        if sheetStatus == .expand && todoListView.todoScrollView.contentOffset.y > 0 { return false }
         return true
     }
 }
