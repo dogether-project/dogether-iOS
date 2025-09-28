@@ -9,7 +9,16 @@ import UIKit
 import SnapKit
 
 final class NavigationHeader: BaseView{
-    weak var delegate: CoordinatorDelegate?
+    weak var delegate: CoordinatorDelegate? {
+        didSet {
+            prevButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.coordinator?.popViewController()
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     private(set) var title: String
     
@@ -38,14 +47,7 @@ final class NavigationHeader: BaseView{
         updateUI()
     }
     
-    override func configureAction() {
-        prevButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.coordinator?.popViewController()
-            }, for: .touchUpInside
-        )
-    }
+    override func configureAction() { }
      
     override func configureHierarchy() {
         [prevButton, titleLabel].forEach { addSubview($0) }

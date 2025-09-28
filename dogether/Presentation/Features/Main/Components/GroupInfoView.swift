@@ -8,7 +8,19 @@
 import UIKit
 
 final class GroupInfoView: BaseView {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            groupNameStackView.addTapAction { [weak self] in
+                guard let self else { return }
+                delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
+            }
+            
+            joinCodeStackView.addTapAction { [weak self] in
+                guard let self else { return }
+                delegate?.inviteAction()
+            }
+        }
+    }
     
     private let hasCopyImage: Bool
     private(set) var challengeGroupInfo: ChallengeGroupInfo
@@ -107,17 +119,7 @@ final class GroupInfoView: BaseView {
         durationProgressView.transform = CGAffineTransform(translationX: 0, y: 1)   // MARK: 디자인 디테일 반영
     }
     
-    override func configureAction() {
-        groupNameStackView.addTapAction { [weak self] in
-            guard let self else { return }
-            delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
-        }
-        
-        joinCodeStackView.addTapAction { [weak self] in
-            guard let self else { return }
-            delegate?.inviteAction()
-        }
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [dosikImageView, groupNameStackView, groupInfoStackView, durationStackView].forEach { self.addSubview($0) }

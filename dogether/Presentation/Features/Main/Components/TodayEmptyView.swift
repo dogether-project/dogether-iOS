@@ -8,7 +8,16 @@
 import UIKit
 
 final class TodayEmptyView: BaseView {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            todoButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.goWriteTodoViewAction()
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     private let emptyImageView = UIImageView(image: .todo)
     private let titleLabel = UILabel()
@@ -33,14 +42,7 @@ final class TodayEmptyView: BaseView {
         emptyStackView.setCustomSpacing(4, after: titleLabel)
     }
     
-    override func configureAction() {
-        todoButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.goWriteTodoViewAction()
-            }, for: .touchUpInside
-        )
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [emptyStackView, todoButton].forEach { addSubview($0) }

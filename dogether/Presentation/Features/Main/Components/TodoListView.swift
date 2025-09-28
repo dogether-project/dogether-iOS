@@ -8,7 +8,11 @@
 import UIKit
 
 final class TodoListView: BaseView {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            [allButton, waitButton, approveButton, rejectButton].forEach { $0.delegate = delegate }
+        }
+    }
     
     private(set) var currentFilter: FilterTypes?
     private(set) var currentTodoList: [TodoEntity]?
@@ -61,10 +65,7 @@ final class TodoListView: BaseView {
         [emptyListImageView, emptyListLabel].forEach { emptyListStackView.addArrangedSubview($0) }
     }
     
-    override func configureAction() {
-        // FIXME: TodoListView 생성 타이밍이 MainPage configureAction 보다 빨라서 항상 nil이 들어감
-        [allButton, waitButton, approveButton, rejectButton].forEach { $0.delegate = delegate }
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [todoScrollView, emptyListStackView, filterStackView].forEach { addSubview($0) }

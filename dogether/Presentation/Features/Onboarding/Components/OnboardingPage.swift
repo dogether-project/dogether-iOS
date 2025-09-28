@@ -9,7 +9,16 @@ import AuthenticationServices
 import Lottie
 
 final class OnboardingPage: BasePage {
-    var delegate: OnboardingDelegate?
+    var delegate: OnboardingDelegate? {
+        didSet {
+            signInButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.signInAction()
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     private let scrollView = UIScrollView()
     private let onboardingStackView = UIStackView()
@@ -50,13 +59,6 @@ final class OnboardingPage: BasePage {
                 let offset = CGPoint(x: CGFloat(page) * scrollView.frame.width, y: 0)
                 scrollView.setContentOffset(offset, animated: true)
             }, for: .valueChanged
-        )
-        
-        signInButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.signInAction()
-            }, for: .touchUpInside
         )
     }
     

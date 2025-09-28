@@ -9,7 +9,23 @@ import UIKit
 import SnapKit
 
 final class MainPage: BasePage {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            bottomSheetView.delegate = delegate
+            groupInfoView.delegate = delegate
+            sheetHeaderView.delegate = delegate
+            
+            rankingButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.goRankingViewAction()
+                }, for: .touchUpInside
+            )
+            
+            todayEmptyView.delegate = delegate
+            todoListView.delegate = delegate
+        }
+    }
     
     private var dogetherPanGesture: UIPanGestureRecognizer!
     private var dogetherSheetTopConstraint: Constraint?
@@ -89,20 +105,6 @@ final class MainPage: BasePage {
     
     override func configureAction() {
         dogetherHeader.delegate = coordinatorDelegate
-        
-        bottomSheetView.delegate = delegate
-        groupInfoView.delegate = delegate
-        sheetHeaderView.delegate = delegate
-        
-        rankingButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.goRankingViewAction()
-            }, for: .touchUpInside
-        )
-        
-        todayEmptyView.delegate = delegate
-        todoListView.delegate = delegate
         
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self

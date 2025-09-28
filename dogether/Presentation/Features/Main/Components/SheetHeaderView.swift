@@ -8,7 +8,23 @@
 import UIKit
 
 final class SheetHeaderView: BaseView {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            prevButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.goPastAction()
+                }, for: .touchUpInside
+            )
+            
+            nextButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.goFutureAction()
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     private let dateLabel = UILabel()
     
@@ -30,21 +46,7 @@ final class SheetHeaderView: BaseView {
         nextButton.isEnabled = false
     }
     
-    override func configureAction() {
-        prevButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.goPastAction()
-            }, for: .touchUpInside
-        )
-        
-        nextButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.goFutureAction()
-            }, for: .touchUpInside
-        )
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [dateLabel, prevButton, nextButton].forEach { addSubview($0) }

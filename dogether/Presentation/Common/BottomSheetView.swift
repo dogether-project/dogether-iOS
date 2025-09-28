@@ -9,7 +9,14 @@ import UIKit
 import SnapKit
 
 final class BottomSheetView: BaseView {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            backgroundView.addTapAction { [weak self] in
+                guard let self else { return }
+                delegate?.updateBottomSheetVisibleAction(isShowSheet: false)
+            }
+        }
+    }
     
     private(set) var backgroundView = UIView()
     private(set) var sheetView = UIView()
@@ -34,12 +41,7 @@ final class BottomSheetView: BaseView {
         itemListStackView.axis = .vertical
     }
     
-    override func configureAction() {
-        backgroundView.addTapAction { [weak self] in
-            guard let self else { return }
-            delegate?.updateBottomSheetVisibleAction(isShowSheet: false)
-        }
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [backgroundView, sheetView].forEach { addSubview($0) }

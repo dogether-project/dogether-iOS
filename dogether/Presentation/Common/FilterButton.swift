@@ -8,7 +8,16 @@
 import UIKit
 
 final class FilterButton: BaseButton {
-    var delegate: MainDelegate?
+    var delegate: MainDelegate? {
+        didSet {
+            addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.selectFilterAction(filterType: type)
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     let type: FilterTypes
     private(set) var isColorful: Bool
@@ -48,14 +57,7 @@ final class FilterButton: BaseButton {
         views.forEach { stackView.addArrangedSubview($0) }
     }
     
-    override func configureAction() {
-        addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.selectFilterAction(filterType: type)
-            }, for: .touchUpInside
-        )
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [stackView].forEach { addSubview($0) }
