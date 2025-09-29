@@ -183,63 +183,12 @@ extension MainViewController {
 //    }
 }
 
-// MARK: - about scroll
-extension MainViewController: UIScrollViewDelegate {
-//    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-//        if viewModel.sheetStatus == .normal {
-//            scrollView.panGestureRecognizer.isEnabled = false
-//            scrollView.panGestureRecognizer.isEnabled = true
-//        }
-//    }
-//
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        if viewModel.sheetStatus == .normal {
-//            scrollView.contentOffset.y = 0
-//            return
-//        }
-//    }
-}
-
-// MARK: - about bottom sheet
-//extension MainViewController: BottomSheetDelegate {
-//    private func configureBottomSheetViewController() {
-//        let bottomSheetItem = viewModel.challengeGroupInfos.map { $0.bottomSheetItem }
-//        let selectedItem = viewModel.currentGroup.bottomSheetItem
-//        
-//        if bottomSheetItem.isEmpty { return }
-//
-//        bottomSheetViewController = BottomSheetViewController(titleText: "그룹 선택",
-//                                                              bottomSheetItem: bottomSheetItem,
-//                                                              shouldShowAddGroupButton: viewModel.challengeGroupInfos.count < 5,
-//                                                              selectedItem: selectedItem)
-//        
-//        bottomSheetViewController?.coordinator = self.coordinator
-//        bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
-//        bottomSheetViewController?.modalTransitionStyle = .coverVertical
-//        
-//        bottomSheetViewController?.didSelectOption = { [weak self] selectedItem in
-//            guard let self,
-//                  let selectedGroup = selectedItem.value as? ChallengeGroupInfo,
-//                  let selectedIndex = viewModel.challengeGroupInfos.firstIndex(of: selectedGroup) else { return }
-//            
-//            viewModel.setChallengeIndex(index: selectedIndex)
-//            viewModel.saveLastSelectedGroup()
-//            viewModel.setDateOffset(offset: 0)
-//            loadMainView(selectedIndex: selectedIndex)
-//        }
-//    }
-//    
-//    func presentBottomSheet() {
-//        if presentedViewController == nil,
-//           let bottomSheetViewController {
-//            present(bottomSheetViewController, animated: true)
-//        }
-//    }
-//}
-
 // MARK: - delegate
 protocol MainDelegate {
     func updateAlphaBySheet(alpha: CGFloat)
+    func updateSheetStatus(sheetStatus: SheetStatus)
+    func updateYOffsetOfSheet(yOffset: CGFloat)
+    func updateIsScrollOnTop(isScrollOnTop: Bool)
     func goRankingViewAction()
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectGroupAction(index: Int)
@@ -273,6 +222,18 @@ extension MainViewController: MainDelegate {
     
     func updateAlphaBySheet(alpha: CGFloat) {
         viewModel.sheetViewDatas.update { $0.alpha = alpha }
+    }
+    
+    func updateSheetStatus(sheetStatus: SheetStatus) {
+        viewModel.sheetViewDatas.update { $0.sheetStatus = sheetStatus }
+    }
+    
+    func updateYOffsetOfSheet(yOffset: CGFloat) {
+        viewModel.sheetViewDatas.update { $0.yOffset = yOffset }
+    }
+    
+    func updateIsScrollOnTop(isScrollOnTop: Bool) {
+        viewModel.sheetViewDatas.update { $0.isScrollOnTop = isScrollOnTop }
     }
     
     func goRankingViewAction() {

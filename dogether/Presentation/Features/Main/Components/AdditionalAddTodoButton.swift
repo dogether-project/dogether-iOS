@@ -12,6 +12,8 @@ final class AdditionalAddTodoButton: BaseButton {
     private let iconImageView = UIImageView(image: .plusCircle)
     private let label = UILabel()
     
+    private(set) var currentCount: Int?
+    
     override func configureView() {
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.tintColor = .grey200
@@ -43,6 +45,9 @@ final class AdditionalAddTodoButton: BaseButton {
     
     override func updateView(_ data: any BaseEntity) {
         if let datas = data as? SheetViewDatas {
+            if currentCount == datas.todoList.count { return }
+            currentCount = datas.todoList.count
+            
             label.text = "투두 추가하기 (\(datas.todoList.count)/10)"
         }
     }

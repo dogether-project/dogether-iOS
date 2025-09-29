@@ -23,9 +23,6 @@ final class MainPage: BasePage {
         }
     }
     
-    private var dogetherPanGesture: UIPanGestureRecognizer!
-    private var dogetherSheetTopConstraint: Constraint?
-    
     private let dogetherHeader = DogetherHeader()
     
     private let dosikCommentButton = DosikCommentButton()
@@ -34,15 +31,7 @@ final class MainPage: BasePage {
     private let groupInfoView = GroupInfoView()
     private let rankingButton = RankingButton()
     
-    private let dogetherSheet = {
-        let view = UIView()
-        view.backgroundColor = .grey800
-        view.layer.cornerRadius = 32
-        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        view.clipsToBounds = true
-        view.isUserInteractionEnabled = true
-        return view
-    }()
+    private let dogetherSheet = UIView()
     
     private let sheetHeaderView = SheetHeaderView()
     
@@ -52,16 +41,23 @@ final class MainPage: BasePage {
     private let pastEmptyView = PastEmptyView()
     private let doneView = DoneView()
     
-    private(set) var sheetStatus: SheetStatus = .normal
+    private(set) var currentSheetStatus: SheetStatus?
+    private(set) var currentYOffset: CGFloat?
+    private(set) var currentIsScrollOnTop: Bool?
     
     override func configureView() {
+        dogetherSheet.backgroundColor = .grey800
+        dogetherSheet.layer.cornerRadius = 32
+        dogetherSheet.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        dogetherSheet.isUserInteractionEnabled = true
+        
         [timerView, todoListView, todayEmptyView, pastEmptyView, doneView].forEach { $0.isHidden = true }
     }
     
     override func configureAction() {
         dogetherHeader.delegate = coordinatorDelegate
         
-        dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        let dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
     }
@@ -97,7 +93,7 @@ final class MainPage: BasePage {
         }
         
         dogetherSheet.snp.makeConstraints {
-            dogetherSheetTopConstraint = $0.top.equalToSuperview().offset(SheetStatus.normal.offset).constraint
+            $0.top.equalToSuperview().offset(SheetViewDatas().sheetStatus.offset)
             $0.bottom.equalToSuperview().offset(UIApplication.safeAreaOffset.bottom)
             $0.left.right.equalToSuperview()
         }
@@ -134,6 +130,10 @@ final class MainPage: BasePage {
         }
         
         if let datas = data as? SheetViewDatas {
+            if currentIsScrollOnTop != datas.isScrollOnTop {
+                currentIsScrollOnTop = datas.isScrollOnTop
+            }
+            
             groupInfoView.viewDidUpdate(datas)
             rankingButton.viewDidUpdate(datas)
             sheetHeaderView.viewDidUpdate(datas)
@@ -159,6 +159,18 @@ final class MainPage: BasePage {
             timerView.viewDidUpdate(datas)
         }
     }
+    
+    override func updateConstraints(_ data: any BaseEntity) {
+        if let datas = data as? SheetViewDatas {
+            if currentYOffset == datas.yOffset && currentSheetStatus == datas.sheetStatus { return }
+            currentYOffset = datas.yOffset
+            currentSheetStatus = datas.sheetStatus
+            
+            dogetherSheet.snp.updateConstraints {
+                $0.top.equalToSuperview().offset(datas.yOffset)
+            }
+        }
+    }
 }
 
 // MARK: - about pan gesture
@@ -168,18 +180,22 @@ extension MainPage: UIGestureRecognizerDelegate {
 
         switch gesture.state {
         case .changed:
-            let newOffset = getNewOffset(
-                from: dogetherSheetTopConstraint?.layoutConstraints.first?.constant ?? 0,
-                with: translation.y
-            )
-            dogetherSheetTopConstraint?.update(offset: newOffset)
+            guard let newOffset = getNewOffset(from: currentYOffset, with: translation.y) else { return }
+            delegate?.updateYOffsetOfSheet(yOffset: newOffset)
             delegate?.updateAlphaBySheet(
                 alpha: 1 - (SheetStatus.normal.offset - newOffset) / (SheetStatus.normal.offset - SheetStatus.expand.offset)
             )
             layoutIfNeeded()
 
         case .ended:
-            updateSheet(updateSheetStatus(with: translation.y))
+            guard let status = getNewStatus(with: translation.y) else { return }
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                guard let self else { return }
+                delegate?.updateAlphaBySheet(alpha: status == .normal ? 1 : 0)
+                delegate?.updateSheetStatus(sheetStatus: status)
+                delegate?.updateYOffsetOfSheet(yOffset: status.offset)
+                layoutIfNeeded()
+            }
 
         default:
             break
@@ -190,25 +206,16 @@ extension MainPage: UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        // FIXME: offset 을 sheetViewDatas 에 두는 것이 꺼려짐, 우선 없이 테스트해보고 필요한 경우 isScrollOnTop 도 고려해보기
-//        if sheetStatus == .expand && todoListView.todoScrollView.contentOffset.y > 0 { return false }
+        if let currentIsScrollOnTop, !currentIsScrollOnTop && currentSheetStatus == .expand { return false }
         return true
     }
 }
 
 // MARK: - about sheet
 extension MainPage {
-    private func updateSheet(_ status: SheetStatus) {
-        UIView.animate(withDuration: 0.3) { [weak self] in
-            guard let self else { return }
-            dogetherSheetTopConstraint?.update(offset: status.offset)
-            delegate?.updateAlphaBySheet(alpha: status == .normal ? 1 : 0)
-            layoutIfNeeded()
-        }
-    }
-    
-    private func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
-        switch sheetStatus {
+    private func getNewOffset(from currentOffset: CGFloat?, with translation: CGFloat) -> CGFloat? {
+        guard let currentSheetStatus else { return nil }
+        switch currentSheetStatus {
         case .expand:
             if translation > 0 { return min(SheetStatus.normal.offset, SheetStatus.expand.offset + translation) }
             return currentOffset
@@ -218,13 +225,13 @@ extension MainPage {
         }
     }
     
-    private func updateSheetStatus(with translation: CGFloat) -> SheetStatus {
-        switch sheetStatus {
+    private func getNewStatus(with translation: CGFloat) -> SheetStatus? {
+        guard let currentSheetStatus else { return nil }
+        switch currentSheetStatus {
         case .expand:
-            sheetStatus = translation > 100 ? .normal : .expand
+            return translation > 100 ? .normal : .expand
         case .normal:
-            sheetStatus = translation < -100 ? .expand : .normal
+            return translation < -100 ? .expand : .normal
         }
-        return sheetStatus
     }
 }

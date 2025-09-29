@@ -60,7 +60,9 @@ final class TodoListView: BaseView {
         [emptyListImageView, emptyListLabel].forEach { emptyListStackView.addArrangedSubview($0) }
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        todoScrollView.delegate = self
+    }
     
     override func configureHierarchy() {
         [todoScrollView, emptyListStackView, filterStackView].forEach { addSubview($0) }
@@ -102,6 +104,8 @@ final class TodoListView: BaseView {
     // MARK: - viewDidUpdate
     override func updateView(_ data: any BaseEntity) {
         if let datas = data as? SheetViewDatas {
+            todoScrollView.isScrollEnabled = datas.sheetStatus == .expand
+            
             if currentFilter == datas.filter && currentTodoList == datas.todoList { return }
             currentFilter = datas.filter
             currentTodoList = datas.todoList
@@ -128,5 +132,11 @@ final class TodoListView: BaseView {
             
             emptyListLabel.text = datas.filter.emptyDescription
         }
+    }
+}
+
+extension TodoListView: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        delegate?.updateIsScrollOnTop(isScrollOnTop: scrollView.contentOffset.y <= 0)
     }
 }
