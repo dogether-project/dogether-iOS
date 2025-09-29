@@ -60,6 +60,8 @@ final class GroupInfoView: BaseView {
     
     private let durationStackView = UIStackView()
     
+    private(set) var currentAlpha: CGFloat?
+    
     override func configureView() {
         nameLabel.textColor = .blue300
         nameLabel.font = Fonts.head1B
@@ -187,6 +189,9 @@ final class GroupInfoView: BaseView {
         }
         
         if let datas = data as? SheetViewDatas {
+            if currentAlpha == datas.alpha { return }
+            currentAlpha = datas.alpha
+            
             [dosikImageView, groupInfoStackView, durationStackView].forEach { $0.alpha = datas.alpha }
         }
     }

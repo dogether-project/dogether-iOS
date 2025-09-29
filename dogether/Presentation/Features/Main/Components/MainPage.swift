@@ -12,15 +12,11 @@ final class MainPage: BasePage {
     var delegate: MainDelegate? {
         didSet {
             bottomSheetView.delegate = delegate
-            groupInfoView.delegate = delegate
-            sheetHeaderView.delegate = delegate
             
-            rankingButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    delegate?.goRankingViewAction()
-                }, for: .touchUpInside
-            )
+            groupInfoView.delegate = delegate
+            rankingButton.delegate = delegate
+            
+            sheetHeaderView.delegate = delegate
             
             todayEmptyView.delegate = delegate
             todoListView.delegate = delegate
@@ -33,51 +29,10 @@ final class MainPage: BasePage {
     private let dogetherHeader = DogetherHeader()
     
     private let dosikCommentButton = DosikCommentButton()
-    private let groupInfoView = GroupInfoView()
-    
     private let bottomSheetView = BottomSheetView()
     
-    private let rankingButton = {
-        let button = UIButton()
-        button.backgroundColor = .grey700
-        button.layer.cornerRadius = 8
-        
-        let imageView = UIImageView(image: .chart)
-        imageView.isUserInteractionEnabled = false
-        
-        let label = UILabel()
-        label.text = "그룹 활동 한눈에 보기 !"
-        label.textColor = .grey200
-        label.font = Fonts.body1S
-        label.isUserInteractionEnabled = false
-        
-        let chevronImageView = UIImageView()
-        chevronImageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        chevronImageView.tintColor = .grey200
-        chevronImageView.isUserInteractionEnabled = false
-        
-        [imageView, label, chevronImageView].forEach { button.addSubview($0) }
-        
-        imageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalToSuperview().offset(16)
-            $0.width.height.equalTo(24)
-        }
-        
-        label.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalTo(imageView.snp.right).offset(8)
-            $0.height.equalTo(25)
-        }
-        
-        chevronImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.right.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(24)
-        }
-        
-        return button
-    }()
+    private let groupInfoView = GroupInfoView()
+    private let rankingButton = RankingButton()
     
     private let dogetherSheet = {
         let view = UIView()
@@ -109,32 +64,6 @@ final class MainPage: BasePage {
         dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
-        
-//        todoListView.todoScrollView.delegate = self
-//        
-//        [todoListView.allButton, todoListView.waitButton, todoListView.rejectButton, todoListView.approveButton].forEach { button in
-//            button.addAction(
-//                UIAction { [weak self, weak button] _ in
-//                    guard let self, let button else { return }
-//                    self.viewModel.setFilter(filter: button.type)
-//                    Task { @MainActor in
-//                        self.updateList()
-//                    }
-//                }, for: .touchUpInside
-//            )
-//        }
-//        
-//        [todoListView.addTodoButton, todayEmptyView.todoButton].forEach { button in
-//            button.addAction(
-//                UIAction { [weak self] _ in
-//                    guard let self else { return }
-//                    let todoWriteViewController = TodoWriteViewController()
-//                    todoWriteViewController.viewModel.groupId = viewModel.currentGroup.id
-//                    todoWriteViewController.viewModel.todos = viewModel.todoList.map { WriteTodoInfo(content: $0.content, enabled: false) }
-//                    coordinator?.pushViewController(todoWriteViewController)
-//                }, for: .touchUpInside
-//            )
-//        }
     }
     
     override func configureHierarchy() {
@@ -206,9 +135,7 @@ final class MainPage: BasePage {
         
         if let datas = data as? SheetViewDatas {
             groupInfoView.viewDidUpdate(datas)
-            // FIXME: 추후 rankingButton View로 분리
-//            rankingButton.viewDidUpdate(datas)
-            rankingButton.alpha = datas.alpha
+            rankingButton.viewDidUpdate(datas)
             sheetHeaderView.viewDidUpdate(datas)
             
             timerView.isHidden = !(datas.status == .timer)
