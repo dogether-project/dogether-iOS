@@ -251,6 +251,8 @@ extension MainViewController: MainDelegate {
         viewModel.groupViewDatas.update { $0.index = index }
         viewModel.saveLastSelectedGroupIndex(index: index)
         
+        viewModel.sheetViewDatas.update { $0.dateOffset = 0 }
+        
         Task {
             try await viewModel.setSheetViewDatasForCurrentGroup(
                 currentGroup: viewModel.groupViewDatas.value.groups[index]
@@ -271,31 +273,23 @@ extension MainViewController: MainDelegate {
     }
     
     func goPastAction() {
-        // FIXME: 추후 수정
-//        viewModel.sheetViewDatas.update { $0.date = "test" }
+        viewModel.sheetViewDatas.update { $0.dateOffset -= 1 }
+        
+        Task {
+            try await viewModel.setSheetViewDatasForCurrentGroup(
+                currentGroup: viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
+            )
+        }
     }
     
     func goFutureAction() {
-        // FIXME: 추후 수정
-//        viewModel.sheetViewDatas.update { $0.date = "test" }
+        viewModel.sheetViewDatas.update { $0.dateOffset += 1 }
         
-//        [sheetHeaderView.prevButton, sheetHeaderView.nextButton].forEach { button in
-//            button.addAction(
-//                UIAction { [weak self] _ in
-//                    guard let self else { return }
-//                    let newOffset = viewModel.dateOffset + button.tag
-//                    viewModel.setFilter(filter: .all)
-//                    viewModel.setDateOffset(offset: newOffset)
-//                    Task {
-//                        try await self.viewModel.updateListInfo()
-//                        await MainActor.run {
-//                            self.updateView()
-//                            self.updateList()
-//                        }
-//                    }
-//                }, for: .touchUpInside
-//            )
-//        }
+        Task {
+            try await viewModel.setSheetViewDatasForCurrentGroup(
+                currentGroup: viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
+            )
+        }
     }
     
     func startTimerAction() {

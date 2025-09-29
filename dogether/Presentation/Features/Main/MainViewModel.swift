@@ -16,9 +16,7 @@ final class MainViewModel {
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
-    private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(
-        value: SheetViewDatas(date: DateFormatterManager.formattedDate())
-    )
+    private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(value: SheetViewDatas())
     
     private(set) var timerViewDatas = BehaviorRelay<TimerViewDatas>(value: TimerViewDatas())
     

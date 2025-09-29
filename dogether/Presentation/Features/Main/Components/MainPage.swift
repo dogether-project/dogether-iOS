@@ -127,6 +127,7 @@ final class MainPage: BasePage {
             bottomSheetView.viewDidUpdate(datas)
             groupInfoView.viewDidUpdate(datas.groups[datas.index])
             dosikCommentButton.viewDidUpdate(datas.groups[datas.index])
+            sheetHeaderView.viewDidUpdate(datas)
         }
         
         if let datas = data as? SheetViewDatas {

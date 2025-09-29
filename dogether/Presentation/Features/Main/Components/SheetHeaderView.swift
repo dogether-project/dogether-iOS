@@ -31,6 +31,9 @@ final class SheetHeaderView: BaseView {
     private let prevButton = UIButton()
     private let nextButton = UIButton()
     
+    private(set) var currentGroupDuration: Int?
+    private(set) var currentDateOffset: Int?
+    
     override func configureView() {
         dateLabel.textColor = .grey0
         dateLabel.font = Fonts.head2B
@@ -70,14 +73,25 @@ final class SheetHeaderView: BaseView {
     
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
-        if let data = data as? SheetViewDatas {
-            dateLabel.text = data.date
-            
-//            prevButton.isEnabled = viewModel.dateOffset * -1 < viewModel.currentGroup.duration - 1
-//            nextButton.isEnabled = viewModel.dateOffset < 0
+        if let datas = data as? GroupViewDatas {
+            if currentGroupDuration == datas.groups[datas.index].duration { return }
+            currentGroupDuration = datas.groups[datas.index].duration
         }
         
-//        let currentDate = DateFormatterManager.formattedDate(viewModel.dateOffset)
-//        sheetHeaderView.setDate(date: currentDate)
+        if let datas = data as? SheetViewDatas {
+            // FIXME: 추후 최적화 필요
+            /// sheetViewDatas의 dateOffset과 groupViewDatas의 duration이 함께 작용해서 결과를 만들기 때문에
+            /// 단순히 currentDateOffset과 datas.dateOffset을 비교하는 방식으로는 최적화가 불가능,
+            /// 현재는 최적화 작업 없이 계속 updateView를 호출하는 상황, 추후 최적화
+
+            guard let currentGroupDuration else { return }
+            currentDateOffset = datas.dateOffset
+            dateLabel.text = DateFormatterManager.formattedDate(datas.dateOffset)
+            
+            prevButton.isEnabled = datas.dateOffset * -1 < currentGroupDuration - 1
+            nextButton.isEnabled = datas.dateOffset < 0
+            
+            print(datas.dateOffset, currentGroupDuration)
+        }
     }
 }
