@@ -50,8 +50,8 @@ final class BottomSheetView: BaseView {
     
     override func configureConstraints() {
         backgroundView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
             $0.top.equalToSuperview().offset(-UIApplication.safeAreaOffset.top)
+            $0.bottom.horizontalEdges.equalToSuperview()
         }
         
         sheetView.snp.makeConstraints {
