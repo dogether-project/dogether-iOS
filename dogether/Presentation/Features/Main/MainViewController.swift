@@ -249,7 +249,7 @@ protocol MainDelegate {
     func goFutureAction()
     func startTimerAction()
     func stopTimerAction()
-    func goWriteTodoViewAction()
+    func goWriteTodoViewAction(todos: [TodoEntity])
     func selectFilterAction(filterType: FilterTypes)
 }
 
@@ -345,16 +345,17 @@ extension MainViewController: MainDelegate {
         viewModel.stopTimer()
     }
     
-    func goWriteTodoViewAction() {
+    func goWriteTodoViewAction(todos: [TodoEntity]) {
         // FIXME: TodoWriteView RxSwift 도입 시 수정
         let todoWriteViewController = TodoWriteViewController()
         let groupId = viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index].id
         todoWriteViewController.viewModel.groupId = groupId
-//        todoWriteViewController.viewModel.todos = viewModel.todoList.map { WriteTodoInfo(content: $0.content, enabled: false) }
+        todoWriteViewController.viewModel.todos = todos.map { WriteTodoInfo(content: $0.content, enabled: false) }
         coordinator?.pushViewController(todoWriteViewController)
     }
     
     func selectFilterAction(filterType: FilterTypes) {
-        viewModel.sheetViewDatas.update { $0.filter = filterType }
+        let filter = filterType == viewModel.sheetViewDatas.value.filter ? .all : filterType
+        viewModel.sheetViewDatas.update { $0.filter = filter }
     }
 }

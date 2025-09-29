@@ -11,6 +11,12 @@ final class TodoListView: BaseView {
     var delegate: MainDelegate? {
         didSet {
             [allButton, waitButton, approveButton, rejectButton].forEach { $0.delegate = delegate }
+            addTodoButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodoList else { return }
+                    delegate?.goWriteTodoViewAction(todos: currentTodoList)
+                }, for: .touchUpInside
+            )
         }
     }
     
@@ -30,7 +36,7 @@ final class TodoListView: BaseView {
     private let emptyListLabel = UILabel()
     private let emptyListStackView = UIStackView()
     
-    private let addTodoButton: UIButton =  UIButton(type: .system)
+    private let addTodoButton = AdditionalAddTodoButton()
     
     override func configureView() {
         filterStackView.axis = .horizontal
@@ -49,17 +55,6 @@ final class TodoListView: BaseView {
         emptyListStackView.axis = .vertical
         emptyListStackView.spacing = 16
         emptyListStackView.alignment = .center
-        
-        addTodoButton.setTitleColor(.grey200, for: .normal)
-        addTodoButton.titleLabel?.font = Fonts.body1S
-        addTodoButton.backgroundColor = .clear
-        addTodoButton.contentHorizontalAlignment = .center
-        
-        addTodoButton.setImage(.plusCircle, for: .normal)
-        addTodoButton.tintColor = .grey200
-        addTodoButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
-        addTodoButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
-        addTodoButton.imageView?.contentMode = .scaleAspectFit
         
         [allButton, waitButton, approveButton, rejectButton].forEach { filterStackView.addArrangedSubview($0) }
         [emptyListImageView, emptyListLabel].forEach { emptyListStackView.addArrangedSubview($0) }
@@ -127,7 +122,7 @@ final class TodoListView: BaseView {
                 .forEach { todoListStackView.addArrangedSubview($0) }
             
             if datas.todoList.count < 10 && isToday {
-                addTodoButton.setTitle("투두 추가하기 (\(datas.todoList.count)/10)", for: .normal)
+                addTodoButton.viewDidUpdate(datas)
                 todoListStackView.addArrangedSubview(addTodoButton)
             }
             

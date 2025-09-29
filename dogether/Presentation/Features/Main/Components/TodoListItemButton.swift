@@ -36,7 +36,7 @@ final class TodoListItemButton: BaseButton {
         label.text = "인증하기"
         label.textAlignment = .center
         label.font = Fonts.body2S
-        label.layer.cornerRadius = 6
+        label.layer.cornerRadius = 8
         label.clipsToBounds = true
         label.isUserInteractionEnabled = false
         return label
@@ -56,7 +56,7 @@ final class TodoListItemButton: BaseButton {
         todoImageView.image = TodoStatus(rawValue: todo.status)?.image
         
         contentLabel.text = todo.content
-        contentLabel.textColor = isUncertified ? isToday ? .grey50 : .grey400 : .grey300
+        contentLabel.textColor = isUncertified ? isToday ? .grey0 : .grey400 : .grey300
         
         certificationLabel.textColor = isToday ? .grey900 : .grey400
         certificationLabel.backgroundColor = isToday ? .blue300 : .grey500

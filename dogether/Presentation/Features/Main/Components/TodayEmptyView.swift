@@ -13,7 +13,7 @@ final class TodayEmptyView: BaseView {
             todoButton.addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
-                    delegate?.goWriteTodoViewAction()
+                    delegate?.goWriteTodoViewAction(todos: [])
                 }, for: .touchUpInside
             )
         }
