@@ -139,48 +139,6 @@ extension MainViewController {
             }
         }
     }
-    
-//    private func updateView() {
-//        timerView.isHidden = !(viewModel.currentGroup.status == .ready)
-//        todoListView.isHidden = viewModel.todoList.isEmpty
-//        todayEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset == 0) || viewModel.currentGroup.status != .running
-//        pastEmptyView.isHidden = !(viewModel.todoList.isEmpty && viewModel.dateOffset < 0)
-//        doneView.isHidden = !(viewModel.currentGroup.status == .dDay && viewModel.dateOffset == 0)
-//        
-//        dosikCommentButton.updateUI(
-//            comment: viewModel.currentGroup.status == .dDay ? "그룹이 종료됐어요!" :
-//                viewModel.currentGroup.progress >= 1.0 ? "마지막 인증일이에요!\n내일부터 인증이 불가능해요." : nil
-//        )
-//    }
-//    
-//    private func updateTimer() {
-//        timerView.updateTimer(time: viewModel.time, timeProgress: viewModel.timeProgress)
-//    }
-//    
-//    func updateList() {
-//        todoListView.updateList(todoList: viewModel.todoList, filter: viewModel.currentFilter, isToday: viewModel.dateOffset == 0)
-//        
-//        todoListView.todoListStackView.arrangedSubviews.forEach { todoListItemView in
-//            guard let todoListItemButton = todoListItemView as? TodoListItemButton else { return }
-//            todoListItemButton.addAction(
-//                UIAction { [weak self, weak todoListItemButton] _ in
-//                    guard let self, let button = todoListItemButton else { return }
-//                    let isCertification = TodoStatus(rawValue: button.todo.status) == .waitCertification
-//                    if isCertification {
-//                        if button.isToday {
-//                            let certificationViewController = CertificationViewController()
-//                            certificationViewController.viewModel.todoInfo = button.todo
-//                            coordinator?.pushViewController(certificationViewController)
-//                        } else { return }
-//                    } else {
-//                        let certificationInfoViewController = CertificationInfoViewController()
-//                        certificationInfoViewController.todoInfo = button.todo
-//                        coordinator?.pushViewController(certificationInfoViewController)
-//                    }
-//                }, for: .touchUpInside
-//            )
-//        }
-//    }
 }
 
 // MARK: - delegate
@@ -200,6 +158,8 @@ protocol MainDelegate {
     func stopTimerAction()
     func goWriteTodoViewAction(todos: [TodoEntity])
     func selectFilterAction(filterType: FilterTypes)
+    func goCertificationViewAction(todo: TodoEntity)
+    func goCertificationInfoViewAction(todo: TodoEntity)
 }
 
 extension MainViewController: MainDelegate {
@@ -273,7 +233,10 @@ extension MainViewController: MainDelegate {
     }
     
     func goPastAction() {
-        viewModel.sheetViewDatas.update { $0.dateOffset -= 1 }
+        viewModel.sheetViewDatas.update {
+            $0.dateOffset -= 1
+            $0.filter = .all
+        }
         
         Task {
             try await viewModel.setSheetViewDatasForCurrentGroup(
@@ -283,7 +246,10 @@ extension MainViewController: MainDelegate {
     }
     
     func goFutureAction() {
-        viewModel.sheetViewDatas.update { $0.dateOffset += 1 }
+        viewModel.sheetViewDatas.update {
+            $0.dateOffset += 1
+            $0.filter = .all
+        }
         
         Task {
             try await viewModel.setSheetViewDatasForCurrentGroup(
@@ -312,5 +278,17 @@ extension MainViewController: MainDelegate {
     func selectFilterAction(filterType: FilterTypes) {
         let filter = filterType == viewModel.sheetViewDatas.value.filter ? .all : filterType
         viewModel.sheetViewDatas.update { $0.filter = filter }
+    }
+    
+    func goCertificationViewAction(todo: TodoEntity) {
+        let certificationViewController = CertificationViewController()
+        certificationViewController.viewModel.todoInfo = todo
+        coordinator?.pushViewController(certificationViewController)
+    }
+    
+    func goCertificationInfoViewAction(todo: TodoEntity) {
+        let certificationInfoViewController = CertificationInfoViewController()
+        certificationInfoViewController.todoInfo = todo
+        coordinator?.pushViewController(certificationInfoViewController)
     }
 }

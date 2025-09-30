@@ -90,8 +90,6 @@ final class SheetHeaderView: BaseView {
             
             prevButton.isEnabled = datas.dateOffset * -1 < currentGroupDuration - 1
             nextButton.isEnabled = datas.dateOffset < 0
-            
-            print(datas.dateOffset, currentGroupDuration)
         }
     }
 }

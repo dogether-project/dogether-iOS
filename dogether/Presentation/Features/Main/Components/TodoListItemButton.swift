@@ -9,6 +9,23 @@ import UIKit
 import SnapKit
 
 final class TodoListItemButton: BaseButton {
+    var delegate: MainDelegate? {
+        didSet {
+            addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    if isUncertified {
+                        if isToday {
+                            delegate?.goCertificationViewAction(todo: todo)
+                        } else { return }
+                    } else {
+                        delegate?.goCertificationInfoViewAction(todo: todo)
+                    }
+                }, for: .touchUpInside
+            )
+        }
+    }
+    
     private(set) var todo: TodoEntity
     private(set) var isToday: Bool
     private(set) var isUncertified: Bool
