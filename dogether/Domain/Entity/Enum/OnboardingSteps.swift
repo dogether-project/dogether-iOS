@@ -36,8 +36,8 @@ enum OnboardingSteps: Int {
     
     var lottieFileName: String {
         switch self {
-        case .one: return "onboarding3" // FIXME: onboarding1.json 파일 변경필요
-        case .two: return "onboarding3" // FIXME: onboarding2.json 파일 변경필요
+        case .one: return "onboarding1"
+        case .two: return "onboarding2"
         case .three: return "onboarding3"
         }
     }
