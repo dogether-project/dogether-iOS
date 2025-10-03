@@ -267,12 +267,14 @@ extension MainViewController: MainDelegate {
     }
     
     func goWriteTodoViewAction(todos: [TodoEntity]) {
-        // FIXME: TodoWriteView RxSwift 도입 시 수정
         let todoWriteViewController = TodoWriteViewController()
-        let groupId = viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index].id
-        todoWriteViewController.viewModel.groupId = groupId
-        todoWriteViewController.viewModel.todos = todos.map { WriteTodoInfo(content: $0.content, enabled: false) }
-        coordinator?.pushViewController(todoWriteViewController)
+        let todoWriteViewDatas = TodoWriteViewDatas(
+            groupId: viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index].id,
+            todos: todos.map {
+                WriteTodoEntity(content: $0.content, enabled: false)
+            }
+        )
+        coordinator?.pushViewController(todoWriteViewController, datas: todoWriteViewDatas)
     }
     
     func selectFilterAction(filterType: FilterTypes) {

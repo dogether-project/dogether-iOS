@@ -7,8 +7,12 @@
 
 import Foundation
 
+import RxRelay
+
 final class TodoWriteViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
+    
+    private(set) var todoWriteViewDatas = BehaviorRelay<TodoWriteViewDatas>(value: TodoWriteViewDatas())
     
     var groupId: Int = 0
     
