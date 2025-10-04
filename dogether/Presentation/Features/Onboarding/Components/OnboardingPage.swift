@@ -6,7 +6,6 @@
 //
 
 import AuthenticationServices
-
 import Lottie
 
 final class OnboardingPage: BasePage {
