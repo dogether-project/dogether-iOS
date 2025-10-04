@@ -109,6 +109,7 @@ extension OnboardingPage {
         subTitleLabel.numberOfLines = 0
         
         let animationView = LottieAnimationView(name: step.lottieFileName)
+        let aspectRatio = animationView.frame.height / animationView.frame.width
         animationView.loopMode = .loop
         animationView.contentMode = .scaleAspectFit
         animationView.translatesAutoresizingMaskIntoConstraints = false
@@ -122,7 +123,7 @@ extension OnboardingPage {
         animationView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(animationView.snp.width).multipliedBy(1.0)
+            $0.height.equalTo(animationView.snp.width).multipliedBy(aspectRatio)
         }
         
         return stackView
