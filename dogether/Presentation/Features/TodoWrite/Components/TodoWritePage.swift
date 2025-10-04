@@ -10,7 +10,31 @@ import UIKit
 final class TodoWritePage: BasePage {
     var delegate: TodoWriteDelegate? {
         didSet {
+            addTapAction { [weak self] in
+                guard let self else { return }
+                endEditing(true)
+            }
             
+            todoTextField.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.updateTodoAction(todo: todoTextField.text, todoMaxLength: todoMaxLength)
+                }, for: .editingChanged
+            )
+            
+            addButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.addTodoAction(todoMaxCount: todoMaxCount)
+                }, for: .touchUpInside
+            )
+            
+            saveButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.saveTodoAction()
+                }, for: .touchUpInside
+            )
         }
     }
     
@@ -57,19 +81,15 @@ final class TodoWritePage: BasePage {
         
         return stackView
     }()
-    
-    private let todoTableView = {
-        let tableView = UITableView()
-        tableView.isHidden = true
-        tableView.backgroundColor = .clear
-        tableView.separatorStyle = .none
-        tableView.rowHeight = UITableView.automaticDimension
-        return tableView
-    }()
+    private let todoTableView = UITableView()
     
     private let saveButton = DogetherButton(title: "투두 저장", status: .disabled)
     
-    
+    private let todoMaxCount: Int = 10
+    private let todoMaxLength: Int = 20
+    private(set) var currentTodo: String?
+    private(set) var currentTodos: [WriteTodoEntity]?
+    private(set) var currentIsShowKeyboard: Bool?
     
     override func configureView() {
         dateLabel.attributedText = NSAttributedString(
@@ -88,6 +108,7 @@ final class TodoWritePage: BasePage {
         todoTextField.layer.cornerRadius = 12
         todoTextField.layer.borderWidth = 0
         todoTextField.layer.borderColor = UIColor.blue300.cgColor
+        todoTextField.becomeFirstResponder()
         
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: todoTextField.frame.height))
         todoTextField.leftView = leftPaddingView
@@ -106,13 +127,22 @@ final class TodoWritePage: BasePage {
         
         addButtonImageView.image = .plus.withRenderingMode(.alwaysTemplate)
         addButtonImageView.isUserInteractionEnabled = false
+        
+        todoTableView.isHidden = true
+        todoTableView.backgroundColor = .clear
+        todoTableView.separatorStyle = .none
+        todoTableView.rowHeight = UITableView.automaticDimension
     }
     
     override func configureAction() {
-        addTapAction { [weak self] in
-            guard let self else { return }
-            endEditing(true)
-        }
+        navigationHeader.delegate = coordinatorDelegate
+
+        todoTextField.delegate = self
+
+        todoTableView.delegate = self
+        todoTableView.dataSource = self
+        todoTableView.register(TodoWriteTableViewCell.self, forCellReuseIdentifier: TodoWriteTableViewCell.identifier)
+        
     }
     
     override func configureHierarchy() {
@@ -180,4 +210,143 @@ final class TodoWritePage: BasePage {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? TodoWriteViewDatas {
+            if currentTodo != datas.todo || currentTodos != datas.todos {
+                updateTextField()
+            }
+            
+            if currentTodo != datas.todo {
+                currentTodo = datas.todo
+                
+                updateAddButtonStatus()
+            }
+            
+            if currentTodos != datas.todos {
+                currentTodos = datas.todos
+                
+                updateTodoLimitLabel()
+                
+                emptyListView.isHidden = !datas.todos.isEmpty
+                todoTableView.isHidden = datas.todos.isEmpty
+                todoTableView.reloadData()
+                
+                saveButton.setButtonStatus(status: datas.todos.map { $0.enabled }.isEmpty ? .disabled : .enabled)
+
+            }
+            
+            if currentIsShowKeyboard != datas.isShowKeyboard {
+                currentIsShowKeyboard = datas.isShowKeyboard
+                
+                todoTextField.layer.borderWidth = datas.isShowKeyboard ? 1.5 : 0
+            }
+        }
+    }
+}
+
+extension TodoWritePage {
+    private func updateTextField() {
+        todoTextField.text = currentTodo
+        let canAddTodo = (currentTodos ?? []).count < todoMaxCount
+        todoTextField.isEnabled = canAddTodo
+        todoTextField.attributedPlaceholder = NSAttributedString(
+            string: canAddTodo ? "예) 30분 걷기, 책 20페이지 읽기" : "모든 투두를 작성했어요!",
+            attributes: [.foregroundColor: canAddTodo ? UIColor.grey300 : UIColor.grey400]
+        )
+        todoTextField.backgroundColor = canAddTodo ? .grey800 : .grey500
+        todoLimitTextCount.isHidden = !canAddTodo
+
+        todoLimitTextCount.attributedText = makeAttributedText(
+            current: "\((currentTodo ?? "").count)",
+            maximum: "/\(todoMaxLength)",
+            currentColor: .blue300,
+            maximumColor: .grey500
+        )
+    }
+    
+    private func updateAddButtonStatus() {
+        let trimmed = (currentTodo ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        addButton.isEnabled = !trimmed.isEmpty
+        addButton.backgroundColor = trimmed.isEmpty ? .grey600 : .blue300
+        addButton.tintColor = trimmed.isEmpty ? .grey400 : .grey900
+    }
+    
+    private func updateTodoLimitLabel() {
+        let current = "\((currentTodos ?? []).count)"
+        
+        todoLimitLabel.attributedText = makeAttributedText(
+            prefix: "추가 가능 투두 ",
+            current: current,
+            maximum: "/\(todoMaxCount)",
+            currentColor: .blue300,
+            maximumColor: .grey600,
+            baseAttributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
+        )
+    }
+    
+    private func makeAttributedText(
+        prefix: String = "",
+        current: String,
+        maximum: String,
+        currentColor: UIColor,
+        maximumColor: UIColor,
+        baseAttributes: [NSAttributedString.Key: Any]? = nil
+    ) -> NSAttributedString {
+        let fullText = "\(prefix)\(current)\(maximum)"
+        let attributedText = NSMutableAttributedString(string: fullText, attributes: baseAttributes)
+        
+        if let range = fullText.range(of: current) {
+            let nsRange = NSRange(range, in: fullText)
+            attributedText.addAttribute(.foregroundColor, value: currentColor, range: nsRange)
+        }
+        
+        if let range = fullText.range(of: maximum) {
+            let nsRange = NSRange(range, in: fullText)
+            attributedText.addAttribute(.foregroundColor, value: maximumColor, range: nsRange)
+        }
+        
+        return attributedText
+    }
+}
+
+// MARK: - aboout tableView
+extension TodoWritePage: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return (currentTodos ?? []).count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: TodoWriteTableViewCell.identifier,
+            for: indexPath
+        ) as? TodoWriteTableViewCell else { return UITableViewCell() }
+        
+        cell.setExtraInfo(todo: (currentTodos ?? [])[indexPath.row], index: indexPath.row) { [weak self] index in
+            guard let self else { return }
+            delegate?.removeTodoAction(index: index)
+        }
+        
+        return cell
+    }
+}
+
+// MARK: - abount keyboard (UITextFieldDelegate)
+extension TodoWritePage: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard addButton.isEnabled else { return false }
+        delegate?.addTodoAction(todoMaxCount: todoMaxCount)
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        delegate?.updateIsShowKeyboardAction(isShowKeyboard: true)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        delegate?.updateIsShowKeyboardAction(isShowKeyboard: false)
+    }
+    
+    @objc private func dismissKeyboard() { endEditing(true) }
 }

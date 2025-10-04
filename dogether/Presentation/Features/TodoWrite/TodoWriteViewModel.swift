@@ -11,46 +11,53 @@ import RxRelay
 
 final class TodoWriteViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
+    private let todoWriteUseCase: TodoWriteUseCase
     
     private(set) var todoWriteViewDatas = BehaviorRelay<TodoWriteViewDatas>(value: TodoWriteViewDatas())
-    
-    var groupId: Int = 0
-    
-    let maximumTodoCount: Int = 10
-    let todoMaxLength: Int = 20
-    
-    private(set) var todo: String = ""
-    var todos: [WriteTodoInfo] = []
     
     init() {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
         self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
+        self.todoWriteUseCase = TodoWriteUseCase()
     }
     
 }
 
 extension TodoWriteViewModel {
-    func updateTodo(todo text: String?) {
-        todo = text ?? ""
-        
-        if todo.count > todoMaxLength {
-            todo = String(todo.prefix(todoMaxLength))
+    func updateIsShowKeyboard(isShowKeyboard: Bool) {
+        todoWriteViewDatas.update { $0.isShowKeyboard = isShowKeyboard }
+    }
+    
+    func updateTodo(todo: String?, todoMaxLength: Int) {
+        todoWriteViewDatas.update {
+            $0.todo = todoWriteUseCase.prefixTodo(todo: todo, todoMaxLength: todoMaxLength)
         }
     }
     
-    func addTodo() -> Bool {
-        if todo.isEmpty || todos.count >= maximumTodoCount { return false }
-        
-        todos.insert(WriteTodoInfo(content: todo), at: 0)
-        return true
+    func addTodo(todoMaxCount: Int) {
+        let todo = todoWriteViewDatas.value.todo
+        let todos = todoWriteViewDatas.value.todos
+        if todo.isEmpty || todos.count >= todoMaxCount { return }
+
+        todoWriteViewDatas.update {
+            $0.todo = ""
+            $0.todos = [WriteTodoEntity(content: todo)] + todos
+            $0.isShowKeyboard = false
+        }
     }
     
-    func removeTodo(_ index: Int) {
+    func removeTodo(index: Int) {
+        var todos = todoWriteViewDatas.value.todos
         guard index < todos.count else { return }
+
         todos.remove(at: index)
+        todoWriteViewDatas.update { $0.todos = todos }
     }
     
     func createTodos() async throws {
-        try await challengeGroupsUseCase.createTodos(groupId: groupId, todos: todos.reversed())
+        try await challengeGroupsUseCase.createTodos(
+            groupId: todoWriteViewDatas.value.groupId,
+            todos: todoWriteViewDatas.value.todos
+        )
     }
 }

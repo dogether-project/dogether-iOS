@@ -67,7 +67,7 @@ final class TodoWriteTableViewCell: BaseTableViewCell, ReusableProtocol {
 }
 
 extension TodoWriteTableViewCell {
-    func setExtraInfo(todo: WriteTodoInfo, index: Int, deleteAction: @escaping (Int) -> Void) {
+    func setExtraInfo(todo: WriteTodoEntity, index: Int, deleteAction: @escaping (Int) -> Void) {
         todoLabel.text = todo.content
         todoLabel.textColor = todo.enabled ? .grey50 : .grey500
         deleteButton.tag = index
