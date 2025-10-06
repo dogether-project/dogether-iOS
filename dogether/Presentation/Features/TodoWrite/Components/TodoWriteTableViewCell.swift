@@ -61,7 +61,7 @@ final class TodoWriteTableViewCell: BaseTableViewCell, ReusableProtocol {
         deleteButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(24)
         }
     }
 }
@@ -69,7 +69,7 @@ final class TodoWriteTableViewCell: BaseTableViewCell, ReusableProtocol {
 extension TodoWriteTableViewCell {
     func setExtraInfo(todo: WriteTodoEntity, index: Int, deleteAction: @escaping (Int) -> Void) {
         todoLabel.text = todo.content
-        todoLabel.textColor = todo.enabled ? .grey50 : .grey500
+        todoLabel.textColor = todo.enabled ? .grey0 : .grey400
         deleteButton.tag = index
         deleteButton.removeTarget(nil, action: nil, for: .touchUpInside)
         deleteButton.isHidden = !todo.enabled

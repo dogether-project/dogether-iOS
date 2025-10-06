@@ -10,11 +10,6 @@ import UIKit
 final class TodoWritePage: BasePage {
     var delegate: TodoWriteDelegate? {
         didSet {
-            addTapAction { [weak self] in
-                guard let self else { return }
-                endEditing(true)
-            }
-            
             todoTextField.addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
@@ -96,7 +91,7 @@ final class TodoWritePage: BasePage {
             string: DateFormatterManager.formattedDate(format: .MdE),
             attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
-        dateLabel.textColor = .grey400
+        dateLabel.textColor = .grey300
         todoLimitLabel.textColor = .grey0
         
         todoTextField.font = Fonts.body1S
@@ -135,6 +130,11 @@ final class TodoWritePage: BasePage {
     }
     
     override func configureAction() {
+        addTapAction { [weak self] in
+            guard let self else { return }
+            endEditing(true)
+        }
+        
         navigationHeader.delegate = coordinatorDelegate
 
         todoTextField.delegate = self
@@ -161,7 +161,7 @@ final class TodoWritePage: BasePage {
         }
         
         dateLabel.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(12)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(4)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
@@ -258,7 +258,7 @@ extension TodoWritePage {
             current: "\((currentTodo ?? "").count)",
             maximum: "/\(todoMaxLength)",
             currentColor: .blue300,
-            maximumColor: .grey500
+            maximumColor: .grey400
         )
     }
     
@@ -343,6 +343,4 @@ extension TodoWritePage: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         delegate?.updateIsShowKeyboardAction(isShowKeyboard: false)
     }
-    
-    @objc private func dismissKeyboard() { endEditing(true) }
 }
