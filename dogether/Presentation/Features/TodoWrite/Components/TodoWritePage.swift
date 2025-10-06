@@ -214,13 +214,10 @@ final class TodoWritePage: BasePage {
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? TodoWriteViewDatas {
-            if currentTodo != datas.todo || currentTodos != datas.todos {
-                updateTextField()
-            }
-            
             if currentTodo != datas.todo {
                 currentTodo = datas.todo
                 
+                updateTextField()
                 updateAddButtonStatus()
             }
             
