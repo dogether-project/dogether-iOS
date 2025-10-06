@@ -230,8 +230,7 @@ final class TodoWritePage: BasePage {
                 todoTableView.isHidden = datas.todos.isEmpty
                 todoTableView.reloadData()
                 
-                saveButton.setButtonStatus(status: datas.todos.map { $0.enabled }.isEmpty ? .disabled : .enabled)
-
+                saveButton.setButtonStatus(status: datas.todos.filter { $0.enabled }.isEmpty ? .disabled : .enabled)
             }
             
             if currentIsShowKeyboard != datas.isShowKeyboard {
