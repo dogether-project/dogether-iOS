@@ -14,8 +14,8 @@ final class ChallengeGroupUseCase {
         self.repository = repository
     }
     
-    func createTodos(groupId: Int, todos: [WriteTodoInfo]) async throws {
-        let createTodosRequest = CreateTodosRequest(todos: todos.filter { $0.enabled }.map { $0.content })
+    func createTodos(groupId: Int, todos: [WriteTodoEntity]) async throws {
+        let createTodosRequest = CreateTodosRequest(todos: todos.reversed().filter { $0.enabled }.map { $0.content })
         try await repository.createTodos(groupId: String(groupId), createTodosRequest: createTodosRequest)
     }
     

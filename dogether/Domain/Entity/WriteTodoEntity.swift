@@ -1,13 +1,13 @@
 //
-//  WriteTodoInfo.swift
+//  WriteTodoEntity.swift
 //  dogether
 //
-//  Created by seungyooooong on 6/8/25.
+//  Created by seungyooooong on 10/3/25.
 //
 
 import Foundation
 
-struct WriteTodoInfo {
+struct WriteTodoEntity: BaseEntity {
     let content: String
     let enabled: Bool
     
