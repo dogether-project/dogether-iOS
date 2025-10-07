@@ -75,7 +75,7 @@ final class StartPage: BasePage {
     }
     
     // MARK: - viewDidUpdate
-    override func updateHierarchy(_ data: (any BaseEntity)?) {
+    override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? StartViewDatas else { return }
         
         dogetherHeader.isHidden = !datas.isFirstGroup
@@ -122,13 +122,13 @@ extension StartPage {
         
         let subTitleLabel = UILabel()
         subTitleLabel.text = groupType.startSubTitleText
-        subTitleLabel.textColor = .grey400
+        subTitleLabel.textColor = .grey300
         subTitleLabel.font = Fonts.body2R
         subTitleLabel.isUserInteractionEnabled = false
         
         let chevronImageView = UIImageView()
         chevronImageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        chevronImageView.tintColor = .grey300
+        chevronImageView.tintColor = .grey200
         chevronImageView.isUserInteractionEnabled = false
         
         [imageView, titleLabel, subTitleLabel, chevronImageView].forEach { button.addSubview($0) }

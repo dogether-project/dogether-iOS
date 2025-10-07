@@ -30,8 +30,29 @@ final class GroupRepository: GroupProtocol {
         try await groupsDataSource.checkParticipating()
     }
     
-    func getGroups() async throws -> GetGroupsResponse {
+    func getGroupsBefore() async throws -> GetGroupsResponse {
         try await groupsDataSource.getGroups()
+    }
+    
+    func getGroups() async throws -> GroupViewDatas {
+        let response = try await groupsDataSource.getGroups()
+        return GroupViewDatas(
+            index: response.lastSelectedGroupIndex ?? 0,
+            groups: response.joiningChallengeGroups.map {
+                GroupEntity(
+                    id: $0.groupId,
+                    name: $0.groupName,
+                    currentMember: $0.currentMemberCount,
+                    maximumMember: $0.maximumMemberCount,
+                    joinCode: $0.joinCode,
+                    status: MainViewStatus(rawValue: $0.status) ?? .running,
+                    startDate: $0.startAt,
+                    endDate: $0.endAt,
+                    duration: $0.progressDay,
+                    progress: $0.progressRate
+                )
+            }
+        )
     }
     
     func saveLastSelectedGroup(saveLastSelectedGroupRequest: SaveLastSelectedGroupRequest) async throws {

@@ -7,22 +7,18 @@
 
 import UIKit
 
+import RxRelay
+
 final class MainViewModel {
     private let groupUseCase: GroupUseCase
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
-    private(set) var rankings: [RankingModel]?
+    private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
+    private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
+    private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(value: SheetViewDatas())
     
-    private(set) var challengeGroupInfos: [ChallengeGroupInfo] = []
-    
-    var currentGroup: ChallengeGroupInfo {
-        challengeGroupInfos[currentChallengeIndex]
-    }
-    
-    private(set) var currentChallengeIndex: Int = 0
-    
-    private(set) var sheetStatus: SheetStatus = .normal
+    private(set) var timerViewDatas = BehaviorRelay<TimerViewDatas>(value: TimerViewDatas())
     
     private(set) var timer: Timer?
     private(set) var time: String = "23:59:59"
@@ -30,7 +26,7 @@ final class MainViewModel {
     
     private(set) var dateOffset: Int = 0
     private(set) var currentFilter: FilterTypes = .all
-    private(set) var todoList: [TodoInfo] = []
+    private(set) var todoList: [TodoEntity] = []
     
 
     // MARK: - Computed
@@ -49,8 +45,13 @@ final class MainViewModel {
 
 // MARK: - get
 extension MainViewModel {
-    func getChallengeGroupInfos() async throws -> (groupIndex: Int?, challengeGroupInfos: [ChallengeGroupInfo]) {
-        return try await groupUseCase.getChallengeGroupInfos()
+    func getGroups() async throws -> GroupViewDatas {
+        return try await groupUseCase.getGroups()
+    }
+    
+    func getTodoList(dateOffset: Int, groupId: Int) async throws -> [TodoEntity] {
+        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
+        return try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date)
     }
     
     func getReviews() async throws -> [ReviewModel] {
@@ -60,14 +61,6 @@ extension MainViewModel {
 
 // MARK: - set
 extension MainViewModel {
-    func setChallengeIndex(index: Int) {
-        self.currentChallengeIndex = index
-    }
-    
-    func setChallengeGroupInfos(challengegroupInfos: [ChallengeGroupInfo]) {
-        self.challengeGroupInfos = challengegroupInfos
-    }
-    
     func setDateOffset(offset: Int) {
         self.dateOffset = offset
     }
@@ -79,78 +72,64 @@ extension MainViewModel {
             self.currentFilter = filter
         }
     }
+    
+    func setSheetViewDatasForCurrentGroup(currentGroup: GroupEntity) async throws {
+        if currentGroup.status == .ready {
+            sheetViewDatas.update { $0.status = .timer }
+            return
+        }
+        
+        let dateOffset = sheetViewDatas.value.dateOffset
+        if currentGroup.status == .dDay && dateOffset == 0 {
+            sheetViewDatas.update { $0.status = .done }
+            return
+        }
+        
+        let todoList = try await getTodoList(dateOffset: dateOffset, groupId: currentGroup.id)
+        sheetViewDatas.update {
+            $0.todoList = todoList
+            $0.status = dateOffset == 0 && todoList.isEmpty ? .createTodo :
+            dateOffset == 0 && todoList.count > 0 ? .certificateTodo :
+            dateOffset < 0 && todoList.isEmpty ? .emptyList : .todoList
+        }
+    }
 }
 
 // MARK: - ready
 extension MainViewModel {
-    func startCountdown(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
-        checkRemainTime(updateTimer: updateTimer, updateList: updateList)
+    func startTimer() {
+        calculateRemainTime()
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-                self.checkRemainTime(updateTimer: updateTimer, updateList: updateList)
+                self.calculateRemainTime()
             }
         }
     }
     
-    private func stopCountdown() {
+    func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
     
-    private func checkRemainTime(updateTimer: @escaping () -> Void, updateList: @escaping () -> Void) {
+    private func calculateRemainTime() {
         let remainTime = Date().getRemainTime()
         
         if remainTime > 0 {
-            updateTimerInfo(remainTime: remainTime, updateTimer: updateTimer)
+            timerViewDatas.update {
+                $0.time = remainTime.formatToHHmmss()
+                $0.timeProgress = remainTime.getTimeProgress()
+            }
         } else {
-            stopCountdown()
+            stopTimer()
         }
-    }
-    
-    private func updateTimerInfo(remainTime: TimeInterval, updateTimer: @escaping () -> Void) {
-        self.time = remainTime.formatToHHmmss()
-        self.timeProgress = remainTime.getTimeProgress()
-        Task { @MainActor in updateTimer() }
-    }
-}
-    
-// MARK: - todoList
-extension MainViewModel {
-    func updateListInfo() async throws {
-        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
-        todoList = try await challengeGroupsUseCase.getMyTodos(groupId: currentGroup.id, date: date)
-    }
-}
-
-// MARK: - about sheet
-extension MainViewModel {
-    func getNewOffset(from currentOffset: CGFloat, with translation: CGFloat) -> CGFloat {
-        switch sheetStatus {
-        case .expand:
-            if translation > 0 { return min(SheetStatus.normal.offset, SheetStatus.expand.offset + translation) }
-            return currentOffset
-        case .normal:
-            if translation < 0 { return max(0, SheetStatus.normal.offset + translation) }
-            return currentOffset
-        }
-    }
-    
-    func updateSheetStatus(with translation: CGFloat) -> SheetStatus {
-        switch sheetStatus {
-        case .expand:
-            sheetStatus = translation > 100 ? .normal : .expand
-        case .normal:
-            sheetStatus = translation < -100 ? .expand : .normal
-        }
-        return sheetStatus
     }
 }
 
 extension MainViewModel {
-    func saveLastSelectedGroup() {
+    func saveLastSelectedGroupIndex(index: Int) {
         Task {
-            try await groupUseCase.saveLastSelectedGroup(groupId: currentGroup.id)
+            try await groupUseCase.saveLastSelectedGroup(groupId: groupViewDatas.value.groups[index].id)
         }
     }
 }

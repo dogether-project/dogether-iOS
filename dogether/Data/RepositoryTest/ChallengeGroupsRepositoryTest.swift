@@ -11,15 +11,15 @@ final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
     func createTodos(groupId: String, createTodosRequest: CreateTodosRequest) async throws { }
     
     func getMyTodos(groupId: String, date: String) async throws -> GetMyTodosResponse {
-        let certify_pendings = (1 ... 2).map { TodoInfo(id: $0, content: "testTodo \($0)", status: "CERTIFY_PENDING") }
+        let certify_pendings = (1 ... 2).map { TodoEntity(id: $0, content: "testTodo \($0)", status: "CERTIFY_PENDING") }
         let review_pendings = (3 ... 4).map {
-            TodoInfo(id: $0, content: "testTodo \($0)", status: "REVIEW_PENDING", certificationContent: "test todo content \($0)")
+            TodoEntity(id: $0, content: "testTodo \($0)", status: "REVIEW_PENDING", certificationContent: "test todo content \($0)")
         }
         let approves = (5 ... 6).map {
-            TodoInfo(id: $0, content: "testTodo \($0)", status: "APPROVE", certificationContent: "test todo content \($0)")
+            TodoEntity(id: $0, content: "testTodo \($0)", status: "APPROVE", certificationContent: "test todo content \($0)")
         }
         let rejects = (7 ... 8).map {
-            TodoInfo(
+            TodoEntity(
                 id: $0, content: "testTodo \($0)testTodo \($0)testTodo \($0)", status: "REJECT",
                 certificationContent: "test todo content \($0)test todo content \($0)test todo content \($0)", reviewFeedback: "test todo reject reason \($0)test todo reject reason \($0)test todo reject reason \($0)test todo reject reason \($0)"
             )

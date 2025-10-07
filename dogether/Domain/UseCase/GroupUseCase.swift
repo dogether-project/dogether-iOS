@@ -51,8 +51,13 @@ final class GroupUseCase {
         return response.checkParticipating
     }
     
+    func getGroups() async throws -> GroupViewDatas {
+        return try await repository.getGroups()
+    }
+    
+    // FIXME: 추후 삭제
     func getChallengeGroupInfos() async throws -> (groupIndex: Int?, challengeGroupInfos: [ChallengeGroupInfo]) {
-        let response = try await repository.getGroups()
+        let response = try await repository.getGroupsBefore()
         return (response.lastSelectedGroupIndex , response.joiningChallengeGroups.map {
             ChallengeGroupInfo(
                 id: $0.groupId,

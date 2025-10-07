@@ -5,8 +5,8 @@
 //  Created by seungyooooong on 2/15/25.
 //
 
-import RxCocoa
 import RxSwift
+import RxCocoa
 
 final class SplashViewController: BaseViewController {
     private let splashPage = SplashPage()

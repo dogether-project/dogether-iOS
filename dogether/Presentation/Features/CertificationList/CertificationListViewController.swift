@@ -148,7 +148,7 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
     func didTapCertificationFilterView() {
     }
     
-    func didTapCertification(_ certification: TodoInfo) {
+    func didTapCertification(_ certification: TodoEntity) {
         let certificationInfoViewController = CertificationInfoViewController()
         certificationInfoViewController.todoInfo = certification
         coordinator?.pushViewController(certificationInfoViewController, animated: true)

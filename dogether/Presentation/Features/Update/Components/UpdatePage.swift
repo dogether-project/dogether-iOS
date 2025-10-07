@@ -8,7 +8,16 @@
 import UIKit
 
 final class UpdatePage: BasePage {
-    var delegate: UpdateDelegate?
+    var delegate: UpdateDelegate? {
+        didSet {
+            updateButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.updateAction()
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     private let typoImageView = UIImageView()
     private let titleLabel = UILabel()
@@ -47,14 +56,7 @@ final class UpdatePage: BasePage {
         updateStackView.setCustomSpacing(44, after: descriptionLabel)
     }
     
-    override func configureAction() {
-        updateButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.updateAction()
-            }, for: .touchUpInside
-        )
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [updateContainerView, updateButton].forEach { addSubview($0) }

@@ -8,5 +8,5 @@
 import Foundation
 
 struct GetMyTodosResponse: Decodable {
-    let todos: [TodoInfo]
+    let todos: [TodoEntity]
 }

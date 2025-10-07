@@ -9,11 +9,28 @@ import UIKit
 import SnapKit
 
 final class TodoListItemButton: BaseButton {
-    private(set) var todo: TodoInfo
+    var delegate: MainDelegate? {
+        didSet {
+            addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    if isUncertified {
+                        if isToday {
+                            delegate?.goCertificationViewAction(todo: todo)
+                        } else { return }
+                    } else {
+                        delegate?.goCertificationInfoViewAction(todo: todo)
+                    }
+                }, for: .touchUpInside
+            )
+        }
+    }
+    
+    private(set) var todo: TodoEntity
     private(set) var isToday: Bool
     private(set) var isUncertified: Bool
     
-    init(todo: TodoInfo, isToday: Bool) {
+    init(todo: TodoEntity, isToday: Bool) {
         self.todo = todo
         self.isToday = isToday
         self.isUncertified = todo.status == TodoStatus.waitCertification.rawValue
@@ -36,7 +53,7 @@ final class TodoListItemButton: BaseButton {
         label.text = "인증하기"
         label.textAlignment = .center
         label.font = Fonts.body2S
-        label.layer.cornerRadius = 6
+        label.layer.cornerRadius = 8
         label.clipsToBounds = true
         label.isUserInteractionEnabled = false
         return label
@@ -56,7 +73,7 @@ final class TodoListItemButton: BaseButton {
         todoImageView.image = TodoStatus(rawValue: todo.status)?.image
         
         contentLabel.text = todo.content
-        contentLabel.textColor = isUncertified ? isToday ? .grey50 : .grey400 : .grey300
+        contentLabel.textColor = isUncertified ? isToday ? .grey0 : .grey400 : .grey300
         
         certificationLabel.textColor = isToday ? .grey900 : .grey400
         certificationLabel.backgroundColor = isToday ? .blue300 : .grey500

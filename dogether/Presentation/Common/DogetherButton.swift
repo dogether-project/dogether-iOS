@@ -24,7 +24,7 @@ final class DogetherButton: BaseButton {
         
         setTitle(title, for: .normal)
         titleLabel?.font = Fonts.body1B
-        layer.cornerRadius = 12
+        layer.cornerRadius = 8
     }
     
     override func configureAction() { }
