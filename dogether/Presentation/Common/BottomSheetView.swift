@@ -160,7 +160,7 @@ extension BottomSheetView {
         let addGroupImageView = UIImageView(image: .plusCircle)
         
         let titleLabel = UILabel()
-        titleLabel.text = "그룹 추가하기"
+        titleLabel.text = "새 그룹 추가하기"
         titleLabel.textColor = .grey200
         titleLabel.font = Fonts.body1B
         

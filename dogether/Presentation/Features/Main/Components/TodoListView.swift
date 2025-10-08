@@ -32,8 +32,9 @@ final class TodoListView: BaseView {
     private let todoScrollView = UIScrollView()
     private let todoListStackView = UIStackView()
     
-    private let emptyListImageView = UIImageView(image: .comment)
-    private let emptyListLabel = UILabel()
+    private let emptyListImageView = UIImageView(image: .embarrassedDosik)
+    private let emptyListTitleLabel = UILabel()
+    private let emptyListDescriptionLabel = UILabel()
     private let emptyListStackView = UIStackView()
     
     private let addTodoButton = AdditionalAddTodoButton()
@@ -49,15 +50,21 @@ final class TodoListView: BaseView {
         todoListStackView.spacing = 8
         todoListStackView.distribution = .fillEqually
         
-        emptyListLabel.textColor = .grey400
-        emptyListLabel.font = Fonts.head2B
+        emptyListTitleLabel.textColor = .grey200
+        emptyListTitleLabel.font = Fonts.head2B
+        emptyListDescriptionLabel.text = "오늘 하루 이루고 싶은 목표를 입력해보세요!"
+        emptyListDescriptionLabel.textColor = .grey400
+        emptyListDescriptionLabel.font = Fonts.body2R
         
         emptyListStackView.axis = .vertical
-        emptyListStackView.spacing = 16
         emptyListStackView.alignment = .center
+        emptyListStackView.setCustomSpacing(16, after: emptyListImageView)
+        emptyListStackView.setCustomSpacing(4, after: emptyListTitleLabel)
         
         [allButton, waitButton, approveButton, rejectButton].forEach { filterStackView.addArrangedSubview($0) }
-        [emptyListImageView, emptyListLabel].forEach { emptyListStackView.addArrangedSubview($0) }
+        [emptyListImageView, emptyListTitleLabel, emptyListDescriptionLabel].forEach {
+            emptyListStackView.addArrangedSubview($0)
+        }
     }
     
     override func configureAction() {
@@ -87,12 +94,18 @@ final class TodoListView: BaseView {
         }
         
         emptyListImageView.snp.makeConstraints {
-            $0.width.equalTo(74)
-            $0.height.equalTo(54)
+            $0.width.height.equalTo(150)
+            // FIXME: embarrassedDosik 이미지 교체 후 수정
+//            $0.width.equalTo(129)
+//            $0.height.equalTo(148)
         }
         
-        emptyListLabel.snp.makeConstraints {
+        emptyListTitleLabel.snp.makeConstraints {
             $0.height.equalTo(28)
+        }
+        
+        emptyListDescriptionLabel.snp.makeConstraints {
+            $0.height.equalTo(21)
         }
         
         emptyListStackView.snp.makeConstraints {
@@ -134,7 +147,7 @@ final class TodoListView: BaseView {
                 todoListStackView.addArrangedSubview(addTodoButton)
             }
             
-            emptyListLabel.text = datas.filter.emptyDescription
+            emptyListTitleLabel.text = datas.filter.emptyTitle
         }
     }
 }
