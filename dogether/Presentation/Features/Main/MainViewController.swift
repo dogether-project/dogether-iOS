@@ -162,7 +162,7 @@ extension MainViewController: MainDelegate {
     func goRankingViewAction() {
         let rankingViewController = RankingViewController()
         // FIXME: rankingView RxSwift 도입 시 수정
-        rankingViewController.viewModel.groupId = viewModel.groupViewDatas.value.index
+        rankingViewController.viewModel.groupId = viewModel.currentGroup.id
         coordinator?.pushViewController(rankingViewController)
     }
     
@@ -177,9 +177,7 @@ extension MainViewController: MainDelegate {
         viewModel.sheetViewDatas.update { $0.dateOffset = 0 }
         
         Task {
-            try await viewModel.setSheetViewDatasForCurrentGroup(
-                currentGroup: viewModel.groupViewDatas.value.groups[index]
-            )
+            try await viewModel.setSheetViewDatasForCurrentGroup(currentGroup: viewModel.currentGroup)
         }
     }
     
@@ -190,8 +188,7 @@ extension MainViewController: MainDelegate {
     }
     
     func inviteAction() {
-        let groupData = viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
-        let inviteGroup = SystemManager.inviteGroup(groupName: groupData.name, joinCode: groupData.joinCode)
+        let inviteGroup = SystemManager.inviteGroup(groupName: viewModel.currentGroup.name, joinCode: viewModel.currentGroup.joinCode)
         present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
     }
     
@@ -202,9 +199,7 @@ extension MainViewController: MainDelegate {
         }
         
         Task {
-            try await viewModel.setSheetViewDatasForCurrentGroup(
-                currentGroup: viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
-            )
+            try await viewModel.setSheetViewDatasForCurrentGroup(currentGroup: viewModel.currentGroup)
         }
     }
     
@@ -215,9 +210,7 @@ extension MainViewController: MainDelegate {
         }
         
         Task {
-            try await viewModel.setSheetViewDatasForCurrentGroup(
-                currentGroup: viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index]
-            )
+            try await viewModel.setSheetViewDatasForCurrentGroup(currentGroup: viewModel.currentGroup)
         }
     }
     
@@ -232,10 +225,8 @@ extension MainViewController: MainDelegate {
     func goWriteTodoViewAction(todos: [TodoEntity]) {
         let todoWriteViewController = TodoWriteViewController()
         let todoWriteViewDatas = TodoWriteViewDatas(
-            groupId: viewModel.groupViewDatas.value.groups[viewModel.groupViewDatas.value.index].id,
-            todos: todos.map {
-                WriteTodoEntity(content: $0.content, enabled: false)
-            }
+            groupId: viewModel.currentGroup.id,
+            todos: todos.map { WriteTodoEntity(content: $0.content, enabled: false) }
         )
         coordinator?.pushViewController(todoWriteViewController, datas: todoWriteViewDatas)
     }

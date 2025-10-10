@@ -30,6 +30,7 @@ final class MainViewModel {
     
 
     // MARK: - Computed
+    var currentGroup: GroupEntity { groupViewDatas.value.groups[groupViewDatas.value.index] }
     var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
     
     init() {
