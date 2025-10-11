@@ -161,9 +161,8 @@ extension MainViewController: MainDelegate {
     
     func goRankingViewAction() {
         let rankingViewController = RankingViewController()
-        // FIXME: rankingView RxSwift 도입 시 수정
-        rankingViewController.viewModel.groupId = viewModel.currentGroup.id
-        coordinator?.pushViewController(rankingViewController)
+        let rankingViewDatas = RankingViewDatas(groupId: viewModel.currentGroup.id)
+        coordinator?.pushViewController(rankingViewController, datas: rankingViewDatas)
     }
     
     func updateBottomSheetVisibleAction(isShowSheet: Bool) {

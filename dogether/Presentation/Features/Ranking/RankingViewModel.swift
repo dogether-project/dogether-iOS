@@ -7,10 +7,13 @@
 
 import UIKit
 
+import RxRelay
+
 final class RankingViewModel {
     private let groupUseCase: GroupUseCase
     
-    var groupId: Int?
+    private(set) var rankingViewDatas = BehaviorRelay<RankingViewDatas>(value: RankingViewDatas())
+    
     private(set) var rankings: [RankingModel] = []
     
     init() {
@@ -27,7 +30,6 @@ extension RankingViewModel {
 
 extension RankingViewModel {
     func getRankings() async throws {
-        guard let groupId else { return }
-        rankings = try await groupUseCase.getRankings(groupId: groupId)
+        rankings = try await groupUseCase.getRankings(groupId: rankingViewDatas.value.groupId)
     }
 }
