@@ -7,10 +7,14 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 class BaseViewController: UIViewController, CoordinatorDelegate {
     weak var coordinator: NavigationCoordinator?
     var datas: (any BaseEntity)?
     var pages: Array<BasePage>?
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,4 +65,25 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     
     /// ViewModel의 변화에 View(Page)가 반응하도록 바인딩하는 역할을 합니다
     func bindViewModel() { }
+    
+    /// 값이 바뀔 때, 등록된 모든 페이지의 viewDidUpdate를 호출합니다
+    func bind<Entity: BaseEntity>(_ relay: BehaviorRelay<Entity>) {
+        relay
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: relay.value)
+            .drive(onNext: { [weak self] datas in
+                guard let self else { return }
+                pages?.forEach { $0.viewDidUpdate(datas) }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    /// 값 변화 시 특정 액션을 수행하도록 바인딩하는 공통 함수입니다.
+    func bindAction<T: Equatable>(_ relay: BehaviorRelay<T>, _ action: @escaping (T) -> Void) {
+        relay
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: relay.value)
+            .drive(onNext: action)
+            .disposed(by: disposeBag)
+    }
 }

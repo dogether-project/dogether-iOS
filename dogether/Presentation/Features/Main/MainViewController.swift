@@ -7,13 +7,9 @@
 
 import UIKit
 
-import RxSwift
-import RxCocoa
-
 final class MainViewController: BaseViewController {
     private let mainPage = MainPage()
     private let viewModel = MainViewModel()
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         mainPage.delegate = self
@@ -34,41 +30,10 @@ final class MainViewController: BaseViewController {
     override func setViewDatas() { }
     
     override func bindViewModel() {
-        viewModel.bottomSheetViewDatas
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: BottomSheetViewDatas())
-            .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                mainPage.viewDidUpdate(datas)
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.groupViewDatas
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: GroupViewDatas())
-            .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                mainPage.viewDidUpdate(datas)
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.sheetViewDatas
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: SheetViewDatas())
-            .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                mainPage.viewDidUpdate(datas)
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.timerViewDatas
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: TimerViewDatas())
-            .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                mainPage.viewDidUpdate(datas)
-            })
-            .disposed(by: disposeBag)
+        bind(viewModel.bottomSheetViewDatas)
+        bind(viewModel.groupViewDatas)
+        bind(viewModel.sheetViewDatas)
+        bind(viewModel.timerViewDatas)
     }
 }
 

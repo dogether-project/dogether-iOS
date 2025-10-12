@@ -5,13 +5,10 @@
 //  Created by seungyooooong on 2/15/25.
 //
 
-import RxSwift
-import RxCocoa
-
 final class SplashViewController: BaseViewController {
     private let splashPage = SplashPage()
     private let viewModel = SplashViewModel()
-    private let disposeBag = DisposeBag()
+//    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         pages = [splashPage]
@@ -22,38 +19,20 @@ final class SplashViewController: BaseViewController {
     }
     
     override func bindViewModel() {
-        viewModel.needUpdate
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(UpdateViewController())
-                }
-            })
-            .disposed(by: disposeBag)
+        bindAction(viewModel.needUpdate) { [weak self] isNeeded in
+            guard let self else { return }
+            if isNeeded { coordinator?.setNavigationController(UpdateViewController()) }
+        }
         
-        viewModel.needLogin
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(OnboardingViewController())
-                }
-            })
-            .disposed(by: disposeBag)
+        bindAction(viewModel.needLogin) { [weak self] isNeeded in
+            guard let self else { return }
+            if isNeeded { coordinator?.setNavigationController(OnboardingViewController()) }
+        }
         
-        viewModel.needParticipating
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(StartViewController())
-                }
-            })
-            .disposed(by: disposeBag)
+        bindAction(viewModel.needParticipating) { [weak self] isNeeded in
+            guard let self else { return }
+            if isNeeded { coordinator?.setNavigationController(StartViewController()) }
+        }
     }
 }
 

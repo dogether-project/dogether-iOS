@@ -5,13 +5,9 @@
 //  Created by seungyooooong on 3/25/25.
 //
 
-import RxSwift
-import RxCocoa
-
 final class OnboardingViewController: BaseViewController {
     private let onboardingPage = OnboardingPage()
     private let viewModel = OnboardingViewModel()
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         onboardingPage.delegate = self
@@ -22,16 +18,12 @@ final class OnboardingViewController: BaseViewController {
     }
     
     override func bindViewModel() {
-        viewModel.needParticipating
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(StartViewController())
-                }
-            })
-            .disposed(by: disposeBag)
+        bindAction(viewModel.needParticipating) { [weak self] isNeeded in
+            guard let self else { return }
+            if isNeeded {
+                coordinator?.setNavigationController(StartViewController())
+            }
+        }
     }
 }
 
