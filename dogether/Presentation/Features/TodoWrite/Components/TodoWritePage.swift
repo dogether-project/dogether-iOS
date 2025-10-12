@@ -44,6 +44,7 @@ final class TodoWritePage: BasePage {
     private let addButton = UIButton()
     private let addButtonImageView = UIImageView()
     
+    // FIXME: 추후에 디자인적인 회의를 거치고 재홍님이 만들어주신 EmptyStateView를 사용해 통일해요
     private let emptyListView = {
         let imageView = UIImageView(image: .embarrassedDosik)
         imageView.contentMode = .scaleAspectFit
