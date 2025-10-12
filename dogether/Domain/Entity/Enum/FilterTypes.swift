@@ -63,7 +63,7 @@ enum FilterTypes: String, CaseIterable, BaseEntity {
         }
     }
     
-    var emptyDescription: String {
+    var emptyTitle: String {
         switch self {
         case .wait:
             return "검사 대기 중인 투두가 없어요"

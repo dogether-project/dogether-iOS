@@ -73,7 +73,7 @@ final class FilterButton: BaseButton {
         }
         
         icon.snp.makeConstraints {
-            $0.width.height.equalTo(18)
+            $0.width.height.equalTo(16)
         }
     }
     

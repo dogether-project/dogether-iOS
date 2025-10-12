@@ -41,30 +41,11 @@ final class TodoListItemButton: BaseButton {
     
     private let todoImageView = UIImageView()
     
-    private let contentLabel = {
-        let label = UILabel()
-        label.font = Fonts.body1S
-        label.isUserInteractionEnabled = false
-        return label
-    }()
+    private let contentLabel = UILabel()
     
-    private let certificationLabel = {
-        let label = UILabel()
-        label.text = "인증하기"
-        label.textAlignment = .center
-        label.font = Fonts.body2S
-        label.layer.cornerRadius = 8
-        label.clipsToBounds = true
-        label.isUserInteractionEnabled = false
-        return label
-    }()
+    private let certificationLabel = UILabel()
     
-    private let checkImageView = {
-        let imageView = UIImageView()
-        imageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .grey200
-        return imageView
-    }()
+    private let checkImageView = UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
     
     override func configureView() {
         backgroundColor = .grey700
@@ -74,9 +55,19 @@ final class TodoListItemButton: BaseButton {
         
         contentLabel.text = todo.content
         contentLabel.textColor = isUncertified ? isToday ? .grey0 : .grey400 : .grey300
+        contentLabel.font = Fonts.body1S
+        contentLabel.isUserInteractionEnabled = false
         
+        certificationLabel.text = "인증하기"
         certificationLabel.textColor = isToday ? .grey900 : .grey400
+        certificationLabel.textAlignment = .center
+        certificationLabel.font = Fonts.body2S
+        certificationLabel.layer.cornerRadius = 8
+        certificationLabel.clipsToBounds = true
+        certificationLabel.isUserInteractionEnabled = false
         certificationLabel.backgroundColor = isToday ? .blue300 : .grey500
+        
+        checkImageView.tintColor = .grey200
     }
     
     override func configureAction() { }
@@ -116,7 +107,7 @@ final class TodoListItemButton: BaseButton {
             checkImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.right.equalToSuperview().offset(-16)
-                $0.width.height.equalTo(20)
+                $0.width.height.equalTo(24)
             }
         }
     }
