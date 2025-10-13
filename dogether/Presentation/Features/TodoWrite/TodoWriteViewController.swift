@@ -13,7 +13,6 @@ import RxCocoa
 final class TodoWriteViewController: BaseViewController {
     private let todoWritePage = TodoWritePage()
     private let viewModel = TodoWriteViewModel()
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         todoWritePage.delegate = self
@@ -29,14 +28,7 @@ final class TodoWriteViewController: BaseViewController {
     }
     
     override func bindViewModel() {
-        viewModel.todoWriteViewDatas
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: TodoWriteViewDatas())
-            .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                todoWritePage.viewDidUpdate(datas)
-            })
-            .disposed(by: disposeBag)
+        bind(viewModel.todoWriteViewDatas)
     }
 }
 
