@@ -9,8 +9,10 @@ import Foundation
 
 struct RankingViewDatas: BaseEntity {
     var groupId: Int
+    var rankings: [RankingEntity]
     
-    init(groupId: Int = 0) {
+    init(groupId: Int = 0, rankings: [RankingEntity] = []) {
         self.groupId = groupId
+        self.rankings = rankings
     }
 }

@@ -80,10 +80,10 @@ final class GroupUseCase {
         try await repository.saveLastSelectedGroup(saveLastSelectedGroupRequest: saveLastSelectedGroupRequest)
     }
     
-    func getRankings(groupId: Int) async throws -> [RankingModel] {
+    func getRankings(groupId: Int) async throws -> [RankingEntity] {
         let response = try await repository.getRanking(groupId: String(groupId))
         return response.ranking.map {
-            RankingModel(
+            RankingEntity(
                 memberId: $0.memberId,
                 rank: $0.rank,
                 profileImageUrl: $0.profileImageUrl,

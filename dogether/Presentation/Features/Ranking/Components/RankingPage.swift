@@ -8,10 +8,7 @@
 import UIKit
 
 final class RankingPage: BasePage {
-    var delegate: RankingDelegate? {
-        didSet {
-        }
-    }
+    var delegate: RankingDelegate?
     
     private let navigationHeader = NavigationHeader(title: "순위")
     private let rankingTopStackView = UIStackView()
@@ -46,11 +43,11 @@ final class RankingPage: BasePage {
     }()
     private let rankingTableView = UITableView()
     
-    private var errorView: ErrorView?
+//    private var errorView: ErrorView?
+    
+    private(set) var currentRankings: [RankingEntity]?
     
     override func configureView() {
-//        updateView()
-        
         rankingTopStackView.axis = .horizontal
         rankingTopStackView.spacing = 11
         rankingTopStackView.distribution = .fillEqually
@@ -95,23 +92,42 @@ final class RankingPage: BasePage {
             $0.bottom.left.right.equalToSuperview()
         }
     }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? RankingViewDatas {
+            if currentRankings != datas.rankings {
+                currentRankings = datas.rankings
+                
+                rankingTopStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+                [1, 0, 2].forEach { index in
+                    let ranking = datas.rankings[safe: index]
+                    let topView = RankingTopView(ranking: ranking)
+                    topView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedTopView(_:))))
+                    rankingTopStackView.addArrangedSubview(topView)
+                }
+
+                rankingTableView.reloadData()
+            }
+        }
+    }
 }
 
 // MARK: - aboout tableView
 extension RankingPage: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        guard viewModel.rankings.count > 3 else { return 0 }
-//        return viewModel.rankings.count - 3
-        return 0
+        guard let currentRankings, currentRankings.count > 3 else { return 0 }
+        return currentRankings.count - 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
+        guard let currentRankings, let cell = tableView.dequeueReusableCell(
             withIdentifier: RankingTableViewCell.identifier,
             for: indexPath
         ) as? RankingTableViewCell else { return UITableViewCell() }
         
-//        cell.setExtraInfo(ranking: viewModel.rankings[indexPath.row + 3])
+        cell.setExtraInfo(ranking: currentRankings[indexPath.row + 3])
         
         return cell
     }
@@ -123,17 +139,14 @@ extension RankingPage: UITableViewDelegate, UITableViewDataSource {
 
 extension RankingPage {
     @objc private func tappedTopView(_ sender: UITapGestureRecognizer) {
-        if let rankingTopView = sender.view as? RankingTopView, let ranking = rankingTopView.ranking {
-            goMemberCertificationView(rankingIndex: ranking.rank - 1)
-        }
+        guard let rankingTopView = sender.view as? RankingTopView, let ranking = rankingTopView.ranking else { return }
+        
+        goMemberCertificationView(rankingIndex: ranking.rank - 1)
     }
     
     private func goMemberCertificationView(rankingIndex: Int) {
-//        if viewModel.rankings[rankingIndex].historyReadStatus == nil { return }
-//        
-//        let memberCertificationViewController = MemberCertificationViewController()
-//        memberCertificationViewController.viewModel.groupId = viewModel.rankingViewDatas.value.groupId
-//        memberCertificationViewController.viewModel.memberInfo = viewModel.rankings[rankingIndex]
-//        coordinator?.pushViewController(memberCertificationViewController)
+        guard let currentRankings, let _ = currentRankings[rankingIndex].historyReadStatus else { return }
+        
+        delegate?.goCertificationViewAction(memberInfo: currentRankings[rankingIndex])
     }
 }

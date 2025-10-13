@@ -56,7 +56,6 @@ extension RankingViewController {
                 try await viewModel.loadRankingView()
                 await MainActor.run {
                     self.showMainContentViews()
-                    self.updateView()
                 }
             } catch let error as NetworkError {
                 await MainActor.run {
@@ -65,19 +64,6 @@ extension RankingViewController {
                 }
             }
         }
-    }
-    
-    private func updateView() {
-//        rankingTopStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-//
-//        [1, 0, 2].forEach { index in
-//            let ranking = viewModel.rankings[safe: index]
-//            let topView = RankingTopView(ranking: ranking)
-//            topView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedTopView(_:))))
-//            rankingTopStackView.addArrangedSubview(topView)
-//        }
-//        
-//        rankingTableView.reloadData()
     }
 }
 
@@ -112,9 +98,15 @@ extension RankingViewController {
 
 // MARK: - delegate
 protocol RankingDelegate {
-    
+    func goCertificationViewAction(memberInfo: RankingEntity)
 }
 
 extension RankingViewController: RankingDelegate {
-    
+    func goCertificationViewAction(memberInfo: RankingEntity) {
+        // FIXME: MemberCertificationView RxSwift 구조 도입 후 수정
+        let memberCertificationViewController = MemberCertificationViewController()
+        memberCertificationViewController.viewModel.groupId = viewModel.rankingViewDatas.value.groupId
+        memberCertificationViewController.viewModel.memberInfo = memberInfo
+        coordinator?.pushViewController(memberCertificationViewController)
+    }
 }

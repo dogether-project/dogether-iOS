@@ -14,8 +14,6 @@ final class RankingViewModel {
     
     private(set) var rankingViewDatas = BehaviorRelay<RankingViewDatas>(value: RankingViewDatas())
     
-    private(set) var rankings: [RankingModel] = []
-    
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
         self.groupUseCase = GroupUseCase(repository: groupRepository)
@@ -30,6 +28,7 @@ extension RankingViewModel {
 
 extension RankingViewModel {
     func getRankings() async throws {
-        rankings = try await groupUseCase.getRankings(groupId: rankingViewDatas.value.groupId)
+        let rankings = try await groupUseCase.getRankings(groupId: rankingViewDatas.value.groupId)
+        rankingViewDatas.update { $0.rankings = rankings }
     }
 }
