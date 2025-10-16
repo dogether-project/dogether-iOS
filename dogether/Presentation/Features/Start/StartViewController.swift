@@ -18,11 +18,10 @@ final class StartViewController: BaseViewController {
     }
     
     override func setViewDatas() {
-        guard let datas = datas as? StartViewDatas else { return }
-        viewModel.startViewDatas.accept(datas)
-    }
-    
-    override func bindViewModel() {
+        if let datas = datas as? StartViewDatas {
+            viewModel.startViewDatas.accept(datas)
+        }
+        
         bind(viewModel.startViewDatas)
     }
 }

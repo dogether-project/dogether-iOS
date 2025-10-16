@@ -30,7 +30,6 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
         configurePages(pages)
         
         setViewDatas()
-        bindViewModel()
     }
     
     /// 뷰의 시각적인 속성을 설정하는 역할을 합니다
@@ -60,20 +59,17 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
         }
     }
     
-    /// View를 구성하는 필수 데이터를 세팅하는 역할을 합니다
+    /// View를 구성하는 필수 데이터를 세팅하고 바인딩하는 역할을 합니다
     func setViewDatas() { }
     
-    /// ViewModel의 변화에 View(Page)가 반응하도록 바인딩하는 역할을 합니다
-    func bindViewModel() { }
-    
-    /// 값이 바뀔 때, 등록된 모든 페이지의 viewDidUpdate를 호출합니다
+    /// ViewDatas의 변화에 Page가 update 되도록 바인딩하는 역할을 합니다
     func bind<Entity: BaseEntity>(_ relay: BehaviorRelay<Entity>) {
         relay
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: relay.value)
             .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                pages?.forEach { $0.viewDidUpdate(datas) }
+                guard let self, let pages else { return }
+                pages.forEach { $0.viewDidUpdate(datas) }
             })
             .disposed(by: disposeBag)
     }

@@ -23,11 +23,10 @@ final class TodoWriteViewController: BaseViewController {
     }
     
     override func setViewDatas() {
-        guard let datas = datas as? TodoWriteViewDatas else { return }
-        viewModel.todoWriteViewDatas.accept(datas)
-    }
-    
-    override func bindViewModel() {
+        if let datas = datas as? TodoWriteViewDatas {
+            viewModel.todoWriteViewDatas.accept(datas)
+        }
+        
         bind(viewModel.todoWriteViewDatas)
     }
 }
