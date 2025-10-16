@@ -11,8 +11,6 @@ final class OnboardingViewModel {
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     
-    private(set) var needParticipating = BehaviorRelay<Bool>(value: false)
-    
     init() {
         let authRepository = DIManager.shared.getAuthRepository()
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -26,7 +24,7 @@ final class OnboardingViewModel {
         try await authUseCase.login(domain: .apple)
     }
     
-    func checkParticipating() async throws {
-        needParticipating.accept(try await groupUseCase.checkParticipating())
+    func checkParticipating() async throws -> Bool {
+        try await groupUseCase.checkParticipating()
     }
 }

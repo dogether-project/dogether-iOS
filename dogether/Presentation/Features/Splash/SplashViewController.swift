@@ -8,7 +8,6 @@
 final class SplashViewController: BaseViewController {
     private let splashPage = SplashPage()
     private let viewModel = SplashViewModel()
-//    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         pages = [splashPage]
@@ -16,23 +15,6 @@ final class SplashViewController: BaseViewController {
         super.viewDidLoad()
         
         onAppear()
-    }
-    
-    override func bindViewModel() {
-        bindAction(viewModel.needUpdate) { [weak self] isNeeded in
-            guard let self else { return }
-            if isNeeded { coordinator?.setNavigationController(UpdateViewController()) }
-        }
-        
-        bindAction(viewModel.needLogin) { [weak self] isNeeded in
-            guard let self else { return }
-            if isNeeded { coordinator?.setNavigationController(OnboardingViewController()) }
-        }
-        
-        bindAction(viewModel.needParticipating) { [weak self] isNeeded in
-            guard let self else { return }
-            if isNeeded { coordinator?.setNavigationController(StartViewController()) }
-        }
     }
 }
 
@@ -46,14 +28,20 @@ extension SplashViewController {
             do {
                 try await viewModel.launchApp()
                 
-                try await viewModel.checkUpdate()
-                if viewModel.needUpdate.value { return }
+                if try await viewModel.checkUpdate() {
+                    coordinator?.setNavigationController(UpdateViewController())
+                    return
+                }
                 
-                try await viewModel.checkLogin()
-                if viewModel.needLogin.value { return }
+                if viewModel.checkLogin() {
+                    coordinator?.setNavigationController(OnboardingViewController())
+                    return
+                }
                 
-                try await viewModel.checkParticipating()
-                if viewModel.needParticipating.value { return }
+                if try await viewModel.checkParticipating() {
+                    coordinator?.setNavigationController(StartViewController())
+                    return
+                }
                 
                 await MainActor.run { [weak self] in
                     guard let self else { return }

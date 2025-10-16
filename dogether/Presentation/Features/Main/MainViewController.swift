@@ -27,8 +27,6 @@ final class MainViewController: BaseViewController {
         loadMainView()
     }
     
-    override func setViewDatas() { }
-    
     override func bindViewModel() {
         bind(viewModel.bottomSheetViewDatas)
         bind(viewModel.groupViewDatas)

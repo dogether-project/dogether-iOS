@@ -16,15 +16,6 @@ final class OnboardingViewController: BaseViewController {
         
         super.viewDidLoad()
     }
-    
-    override func bindViewModel() {
-        bindAction(viewModel.needParticipating) { [weak self] isNeeded in
-            guard let self else { return }
-            if isNeeded {
-                coordinator?.setNavigationController(StartViewController())
-            }
-        }
-    }
 }
 
 // MARK: - delegate
@@ -38,8 +29,10 @@ extension OnboardingViewController: OnboardingDelegate {
             guard let self else { return }
             try await viewModel.signInWithApple()
             
-            try await viewModel.checkParticipating()
-            if viewModel.needParticipating.value { return }
+            if try await viewModel.checkParticipating() {
+                coordinator?.setNavigationController(StartViewController())
+                return
+            }
             
             await MainActor.run { [weak self] in
                 guard let self else { return }

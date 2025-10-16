@@ -77,13 +77,4 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
             })
             .disposed(by: disposeBag)
     }
-    
-    /// 값 변화 시 특정 액션을 수행하도록 바인딩하는 공통 함수입니다.
-    func bindAction<T: Equatable>(_ relay: BehaviorRelay<T>, _ action: @escaping (T) -> Void) {
-        relay
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: relay.value)
-            .drive(onNext: action)
-            .disposed(by: disposeBag)
-    }
 }
