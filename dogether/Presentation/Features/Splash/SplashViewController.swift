@@ -5,13 +5,9 @@
 //  Created by seungyooooong on 2/15/25.
 //
 
-import RxSwift
-import RxCocoa
-
 final class SplashViewController: BaseViewController {
     private let splashPage = SplashPage()
     private let viewModel = SplashViewModel()
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         pages = [splashPage]
@@ -19,41 +15,6 @@ final class SplashViewController: BaseViewController {
         super.viewDidLoad()
         
         onAppear()
-    }
-    
-    override func bindViewModel() {
-        viewModel.needUpdate
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(UpdateViewController())
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.needLogin
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(OnboardingViewController())
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.needParticipating
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: false)
-            .drive(onNext: { [weak self] isNeeded in
-                guard let self else { return }
-                if isNeeded {
-                    coordinator?.setNavigationController(StartViewController())
-                }
-            })
-            .disposed(by: disposeBag)
     }
 }
 
@@ -67,14 +28,20 @@ extension SplashViewController {
             do {
                 try await viewModel.launchApp()
                 
-                try await viewModel.checkUpdate()
-                if viewModel.needUpdate.value { return }
+                if try await viewModel.checkUpdate() {
+                    coordinator?.setNavigationController(UpdateViewController())
+                    return
+                }
                 
-                try await viewModel.checkLogin()
-                if viewModel.needLogin.value { return }
+                if viewModel.checkLogin() {
+                    coordinator?.setNavigationController(OnboardingViewController())
+                    return
+                }
                 
-                try await viewModel.checkParticipating()
-                if viewModel.needParticipating.value { return }
+                if try await viewModel.checkParticipating() {
+                    coordinator?.setNavigationController(StartViewController())
+                    return
+                }
                 
                 await MainActor.run { [weak self] in
                     guard let self else { return }
