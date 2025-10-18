@@ -7,13 +7,9 @@
 
 import UIKit
 
-import RxSwift
-import RxCocoa
-
 final class RankingViewController: BaseViewController {
     private let rankingPage = RankingPage()
     private let viewModel = RankingViewModel()
-    private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         rankingPage.delegate = self
@@ -34,17 +30,8 @@ final class RankingViewController: BaseViewController {
     override func setViewDatas() {
         guard let datas = datas as? RankingViewDatas else { return }
         viewModel.rankingViewDatas.accept(datas)
-    }
-    
-    override func bindViewModel() {
-        viewModel.rankingViewDatas
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: RankingViewDatas())
-            .drive(onNext: { [weak self] datas in
-                guard let self else { return }
-                rankingPage.viewDidUpdate(datas)
-            })
-            .disposed(by: disposeBag)
+        
+        bind(viewModel.rankingViewDatas)
     }
 }
 
