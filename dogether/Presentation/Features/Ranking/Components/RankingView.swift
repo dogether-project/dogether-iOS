@@ -8,11 +8,6 @@
 import UIKit
 
 final class RankingView: BaseView {
-    init() {
-        super.init(frame: .zero)
-    }
-    required init?(coder: NSCoder) { fatalError() }
-    
     private let rankingLabel = {
         let label = UILabel()
         label.textColor = .grey0
