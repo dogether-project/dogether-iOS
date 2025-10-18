@@ -16,10 +16,10 @@ final class TodoListItemButton: BaseButton {
                     guard let self else { return }
                     if isUncertified {
                         if isToday {
-                            delegate?.goCertificationViewAction(todo: todo)
+                            delegate?.goCertificateViewAction(todo: todo)
                         } else { return }
                     } else {
-                        delegate?.goCertificationInfoViewAction(todo: todo)
+                        delegate?.goCertificationViewAction(todo: todo)
                     }
                 }, for: .touchUpInside
             )

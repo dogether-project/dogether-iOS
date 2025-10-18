@@ -121,8 +121,8 @@ protocol MainDelegate {
     func stopTimerAction()
     func goWriteTodoViewAction(todos: [TodoEntity])
     func selectFilterAction(filterType: FilterTypes)
+    func goCertificateViewAction(todo: TodoEntity)
     func goCertificationViewAction(todo: TodoEntity)
-    func goCertificationInfoViewAction(todo: TodoEntity)
 }
 
 extension MainViewController: MainDelegate {
@@ -235,15 +235,15 @@ extension MainViewController: MainDelegate {
         viewModel.sheetViewDatas.update { $0.filter = filter }
     }
     
-    func goCertificationViewAction(todo: TodoEntity) {
-        let certificationViewController = CertificationViewController()
-        certificationViewController.viewModel.todoInfo = todo
-        coordinator?.pushViewController(certificationViewController)
+    func goCertificateViewAction(todo: TodoEntity) {
+        let certificateImageViewController = CertificateImageViewController()
+        certificateImageViewController.viewModel.todoInfo = todo
+        coordinator?.pushViewController(certificateImageViewController)
     }
     
-    func goCertificationInfoViewAction(todo: TodoEntity) {
-        let certificationInfoViewController = CertificationInfoViewController()
-        certificationInfoViewController.todoInfo = todo
-        coordinator?.pushViewController(certificationInfoViewController)
+    func goCertificationViewAction(todo: TodoEntity) {
+        let certificationViewController = CertificationViewController()
+        certificationViewController.todoInfo = todo
+        coordinator?.pushViewController(certificationViewController)
     }
 }

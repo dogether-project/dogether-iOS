@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 
+// FIXME: CertificationViewController로 이전
 final class MemberCertificationViewController: BaseViewController {
     let viewModel = MemberCertificationViewModel()
     
