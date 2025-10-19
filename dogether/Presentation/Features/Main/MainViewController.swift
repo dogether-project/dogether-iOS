@@ -243,7 +243,7 @@ extension MainViewController: MainDelegate {
     
     func goCertificationViewAction(todo: TodoEntity) {
         let certificationViewController = CertificationViewController()
-        certificationViewController.todoInfo = todo
-        coordinator?.pushViewController(certificationViewController)
+        let certificationViewDatas = CertificationViewDatas(todo: todo)
+        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
     }
 }
