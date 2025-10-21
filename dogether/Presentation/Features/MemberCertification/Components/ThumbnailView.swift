@@ -7,11 +7,6 @@
 
 import UIKit
 
-enum ThumbnailStatus {
-    case yet
-    case done
-}
-
 // FIXME: 추후 BaseImageView로 수정
 final class ThumbnailView: BaseView {
     private(set) var imageUrl: String?
@@ -62,9 +57,7 @@ final class ThumbnailView: BaseView {
         imageView.layer.cornerRadius = 12
     }
     
-    override func configureAction() {
-        
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [imageView, doneOverlay].forEach { addSubview($0) }

@@ -11,7 +11,7 @@ import SnapKit
 final class BottomSheetView: BaseView {
     var delegate: MainDelegate? {
         didSet {
-            backgroundView.addTapAction { [weak self] in
+            backgroundView.addTapAction { [weak self] _ in
                 guard let self else { return }
                 delegate?.updateBottomSheetVisibleAction(isShowSheet: false)
             }

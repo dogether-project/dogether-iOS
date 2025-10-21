@@ -10,59 +10,49 @@ import UIKit
 final class CertificationPage: BasePage {
     var delegate: CertificationDelegate?  {
         didSet {
-            
+            thumbnailListView.delegate = delegate
         }
     }
     
-    private let navigationHeader = NavigationHeader(title: "내 인증 정보")
+    private let navigationHeader = NavigationHeader(title: "인증 정보")
+    private let thumbnailListView = ThumbnailListView()
     private let imageView = UIImageView()
     private let statusView = FilterButton(type: .all)
-    private let contentLabel = {
-        let label = UILabel()
-        label.textColor = .grey0
-        label.numberOfLines = 0
-        return label
-    }()
+    private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
     
     override func configureView() {
-        imageView = CertificationImageView(
-            image: .logo,
-            certificationContent: todoInfo.certificationContent
-        )
+//        imageView = CertificationImageView(
+//            image: .logo,
+//            certificationContent: todoInfo.certificationContent
+//        )
         
-        imageView.loadImage(url: todoInfo.certificationMediaUrl)
-        
-        guard let status = TodoStatus(rawValue: todoInfo.status),
-              let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
-        statusView = FilterButton(type: filterType)
-        
-        contentLabel.attributedText = NSAttributedString(
-            string: todoInfo.content,
-            attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
-        )
-        
-        if let reviewFeedback = todoInfo.reviewFeedback { reviewFeedbackView.updateFeedback(feedback: reviewFeedback) }
+        contentLabel.textColor = .grey0
+        contentLabel.numberOfLines = 0
     }
     
     override func configureAction() {
-        navigationHeader.delegate = self
+        navigationHeader.delegate = coordinatorDelegate
     }
     
     override func configureHierarchy() {
-        [navigationHeader, imageView, statusView, contentLabel].forEach { view.addSubview($0) }
-        
-        if let reviewFeedback = todoInfo.reviewFeedback, reviewFeedback.count > 0 { view.addSubview(reviewFeedbackView) }
+        [navigationHeader, thumbnailListView, imageView, statusView, contentLabel].forEach { addSubview($0) }
     }
      
     override func configureConstraints() {
         navigationHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
         }
         
+        thumbnailListView.snp.makeConstraints {
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(2)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(54)
+        }
+        
         imageView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(20)
+            $0.top.equalTo(thumbnailListView.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(imageView.snp.width)
         }
@@ -77,11 +67,34 @@ final class CertificationPage: BasePage {
             $0.top.equalTo(statusView.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
-        
-        if let reviewFeedback = todoInfo.reviewFeedback, reviewFeedback.count > 0 {
-            reviewFeedbackView.snp.makeConstraints {
-                $0.top.equalTo(contentLabel.snp.bottom).offset(16)
-                $0.horizontalEdges.equalToSuperview().inset(16)
+    }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? CertificationViewDatas {
+            thumbnailListView.viewDidUpdate(datas)
+            
+            imageView.loadImage(url: datas.todos[datas.index].certificationMediaUrl)
+            
+            guard let status = TodoStatus(rawValue:  datas.todos[datas.index].status),
+                  let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
+            statusView.viewDidUpdate(filterType)
+            
+            contentLabel.attributedText = NSAttributedString(
+                string:  datas.todos[datas.index].content,
+                attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
+            )
+            
+            if let reviewFeedback = datas.todos[datas.index].reviewFeedback {
+                reviewFeedbackView.updateFeedback(feedback: reviewFeedback)
+                if reviewFeedback.count > 0 {
+                    addSubview(reviewFeedbackView)
+                    
+                    reviewFeedbackView.snp.makeConstraints {
+                        $0.top.equalTo(contentLabel.snp.bottom).offset(16)
+                        $0.horizontalEdges.equalToSuperview().inset(16)
+                    }
+                }
             }
         }
     }

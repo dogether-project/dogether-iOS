@@ -8,10 +8,11 @@
 import Foundation
 
 struct CertificationViewDatas: BaseEntity {
-    var todo: TodoEntity
+    var todos: [TodoEntity]
+    var index: Int
     
-    // FIXME: TodoEntity 기본값 수정
-    init(todo: TodoEntity = TodoEntity(id: 0, content: "", status: "")) {
-        self.todo = todo
+    init(todos: [TodoEntity] = [], index: Int = 0) {
+        self.todos = todos
+        self.index = index
     }
 }

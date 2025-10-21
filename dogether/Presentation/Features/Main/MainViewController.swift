@@ -243,7 +243,7 @@ extension MainViewController: MainDelegate {
     
     func goCertificationViewAction(todo: TodoEntity) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(todo: todo)
+        let certificationViewDatas = CertificationViewDatas(todos: [todo])  // FIXME: 리스트로 전달하도록 수정
         coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
     }
 }

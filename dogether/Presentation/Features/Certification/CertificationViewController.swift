@@ -5,6 +5,8 @@
 //  Created by seungyooooong on 2/16/25.
 //
 
+import UIKit
+
 final class CertificationViewController: BaseViewController {
     private let certificationPage = CertificationPage()
     private let viewModel = CertificationViewModel()
@@ -28,9 +30,18 @@ final class CertificationViewController: BaseViewController {
 
 // MARK: - delegate
 protocol CertificationDelegate {
-    
+    func thumbnailTapAction(_ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
 }
 
 extension CertificationViewController: CertificationDelegate {
-    
+    func thumbnailTapAction(_ stackView: UIStackView, _ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: stackView)
+
+        for (index, view) in stackView.arrangedSubviews.enumerated() {
+            if view.frame.contains(location) {
+                viewModel.certificationViewDatas.update { $0.index = index }
+                return
+            }
+        }
+    }
 }

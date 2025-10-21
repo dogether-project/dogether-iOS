@@ -150,8 +150,8 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
     
     func didTapCertification(_ certification: TodoEntity) {
         let certificationViewController = CertificationViewController()
-        certificationViewController.todoInfo = certification
-        coordinator?.pushViewController(certificationViewController, animated: true)
+        let certificationViewDatas = CertificationViewDatas(todos: [certification]) // FIXME: 리스트로 전달하도록 수정
+        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas, animated: true)
     }
     
     func didScrollToBottom() {
