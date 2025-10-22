@@ -20,23 +20,8 @@ final class CertificationImageView: BaseImageView {
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let gradientView = {
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [
-            UIColor.black.withAlphaComponent(0.87).cgColor,
-            UIColor.black.withAlphaComponent(0.37).cgColor,
-            UIColor.clear.cgColor
-        ]
-        gradientLayer.locations = [-0.2, 0.6]
-        gradientLayer.startPoint = CGPoint(x: 0.5, y: 1.0)
-        gradientLayer.endPoint = CGPoint(x: 0.5, y: 0.6)
-        gradientLayer.cornerRadius = 12
-        
-        let view = UIView()
-        view.layer.addSublayer(gradientLayer)
-        
-        return view
-    }()
+    private let gradientLayer = CAGradientLayer()
+    private let gradientView = UIView()
     
     private let certificationContentLabel = {
         let label = UILabel()
@@ -63,6 +48,16 @@ final class CertificationImageView: BaseImageView {
         clipsToBounds = true
         layer.cornerRadius = 12
         
+        gradientLayer.colors = [
+            UIColor.black.withAlphaComponent(0.87).cgColor,
+            UIColor.black.withAlphaComponent(0.37).cgColor,
+            UIColor.clear.cgColor
+        ]
+        gradientLayer.locations = [-0.2, 0.6]
+        gradientLayer.startPoint = CGPoint(x: 0.5, y: 1.0)
+        gradientLayer.endPoint = CGPoint(x: 0.5, y: 0.6)
+        gradientLayer.cornerRadius = 12
+        
         gradientView.layer.cornerRadius = 12
         gradientView.layer.borderColor = UIColor.grey700.cgColor
         gradientView.layer.borderWidth = 1
@@ -73,6 +68,7 @@ final class CertificationImageView: BaseImageView {
     override func configureAction() { }
     
     override func configureHierarchy() {
+        gradientView.layer.addSublayer(gradientLayer)
         [gradientView, certificationContentLabel, certificatorLabel].forEach { addSubview($0) }
     }
     

@@ -135,8 +135,8 @@ final class TodoListView: BaseView {
             
             todoListStackView.subviews.forEach { todoListStackView.removeArrangedSubview($0) }
             currentTodoList
-                .map {
-                    let todoListItemButton = TodoListItemButton(todo: $0, isToday: isToday)
+                .enumerated().map {
+                    let todoListItemButton = TodoListItemButton(index: $0, todo: $1, isToday: isToday)
                     todoListItemButton.delegate = delegate
                     return todoListItemButton
                 }

@@ -21,15 +21,7 @@ final class CertificationViewController: BaseViewController {
     
     override func setViewDatas() {
         if let datas = datas as? CertificationViewDatas {
-            // FIXME: 더미 데이터, 추후 삭제
-            let temp = CertificationViewDatas(
-                todos: [
-                    TodoEntity(id: 0, content: "test", status: "CERTIFY_PENDING"),
-                    datas.todos[0],
-                ],
-                index: datas.index
-            )
-            viewModel.certificationViewDatas.accept(temp)   // FIXME: temp -> datas
+            viewModel.certificationViewDatas.accept(datas)
         }
         
         bind(viewModel.certificationViewDatas)

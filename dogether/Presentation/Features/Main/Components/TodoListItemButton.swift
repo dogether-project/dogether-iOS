@@ -19,18 +19,20 @@ final class TodoListItemButton: BaseButton {
                             delegate?.goCertificateViewAction(todo: todo)
                         } else { return }
                     } else {
-                        delegate?.goCertificationViewAction(todo: todo)
+                        delegate?.goCertificationViewAction(index: index)
                     }
                 }, for: .touchUpInside
             )
         }
     }
     
+    private(set) var index: Int
     private(set) var todo: TodoEntity
     private(set) var isToday: Bool
     private(set) var isUncertified: Bool
     
-    init(todo: TodoEntity, isToday: Bool) {
+    init(index: Int, todo: TodoEntity, isToday: Bool) {
+        self.index = index
         self.todo = todo
         self.isToday = isToday
         self.isUncertified = todo.status == TodoStatus.waitCertification.rawValue

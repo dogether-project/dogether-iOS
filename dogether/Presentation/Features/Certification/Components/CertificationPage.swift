@@ -73,8 +73,7 @@ final class CertificationPage: BasePage {
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
             thumbnailListView.viewDidUpdate(datas)
-            
-//            imageView.loadImage(url: datas.todos[datas.index].certificationMediaUrl)
+            certificationListView.viewDidUpdate(datas)
             
             guard let status = TodoStatus(rawValue:  datas.todos[datas.index].status),
                   let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }

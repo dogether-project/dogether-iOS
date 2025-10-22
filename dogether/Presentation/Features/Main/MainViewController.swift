@@ -122,7 +122,7 @@ protocol MainDelegate {
     func goWriteTodoViewAction(todos: [TodoEntity])
     func selectFilterAction(filterType: FilterTypes)
     func goCertificateViewAction(todo: TodoEntity)
-    func goCertificationViewAction(todo: TodoEntity)
+    func goCertificationViewAction(index: Int)
 }
 
 extension MainViewController: MainDelegate {
@@ -241,9 +241,12 @@ extension MainViewController: MainDelegate {
         coordinator?.pushViewController(certificateImageViewController)
     }
     
-    func goCertificationViewAction(todo: TodoEntity) {
+    func goCertificationViewAction(index: Int) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(todos: [todo])  // FIXME: 리스트로 전달하도록 수정
+        let certificationViewDatas = CertificationViewDatas(
+            todos: viewModel.sheetViewDatas.value.todoList,
+            index: index
+        )
         coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
     }
 }

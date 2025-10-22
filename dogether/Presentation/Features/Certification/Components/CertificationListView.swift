@@ -55,6 +55,8 @@ final class CertificationListView: BaseView {
             if currentTodos != datas.todos {
                 currentTodos = datas.todos
                 
+                layoutIfNeeded()
+                
                 datas.todos
                     .map {
                         if let mediaUrl = $0.certificationMediaUrl {
