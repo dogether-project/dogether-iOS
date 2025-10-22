@@ -16,7 +16,7 @@ final class CertificationPage: BasePage {
     
     private let navigationHeader = NavigationHeader(title: "인증 정보")
     private let thumbnailListView = ThumbnailListView()
-    private let imageView = UIImageView()
+    private let certificationListView = CertificationListView()
     private let statusView = FilterButton(type: .all)
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
@@ -36,7 +36,7 @@ final class CertificationPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [navigationHeader, thumbnailListView, imageView, statusView, contentLabel].forEach { addSubview($0) }
+        [navigationHeader, thumbnailListView, certificationListView, statusView, contentLabel].forEach { addSubview($0) }
     }
      
     override func configureConstraints() {
@@ -51,15 +51,15 @@ final class CertificationPage: BasePage {
             $0.height.equalTo(54)
         }
         
-        imageView.snp.makeConstraints {
+        certificationListView.snp.makeConstraints {
             $0.top.equalTo(thumbnailListView.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            $0.height.equalTo(imageView.snp.width)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(frame.width - 32)
         }
         
         statusView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(imageView.snp.bottom).offset(32)
+            $0.top.equalTo(certificationListView.snp.bottom).offset(32)
             $0.height.equalTo(32)
         }
         
@@ -74,7 +74,7 @@ final class CertificationPage: BasePage {
         if let datas = data as? CertificationViewDatas {
             thumbnailListView.viewDidUpdate(datas)
             
-            imageView.loadImage(url: datas.todos[datas.index].certificationMediaUrl)
+//            imageView.loadImage(url: datas.todos[datas.index].certificationMediaUrl)
             
             guard let status = TodoStatus(rawValue:  datas.todos[datas.index].status),
                   let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }

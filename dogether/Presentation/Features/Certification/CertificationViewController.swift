@@ -21,7 +21,15 @@ final class CertificationViewController: BaseViewController {
     
     override func setViewDatas() {
         if let datas = datas as? CertificationViewDatas {
-            viewModel.certificationViewDatas.accept(datas)
+            // FIXME: 더미 데이터, 추후 삭제
+            let temp = CertificationViewDatas(
+                todos: [
+                    TodoEntity(id: 0, content: "test", status: "CERTIFY_PENDING"),
+                    datas.todos[0],
+                ],
+                index: datas.index
+            )
+            viewModel.certificationViewDatas.accept(temp)   // FIXME: temp -> datas
         }
         
         bind(viewModel.certificationViewDatas)
@@ -31,6 +39,7 @@ final class CertificationViewController: BaseViewController {
 // MARK: - delegate
 protocol CertificationDelegate {
     func thumbnailTapAction(_ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
+    func certificationTapAction(_ scrollView: UIScrollView, _ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
 }
 
 extension CertificationViewController: CertificationDelegate {
@@ -43,5 +52,24 @@ extension CertificationViewController: CertificationDelegate {
                 return
             }
         }
+    }
+    
+    func certificationTapAction(
+        _ scrollView: UIScrollView,
+        _ stackView: UIStackView,
+        _ gesture: UITapGestureRecognizer
+    ) {
+        let location = gesture.location(in: scrollView)
+        let scrollViewWidth = scrollView.bounds.width
+        
+        // MARK: view 중앙을 기준으로 direction 결정
+        let direction: Directions = location.x - scrollView.contentOffset.x < scrollViewWidth / 2 ? .prev : .next
+        let index = Int(round(scrollView.contentOffset.x / scrollViewWidth))
+        let nextIndex = index + direction.tag
+        
+        if nextIndex < 0 || stackView.arrangedSubviews.count <= nextIndex { return }
+        
+        let newOffset = CGPoint(x: scrollViewWidth * CGFloat(nextIndex), y: 0)
+        scrollView.setContentOffset(newOffset, animated: true)
     }
 }
