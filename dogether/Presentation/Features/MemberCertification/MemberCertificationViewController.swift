@@ -173,11 +173,14 @@ extension MemberCertificationViewController {
     private func setUI() {
         viewModel.todos
             .enumerated().map {
-                ThumbnailView(
+                let thumbnailView = ThumbnailView()
+                let thumbnailViewDatas = ThumbnailViewDatas(
                     imageUrl: $1.certificationMediaUrl,
                     thumbnailStatus: $1.thumbnailStatus,
                     isHighlighted: $0 == viewModel.currentIndex
                 )
+                thumbnailView.viewDidUpdate(thumbnailViewDatas)
+                return thumbnailView
             }
             .forEach {
                 thumbnailStackView.addArrangedSubview($0)
@@ -237,8 +240,12 @@ extension MemberCertificationViewController {
         thumbnailStackView.arrangedSubviews.enumerated().forEach { index, view in
             guard let view = view as? ThumbnailView else { return }
             // TODO: beforeIndex, currentIndex만 처리할지 고민해보기
-            view.setStatus(status: viewModel.todos[index].thumbnailStatus)
-            view.setIsHighlighted(isHighlighted: index == viewModel.currentIndex)
+            let thumbnailViewDatas = ThumbnailViewDatas(
+                imageUrl: viewModel.todos[index].certificationMediaUrl,
+                thumbnailStatus: viewModel.todos[index].thumbnailStatus,
+                isHighlighted: index == viewModel.currentIndex
+            )
+            view.viewDidUpdate(thumbnailViewDatas)
             
             if index == viewModel.currentIndex {
                 let scrollViewWidth = thumbnailScrollView.bounds.width

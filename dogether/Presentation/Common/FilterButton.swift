@@ -19,6 +19,7 @@ final class FilterButton: BaseButton {
         }
     }
     
+    // FIXME: CertificationListView RxSwift 도입 후 private 추가
     let type: FilterTypes
     private(set) var isColorful: Bool
     

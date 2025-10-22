@@ -56,11 +56,13 @@ final class ThumbnailListView: BaseView {
                 
                 datas.todos
                     .enumerated().map {
-                        ThumbnailView(
+                        let thumbnailView = ThumbnailView()
+                        let thumbnailViewDatas = ThumbnailViewDatas(
                             imageUrl: $1.certificationMediaUrl,
-                            thumbnailStatus: .yet,  // FIXME: 기존 $1.thumbnailStatus
                             isHighlighted: $0 == datas.index
                         )
+                        thumbnailView.viewDidUpdate(thumbnailViewDatas)
+                        return thumbnailView
                     }
                     .forEach {
                         stackView.addArrangedSubview($0)
