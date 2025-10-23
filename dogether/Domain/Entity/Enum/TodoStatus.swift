@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum TodoStatus: String, CaseIterable {
+enum TodoStatus: String, CaseIterable, BaseEntity {
     case waitCertification = "CERTIFY_PENDING"
     case waitExamination = "REVIEW_PENDING"
     case reject = "REJECT"

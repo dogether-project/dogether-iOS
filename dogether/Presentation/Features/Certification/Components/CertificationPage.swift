@@ -18,16 +18,11 @@ final class CertificationPage: BasePage {
     private let navigationHeader = NavigationHeader(title: "인증 정보")
     private let thumbnailListView = ThumbnailListView()
     private let certificationListView = CertificationListView()
-    private let statusView = FilterButton(type: .all)
+    private let statusView = TodoStatusButton(type: .waitCertification)
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
     
     override func configureView() {
-//        imageView = CertificationImageView(
-//            image: .logo,
-//            certificationContent: todoInfo.certificationContent
-//        )
-        
         contentLabel.textColor = .grey0
         contentLabel.numberOfLines = 0
     }
@@ -76,9 +71,8 @@ final class CertificationPage: BasePage {
             thumbnailListView.viewDidUpdate(datas)
             certificationListView.viewDidUpdate(datas)
             
-            guard let status = TodoStatus(rawValue:  datas.todos[datas.index].status),
-                  let filterType = FilterTypes.allCases.first(where: { $0.tag == status.tag }) else { return }
-            statusView.viewDidUpdate(filterType)
+            guard let status = TodoStatus(rawValue: datas.todos[datas.index].status) else { return }
+            statusView.viewDidUpdate(status)
             
             contentLabel.attributedText = NSAttributedString(
                 string:  datas.todos[datas.index].content,

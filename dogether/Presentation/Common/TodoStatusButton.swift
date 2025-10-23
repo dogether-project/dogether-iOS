@@ -63,6 +63,28 @@ final class TodoStatusButton: BaseButton {
             $0.width.height.equalTo(18)
         }
     }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: any BaseEntity) {
+        if let datas = data as? TodoStatus {
+            backgroundColor = datas.backgroundColor
+            icon.image = datas.image?.withRenderingMode(.alwaysTemplate)
+            label.text = datas.text
+            
+            stackView.arrangedSubviews.forEach { stackView.removeArrangedSubview($0) }
+            
+            let views = icon.image == nil ? [label] : [icon, label]
+            views.forEach { stackView.addArrangedSubview($0) }
+            
+            self.snp.updateConstraints {
+                $0.width.equalTo(datas.width)
+            }
+            
+            icon.snp.updateConstraints {
+                $0.width.height.equalTo(18)
+            }
+        }
+    }
 }
 
 extension TodoStatusButton {
