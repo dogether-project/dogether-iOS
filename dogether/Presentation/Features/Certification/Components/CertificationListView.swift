@@ -21,6 +21,7 @@ final class CertificationListView: BaseView {
     private let stackView = UIStackView()
     
     private(set) var currentTodos: [TodoEntity]?
+    private(set) var currentIndex: Int?
     
     override func configureView() {
         scrollView.showsHorizontalScrollIndicator = false
@@ -32,7 +33,9 @@ final class CertificationListView: BaseView {
         stackView.distribution = .fillEqually
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        scrollView.delegate = self
+    }
     
     override func configureHierarchy() {
         [scrollView].forEach { addSubview($0) }
@@ -55,6 +58,7 @@ final class CertificationListView: BaseView {
             if currentTodos != datas.todos {
                 currentTodos = datas.todos
                 
+                // FIXME: frame.width 동기화를 위해 필요, BaseView에서 일괄 방식 고민 후 수정
                 layoutIfNeeded()
                 
                 datas.todos
@@ -80,6 +84,23 @@ final class CertificationListView: BaseView {
                     $0.height.equalToSuperview()
                 }
             }
+            
+            if currentIndex != datas.index {
+                currentIndex = datas.index
+                
+                let scrollViewWidth = scrollView.bounds.width
+                let index = Int(round(scrollView.contentOffset.x / scrollViewWidth))
+                
+                let newOffset = CGPoint(x: scrollViewWidth * CGFloat(datas.index), y: 0)
+                scrollView.setContentOffset(newOffset, animated: false)
+            }
         }
+    }
+}
+
+extension CertificationListView: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let index = Int(round(scrollView.contentOffset.x / frame.width))
+        delegate?.certificationListScrollEndAction(index: index)
     }
 }

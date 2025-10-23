@@ -11,6 +11,7 @@ final class CertificationPage: BasePage {
     var delegate: CertificationDelegate?  {
         didSet {
             thumbnailListView.delegate = delegate
+            certificationListView.delegate = delegate
         }
     }
     

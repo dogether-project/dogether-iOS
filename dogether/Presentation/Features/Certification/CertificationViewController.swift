@@ -32,6 +32,7 @@ final class CertificationViewController: BaseViewController {
 protocol CertificationDelegate {
     func thumbnailTapAction(_ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
     func certificationTapAction(_ scrollView: UIScrollView, _ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
+    func certificationListScrollEndAction(index: Int)
 }
 
 extension CertificationViewController: CertificationDelegate {
@@ -63,5 +64,9 @@ extension CertificationViewController: CertificationDelegate {
         
         let newOffset = CGPoint(x: scrollViewWidth * CGFloat(nextIndex), y: 0)
         scrollView.setContentOffset(newOffset, animated: true)
+    }
+    
+    func certificationListScrollEndAction(index: Int) {
+        viewModel.certificationViewDatas.update { $0.index = index }
     }
 }

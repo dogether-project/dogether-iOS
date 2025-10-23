@@ -21,6 +21,7 @@ final class ThumbnailListView: BaseView {
     private let stackView = UIStackView()
     
     private(set) var currentTodos: [TodoEntity]?
+    private(set) var currentIndex: Int?
     
     override func configureView() {
         scrollView.showsHorizontalScrollIndicator = false
@@ -67,6 +68,19 @@ final class ThumbnailListView: BaseView {
                     .forEach {
                         stackView.addArrangedSubview($0)
                     }
+            }
+            
+            if currentIndex != datas.index {
+                currentIndex = datas.index
+                
+                stackView.subviews.enumerated().forEach {
+                    guard let thumbnailView = $1 as? ThumbnailView else { return }
+                    let thumbnailViewDatas = ThumbnailViewDatas(
+                        imageUrl: datas.todos[$0].certificationMediaUrl,
+                        isHighlighted: $0 == datas.index
+                    )
+                    thumbnailView.viewDidUpdate(thumbnailViewDatas)
+                }
             }
         }
     }
