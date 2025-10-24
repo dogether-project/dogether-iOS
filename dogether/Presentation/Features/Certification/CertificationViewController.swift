@@ -63,7 +63,12 @@ extension CertificationViewController: CertificationDelegate {
         if nextIndex < 0 || stackView.arrangedSubviews.count <= nextIndex { return }
         
         let newOffset = CGPoint(x: scrollViewWidth * CGFloat(nextIndex), y: 0)
-        scrollView.setContentOffset(newOffset, animated: true)
+        UIView.animate(withDuration: 0.3, animations: {
+            scrollView.setContentOffset(newOffset, animated: false)
+        }, completion: { [weak self] finished in
+            guard let self else { return }
+            if finished { viewModel.certificationViewDatas.update { $0.index = nextIndex } }
+        })
     }
     
     func certificationListScrollEndAction(index: Int) {

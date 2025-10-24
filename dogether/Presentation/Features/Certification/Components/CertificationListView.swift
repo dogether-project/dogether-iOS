@@ -89,8 +89,6 @@ final class CertificationListView: BaseView {
                 currentIndex = datas.index
                 
                 let scrollViewWidth = scrollView.bounds.width
-                let index = Int(round(scrollView.contentOffset.x / scrollViewWidth))
-                
                 let newOffset = CGPoint(x: scrollViewWidth * CGFloat(datas.index), y: 0)
                 scrollView.setContentOffset(newOffset, animated: false)
             }
