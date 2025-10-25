@@ -12,6 +12,7 @@ final class CertificationPage: BasePage {
         didSet {
             thumbnailListView.delegate = delegate
             certificationListView.delegate = delegate
+            certificateButton.certificationDelegate = delegate
         }
     }
     
@@ -21,10 +22,13 @@ final class CertificationPage: BasePage {
     private let statusView = TodoStatusButton(type: .waitCertification)
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
+    private let certificateButton = DogetherButton(title: "인증하기")
     
     override func configureView() {
         contentLabel.textColor = .grey0
         contentLabel.numberOfLines = 0
+        
+        certificateButton.isHidden = false
     }
     
     override func configureAction() {
@@ -33,7 +37,7 @@ final class CertificationPage: BasePage {
     
     override func configureHierarchy() {
         [navigationHeader, thumbnailListView, certificationListView,
-         statusView, contentLabel, reviewFeedbackView
+         statusView, contentLabel, reviewFeedbackView, certificateButton
         ].forEach { addSubview($0) }
     }
      
@@ -70,6 +74,10 @@ final class CertificationPage: BasePage {
             $0.top.equalTo(contentLabel.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
+        
+        certificateButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
     }
     
     // MARK: - viewDidUpdate
@@ -88,6 +96,7 @@ final class CertificationPage: BasePage {
             )
             
             reviewFeedbackView.viewDidUpdate(datas)
+            certificateButton.viewDidUpdate(datas)
         }
     }
 }

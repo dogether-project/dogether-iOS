@@ -33,6 +33,7 @@ protocol CertificationDelegate {
     func thumbnailTapAction(_ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
     func certificationTapAction(_ scrollView: UIScrollView, _ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
     func certificationListScrollEndAction(index: Int)
+    func goCertificateViewAction(todo: TodoEntity)
 }
 
 extension CertificationViewController: CertificationDelegate {
@@ -73,5 +74,11 @@ extension CertificationViewController: CertificationDelegate {
     
     func certificationListScrollEndAction(index: Int) {
         viewModel.certificationViewDatas.update { $0.index = index }
+    }
+    
+    func goCertificateViewAction(todo: TodoEntity) {
+        let certificateImageViewController = CertificateImageViewController()
+        certificateImageViewController.viewModel.todoInfo = todo
+        coordinator?.pushViewController(certificateImageViewController)
     }
 }

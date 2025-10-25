@@ -8,8 +8,21 @@
 import UIKit
 
 final class DogetherButton: BaseButton {
+    var certificationDelegate: CertificationDelegate? {
+        didSet {
+            addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    certificationDelegate?.goCertificateViewAction(todo: currentTodo)
+                }, for: .touchUpInside
+            )
+        }
+    }
+    
     private(set) var title: String
     private(set) var status: ButtonStatus
+    
+    private(set) var currentTodo: TodoEntity?
     
     init(title: String, status: ButtonStatus = .enabled) {
         self.title = title
@@ -34,6 +47,17 @@ final class DogetherButton: BaseButton {
     override func configureConstraints() {
         self.snp.makeConstraints {
             $0.height.equalTo(50)
+        }
+    }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? CertificationViewDatas {
+            if currentTodo != datas.todos[datas.index] {
+                currentTodo = datas.todos[datas.index]
+                
+                isHidden = datas.todos[datas.index].status != TodoStatus.waitCertification.rawValue
+            }
         }
     }
 }
