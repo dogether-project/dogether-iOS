@@ -8,19 +8,14 @@
 import UIKit
 
 final class ReviewFeedbackView: BaseView {
-    init() { super.init(frame: .zero) }
-    required init?(coder: NSCoder) { fatalError() }
-    
-    private let reviewFeedbackLabel = {
-        let label = UILabel()
-        label.textColor = .grey100
-        label.numberOfLines = 0
-        return label
-    }()
+    private let reviewFeedbackLabel = UILabel()
     
     override func configureView() {
         backgroundColor = .grey600
         layer.cornerRadius = 8
+        
+        reviewFeedbackLabel.textColor = .grey100
+        reviewFeedbackLabel.numberOfLines = 0
     }
     
     override func configureAction() { }
@@ -35,8 +30,17 @@ final class ReviewFeedbackView: BaseView {
             $0.verticalEdges.equalToSuperview().inset(10)
         }
     }
+    
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? CertificationViewDatas {
+            isHidden = !(datas.todos[datas.index].reviewFeedback?.isEmpty == false)
+            updateFeedback(feedback: datas.todos[datas.index].reviewFeedback ?? "")
+        }
+    }
 }
 
+// FIXME: 추후 삭제
 extension ReviewFeedbackView {
     func updateFeedback(feedback: String) {
         reviewFeedbackLabel.attributedText = NSAttributedString(
