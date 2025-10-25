@@ -58,7 +58,6 @@ final class CertificationListView: BaseView {
             if currentTodos != datas.todos {
                 currentTodos = datas.todos
                 
-                // FIXME: frame.width 동기화를 위해 필요, BaseView에서 일괄 방식 고민 후 수정
                 layoutIfNeeded()
                 
                 datas.todos

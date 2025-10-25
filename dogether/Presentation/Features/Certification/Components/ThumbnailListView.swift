@@ -73,13 +73,22 @@ final class ThumbnailListView: BaseView {
             if currentIndex != datas.index {
                 currentIndex = datas.index
                 
-                stackView.subviews.enumerated().forEach {
+                layoutIfNeeded()
+                
+                stackView.arrangedSubviews.enumerated().forEach {
                     guard let thumbnailView = $1 as? ThumbnailView else { return }
                     let thumbnailViewDatas = ThumbnailViewDatas(
                         imageUrl: datas.todos[$0].certificationMediaUrl,
                         isHighlighted: $0 == datas.index
                     )
                     thumbnailView.viewDidUpdate(thumbnailViewDatas)
+                    
+                    if $0 == datas.index {
+                        let scrollViewWidth = scrollView.bounds.width
+                        let idealOffset = $1.frame.midX - scrollViewWidth / 2 + 16
+                        let newOffset = max(0, min(idealOffset, scrollView.contentSize.width - scrollViewWidth))
+                        scrollView.setContentOffset(CGPoint(x: newOffset, y: 0), animated: true)
+                    }
                 }
             }
         }
