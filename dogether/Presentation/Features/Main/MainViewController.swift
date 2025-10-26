@@ -244,6 +244,7 @@ extension MainViewController: MainDelegate {
     func goCertificationViewAction(index: Int) {
         let certificationViewController = CertificationViewController()
         let certificationViewDatas = CertificationViewDatas(
+            title: "내 인증 정보",
             todos: viewModel.sheetViewDatas.value.todoList,
             index: index
         )

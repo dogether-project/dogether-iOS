@@ -8,10 +8,12 @@
 import Foundation
 
 struct CertificationViewDatas: BaseEntity {
+    var title: String
     var todos: [TodoEntity]
     var index: Int
     
-    init(todos: [TodoEntity] = [], index: Int = 0) {
+    init(title: String = "", todos: [TodoEntity] = [], index: Int = 0) {
+        self.title = title
         self.todos = todos
         self.index = index
     }
