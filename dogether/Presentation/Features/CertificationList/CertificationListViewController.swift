@@ -145,16 +145,9 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
         viewModel.currentFilter = selectedFilter
     }
     
-    func didTapCertificationFilterView() {
-    }
-    
-    func didTapCertification(_ certification: TodoEntity) {
+    func didTapCertification(title: String, todos: [TodoEntity], index: Int) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(
-            title: "test",  // FIXME: 투두 완료일순의 경우 선택한 날짜, 그룹 생성일순의 경우 그룹명을 전달하도록 수정
-            todos: [certification], // FIXME: 리스트로 전달하도록 수정
-            index: 0    // FIXME: 선택한 인증의 index 전달하도록 수정
-        )
+        let certificationViewDatas = CertificationViewDatas(title: title, todos: todos, index: index)
         coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas, animated: true)
     }
     
