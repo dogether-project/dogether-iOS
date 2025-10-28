@@ -69,6 +69,18 @@ final class NavigationHeader: BaseView{
             $0.height.equalTo(28)
         }
     }
+    // MARK: - viewDidUpdate
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? CertificationViewDatas {
+            if title != datas.title {
+                // FIXME: 추후에 title -> currentTitle로 수정 시 반영
+//            if currentTitle != datas.title {
+//                currentTitle = datas.title
+                
+                titleLabel.text = datas.title
+            }
+        }
+    }
 }
 
 extension NavigationHeader {

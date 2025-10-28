@@ -8,7 +8,7 @@
 import UIKit
 
 final class CertificationPage: BasePage {
-    var delegate: CertificationDelegate?  {
+    var delegate: CertificationDelegate? {
         didSet {
             thumbnailListView.delegate = delegate
             certificationListView.delegate = delegate
@@ -83,6 +83,7 @@ final class CertificationPage: BasePage {
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
+            navigationHeader.viewDidUpdate(datas)
             thumbnailListView.viewDidUpdate(datas)
             certificationListView.viewDidUpdate(datas)
             
