@@ -148,7 +148,7 @@ extension CertificationListViewController: CertificationListContentViewDelegate 
     func didTapCertification(title: String, todos: [TodoEntity], index: Int) {
         let certificationViewController = CertificationViewController()
         let certificationViewDatas = CertificationViewDatas(title: title, todos: todos, index: index)
-        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas, animated: true)
+        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
     }
     
     func didScrollToBottom() {

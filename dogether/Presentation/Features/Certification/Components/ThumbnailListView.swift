@@ -20,7 +20,7 @@ final class ThumbnailListView: BaseView {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    private(set) var currentTodos: [TodoEntity]?
+    private(set) var isFirst: Bool = true
     private(set) var currentIndex: Int?
     
     override func configureView() {
@@ -52,14 +52,15 @@ final class ThumbnailListView: BaseView {
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
-            if currentTodos != datas.todos {
-                currentTodos = datas.todos
+            if isFirst {
+                isFirst = false
                 
                 datas.todos
                     .enumerated().map {
                         let thumbnailView = ThumbnailView()
                         let thumbnailViewDatas = ThumbnailViewDatas(
                             imageUrl: $1.certificationMediaUrl,
+                            thumbnailStatus: $1.thumbnailStatus,
                             isHighlighted: $0 == datas.index
                         )
                         thumbnailView.viewDidUpdate(thumbnailViewDatas)
@@ -79,6 +80,7 @@ final class ThumbnailListView: BaseView {
                     guard let thumbnailView = $1 as? ThumbnailView else { return }
                     let thumbnailViewDatas = ThumbnailViewDatas(
                         imageUrl: datas.todos[$0].certificationMediaUrl,
+                        thumbnailStatus: datas.todos[$0].thumbnailStatus,
                         isHighlighted: $0 == datas.index
                     )
                     thumbnailView.viewDidUpdate(thumbnailViewDatas)

@@ -10,7 +10,7 @@ import UIKit
 final class CertificateViewModel {
     private let challengeGroupUseCase: ChallengeGroupUseCase
     
-    var todoInfo = TodoEntity(id: 0, content: "", status: "")
+    var todoInfo = TodoEntity(id: 0, content: "", status: .waitCertification)
 
     init() {
         let repository = DIManager.shared.getChallengeGroupsRepository()

@@ -20,7 +20,7 @@ final class CertificationListView: BaseView {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    private(set) var currentTodos: [TodoEntity]?
+    private(set) var isFirst: Bool = true
     private(set) var currentIndex: Int?
     
     override func configureView() {
@@ -55,8 +55,8 @@ final class CertificationListView: BaseView {
     // MARK: - viewDidUpdate
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
-            if currentTodos != datas.todos {
-                currentTodos = datas.todos
+            if isFirst {
+                isFirst = false
                 
                 layoutIfNeeded()
                 

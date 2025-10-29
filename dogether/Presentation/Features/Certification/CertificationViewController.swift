@@ -42,7 +42,10 @@ extension CertificationViewController: CertificationDelegate {
 
         for (index, view) in stackView.arrangedSubviews.enumerated() {
             if view.frame.contains(location) {
-                viewModel.certificationViewDatas.update { $0.index = index }
+                Task { [weak self] in
+                    guard let self else { return }
+                    try await viewModel.setIndex(index: index)
+                }
                 return
             }
         }
@@ -68,12 +71,15 @@ extension CertificationViewController: CertificationDelegate {
             scrollView.setContentOffset(newOffset, animated: false)
         }, completion: { [weak self] finished in
             guard let self else { return }
-            if finished { viewModel.certificationViewDatas.update { $0.index = nextIndex } }
+            if finished { Task { try await self.viewModel.setIndex(index: nextIndex) } }
         })
     }
     
     func certificationListScrollEndAction(index: Int) {
-        viewModel.certificationViewDatas.update { $0.index = index }
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.setIndex(index: index)
+        }
     }
     
     func goCertificateViewAction(todo: TodoEntity) {

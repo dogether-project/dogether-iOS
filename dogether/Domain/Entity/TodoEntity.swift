@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct TodoEntity: Decodable, BaseEntity {
+struct TodoEntity: BaseEntity {
     let id: Int
     let content: String
-    var status: String
+    var status: TodoStatus
+    var thumbnailStatus: ThumbnailStatus
     var certificationContent: String?
     var certificationMediaUrl: String?
     var reviewFeedback: String?
@@ -18,7 +19,8 @@ struct TodoEntity: Decodable, BaseEntity {
     init(
         id: Int,
         content: String,
-        status: String,
+        status: TodoStatus,
+        thumbnailStatus: ThumbnailStatus = .yet,
         certificationContent: String? = nil,
         certificationMediaUrl: String? = nil,
         reviewFeedback: String? = nil
@@ -26,6 +28,7 @@ struct TodoEntity: Decodable, BaseEntity {
         self.id = id
         self.content = content
         self.status = status
+        self.thumbnailStatus = thumbnailStatus
         self.certificationContent = certificationContent
         self.certificationMediaUrl = certificationMediaUrl
         self.reviewFeedback = reviewFeedback
@@ -36,7 +39,8 @@ extension TodoEntity {
     init(from item: CertificationItem) {
         self.id = item.id
         self.content = item.content
-        self.status = item.status
+        self.status = TodoStatus(rawValue: item.status) ?? .waitCertification // FIXME: 추후 삭제
+        self.thumbnailStatus = .yet
         self.certificationContent = item.certificationContent
         self.certificationMediaUrl = item.certificationMediaUrl
         self.reviewFeedback = item.reviewFeedback

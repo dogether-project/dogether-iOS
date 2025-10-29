@@ -56,7 +56,7 @@ final class DogetherButton: BaseButton {
             if currentTodo != datas.todos[datas.index] {
                 currentTodo = datas.todos[datas.index]
                 
-                isHidden = datas.todos[datas.index].status != TodoStatus.waitCertification.rawValue
+                isHidden = datas.rankingEntity != nil || datas.todos[datas.index].status != .waitCertification
             }
         }
     }

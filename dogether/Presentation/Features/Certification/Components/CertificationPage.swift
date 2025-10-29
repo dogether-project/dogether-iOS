@@ -87,9 +87,7 @@ final class CertificationPage: BasePage {
             thumbnailListView.viewDidUpdate(datas)
             certificationListView.viewDidUpdate(datas)
             
-            if let status = TodoStatus(rawValue: datas.todos[datas.index].status) {
-                statusView.viewDidUpdate(status)
-            }
+            statusView.viewDidUpdate(datas.todos[datas.index].status)
             
             contentLabel.attributedText = NSAttributedString(
                 string:  datas.todos[datas.index].content,

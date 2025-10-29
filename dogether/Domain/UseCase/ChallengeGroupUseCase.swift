@@ -20,28 +20,15 @@ final class ChallengeGroupUseCase {
     }
     
     func getMyTodos(groupId: Int, date: String) async throws -> [TodoEntity] {
-        let response = try await repository.getMyTodos(groupId: String(groupId), date: date)
-        return response.todos
+        try await repository.getMyTodos(groupId: String(groupId), date: date)
     }
     
-    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (currentIndex: Int, memberTodos: [MemberCertificationInfo]) {
-        let response = try await repository.getMemberTodos(groupId: String(groupId), memberId: String(memberId))
-        let currentIndex = response.currentTodoHistoryToReadIndex
-        let memberTodos = response.todos.map {
-            MemberCertificationInfo(
-                id: $0.id,
-                content: $0.content,
-                status: TodoStatus(rawValue: $0.status) ?? .waitExamination,
-                certificationContent: $0.certificationContent,
-                certificationMediaUrl: $0.certificationMediaUrl,
-                feedback: $0.reviewFeedback,
-                thumbnailStatus: $0.isRead ? .done : .yet
-            )
-        }
-        return (currentIndex, memberTodos)
+    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, todos: [TodoEntity]) {
+        try await repository.getMemberTodos(groupId: groupId, memberId: memberId)
     }
     
-    func readTodo(todo: MemberCertificationInfo) async throws {
+    func readTodo(todo: TodoEntity) async throws {
+        // MARK: 이미 thumbnailStatus 가 done인 투두는 read API 호출할 필요 x
         if todo.thumbnailStatus == .done { return }
         try await repository.readTodo(todoId: String(todo.id))
     }
