@@ -17,6 +17,8 @@ final class CertificationViewController: BaseViewController {
         pages = [certificationPage]
 
         super.viewDidLoad()
+        
+        onAppear()
     }
     
     override func setViewDatas() {
@@ -37,6 +39,13 @@ protocol CertificationDelegate {
 }
 
 extension CertificationViewController: CertificationDelegate {
+    private func onAppear() {
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.readTodo()
+        }
+    }
+    
     func thumbnailTapAction(_ stackView: UIStackView, _ gesture: UITapGestureRecognizer) {
         let location = gesture.location(in: stackView)
 

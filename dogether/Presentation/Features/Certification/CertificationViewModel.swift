@@ -26,7 +26,13 @@ extension CertificationViewModel {
             // MARK: 이전에 보고 있던 thumbnailStatus를 수정하고 이동한 todo의 read API를 호출
             certificationViewDatas.update { $0.todos[certificationViewDatas.value.index].thumbnailStatus = .done }
             certificationViewDatas.update { $0.index = index }
-            try await challengeGroupsUseCase.readTodo(todo: certificationViewDatas.value.todos[index])
+            try await readTodo(index: index)
         }
+    }
+    
+    func readTodo(index: Int? = nil) async throws {
+        try await challengeGroupsUseCase.readTodo(
+            todo: certificationViewDatas.value.todos[index ?? certificationViewDatas.value.index]
+        )
     }
 }
