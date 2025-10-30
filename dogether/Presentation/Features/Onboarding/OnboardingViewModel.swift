@@ -21,7 +21,7 @@ final class OnboardingViewModel {
 
     func signInWithApple() async throws {
         authUseCase.appleLogin()
-        try await authUseCase.login(domain: .apple)
+        try await authUseCase.login(loginType: .apple)
     }
     
     func checkParticipating() async throws -> Bool {

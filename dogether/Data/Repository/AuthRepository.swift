@@ -19,8 +19,8 @@ final class AuthRepository: AuthProtocol {
         self.notificationDataSource = notificationDataSou
     }
     
-    func appleLogin(appleLoginRequest: AppleLoginRequest) async throws -> AppleLoginResponse {
-        try await authDataSource.appleLogin(appleLoginRequest: appleLoginRequest)
+    func login(loginRequest: LoginRequest) async throws -> LoginResponse {
+        try await authDataSource.login(loginRequest: loginRequest)
     }
     
     func saveNotiToken(saveNotiTokenRequest: SaveNotiTokenRequest) async throws {
