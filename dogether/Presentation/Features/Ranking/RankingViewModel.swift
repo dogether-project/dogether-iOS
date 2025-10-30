@@ -7,11 +7,12 @@
 
 import UIKit
 
+import RxRelay
+
 final class RankingViewModel {
     private let groupUseCase: GroupUseCase
     
-    var groupId: Int?
-    private(set) var rankings: [RankingModel] = []
+    private(set) var rankingViewDatas = BehaviorRelay<RankingViewDatas>(value: RankingViewDatas())
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -27,7 +28,7 @@ extension RankingViewModel {
 
 extension RankingViewModel {
     func getRankings() async throws {
-        guard let groupId else { return }
-        rankings = try await groupUseCase.getRankings(groupId: groupId)
+        let rankings = try await groupUseCase.getRankings(groupId: rankingViewDatas.value.groupId)
+        rankingViewDatas.update { $0.rankings = rankings }
     }
 }

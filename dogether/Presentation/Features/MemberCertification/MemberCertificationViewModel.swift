@@ -11,7 +11,7 @@ final class MemberCertificationViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
     
     var groupId: Int?
-    var memberInfo: RankingModel?
+    var memberInfo: RankingEntity?
     
     private(set) var todos: [MemberCertificationInfo] = []
     private(set) var currentIndex: Int = 0

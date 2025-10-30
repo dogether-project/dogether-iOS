@@ -1,8 +1,8 @@
 //
-//  RankingModel.swift
+//  HistoryReadStatus.swift
 //  dogether
 //
-//  Created by seungyooooong on 2/4/25.
+//  Created by seungyooooong on 10/13/25.
 //
 
 import UIKit
@@ -19,13 +19,4 @@ enum HistoryReadStatus: String {
             return [UIColor.grey500.cgColor, UIColor.grey500.cgColor]
         }
     }
-}
-
-struct RankingModel {
-    let memberId: Int
-    let rank: Int
-    let profileImageUrl: String
-    let name: String
-    let historyReadStatus: HistoryReadStatus?
-    let achievementRate: Int
 }

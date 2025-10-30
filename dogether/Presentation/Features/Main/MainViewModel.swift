@@ -19,18 +19,10 @@ final class MainViewModel {
     private(set) var sheetViewDatas = BehaviorRelay<SheetViewDatas>(value: SheetViewDatas())
     
     private(set) var timerViewDatas = BehaviorRelay<TimerViewDatas>(value: TimerViewDatas())
-    
     private(set) var timer: Timer?
-    private(set) var time: String = "23:59:59"
-    private(set) var timeProgress: CGFloat = 0.0
     
-    private(set) var dateOffset: Int = 0
-    private(set) var currentFilter: FilterTypes = .all
-    private(set) var todoList: [TodoEntity] = []
-    
-
     // MARK: - Computed
-    var todoListHeight: Int { todoList.isEmpty ? 0 : 64 * todoList.count + 8 * (todoList.count - 1) }
+    var currentGroup: GroupEntity { groupViewDatas.value.groups[groupViewDatas.value.index] }
     
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
@@ -55,24 +47,12 @@ extension MainViewModel {
     }
     
     func getReviews() async throws -> [ReviewModel] {
-        try await todoCertificationsUseCase.getReviews()
+        return try await todoCertificationsUseCase.getReviews()
     }
 }
 
 // MARK: - set
 extension MainViewModel {
-    func setDateOffset(offset: Int) {
-        self.dateOffset = offset
-    }
-    
-    func setFilter(filter: FilterTypes) {
-        if self.currentFilter == filter {
-            self.currentFilter = .all
-        } else {
-            self.currentFilter = filter
-        }
-    }
-    
     func setSheetViewDatasForCurrentGroup(currentGroup: GroupEntity) async throws {
         if currentGroup.status == .ready {
             sheetViewDatas.update { $0.status = .timer }

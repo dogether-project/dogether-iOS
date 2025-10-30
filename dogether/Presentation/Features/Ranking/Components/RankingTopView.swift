@@ -9,9 +9,9 @@ import UIKit
 import SnapKit
 
 final class RankingTopView: BaseView {
-    let ranking: RankingModel?
+    let ranking: RankingEntity?
     
-    init(ranking: RankingModel?) {
+    init(ranking: RankingEntity?) {
         self.ranking = ranking
         super.init(frame: .zero)
     }
