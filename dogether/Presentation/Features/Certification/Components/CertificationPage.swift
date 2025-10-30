@@ -99,22 +99,22 @@ final class CertificationPage: BasePage {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
-            navigationHeader.viewDidUpdate(datas)
-            thumbnailListView.viewDidUpdate(datas)
-            certificationListView.viewDidUpdate(datas)
+            navigationHeader.updateView(datas)
+            thumbnailListView.updateView(datas)
+            certificationListView.updateView(datas)
             
-            statusView.viewDidUpdate(datas.todos[datas.index].status)
+            statusView.updateView(datas.todos[datas.index].status)
             
             contentLabel.attributedText = NSAttributedString(
                 string:  datas.todos[datas.index].content,
                 attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
             )
             
-            reviewFeedbackView.viewDidUpdate(datas)
-            certificateButton.viewDidUpdate(datas)
+            reviewFeedbackView.updateView(datas)
+            certificateButton.updateView(datas)
         }
     }
 }

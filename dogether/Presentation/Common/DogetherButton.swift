@@ -50,7 +50,7 @@ final class DogetherButton: BaseButton {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
             if currentTodo != datas.todos[datas.index] {

@@ -49,7 +49,7 @@ final class ThumbnailListView: BaseView {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
             if isFirst {
@@ -63,7 +63,7 @@ final class ThumbnailListView: BaseView {
                             thumbnailStatus: $1.thumbnailStatus,
                             isHighlighted: $0 == datas.index
                         )
-                        thumbnailView.viewDidUpdate(thumbnailViewDatas)
+                        thumbnailView.updateView(thumbnailViewDatas)
                         return thumbnailView
                     }
                     .forEach {
@@ -83,7 +83,7 @@ final class ThumbnailListView: BaseView {
                         thumbnailStatus: datas.todos[$0].thumbnailStatus,
                         isHighlighted: $0 == datas.index
                     )
-                    thumbnailView.viewDidUpdate(thumbnailViewDatas)
+                    thumbnailView.updateView(thumbnailViewDatas)
                     
                     if $0 == datas.index {
                         let scrollViewWidth = scrollView.bounds.width

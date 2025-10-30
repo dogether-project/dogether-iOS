@@ -31,7 +31,7 @@ final class ReviewFeedbackView: BaseView {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
             isHidden = !(datas.todos[datas.index].reviewFeedback?.isEmpty == false)

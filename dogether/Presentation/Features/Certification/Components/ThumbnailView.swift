@@ -50,7 +50,7 @@ final class ThumbnailView: BaseView {
     }
     
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? ThumbnailViewDatas {
             if currentImageUrl != datas.imageUrl {

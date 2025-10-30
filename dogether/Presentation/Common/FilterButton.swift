@@ -78,7 +78,7 @@ final class FilterButton: BaseButton {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: any BaseEntity) {
         if let datas = data as? FilterTypes {
             let isColorful = type == datas

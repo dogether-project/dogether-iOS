@@ -69,7 +69,7 @@ final class NavigationHeader: BaseView{
             $0.height.equalTo(28)
         }
     }
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
             if title != datas.title {
