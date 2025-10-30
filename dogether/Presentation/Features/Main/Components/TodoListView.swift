@@ -114,7 +114,7 @@ final class TodoListView: BaseView {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: any BaseEntity) {
         if let datas = data as? SheetViewDatas {
             todoScrollView.isScrollEnabled = datas.sheetStatus == .expand
@@ -123,7 +123,7 @@ final class TodoListView: BaseView {
             currentFilter = datas.filter
             currentTodoList = datas.todoList
             
-            [allButton, waitButton, rejectButton, approveButton].forEach { $0.viewDidUpdate(datas.filter) }
+            [allButton, waitButton, rejectButton, approveButton].forEach { $0.updateView(datas.filter) }
             
             let isToday = datas.dateOffset == 0
             
@@ -143,7 +143,7 @@ final class TodoListView: BaseView {
                 .forEach { todoListStackView.addArrangedSubview($0) }
             
             if datas.todoList.count < 10 && isToday {
-                addTodoButton.viewDidUpdate(datas)
+                addTodoButton.updateView(datas)
                 todoListStackView.addArrangedSubview(addTodoButton)
             }
             

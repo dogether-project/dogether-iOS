@@ -70,7 +70,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
             .asDriver(onErrorJustReturn: relay.value)
             .drive(onNext: { [weak self] datas in
                 guard let self, let pages else { return }
-                pages.forEach { $0.viewDidUpdate(datas) }
+                pages.forEach { $0.updateView(datas) }
             })
             .disposed(by: disposeBag)
     }

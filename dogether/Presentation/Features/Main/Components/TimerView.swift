@@ -111,7 +111,7 @@ final class TimerView: BaseView {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? TimerViewDatas {
             timerLabel.text = datas.time

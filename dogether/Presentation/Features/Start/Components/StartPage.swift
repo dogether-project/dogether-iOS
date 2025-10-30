@@ -74,7 +74,7 @@ final class StartPage: BasePage {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? StartViewDatas else { return }
         
@@ -83,10 +83,6 @@ final class StartPage: BasePage {
         navigationHeader.isHidden = datas.isFirstGroup
         
         titleLabel.isHidden = !datas.isFirstGroup
-    }
-    
-    override func updateConstraints(_ data: (any BaseEntity)?) {
-        guard let datas = data as? StartViewDatas else { return }
         
         buttonStackView.snp.remakeConstraints {
             $0.top.equalTo(datas.isFirstGroup ? titleLabel.snp.bottom : navigationHeader.snp.bottom)

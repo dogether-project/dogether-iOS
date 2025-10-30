@@ -71,7 +71,7 @@ final class SheetHeaderView: BaseView {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupViewDatas {
             if currentGroupDuration == datas.groups[datas.index].duration { return }

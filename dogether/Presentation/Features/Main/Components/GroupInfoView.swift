@@ -163,7 +163,7 @@ final class GroupInfoView: BaseView {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let data = data as? GroupEntity {
             nameLabel.text = data.name
