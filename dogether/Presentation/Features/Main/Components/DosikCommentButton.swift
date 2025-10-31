@@ -63,7 +63,7 @@ final class DosikCommentButton: BaseButton {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let data = data as? GroupEntity {
             let comment = data.status == .dDay ? "그룹이 종료됐어요!" :

@@ -93,7 +93,7 @@ final class RankingPage: BasePage {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? RankingViewDatas {
             if currentRankings != datas.rankings {

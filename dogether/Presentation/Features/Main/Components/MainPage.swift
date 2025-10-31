@@ -117,17 +117,17 @@ final class MainPage: BasePage {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? BottomSheetViewDatas {
-            bottomSheetView.viewDidUpdate(datas)
+            bottomSheetView.updateView(datas)
         }
         
         if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
-            bottomSheetView.viewDidUpdate(datas)
-            groupInfoView.viewDidUpdate(datas.groups[datas.index])
-            dosikCommentButton.viewDidUpdate(datas.groups[datas.index])
-            sheetHeaderView.viewDidUpdate(datas)
+            bottomSheetView.updateView(datas)
+            groupInfoView.updateView(datas.groups[datas.index])
+            dosikCommentButton.updateView(datas.groups[datas.index])
+            sheetHeaderView.updateView(datas)
         }
         
         if let datas = data as? SheetViewDatas {
@@ -135,9 +135,9 @@ final class MainPage: BasePage {
                 currentIsScrollOnTop = datas.isScrollOnTop
             }
             
-            groupInfoView.viewDidUpdate(datas)
-            rankingButton.viewDidUpdate(datas)
-            sheetHeaderView.viewDidUpdate(datas)
+            groupInfoView.updateView(datas)
+            rankingButton.updateView(datas)
+            sheetHeaderView.updateView(datas)
             
             timerView.isHidden = !(datas.status == .timer)
             todoListView.isHidden = !(datas.status == .certificateTodo || datas.status == .todoList)
@@ -152,17 +152,9 @@ final class MainPage: BasePage {
             }
             
             if datas.status == .certificateTodo || datas.status == .todoList {
-                todoListView.viewDidUpdate(datas)
+                todoListView.updateView(datas)
             }
-        }
-        
-        if let datas = data as? TimerViewDatas {
-            timerView.viewDidUpdate(datas)
-        }
-    }
-    
-    override func updateConstraints(_ data: any BaseEntity) {
-        if let datas = data as? SheetViewDatas {
+            
             if currentYOffset == datas.yOffset && currentSheetStatus == datas.sheetStatus { return }
             currentYOffset = datas.yOffset
             currentSheetStatus = datas.sheetStatus
@@ -170,6 +162,10 @@ final class MainPage: BasePage {
             dogetherSheet.snp.updateConstraints {
                 $0.top.equalToSuperview().offset(datas.yOffset)
             }
+        }
+        
+        if let datas = data as? TimerViewDatas {
+            timerView.updateView(datas)
         }
     }
 }

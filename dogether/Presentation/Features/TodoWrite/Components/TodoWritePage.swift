@@ -212,7 +212,7 @@ final class TodoWritePage: BasePage {
         }
     }
     
-    // MARK: - viewDidUpdate
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? TodoWriteViewDatas {
             if currentTodo != datas.todo {
