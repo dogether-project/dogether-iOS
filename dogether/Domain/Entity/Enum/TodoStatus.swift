@@ -64,17 +64,4 @@ enum TodoStatus: String, CaseIterable, BaseEntity {
             return .blue300
         }
     }
-    
-    var width: CGFloat {
-        switch self {
-        case .waitCertification:
-            return 52
-        case .waitExamination:
-            return 89
-        case .reject:
-            return 74
-        case .approve:
-            return 62
-        }
-    }
 }

@@ -23,19 +23,8 @@ final class CertificationImageView: BaseImageView {
     private let gradientLayer = CAGradientLayer()
     private let gradientView = UIView()
     
-    private let certificationContentLabel = {
-        let label = UILabel()
-        label.textColor = .grey100
-        label.numberOfLines = 0
-        return label
-    }()
-    
-    private let certificatorLabel = {
-        let label = UILabel()
-        label.textColor = .grey100
-        label.font = Fonts.head2B
-        return label
-    }()
+    private let certificationContentLabel = UILabel()
+    private let certificatorLabel = UILabel()
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -61,6 +50,12 @@ final class CertificationImageView: BaseImageView {
         gradientView.layer.cornerRadius = 12
         gradientView.layer.borderColor = UIColor.grey700.cgColor
         gradientView.layer.borderWidth = 1
+        
+        certificationContentLabel.textColor = .grey0
+        certificationContentLabel.numberOfLines = 0
+        
+        certificatorLabel.textColor = .grey100
+        certificatorLabel.font = Fonts.head2B
         
         updateCertificationContent(certificationContent: certificationContent, updateConstraints: false)
     }
