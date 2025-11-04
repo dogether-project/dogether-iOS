@@ -341,14 +341,14 @@ extension GroupCreateViewController {
                 try await viewModel.createGroup()
                 guard let joinCode = viewModel.joinCode else { return }
                 await MainActor.run {
-                    let completeVC = CompleteViewController(
+                    coordinator?.setNavigationController(
+                        CompleteViewController(),
                         datas: CompleteViewDatas(
                             groupType: .create,
                             joinCode: joinCode,
                             groupInfo: ChallengeGroupInfo(name: viewModel.currentGroupName)
                         )
                     )
-                    coordinator?.setNavigationController(completeVC)
                 }
             } catch let error as NetworkError {
                 ErrorHandlingManager.presentErrorView(

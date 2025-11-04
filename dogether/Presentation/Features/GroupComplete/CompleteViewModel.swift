@@ -9,9 +9,6 @@ import RxRelay
 
 final class CompleteViewModel {
     private(set) var completeViewDatas = BehaviorRelay<CompleteViewDatas>(value: CompleteViewDatas())
-    var groupType: GroupTypes { completeViewDatas.value.groupType }
-    var joinCode: String { completeViewDatas.value.joinCode }
-    var groupInfo: ChallengeGroupInfo { completeViewDatas.value.groupInfo }
 }
 
 extension CompleteViewModel {

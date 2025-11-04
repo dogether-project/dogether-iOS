@@ -208,3 +208,25 @@ extension DogetherGroupInfo {
         endDayInfoLabel.text = DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)
     }
 }
+
+extension DogetherGroupInfo {
+    func setInfo(
+        groupName: String,
+        memberCount: Int,
+        duration: Int,
+        startAtString: String,
+        endAtString: String
+    ) {
+        self.groupName = groupName
+        self.memberCount = memberCount
+        self.duration = GroupChallengeDurations(rawValue: duration) ?? .threeDays
+        self.startAtString = startAtString
+        self.endAtString = endAtString
+        
+        groupNameLabel.text = groupName
+        durationInfoLabel.text = self.duration.text
+        memberCountInfoLabel.text = "총 \(memberCount)명"
+        startDayInfoLabel.text = "\(startAtString)"
+        endDayInfoLabel.text = "\(endAtString)"
+    }
+}

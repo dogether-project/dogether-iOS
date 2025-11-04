@@ -11,25 +11,19 @@ final class CompleteViewController: BaseViewController {
     private let completePage = CompletePage()
     private let viewModel = CompleteViewModel()
     
-    init(datas: CompleteViewDatas) {
-        super.init(nibName: nil, bundle: nil)
-        self.datas = datas
-        viewModel.setDatas(datas)
-        pages = [completePage]
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         completePage.delegate = self
+        pages = [completePage]
         super.viewDidLoad()
     }
     
     override func setViewDatas() {
-        bind(viewModel.completeViewDatas)
-    }
+         if let datas = datas as? CompleteViewDatas {
+             viewModel.completeViewDatas.accept(datas)
+         }
+         
+         bind(viewModel.completeViewDatas)
+     }
 }
 
 protocol CompleteDelegate: AnyObject {

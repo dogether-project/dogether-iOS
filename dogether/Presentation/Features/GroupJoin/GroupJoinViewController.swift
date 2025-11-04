@@ -136,13 +136,13 @@ extension GroupJoinViewController {
                 try await viewModel.joinGroup()
                 guard let groupInfo = viewModel.challengeGroupInfo else { return }
                 await MainActor.run {
-                    let completeVC = CompleteViewController(
+                    coordinator?.setNavigationController(
+                        CompleteViewController(),
                         datas: CompleteViewDatas(
                             groupType: .join,
                             groupInfo: groupInfo
                         )
                     )
-                    coordinator?.setNavigationController(completeVC)
                 }
             } catch let error as NetworkError {
                 if case let .dogetherError(code, _) = error, code == .CGF0005 {
