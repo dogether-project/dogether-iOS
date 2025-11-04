@@ -35,9 +35,14 @@ extension CompleteViewController: CompleteDelegate {
     func goHomeAction() {
         coordinator?.setNavigationController(MainViewController())
     }
-
+    
     func shareJoinCodeAction() {
-        let invite = viewModel.shareGroupCode()
+        let data = viewModel.completeViewDatas.value
+        
+        let invite = SystemManager.inviteGroup(
+            groupName: data.groupInfo.name,
+            joinCode: data.joinCode
+        )
         present(UIActivityViewController(activityItems: invite, applicationActivities: nil), animated: true)
     }
 }

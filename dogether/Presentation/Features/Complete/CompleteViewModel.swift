@@ -15,12 +15,4 @@ extension CompleteViewModel {
     func setDatas(_ datas: CompleteViewDatas) {
         completeViewDatas.accept(datas)
     }
-
-    func shareGroupCode() -> [Any] {
-        let data = completeViewDatas.value
-        return SystemManager.inviteGroup(
-            groupName: data.groupInfo.name,
-            joinCode: data.joinCode
-        )
-    }
 }
