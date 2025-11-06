@@ -8,42 +8,11 @@
 import UIKit
 
 final class DogetherGroupInfo: BaseView {
-    var groupName: String
-    var memberCount: Int
-    var duration: GroupChallengeDurations
-    var startAt: GroupStartAts?
-    var startAtString: String?
-    var endAtString: String?
-    
-    init(
-        groupName: String = "",
-        memberCount: Int = 0,
-        duration: GroupChallengeDurations = .threeDays,
-        startAt: GroupStartAts = .today
-    ) {
-        self.groupName = groupName
-        self.memberCount = memberCount
-        self.duration = duration
-        self.startAt = startAt
-        
-        super.init(frame: .zero)
-    }
-    init(
-        groupName: String = "",
-        memberCount: Int = 0,
-        duration: Int = 3,
-        startAtString: String,
-        endAtString: String
-    ) {
-        self.groupName = groupName
-        self.memberCount = memberCount
-        self.duration = GroupChallengeDurations(rawValue: duration) ?? .threeDays
-        self.startAtString = startAtString
-        self.endAtString = endAtString
-        
-        super.init(frame: .zero)
-    }
-    required init?(coder: NSCoder) { fatalError() }
+    private var currentGroupName: String = ""
+    private var currentMemberCount: Int = 0
+    private var currentDuration: GroupChallengeDurations = .threeDays
+    private var currentStartAtString: String = ""
+    private var currentEndAtString: String = ""
     
     private let groupInfoView = {
         let view = UIView()
@@ -100,19 +69,10 @@ final class DogetherGroupInfo: BaseView {
         startDayInfoLabel = infoLabel()
         endDayInfoLabel = infoLabel()
         
-        groupNameLabel.text = groupName
-        
         durationDescriptionLabel.text = "활동 기간"
         memberCountDescriptionLabel.text = "그룹원"
         startDayDescriptionLabel.text = "시작일"
         endDayDescriptionLabel.text = "종료일"
-        
-        durationInfoLabel.text = duration.text
-        memberCountInfoLabel.text = "총 \(memberCount)명"
-        if let startAtString, let endAtString {
-            startDayInfoLabel.text = "\(startAtString)"
-            endDayInfoLabel.text = "\(endAtString)"
-        }
     }
     
     override func configureAction() { }
@@ -191,42 +151,20 @@ final class DogetherGroupInfo: BaseView {
             $0.height.equalTo(25)
         }
     }
-}
- 
-extension DogetherGroupInfo {
-    func setInfo(groupName: String, memberCount: Int, duration: GroupChallengeDurations, startAt: GroupStartAts) {
-        self.groupName = groupName
-        self.memberCount = memberCount
-        self.duration = duration
-        self.startAt = startAt
-        
-        
-        groupNameLabel.text = groupName
-        durationInfoLabel.text = duration.text
-        memberCountInfoLabel.text = "총 \(memberCount)명"
-        startDayInfoLabel.text = DateFormatterManager.formattedDate(startAt.daysFromToday)
-        endDayInfoLabel.text = DateFormatterManager.formattedDate(startAt.daysFromToday + duration.rawValue)
-    }
-}
+    
+    override func updateView(_ data: any BaseEntity) {
+        guard let data = data as? DogetherGroupInfoViewData else { return }
 
-extension DogetherGroupInfo {
-    func setInfo(
-        groupName: String,
-        memberCount: Int,
-        duration: Int,
-        startAtString: String,
-        endAtString: String
-    ) {
-        self.groupName = groupName
-        self.memberCount = memberCount
-        self.duration = GroupChallengeDurations(rawValue: duration) ?? .threeDays
-        self.startAtString = startAtString
-        self.endAtString = endAtString
-        
-        groupNameLabel.text = groupName
-        durationInfoLabel.text = self.duration.text
-        memberCountInfoLabel.text = "총 \(memberCount)명"
-        startDayInfoLabel.text = "\(startAtString)"
-        endDayInfoLabel.text = "\(endAtString)"
+        currentGroupName = data.name
+        currentMemberCount = data.memberCount
+        currentDuration = GroupChallengeDurations(rawValue: data.duration) ?? .threeDays
+        currentStartAtString = data.startDay
+        currentEndAtString = data.endDay
+
+        groupNameLabel.text = currentGroupName
+        durationInfoLabel.text = currentDuration.text
+        memberCountInfoLabel.text = "총 \(currentMemberCount)명"
+        startDayInfoLabel.text = currentStartAtString
+        endDayInfoLabel.text = currentEndAtString
     }
 }

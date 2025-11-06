@@ -8,26 +8,13 @@
 import UIKit
 
 final class JoinCodeShareButton: BaseButton {
-    private(set) var joinCode: String
-    
     private let codeLabel = UILabel()
     private let iconImageView = UIImageView(
         image: .share.withRenderingMode(.alwaysTemplate)
     )
     private let stackView = UIStackView()
     
-    
-    init(joinCode: String = "") {
-        self.joinCode = joinCode
-        super.init(frame: .zero)
-    }
-    
-    required init?(coder: NSCoder) { fatalError() }
-    
-    
     override func configureView() {
-        updateUI()
-        
         layer.cornerRadius = 12
         backgroundColor = .grey700
         
@@ -67,15 +54,9 @@ final class JoinCodeShareButton: BaseButton {
             $0.width.height.equalTo(24)
         }
     }
-}
-
-extension JoinCodeShareButton {
-    private func updateUI() {
-        codeLabel.text = joinCode
-    }
     
-    func update(joinCode: String) {
-        self.joinCode = joinCode
-        updateUI()
+    override func updateView(_ data: any BaseEntity) {
+        guard let data = data as? JoinCodeShareButtonViewData else { return }
+        codeLabel.text = data.joinCode
     }
 }

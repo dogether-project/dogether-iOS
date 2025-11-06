@@ -379,12 +379,14 @@ extension GroupCreateViewController {
         if viewModel.currentStep == .two { view.endEditing(true) }
         if viewModel.currentStep == .three {
             completeButton.setTitle("그룹 생성")
-            dogetherGroupInfo.setInfo(
-                groupName: viewModel.currentGroupName,
+            let viewData = DogetherGroupInfoViewData(
+                name: viewModel.currentGroupName,
                 memberCount: viewModel.memberCount,
-                duration: viewModel.currentDuration,
-                startAt: viewModel.currentStartAt
+                duration: viewModel.currentDuration.rawValue,
+                startDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday),
+                endDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday + viewModel.currentDuration.rawValue)
             )
+            dogetherGroupInfo.updateView(viewData)
         }
     }
     

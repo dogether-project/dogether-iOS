@@ -98,7 +98,7 @@ final class CompletePage: BasePage {
             $0.top.equalTo(joinCodeShareButton.snp.bottom).offset(16)
         }
     }
-
+    
     override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? CompleteViewDatas else { return }
         
@@ -106,23 +106,28 @@ final class CompletePage: BasePage {
             string: datas.groupType.completeTitleText,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
-
+        
         switch datas.groupType {
         case .join:
-            groupInfoView.setInfo(
-                groupName: datas.groupInfo.name,
+            let viewData = DogetherGroupInfoViewData(
+                name: datas.groupInfo.name,
                 memberCount: datas.groupInfo.maximumMember,
                 duration: datas.groupInfo.duration,
-                startAtString: datas.groupInfo.startDate,
-                endAtString: datas.groupInfo.endDate
+                startDay: datas.groupInfo.startDate,
+                endDay: datas.groupInfo.endDate
             )
+            
+            groupInfoView.updateView(viewData)
             
             groupInfoView.isHidden = false
             joinCodeShareButton.isHidden = true
             noticeView.isHidden = true
-
+            
         case .create:
-            joinCodeShareButton.update(joinCode: datas.joinCode)
+            joinCodeShareButton.updateView(
+                JoinCodeShareButtonViewData(joinCode: datas.joinCode)
+            )
+            
             groupInfoView.isHidden = true
             joinCodeShareButton.isHidden = false
             noticeView.isHidden = false
