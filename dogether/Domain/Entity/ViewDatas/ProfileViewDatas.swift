@@ -1,15 +1,15 @@
 //
-//  ProfileInfo.swift
+//  ProfileViewDatas.swift
 //  dogether
 //
-//  Created by seungyooooong on 7/20/25.
+//  Created by yujaehong on 11/8/25.
 //
 
 import Foundation
 
-struct ProfileInfo {
-    let name: String
-    let imageUrl: String
+struct ProfileViewDatas: BaseEntity {
+    var name: String
+    var imageUrl: String
     
     init(name: String = "", imageUrl: String = "") {
         self.name = name
