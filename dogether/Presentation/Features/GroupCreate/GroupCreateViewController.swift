@@ -341,11 +341,14 @@ extension GroupCreateViewController {
                 try await viewModel.createGroup()
                 guard let joinCode = viewModel.joinCode else { return }
                 await MainActor.run {
-                    let completeViewController = CompleteViewController()
-                    completeViewController.viewModel.groupType = .create
-                    completeViewController.viewModel.joinCode = joinCode
-                    completeViewController.viewModel.groupInfo = ChallengeGroupInfo(name: viewModel.currentGroupName)
-                    coordinator?.setNavigationController(completeViewController)
+                    coordinator?.setNavigationController(
+                        CompleteViewController(),
+                        datas: CompleteViewDatas(
+                            groupType: .create,
+                            joinCode: joinCode,
+                            groupInfo: ChallengeGroupInfo(name: viewModel.currentGroupName)
+                        )
+                    )
                 }
             } catch let error as NetworkError {
                 ErrorHandlingManager.presentErrorView(
@@ -376,12 +379,14 @@ extension GroupCreateViewController {
         if viewModel.currentStep == .two { view.endEditing(true) }
         if viewModel.currentStep == .three {
             completeButton.setTitle("그룹 생성")
-            dogetherGroupInfo.setInfo(
-                groupName: viewModel.currentGroupName,
+            let viewData = DogetherGroupInfoViewData(
+                name: viewModel.currentGroupName,
                 memberCount: viewModel.memberCount,
-                duration: viewModel.currentDuration,
-                startAt: viewModel.currentStartAt
+                duration: viewModel.currentDuration.rawValue,
+                startDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday),
+                endDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday + viewModel.currentDuration.rawValue)
             )
+            dogetherGroupInfo.updateView(viewData)
         }
     }
     
