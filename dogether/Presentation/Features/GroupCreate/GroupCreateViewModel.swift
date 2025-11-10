@@ -7,8 +7,12 @@
 
 import Foundation
 
+import RxRelay
+
 final class GroupCreateViewModel {
     private let groupUseCase: GroupUseCase
+    
+    private(set) var groupCreateViewDatas = BehaviorRelay<GroupCreateViewDatas>(value: GroupCreateViewDatas())
     
     let maxStep: Int = 3
     let groupNameMaxLength: Int = 10

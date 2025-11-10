@@ -59,6 +59,10 @@ final class DogetherButton: BaseButton {
                 isHidden = datas.rankingEntity != nil || datas.todos[datas.index].status != .waitCertification
             }
         }
+        
+        if let datas = data as? GroupCreateViewDatas {
+            self.title = datas.step.buttonTitle
+        }
     }
 }
 

@@ -329,7 +329,7 @@ extension TodoWritePage: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - abount keyboard (UITextFieldDelegate)
+// MARK: - about keyboard (UITextFieldDelegate)
 extension TodoWritePage: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard addButton.isEnabled else { return false }
