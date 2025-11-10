@@ -18,6 +18,15 @@ final class DogetherButton: BaseButton {
             )
         }
     }
+    var groupCreateDelegate: GroupCreateDelegate? {
+        didSet {
+            addAction(
+                UIAction { [weak self] _ in
+                    
+                }, for: .touchUpInside
+            )
+        }
+    }
     
     private(set) var title: String
     private(set) var status: ButtonStatus

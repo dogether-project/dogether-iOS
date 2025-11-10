@@ -11,12 +11,13 @@ import SnapKit
 final class GroupCreatePage: BasePage {
     var delegate: GroupCreateDelegate? {
         didSet {
-            
+            completeButton.groupCreateDelegate = delegate
+            stepOneView.delegate = delegate
         }
     }
     
     private let navigationHeader = NavigationHeader(title: "그룹 만들기")
-    private let stepInfoView = StepInfoView()
+    private let stepInfoStackView = StepInfoStackView()
     private let completeButton = DogetherButton(title: "다음", status: .disabled)
     
     private var stepOneView = StepOneView()
@@ -26,26 +27,16 @@ final class GroupCreatePage: BasePage {
     override func configureView() { }
     
     override func configureAction() {
-//        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+//        addTapAction { [weak self] _ in
+//            guard let self else { return }
+//            endEditing(true)
+//        }
 
         navigationHeader.delegate = coordinatorDelegate
-
-        completeButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-//                if viewModel.currentStep.rawValue == viewModel.maxStep {
-//                    tryCreateGroup()
-//                } else {
-//                    guard let nextStep = CreateGroupSteps(rawValue: viewModel.currentStep.rawValue + 1) else { return }
-//                    viewModel.updateStep(step: nextStep)
-//                    updateStep()
-//                }
-            }, for: .touchUpInside
-        )
     }
     
     override func configureHierarchy() {
-        [ navigationHeader, stepInfoView, completeButton,
+        [ navigationHeader, stepInfoStackView, completeButton,
           stepOneView, stepTwoView, stepThreeView
         ].forEach { addSubview($0) }
     }
@@ -56,7 +47,7 @@ final class GroupCreatePage: BasePage {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        stepInfoView.snp.makeConstraints {
+        stepInfoStackView.snp.makeConstraints {
             $0.top.equalTo(navigationHeader.snp.bottom).offset(44)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
@@ -67,17 +58,17 @@ final class GroupCreatePage: BasePage {
         }
 
         stepOneView.snp.makeConstraints {
-            $0.top.equalTo(stepInfoView.snp.bottom).offset(24)
+            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepTwoView.snp.makeConstraints {
-            $0.top.equalTo(stepInfoView.snp.bottom).offset(24)
+            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepThreeView.snp.makeConstraints {
-            $0.top.equalTo(stepInfoView.snp.bottom).offset(34)
+            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(34)
             $0.horizontalEdges.equalToSuperview().inset(36)
         }
     }
@@ -85,26 +76,21 @@ final class GroupCreatePage: BasePage {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupCreateViewDatas {
-            stepInfoView.updateView(datas)
+            stepInfoStackView.updateView(datas)
             
-            [stepOneView, stepTwoView, stepThreeView].forEach {
-                guard let step = CreateGroupSteps(rawValue: $0.tag) else { return }
-                $0.isHidden = datas.step != step
-            }
+            completeButton.updateView(datas)
             
-            if datas.step == .two { endEditing(true) }
-            if datas.step == .three {
-//                completeButton.updateView(datas)
-//                dogetherGroupInfo.updateView(datas)
-                
-//                let viewData = DogetherGroupInfoViewData(
-//                    name: viewModel.currentGroupName,
-//                    memberCount: viewModel.memberCount,
-//                    duration: viewModel.currentDuration.rawValue,
-//                    startDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday),
-//                    endDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday + viewModel.currentDuration.rawValue)
-//                )
-//                dogetherGroupInfo.updateView(viewData)
+            stepOneView.isHidden = datas.step != .one
+            stepTwoView.isHidden = datas.step != .two
+            stepThreeView.isHidden = datas.step != .three
+            
+            switch datas.step {
+            case .one:
+                stepOneView.updateView(datas)
+            case .two:
+                endEditing(true)
+            case .three:
+                stepThreeView.updateView(datas)
             }
         }
     }

@@ -8,6 +8,12 @@
 import UIKit
 
 final class StepOneView: BaseView {
+    var delegate: GroupCreateDelegate? {
+        didSet {
+            memberCountView.delegate = delegate
+        }
+    }
+    
     private let groupNameTitleLabel = UILabel()
     private let groupNameTextField = UITextField()
     private let groupNameCountLabel = UILabel()
@@ -15,7 +21,7 @@ final class StepOneView: BaseView {
     private let groupNameCountStackView = UIStackView()
     
     private let memberCountTitleLabel = UILabel()
-    private let memberCountView = UIView()
+    private let memberCountView = CounterView()
     
     override func configureView() {
         groupNameTitleLabel.text = "그룹명"
@@ -54,9 +60,6 @@ final class StepOneView: BaseView {
         memberCountTitleLabel.text = "그룹 인원"
         memberCountTitleLabel.textColor = .grey200
         memberCountTitleLabel.font = Fonts.body1B
-//        memberCountView = CounterView(min: 2, max: 20, current: viewModel.memberCount, unit: "명") { [weak self] in
-//            self?.viewModel.updateMemberCount(count: $0)
-//        }
     }
     
     override func configureAction() {
@@ -103,6 +106,13 @@ final class StepOneView: BaseView {
             $0.top.equalTo(memberCountTitleLabel.snp.bottom).offset(8)
             $0.width.equalToSuperview()
             $0.height.equalTo(79)
+        }
+    }
+    
+    // MARK: - updateView
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? GroupCreateViewDatas {
+            memberCountView.updateView(datas)
         }
     }
 }

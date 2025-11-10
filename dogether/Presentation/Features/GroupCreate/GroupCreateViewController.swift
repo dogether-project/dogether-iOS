@@ -58,9 +58,11 @@ extension GroupCreateViewController {
 
 // MARK: - delegate
 protocol GroupCreateDelegate {
-    
+    func changeCountAction(currentCount: Int)
 }
 
 extension GroupCreateViewController: GroupCreateDelegate {
-    
+    func changeCountAction(currentCount: Int) {
+        viewModel.updateMemberCount(count: currentCount)
+    }
 }

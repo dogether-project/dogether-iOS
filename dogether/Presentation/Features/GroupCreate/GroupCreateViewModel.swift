@@ -14,13 +14,8 @@ final class GroupCreateViewModel {
     
     private(set) var groupCreateViewDatas = BehaviorRelay<GroupCreateViewDatas>(value: GroupCreateViewDatas())
     
-    let maxStep: Int = 3
-    let groupNameMaxLength: Int = 10
-    
     private(set) var joinCode: String?
-    private(set) var currentStep: CreateGroupSteps = .one
     private(set) var currentGroupName: String = ""
-    private(set) var memberCount: Int = 10
     private(set) var currentDuration: GroupChallengeDurations = .threeDays
     private(set) var currentStartAt: GroupStartAts = .today
     
@@ -31,20 +26,18 @@ final class GroupCreateViewModel {
 }
 
 extension GroupCreateViewModel {
-    func updateStep(step: CreateGroupSteps) {
-        currentStep = step
-    }
-    
     func updateGroupName(groupName: String?) {
         currentGroupName = groupName ?? ""
         
-        if currentGroupName.count > groupNameMaxLength {
-            currentGroupName = String(currentGroupName.prefix(groupNameMaxLength))
-        }
+//        if currentGroupName.count > groupNameMaxLength {
+//            currentGroupName = String(currentGroupName.prefix(groupNameMaxLength))
+//        }
     }
     
     func updateMemberCount(count: Int) {
-        memberCount = count
+        guard groupCreateViewDatas.value.memberMinimum <= count,
+              count <= groupCreateViewDatas.value.memberMaximum else { return }
+        groupCreateViewDatas.update { $0.memberCount = count }
     }
     
     func updateDuration(duration: GroupChallengeDurations) {
@@ -60,7 +53,7 @@ extension GroupCreateViewModel {
     func createGroup() async throws {
         joinCode = try await groupUseCase.createGroup(
             groupName: currentGroupName,
-            maximumMemberCount: memberCount,
+            maximumMemberCount: groupCreateViewDatas.value.memberCount,
             startAt: currentStartAt,
             duration: currentDuration
         )
