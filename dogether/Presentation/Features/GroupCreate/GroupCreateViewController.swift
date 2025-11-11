@@ -32,14 +32,15 @@ extension GroupCreateViewController {
                 try await viewModel.createGroup()
                 guard let joinCode = viewModel.joinCode else { return }
                 await MainActor.run {
-                    coordinator?.setNavigationController(
-                        CompleteViewController(),
-                        datas: CompleteViewDatas(
-                            groupType: .create,
-                            joinCode: joinCode,
-                            groupInfo: ChallengeGroupInfo(name: viewModel.currentGroupName)
+                    let completeViewController = CompleteViewController()
+                    let completeViewDatas = CompleteViewDatas(
+                        groupType: .create,
+                        joinCode: joinCode,
+                        groupInfo: ChallengeGroupInfo(
+                            name: viewModel.groupCreateViewDatas.value.groupName
                         )
                     )
+                    coordinator?.setNavigationController(completeViewController, datas: completeViewDatas)
                 }
             } catch let error as NetworkError {
                 ErrorHandlingManager.presentErrorView(
@@ -58,11 +59,21 @@ extension GroupCreateViewController {
 
 // MARK: - delegate
 protocol GroupCreateDelegate {
-    func changeCountAction(currentCount: Int)
+    func updateStep(direction: Directions)
+    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int)
+    func updateCountAction(currentCount: Int, min: Int, max: Int)
 }
 
 extension GroupCreateViewController: GroupCreateDelegate {
-    func changeCountAction(currentCount: Int) {
-        viewModel.updateMemberCount(count: currentCount)
+    func updateStep(direction: Directions) {
+        viewModel.updateStep(direction: direction)
+    }
+    
+    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int) {
+        viewModel.updateGroupName(groupName: groupName, groupNameMaxLength: groupNameMaxLength)
+    }
+    
+    func updateCountAction(currentCount: Int, min: Int, max: Int) {
+        viewModel.updateMemberCount(count: currentCount, min: min, max: max)
     }
 }

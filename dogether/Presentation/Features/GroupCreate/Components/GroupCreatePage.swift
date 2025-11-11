@@ -18,7 +18,7 @@ final class GroupCreatePage: BasePage {
     
     private let navigationHeader = NavigationHeader(title: "그룹 만들기")
     private let stepInfoStackView = StepInfoStackView()
-    private let completeButton = DogetherButton(title: "다음", status: .disabled)
+    private let completeButton = DogetherButton(title: "다음", status: .disabled, direction: .next)
     
     private var stepOneView = StepOneView()
     private var stepTwoView = StepTwoView()
@@ -27,10 +27,10 @@ final class GroupCreatePage: BasePage {
     override func configureView() { }
     
     override func configureAction() {
-//        addTapAction { [weak self] _ in
-//            guard let self else { return }
-//            endEditing(true)
-//        }
+        addTapAction { [weak self] _ in
+            guard let self else { return }
+            endEditing(true)
+        }
 
         navigationHeader.delegate = coordinatorDelegate
     }
@@ -59,16 +59,19 @@ final class GroupCreatePage: BasePage {
 
         stepOneView.snp.makeConstraints {
             $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
+            $0.bottom.equalTo(completeButton.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepTwoView.snp.makeConstraints {
             $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
+            $0.bottom.equalTo(completeButton.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepThreeView.snp.makeConstraints {
             $0.top.equalTo(stepInfoStackView.snp.bottom).offset(34)
+            $0.bottom.equalTo(completeButton.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(36)
         }
     }

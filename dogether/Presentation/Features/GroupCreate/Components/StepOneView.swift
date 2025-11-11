@@ -10,6 +10,16 @@ import UIKit
 final class StepOneView: BaseView {
     var delegate: GroupCreateDelegate? {
         didSet {
+            groupNameTextField.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.updateGroupNameAction(
+                        groupName: groupNameTextField.text,
+                        groupNameMaxLength: groupNameMaxLength
+                    )
+                }, for: .editingChanged
+            )
+            
             memberCountView.delegate = delegate
         }
     }
@@ -22,6 +32,10 @@ final class StepOneView: BaseView {
     
     private let memberCountTitleLabel = UILabel()
     private let memberCountView = CounterView()
+    
+    private let groupNameMaxLength: Int = 10
+    
+    private var currentGroupName: String?
     
     override func configureView() {
         groupNameTitleLabel.text = "그룹명"
@@ -46,11 +60,10 @@ final class StepOneView: BaseView {
         groupNameTextField.leftView = leftPaddingView
         groupNameTextField.leftViewMode = .always
         
-        groupNameCountLabel.text = "0"
         groupNameCountLabel.textColor = .grey300
         groupNameCountLabel.font = Fonts.smallS
         
-        groupNameMaxLengthLabel.text = "/\(/*viewModel.groupNameMaxLength*/10)"
+        groupNameMaxLengthLabel.text = "/\(groupNameMaxLength)"
         groupNameMaxLengthLabel.textColor = .grey300
         groupNameMaxLengthLabel.font = Fonts.smallS
         
@@ -64,15 +77,6 @@ final class StepOneView: BaseView {
     
     override func configureAction() {
         groupNameTextField.delegate = self
-        groupNameTextField.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-//                viewModel.updateGroupName(groupName: groupNameTextField.text)
-//                groupNameTextField.text = viewModel.currentGroupName
-//                groupNameCountLabel.text = String(viewModel.currentGroupName.count)
-//                completeButton.setButtonStatus(status: viewModel.currentStep == .one && viewModel.currentGroupName.count > 0 ? .enabled : .disabled)
-            }, for: .editingChanged
-        )
     }
     
     override func configureHierarchy() {
@@ -112,6 +116,12 @@ final class StepOneView: BaseView {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupCreateViewDatas {
+            if currentGroupName != datas.groupName {
+                currentGroupName = datas.groupName
+                
+                groupNameTextField.text = datas.groupName
+                groupNameCountLabel.text = "\(datas.groupName.count)"
+            }
             memberCountView.updateView(datas)
         }
     }

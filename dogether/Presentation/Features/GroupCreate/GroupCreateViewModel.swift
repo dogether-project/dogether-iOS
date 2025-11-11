@@ -15,7 +15,6 @@ final class GroupCreateViewModel {
     private(set) var groupCreateViewDatas = BehaviorRelay<GroupCreateViewDatas>(value: GroupCreateViewDatas())
     
     private(set) var joinCode: String?
-    private(set) var currentGroupName: String = ""
     private(set) var currentDuration: GroupChallengeDurations = .threeDays
     private(set) var currentStartAt: GroupStartAts = .today
     
@@ -26,18 +25,22 @@ final class GroupCreateViewModel {
 }
 
 extension GroupCreateViewModel {
-    func updateGroupName(groupName: String?) {
-        currentGroupName = groupName ?? ""
-        
-//        if currentGroupName.count > groupNameMaxLength {
-//            currentGroupName = String(currentGroupName.prefix(groupNameMaxLength))
-//        }
+    func updateStep(direction: Directions) {
+        guard let step = CreateGroupSteps(
+            rawValue: groupCreateViewDatas.value.step.rawValue + direction.tag
+        ) else { return }
+        groupCreateViewDatas.update { $0.step = step }
     }
     
-    func updateMemberCount(count: Int) {
-        guard groupCreateViewDatas.value.memberMinimum <= count,
-              count <= groupCreateViewDatas.value.memberMaximum else { return }
-        groupCreateViewDatas.update { $0.memberCount = count }
+    func updateGroupName(groupName: String?, groupNameMaxLength: Int) {
+        groupCreateViewDatas.update {
+            $0.groupName = groupUseCase.prefixGroupName(groupName: groupName, maxLength: groupNameMaxLength)
+        }
+    }
+    
+    func updateMemberCount(count: Int, min: Int, max: Int) {
+        let isValidate = groupUseCase.validateMemberCount(count: count, min: min, max: max)
+        if isValidate { groupCreateViewDatas.update { $0.memberCount = count } }
     }
     
     func updateDuration(duration: GroupChallengeDurations) {
@@ -52,7 +55,7 @@ extension GroupCreateViewModel {
 extension GroupCreateViewModel {
     func createGroup() async throws {
         joinCode = try await groupUseCase.createGroup(
-            groupName: currentGroupName,
+            groupName: groupCreateViewDatas.value.groupName,
             maximumMemberCount: groupCreateViewDatas.value.memberCount,
             startAt: currentStartAt,
             duration: currentDuration

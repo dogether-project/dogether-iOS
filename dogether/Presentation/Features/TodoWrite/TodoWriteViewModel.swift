@@ -30,7 +30,7 @@ extension TodoWriteViewModel {
     
     func updateTodo(todo: String?, todoMaxLength: Int) {
         todoWriteViewDatas.update {
-            $0.todo = todoWriteUseCase.prefixTodo(todo: todo, todoMaxLength: todoMaxLength)
+            $0.todo = todoWriteUseCase.prefixTodo(todo: todo, maxLength: todoMaxLength)
         }
     }
     

@@ -8,18 +8,17 @@
 import Foundation
 
 struct GroupCreateViewDatas: BaseEntity {
-    let groupNameMaxLength: Int = 10
-    let memberMinimum: Int = 2
-    let memberMaximum: Int = 20
-    let memberUnit: String = "명"
     var step: CreateGroupSteps
+    var groupName: String
     var memberCount: Int
     
     init(
         step: CreateGroupSteps = .one,
+        groupName: String = "",
         member: Int = 10,
     ) {
         self.step = step
+        self.groupName = groupName
         self.memberCount = member
     }
 }

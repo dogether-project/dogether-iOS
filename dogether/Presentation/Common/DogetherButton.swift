@@ -22,20 +22,24 @@ final class DogetherButton: BaseButton {
         didSet {
             addAction(
                 UIAction { [weak self] _ in
-                    
+                    guard let self, let direction else { return }
+                    groupCreateDelegate?.updateStep(direction: direction)
                 }, for: .touchUpInside
             )
         }
     }
+    
+    private let direction: Directions?
     
     private(set) var title: String
     private(set) var status: ButtonStatus
     
     private(set) var currentTodo: TodoEntity?
     
-    init(title: String, status: ButtonStatus = .enabled) {
+    init(title: String, status: ButtonStatus = .enabled, direction: Directions? = nil) {
         self.title = title
         self.status = status
+        self.direction = direction
         
         super.init(frame: .zero)
     }
@@ -71,6 +75,9 @@ final class DogetherButton: BaseButton {
         
         if let datas = data as? GroupCreateViewDatas {
             self.title = datas.step.buttonTitle
+            
+            // FIXME: 추후 수정
+            setButtonStatus(status: datas.groupName.count > 0 ? .enabled : .disabled)
         }
     }
 }

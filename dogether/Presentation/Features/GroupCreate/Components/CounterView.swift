@@ -14,15 +14,12 @@ final class CounterView: BaseView {
                 button.addAction(
                     UIAction { [weak self, weak button] _ in
                         guard let self, let currentCount, let button else { return }
-                        delegate?.changeCountAction(currentCount: currentCount + button.tag)
+                        delegate?.updateCountAction(currentCount: currentCount + button.tag, min: min, max: max)
                     }, for: .touchUpInside
                 )
             }
         }
     }
-    
-    private var isFirst: Bool = true
-    private var currentCount: Int?
     
     private let dogetherCountView = UIView()
     private let minusButton = UIButton()
@@ -34,6 +31,12 @@ final class CounterView: BaseView {
     private let currentLabel = UILabel()
     private let minLabel = UILabel()
     private let maxLabel = UILabel()
+    
+    private let min: Int = 2
+    private let max: Int = 20
+    private let unit: String = "명"
+    
+    private var currentCount: Int?
     
     override func configureView() {
         dogetherCountView.backgroundColor = .grey800
@@ -58,9 +61,11 @@ final class CounterView: BaseView {
         currentLabel.textColor = .grey0
         currentLabel.font = Fonts.body1S
         
+        minLabel.text = "\(min)\(unit)"
         minLabel.textColor = .grey300
         minLabel.font = Fonts.body2S
         
+        maxLabel.text = "\(max)\(unit)"
         maxLabel.textColor = .grey300
         maxLabel.font = Fonts.body2S
     }
@@ -121,17 +126,10 @@ final class CounterView: BaseView {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupCreateViewDatas {
-            if isFirst {
-                isFirst = false
-                
-                minLabel.text = "\(datas.memberMinimum)\(datas.memberUnit)"
-                maxLabel.text = "\(datas.memberMaximum)\(datas.memberUnit)"
-            }
-            
             if currentCount != datas.memberCount {
                 currentCount = datas.memberCount
                 
-                currentLabel.text = "\(datas.memberCount)\(datas.memberUnit)"
+                currentLabel.text = "\(datas.memberCount)\(unit)"
             }
         }
     }

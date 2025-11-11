@@ -20,8 +20,8 @@ final class ThumbnailListView: BaseView {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     
-    private(set) var isFirst: Bool = true
-    private(set) var currentIndex: Int?
+    private var isFirst: Bool = true
+    private var currentIndex: Int?
     
     override func configureView() {
         scrollView.showsHorizontalScrollIndicator = false
