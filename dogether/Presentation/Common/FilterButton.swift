@@ -19,6 +19,7 @@ final class FilterButton: BaseButton {
         }
     }
     
+    // FIXME: CertificationListView RxSwift 도입 후 private 추가
     let type: FilterTypes
     private(set) var isColorful: Bool
     
@@ -77,6 +78,7 @@ final class FilterButton: BaseButton {
         }
     }
     
+    // MARK: - updateView
     override func updateView(_ data: any BaseEntity) {
         if let datas = data as? FilterTypes {
             let isColorful = type == datas

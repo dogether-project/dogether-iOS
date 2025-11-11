@@ -85,15 +85,25 @@ extension RankingViewController {
 
 // MARK: - delegate
 protocol RankingDelegate {
-    func goCertificationViewAction(memberInfo: RankingEntity)
+    func goCertificationViewAction(rankingEntity: RankingEntity)
 }
 
 extension RankingViewController: RankingDelegate {
-    func goCertificationViewAction(memberInfo: RankingEntity) {
-        // FIXME: MemberCertificationView RxSwift 구조 도입 후 수정
-        let memberCertificationViewController = MemberCertificationViewController()
-        memberCertificationViewController.viewModel.groupId = viewModel.rankingViewDatas.value.groupId
-        memberCertificationViewController.viewModel.memberInfo = memberInfo
-        coordinator?.pushViewController(memberCertificationViewController)
+    func goCertificationViewAction(rankingEntity: RankingEntity) {
+        Task {
+            let (index, todos) = try await viewModel.getMemberTodos(memberId: rankingEntity.memberId)
+            
+            await MainActor.run {
+                let certificationViewController = CertificationViewController()
+                let certificationViewDatas = CertificationViewDatas(
+                    title: "\(rankingEntity.name)님의 인증 정보",
+                    todos: todos,
+                    index: index,
+                    groupId: viewModel.rankingViewDatas.value.groupId,
+                    rankingEntity: rankingEntity
+                )
+                coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
+            }
+        }
     }
 }

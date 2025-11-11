@@ -131,7 +131,7 @@ final class TodoWritePage: BasePage {
     }
     
     override func configureAction() {
-        addTapAction { [weak self] in
+        addTapAction { [weak self] _ in
             guard let self else { return }
             endEditing(true)
         }

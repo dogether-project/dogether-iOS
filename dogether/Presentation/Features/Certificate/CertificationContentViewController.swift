@@ -1,5 +1,5 @@
 //
-//  CertificationSupplyViewController.swift
+//  CertificationContentViewController.swift
 //  dogether
 //
 //  Created by seungyooooong on 5/13/25.
@@ -10,8 +10,8 @@ import SnapKit
 
 import Combine
 
-final class CertificationSupplyViewController: BaseViewController {
-    var viewModel = CertificationViewModel()
+final class CertificationContentViewController: BaseViewController {
+    var viewModel = CertificateViewModel()
     
     private let navigationHeader = NavigationHeader(title: "인증 하기")
     
@@ -129,7 +129,7 @@ final class CertificationSupplyViewController: BaseViewController {
     }
 }
 // MARK: - Keyboard
-extension CertificationSupplyViewController {
+extension CertificationContentViewController {
     private func observeKeyboardNotifications() {
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
             .compactMap { notification -> CGFloat? in
@@ -171,7 +171,7 @@ extension CertificationSupplyViewController {
 }
 
 // MARK: - UITextFieldDelegate
-extension CertificationSupplyViewController: UITextViewDelegate {
+extension CertificationContentViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
@@ -217,7 +217,7 @@ extension CertificationSupplyViewController: UITextViewDelegate {
     @objc private func dismissKeyboard() { view.endEditing(true) }
 }
 
-extension CertificationSupplyViewController {
+extension CertificationContentViewController {
     private func tryCertifyTodo() {
         Task {
             do {

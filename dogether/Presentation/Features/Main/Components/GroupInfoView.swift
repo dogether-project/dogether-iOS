@@ -10,12 +10,12 @@ import UIKit
 final class GroupInfoView: BaseView {
     var delegate: MainDelegate? {
         didSet {
-            groupNameStackView.addTapAction { [weak self] in
+            groupNameStackView.addTapAction { [weak self] _ in
                 guard let self else { return }
                 delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
             }
             
-            joinCodeStackView.addTapAction { [weak self] in
+            joinCodeStackView.addTapAction { [weak self] _ in
                 guard let self else { return }
                 delegate?.inviteAction()
             }

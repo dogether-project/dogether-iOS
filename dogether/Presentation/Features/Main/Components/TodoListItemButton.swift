@@ -16,24 +16,26 @@ final class TodoListItemButton: BaseButton {
                     guard let self else { return }
                     if isUncertified {
                         if isToday {
-                            delegate?.goCertificationViewAction(todo: todo)
+                            delegate?.goCertificateViewAction(todo: todo)
                         } else { return }
                     } else {
-                        delegate?.goCertificationInfoViewAction(todo: todo)
+                        delegate?.goCertificationViewAction(index: index)
                     }
                 }, for: .touchUpInside
             )
         }
     }
     
+    private(set) var index: Int
     private(set) var todo: TodoEntity
     private(set) var isToday: Bool
     private(set) var isUncertified: Bool
     
-    init(todo: TodoEntity, isToday: Bool) {
+    init(index: Int, todo: TodoEntity, isToday: Bool) {
+        self.index = index
         self.todo = todo
         self.isToday = isToday
-        self.isUncertified = todo.status == TodoStatus.waitCertification.rawValue
+        self.isUncertified = todo.status == .waitCertification
         
         super.init(frame: .zero)
     }
@@ -51,7 +53,7 @@ final class TodoListItemButton: BaseButton {
         backgroundColor = .grey700
         layer.cornerRadius = 8
         
-        todoImageView.image = TodoStatus(rawValue: todo.status)?.image
+        todoImageView.image = todo.status.image
         
         contentLabel.text = todo.content
         contentLabel.textColor = isUncertified ? isToday ? .grey0 : .grey400 : .grey300
@@ -82,7 +84,7 @@ final class TodoListItemButton: BaseButton {
             $0.height.equalTo(64)
         }
         
-        if todo.status != TodoStatus.waitCertification.rawValue {
+        if todo.status != .waitCertification {
             todoImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.left.equalToSuperview().offset(16)
