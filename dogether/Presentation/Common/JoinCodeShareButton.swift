@@ -7,12 +7,19 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 final class JoinCodeShareButton: BaseButton {
     private let codeLabel = UILabel()
     private let iconImageView = UIImageView(
         image: .share.withRenderingMode(.alwaysTemplate)
     )
     private let stackView = UIStackView()
+    
+    // ✅ 버튼 탭 이벤트 노출
+    let tapRelay = PublishRelay<Void>()
+    private let disposeBag = DisposeBag()
     
     override func configureView() {
         layer.cornerRadius = 12
@@ -26,6 +33,12 @@ final class JoinCodeShareButton: BaseButton {
         stackView.axis = .horizontal
         stackView.spacing = 8
         stackView.isUserInteractionEnabled = false
+        
+        // ✅ 탭 이벤트 바인딩
+        rx.tap
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance) // 중복클릭 방지
+            .bind(to: tapRelay)
+            .disposed(by: disposeBag)
     }
     
     override func configureAction() { }

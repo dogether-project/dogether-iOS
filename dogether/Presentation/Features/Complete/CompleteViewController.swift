@@ -12,7 +12,6 @@ final class CompleteViewController: BaseViewController {
     private let viewModel = CompleteViewModel()
     
     override func viewDidLoad() {
-        completePage.delegate = self
         pages = [completePage]
         super.viewDidLoad()
     }
@@ -24,25 +23,24 @@ final class CompleteViewController: BaseViewController {
          
          bind(viewModel.completeViewDatas)
      }
-}
-
-protocol CompleteDelegate: AnyObject {
-    func goHomeAction()
-    func shareJoinCodeAction()
-}
-
-extension CompleteViewController: CompleteDelegate {
-    func goHomeAction() {
-        coordinator?.setNavigationController(MainViewController())
-    }
     
-    func shareJoinCodeAction() {
-        let data = viewModel.completeViewDatas.value
+    override func bindAction() {
+        completePage.homeTap
+            .emit(onNext: { [weak self] in
+                self?.coordinator?.setNavigationController(MainViewController())
+            })
+            .disposed(by: disposeBag)
         
-        let invite = SystemManager.inviteGroup(
-            groupName: data.groupInfo.name,
-            joinCode: data.joinCode
-        )
-        present(UIActivityViewController(activityItems: invite, applicationActivities: nil), animated: true)
+        completePage.shareTap
+            .emit(onNext: { [weak self] in
+                guard let self else { return }
+                let data = viewModel.completeViewDatas.value
+                let invite = SystemManager.inviteGroup(
+                    groupName: data.groupInfo.name,
+                    joinCode: data.joinCode
+                )
+                present(UIActivityViewController(activityItems: invite, applicationActivities: nil), animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
