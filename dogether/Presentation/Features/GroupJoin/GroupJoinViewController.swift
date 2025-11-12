@@ -49,7 +49,7 @@ final class GroupJoinViewController: BaseViewController {
         return textField
     }()
     
-    private var joinButton = DogetherButton(title: "가입하기", status: .disabled)
+    private var joinButton = DogetherButton("가입하기")
     
     private var joinButtonBottomConstraint: Constraint?
     
@@ -81,7 +81,10 @@ final class GroupJoinViewController: BaseViewController {
                 guard let self, let textField = codeTextField else { return }
                 viewModel.setCode(textField.text)
                 textField.text = viewModel.code
-                joinButton.setButtonStatus(status: viewModel.code.count < viewModel.codeLength ? .disabled : .enabled)
+                // FIXME: 추후 수정
+                var viewDatas = joinButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+                viewDatas.status = viewModel.code.count < viewModel.codeLength ? .disabled : .enabled
+                joinButton.updateView(viewDatas)
             },
             for: .editingChanged
         )

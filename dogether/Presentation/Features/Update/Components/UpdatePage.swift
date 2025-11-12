@@ -26,7 +26,7 @@ final class UpdatePage: BasePage {
     private let updateStackView = UIStackView()
     private let updateContainerView = UIView()
     
-    private let updateButton = DogetherButton(title: "업데이트 하러가기")
+    private let updateButton = DogetherButton("업데이트 하러가기")
     
     override func configureView() {
         typoImageView.image = .logoTypo

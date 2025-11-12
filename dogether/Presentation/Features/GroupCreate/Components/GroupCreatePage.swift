@@ -11,7 +11,7 @@ import SnapKit
 final class GroupCreatePage: BasePage {
     var delegate: GroupCreateDelegate? {
         didSet {
-            completeButton.groupCreateDelegate = delegate
+            stepButtonStackView.delegate = delegate
             stepOneView.delegate = delegate
             stepTwoView.delegate = delegate
         }
@@ -19,7 +19,7 @@ final class GroupCreatePage: BasePage {
     
     private let navigationHeader = NavigationHeader(title: "그룹 만들기")
     private let stepInfoStackView = StepInfoStackView()
-    private let completeButton = DogetherButton(title: "다음", status: .disabled, direction: .next)
+    private let stepButtonStackView = StepButtonStackView()
     
     private var stepOneView = StepOneView()
     private var stepTwoView = StepTwoView()
@@ -37,7 +37,7 @@ final class GroupCreatePage: BasePage {
     }
     
     override func configureHierarchy() {
-        [ navigationHeader, stepInfoStackView, completeButton,
+        [ navigationHeader, stepInfoStackView, stepButtonStackView,
           stepOneView, stepTwoView, stepThreeView
         ].forEach { addSubview($0) }
     }
@@ -53,26 +53,26 @@ final class GroupCreatePage: BasePage {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
-        completeButton.snp.makeConstraints {
+        stepButtonStackView.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepOneView.snp.makeConstraints {
             $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
-            $0.bottom.equalTo(completeButton.snp.top)
+            $0.bottom.equalTo(stepButtonStackView.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepTwoView.snp.makeConstraints {
             $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
-            $0.bottom.equalTo(completeButton.snp.top)
+            $0.bottom.equalTo(stepButtonStackView.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepThreeView.snp.makeConstraints {
             $0.top.equalTo(stepInfoStackView.snp.bottom).offset(34)
-            $0.bottom.equalTo(completeButton.snp.top)
+            $0.bottom.equalTo(stepButtonStackView.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(36)
         }
     }
@@ -82,7 +82,7 @@ final class GroupCreatePage: BasePage {
         if let datas = data as? GroupCreateViewDatas {
             stepInfoStackView.updateView(datas)
             
-            completeButton.updateView(datas)
+            stepButtonStackView.updateView(datas)
             
             stepOneView.isHidden = datas.step != .one
             stepTwoView.isHidden = datas.step != .two

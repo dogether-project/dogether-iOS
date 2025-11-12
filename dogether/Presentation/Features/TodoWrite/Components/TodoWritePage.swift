@@ -79,7 +79,7 @@ final class TodoWritePage: BasePage {
     }()
     private let todoTableView = UITableView()
     
-    private let saveButton = DogetherButton(title: "투두 저장", status: .disabled)
+    private let saveButton = DogetherButton("투두 저장")
     
     private let todoMaxCount: Int = 10
     private let todoMaxLength: Int = 20
@@ -231,7 +231,10 @@ final class TodoWritePage: BasePage {
                 todoTableView.isHidden = datas.todos.isEmpty
                 todoTableView.reloadData()
                 
-                saveButton.setButtonStatus(status: datas.todos.filter { $0.enabled }.isEmpty ? .disabled : .enabled)
+                // FIXME: 추후 수정
+                var viewDatas = saveButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+                viewDatas.status = datas.todos.filter { $0.enabled }.isEmpty ? .disabled : .enabled
+                saveButton.updateView(viewDatas)
             }
             
             if currentIsShowKeyboard != datas.isShowKeyboard {

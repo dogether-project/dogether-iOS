@@ -21,9 +21,10 @@ final class GroupCreateViewModel {
 }
 
 extension GroupCreateViewModel {
-    func updateStep(direction: Directions) {
-        let stepRawValue = groupCreateViewDatas.value.step.rawValue + direction.tag
-        guard let step = CreateGroupSteps(rawValue: stepRawValue) else { return }
+    func updateStep(step: CreateGroupSteps?) {
+//        let stepRawValue = groupCreateViewDatas.value.step.rawValue + direction.tag
+//        guard let step = CreateGroupSteps(rawValue: stepRawValue) else { return }
+        guard let step else { return }
         groupCreateViewDatas.update { $0.step = step }
     }
     

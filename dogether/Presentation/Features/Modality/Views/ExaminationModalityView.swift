@@ -14,7 +14,7 @@ final class ExaminationModalityView: BaseView {
     
     private let scrollView = UIScrollView()
     
-    var closeButton = DogetherButton(title: "보내기", status: .disabled)
+    var closeButton = DogetherButton("보내기")
     
     private let contentStackView = {
         let stackView = UIStackView()

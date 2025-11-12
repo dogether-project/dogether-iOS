@@ -85,7 +85,7 @@ final class CertificateImageViewController: BaseViewController {
         return stackView
     }()
     
-    private let certificationButton = DogetherButton(title: "다음", status: .disabled)
+    private let certificationButton = DogetherButton("다음")
     
     override func configureView() {
         todoContentLabel.attributedText = NSAttributedString(
@@ -289,14 +289,18 @@ extension CertificateImageViewController {
         
         // FIXME: 추후 S3Manager를 NetworkManager로 합치면서 loading 로직도 제거해요
         Task {
-            certificationButton.setButtonStatus(status: .disabled)
+            // FIXME: 추후 수정
+            var viewDatas = certificationButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+            viewDatas.status = .disabled
+            certificationButton.updateView(viewDatas)
             
             LoadingManager.shared.showLoading()
             defer { LoadingManager.shared.hideLoading() }
             
             do {
                 try await viewModel.uploadImage(image: image)
-                certificationButton.setButtonStatus(status: .enabled)
+                viewDatas.status = .enabled
+                certificationButton.updateView(viewDatas)
             } catch {
                 // TODO: 예외 케이스 핸들링
             }

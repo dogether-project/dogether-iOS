@@ -12,7 +12,12 @@ final class CertificationPage: BasePage {
         didSet {
             thumbnailListView.delegate = delegate
             certificationListView.delegate = delegate
-            certificateButton.certificationDelegate = delegate
+            certificateButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.goCertificateViewAction(todo: currentTodo)
+                }, for: .touchUpInside
+            )
         }
     }
     
@@ -24,7 +29,9 @@ final class CertificationPage: BasePage {
     private let statusView = TodoStatusButton(type: .waitCertification)
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
-    private let certificateButton = DogetherButton(title: "인증하기")
+    private let certificateButton = DogetherButton("인증하기")
+    
+    private var currentTodo: TodoEntity?
     
     override func configureView() {
         certificationScrollView.showsVerticalScrollIndicator = false
@@ -40,8 +47,6 @@ final class CertificationPage: BasePage {
         
         contentLabel.textColor = .grey0
         contentLabel.numberOfLines = 0
-        
-        certificateButton.isHidden = false
     }
     
     override func configureAction() {
@@ -101,10 +106,13 @@ final class CertificationPage: BasePage {
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
-        if let datas = data as? CertificationViewDatas {
-            navigationHeader.updateView(datas)
-            thumbnailListView.updateView(datas)
-            certificationListView.updateView(datas)
+        guard let datas = data as? CertificationViewDatas else { return }
+        navigationHeader.updateView(datas)
+        thumbnailListView.updateView(datas)
+        certificationListView.updateView(datas)
+        
+        if currentTodo != datas.todos[datas.index] {
+            currentTodo = datas.todos[datas.index]
             
             statusView.updateView(datas.todos[datas.index].status)
             
@@ -114,7 +122,11 @@ final class CertificationPage: BasePage {
             )
             
             reviewFeedbackView.updateView(datas)
-            certificateButton.updateView(datas)
+            
+            // FIXME: 추후 수정
+            var dogetherButtonViewDatas = certificateButton.currentViewDatas ?? DogetherButtonViewDatas()
+            dogetherButtonViewDatas.isHidden = datas.rankingEntity != nil || datas.todos[datas.index].status != .waitCertification
+            certificateButton.updateView(dogetherButtonViewDatas)
         }
     }
 }
