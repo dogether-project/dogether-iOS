@@ -13,6 +13,7 @@ final class GroupCreatePage: BasePage {
         didSet {
             completeButton.groupCreateDelegate = delegate
             stepOneView.delegate = delegate
+            stepTwoView.delegate = delegate
         }
     }
     
@@ -91,6 +92,7 @@ final class GroupCreatePage: BasePage {
             case .one:
                 stepOneView.updateView(datas)
             case .two:
+                stepTwoView.updateView(datas)
                 endEditing(true)
             case .three:
                 stepThreeView.updateView(datas)

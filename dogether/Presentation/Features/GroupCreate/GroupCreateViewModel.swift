@@ -14,10 +14,6 @@ final class GroupCreateViewModel {
     
     private(set) var groupCreateViewDatas = BehaviorRelay<GroupCreateViewDatas>(value: GroupCreateViewDatas())
     
-    private(set) var joinCode: String?
-    private(set) var currentDuration: GroupChallengeDurations = .threeDays
-    private(set) var currentStartAt: GroupStartAts = .today
-    
     init() {
         let groupRepository = DIManager.shared.getGroupRepository()
         self.groupUseCase = GroupUseCase(repository: groupRepository)
@@ -26,9 +22,8 @@ final class GroupCreateViewModel {
 
 extension GroupCreateViewModel {
     func updateStep(direction: Directions) {
-        guard let step = CreateGroupSteps(
-            rawValue: groupCreateViewDatas.value.step.rawValue + direction.tag
-        ) else { return }
+        let stepRawValue = groupCreateViewDatas.value.step.rawValue + direction.tag
+        guard let step = CreateGroupSteps(rawValue: stepRawValue) else { return }
         groupCreateViewDatas.update { $0.step = step }
     }
     
@@ -44,21 +39,16 @@ extension GroupCreateViewModel {
     }
     
     func updateDuration(duration: GroupChallengeDurations) {
-        currentDuration = duration
+        groupCreateViewDatas.update { $0.duration = duration }
     }
     
     func updateStartAt(startAt: GroupStartAts) {
-        currentStartAt = startAt
+        groupCreateViewDatas.update { $0.startAt = startAt }
     }
 }
 
 extension GroupCreateViewModel {
-    func createGroup() async throws {
-        joinCode = try await groupUseCase.createGroup(
-            groupName: groupCreateViewDatas.value.groupName,
-            maximumMemberCount: groupCreateViewDatas.value.memberCount,
-            startAt: currentStartAt,
-            duration: currentDuration
-        )
+    func createGroup() async throws -> String {
+        try await groupUseCase.createGroup(groupCreateViewDatas: groupCreateViewDatas.value)
     }
 }

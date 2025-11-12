@@ -25,12 +25,41 @@ final class GroupCreateViewController: BaseViewController {
     }
 }
 
-extension GroupCreateViewController {
-    private func tryCreateGroup() {
+// MARK: - delegate
+protocol GroupCreateDelegate {
+    func updateStep(direction: Directions)
+    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int)
+    func updateCountAction(currentCount: Int, min: Int, max: Int)
+    func updateDuration(duration: GroupChallengeDurations)
+    func updateStartAt(startAt: GroupStartAts)
+    func createGroup()
+}
+
+extension GroupCreateViewController: GroupCreateDelegate {
+    func updateStep(direction: Directions) {
+        viewModel.updateStep(direction: direction)
+    }
+    
+    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int) {
+        viewModel.updateGroupName(groupName: groupName, groupNameMaxLength: groupNameMaxLength)
+    }
+    
+    func updateCountAction(currentCount: Int, min: Int, max: Int) {
+        viewModel.updateMemberCount(count: currentCount, min: min, max: max)
+    }
+    
+    func updateDuration(duration: GroupChallengeDurations) {
+        viewModel.updateDuration(duration: duration)
+    }
+    
+    func updateStartAt(startAt: GroupStartAts) {
+        viewModel.updateStartAt(startAt: startAt)
+    }
+    
+    func createGroup() {
         Task {
             do {
-                try await viewModel.createGroup()
-                guard let joinCode = viewModel.joinCode else { return }
+                let joinCode = try await viewModel.createGroup()
                 await MainActor.run {
                     let completeViewController = CompleteViewController()
                     let completeViewDatas = CompleteViewDatas(
@@ -49,31 +78,10 @@ extension GroupCreateViewController {
                     coordinator: coordinator,
                     retryHandler: { [weak self] in
                         guard let self else { return }
-                        tryCreateGroup()
+                        createGroup()
                     }
                 )
             }
         }
-    }
-}
-
-// MARK: - delegate
-protocol GroupCreateDelegate {
-    func updateStep(direction: Directions)
-    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int)
-    func updateCountAction(currentCount: Int, min: Int, max: Int)
-}
-
-extension GroupCreateViewController: GroupCreateDelegate {
-    func updateStep(direction: Directions) {
-        viewModel.updateStep(direction: direction)
-    }
-    
-    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int) {
-        viewModel.updateGroupName(groupName: groupName, groupNameMaxLength: groupNameMaxLength)
-    }
-    
-    func updateCountAction(currentCount: Int, min: Int, max: Int) {
-        viewModel.updateMemberCount(count: currentCount, min: min, max: max)
     }
 }

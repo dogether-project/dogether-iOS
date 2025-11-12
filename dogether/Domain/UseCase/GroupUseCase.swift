@@ -14,20 +14,8 @@ final class GroupUseCase {
         self.repository = repository
     }
     
-    func createGroup(
-        groupName: String,
-        maximumMemberCount: Int,
-        startAt: GroupStartAts,
-        duration: GroupChallengeDurations
-    ) async throws -> String {
-        let createGroupRequest = CreateGroupRequest(
-            groupName: groupName,
-            maximumMemberCount: maximumMemberCount,
-            startAt: startAt.rawValue,
-            duration: duration.rawValue
-        )
-        let response = try await repository.createGroup(createGroupRequest: createGroupRequest)
-        return response.joinCode
+    func createGroup(groupCreateViewDatas: GroupCreateViewDatas) async throws -> String {
+        try await repository.createGroup(groupCreateViewDatas: groupCreateViewDatas)
     }
     
     func joinGroup(joinCode: String) async throws -> ChallengeGroupInfo {

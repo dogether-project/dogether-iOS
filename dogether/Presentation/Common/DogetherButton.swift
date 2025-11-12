@@ -18,16 +18,7 @@ final class DogetherButton: BaseButton {
             )
         }
     }
-    var groupCreateDelegate: GroupCreateDelegate? {
-        didSet {
-            addAction(
-                UIAction { [weak self] _ in
-                    guard let self, let direction else { return }
-                    groupCreateDelegate?.updateStep(direction: direction)
-                }, for: .touchUpInside
-            )
-        }
-    }
+    var groupCreateDelegate: GroupCreateDelegate?
     
     private let direction: Directions?
     
@@ -73,10 +64,27 @@ final class DogetherButton: BaseButton {
             }
         }
         
+        // FIXME: 추후 수정
         if let datas = data as? GroupCreateViewDatas {
-            self.title = datas.step.buttonTitle
+            setTitle(datas.step.buttonTitle, for: .normal)
+            if datas.step.rawValue == CreateGroupSteps.allCases.count {
+                removeTarget(nil, action: nil, for: .allEvents)
+                addAction(
+                    UIAction { [weak self] _ in
+                        guard let self else { return }
+                        groupCreateDelegate?.createGroup()
+                    }, for: .touchUpInside
+                )
+            } else {
+                removeTarget(nil, action: nil, for: .allEvents)
+                addAction(
+                    UIAction { [weak self] _ in
+                        guard let self, let direction else { return }
+                        groupCreateDelegate?.updateStep(direction: direction)
+                    }, for: .touchUpInside
+                )
+            }
             
-            // FIXME: 추후 수정
             setButtonStatus(status: datas.groupName.count > 0 ? .enabled : .disabled)
         }
     }

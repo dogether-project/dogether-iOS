@@ -29,16 +29,14 @@ final class StepThreeView: BaseView {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupCreateViewDatas {
-//            dogetherGroupInfo.updateView(datas)
-            
-//                let viewData = DogetherGroupInfoViewData(
-//                    name: viewModel.currentGroupName,
-//                    memberCount: viewModel.memberCount,
-//                    duration: viewModel.currentDuration.rawValue,
-//                    startDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday),
-//                    endDay: DateFormatterManager.formattedDate(viewModel.currentStartAt.daysFromToday + viewModel.currentDuration.rawValue)
-//                )
-//                dogetherGroupInfo.updateView(viewData)
+            let viewData = DogetherGroupInfoViewData(
+                name: datas.groupName,
+                memberCount: datas.memberCount,
+                duration: datas.duration,
+                startDay: DateFormatterManager.formattedDate(datas.startAt.daysFromToday),
+                endDay: DateFormatterManager.formattedDate(datas.startAt.daysFromToday + datas.duration.rawValue)
+            )
+            dogetherGroupInfo.updateView(viewData)
         }
     }
 }

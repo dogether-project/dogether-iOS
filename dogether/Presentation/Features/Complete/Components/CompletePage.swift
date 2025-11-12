@@ -112,7 +112,7 @@ final class CompletePage: BasePage {
             let viewData = DogetherGroupInfoViewData(
                 name: datas.groupInfo.name,
                 memberCount: datas.groupInfo.maximumMember,
-                duration: datas.groupInfo.duration,
+                duration: GroupChallengeDurations(rawValue: datas.groupInfo.duration) ?? .threeDays,    // FIXME: 추후 수정
                 startDay: datas.groupInfo.startDate,
                 endDay: datas.groupInfo.endDate
             )

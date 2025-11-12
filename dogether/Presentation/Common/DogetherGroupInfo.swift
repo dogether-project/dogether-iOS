@@ -8,31 +8,9 @@
 import UIKit
 
 final class DogetherGroupInfo: BaseView {
-    private var currentGroupName: String = ""
-    private var currentMemberCount: Int = 0
-    private var currentDuration: GroupChallengeDurations = .threeDays
-    private var currentStartAtString: String = ""
-    private var currentEndAtString: String = ""
-    
-    private let groupInfoView = {
-        let view = UIView()
-        view.backgroundColor = .grey700
-        view.layer.cornerRadius = 12
-        return view
-    }()
-    
-    private let groupNameLabel = {
-        let label = UILabel()
-        label.textColor = .grey0
-        label.font = Fonts.head1B
-        return label
-    }()
-    
-    private let dividerView = {
-        let view = UIView()
-        view.backgroundColor = .grey600
-        return view
-    }()
+    private let groupInfoView = UIView()
+    private let groupNameLabel = UILabel()
+    private let dividerView = UIView()
     
     private func descriptionLabel() -> UILabel {
         let label = UILabel()
@@ -58,7 +36,21 @@ final class DogetherGroupInfo: BaseView {
     private var startDayInfoLabel = UILabel()
     private var endDayInfoLabel = UILabel()
     
+    private var currentGroupName: String?
+    private var currentMemberCount: Int?
+    private var currentDuration: GroupChallengeDurations?
+    private var currentStartAtString: String?
+    private var currentEndAtString: String?
+    
     override func configureView() {
+        groupInfoView.backgroundColor = .grey700
+        groupInfoView.layer.cornerRadius = 12
+        
+        groupNameLabel.textColor = .grey0
+        groupNameLabel.font = Fonts.head1B
+        
+        dividerView.backgroundColor = .grey600
+        
         durationDescriptionLabel = descriptionLabel()
         memberCountDescriptionLabel = descriptionLabel()
         startDayDescriptionLabel = descriptionLabel()
@@ -153,17 +145,27 @@ final class DogetherGroupInfo: BaseView {
     }
     
     override func updateView(_ data: any BaseEntity) {
-        guard let data = data as? DogetherGroupInfoViewData else { return }
+        guard let datas = data as? DogetherGroupInfoViewData else { return }
+        if currentGroupName != datas.name {
+            currentGroupName = datas.name
+            
+            groupNameLabel.text = datas.name
+        }
+        
+        if currentMemberCount != datas.memberCount {
+            currentMemberCount = datas.memberCount
+            
+            memberCountInfoLabel.text = "총 \(datas.memberCount)명"
+        }
+        
+        if currentDuration != datas.duration {
+            currentDuration = datas.duration
+            
+            durationInfoLabel.text = datas.duration.text
+        }
+        currentStartAtString = datas.startDay
+        currentEndAtString = datas.endDay
 
-        currentGroupName = data.name
-        currentMemberCount = data.memberCount
-        currentDuration = GroupChallengeDurations(rawValue: data.duration) ?? .threeDays
-        currentStartAtString = data.startDay
-        currentEndAtString = data.endDay
-
-        groupNameLabel.text = currentGroupName
-        durationInfoLabel.text = currentDuration.text
-        memberCountInfoLabel.text = "총 \(currentMemberCount)명"
         startDayInfoLabel.text = currentStartAtString
         endDayInfoLabel.text = currentEndAtString
     }

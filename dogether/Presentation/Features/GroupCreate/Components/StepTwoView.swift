@@ -8,6 +8,13 @@
 import UIKit
 
 final class StepTwoView: BaseView {
+    var delegate: GroupCreateDelegate? {
+        didSet {
+            [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach { $0.delegate = delegate }
+            [todayButton, tomorrowButton].forEach { $0.delegate = delegate }
+        }
+    }
+    
     private let duration = UILabel()
     private let startAt = UILabel()
     
@@ -55,25 +62,7 @@ final class StepTwoView: BaseView {
         startAtStack = horizontalStackView(buttons: [todayButton, tomorrowButton])
     }
     
-    override func configureAction() {
-        [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach { button in
-            button.addAction(
-                UIAction { [weak self, weak button] _ in
-                    guard let self, let button else { return }
-//                    updateDuration(button.duration)
-                }, for: .touchUpInside
-            )
-        }
-
-        [todayButton, tomorrowButton].forEach { button in
-            button.addAction(
-                UIAction { [weak self, weak button] _ in
-                    guard let self, let button else { return }
-//                    updateStartAt(button.startAt)
-                }, for: .touchUpInside
-            )
-        }
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         [duration, durationStack, startAt, startAtStack].forEach { addSubview($0) }
@@ -100,24 +89,12 @@ final class StepTwoView: BaseView {
             $0.height.equalTo(166)
         }
     }
-}
-
-
-// MARK: - update UI
-extension StepTwoView {
-//    private func updateDuration(_ duration: GroupChallengeDurations = .threeDays) {
-//        viewModel.updateDuration(duration: duration)
-//
-//        [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach {
-//            $0.setColorful(isColorful: viewModel.currentDuration == $0.duration)
-//        }
-//    }
-//
-//    private func updateStartAt(_ startAt: GroupStartAts = .today) {
-//        viewModel.updateStartAt(startAt: startAt)
-//
-//        [todayButton, tomorrowButton].forEach {
-//            $0.setColorful(isColorful: viewModel.currentStartAt == $0.startAt)
-//        }
-//    }
+    
+    // MARK: - updateView
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? GroupCreateViewDatas {
+            [threeDaysButton, oneWeekButton, twoWeeksButton, fourWeeksButton].forEach { $0.updateView(datas.duration) }
+            [todayButton, tomorrowButton].forEach { $0.updateView(datas.startAt) }
+        }
+    }
 }
