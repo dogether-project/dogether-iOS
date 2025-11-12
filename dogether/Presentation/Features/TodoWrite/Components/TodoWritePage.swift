@@ -7,33 +7,24 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 final class TodoWritePage: BasePage {
-    var delegate: TodoWriteDelegate? {
-        didSet {
-            todoTextField.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    let todo = String((todoTextField.text ?? "").prefix(todoMaxLength))
-                    todoTextField.text = todo
-                    delegate?.updateTodoAction(todo: todo)
-                }, for: .editingChanged
-            )
-            
-            addButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    delegate?.addTodoAction(todoMaxCount: todoMaxCount)
-                }, for: .touchUpInside
-            )
-            
-            saveButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    delegate?.saveTodoAction()
-                }, for: .touchUpInside
-            )
-        }
-    }
+    // ✅ 외부 노출용 Signal
+    var todoChanged: Signal<(String?, Int)> { _todoChanged.asSignal() }
+    var addTap: Signal<Int> { _addTap.asSignal() }
+    var saveTap: Signal<Void> { _saveTap.asSignal() }
+    var removeTap: Signal<Int> { _removeTap.asSignal() }
+    var keyboardState: Signal<Bool> { _keyboardState.asSignal() }
+
+    // ✅ 내부 Relay
+    private let _todoChanged = PublishRelay<(String?, Int)>()
+    private let _addTap = PublishRelay<Int>()
+    private let _saveTap = PublishRelay<Void>()
+    private let _removeTap = PublishRelay<Int>()
+    private let _keyboardState = PublishRelay<Bool>()
+    private let disposeBag = DisposeBag()
     
     private let navigationHeader = NavigationHeader(title: "투두 작성")
     
@@ -137,15 +128,63 @@ final class TodoWritePage: BasePage {
             guard let self else { return }
             endEditing(true)
         }
-        
-        navigationHeader.delegate = coordinatorDelegate
 
-        todoTextField.delegate = self
+        navigationHeader.delegate = coordinatorDelegate
 
         todoTableView.delegate = self
         todoTableView.dataSource = self
         todoTableView.register(TodoWriteTableViewCell.self, forCellReuseIdentifier: TodoWriteTableViewCell.identifier)
         
+        // 텍스트 변경 → ViewModel로 전달 + 즉시 UI 갱신
+        todoTextField.rx.text
+            .skip(1)
+            .do(onNext: { [weak self] _ in
+                guard let self else { return }
+                updateTextField()
+            })
+            .map { ($0, self.todoMaxLength) }
+            .bind(to: _todoChanged)
+            .disposed(by: disposeBag)
+        
+        // 텍스트 길이 제한 (20자)
+        todoTextField.rx.controlEvent(.editingChanged)
+            .withLatestFrom(todoTextField.rx.text.orEmpty)
+            .subscribe(onNext: { [weak self] text in
+                guard let self else { return }
+                if text.count > self.todoMaxLength {
+                    let limited = String(text.prefix(self.todoMaxLength))
+                    self.todoTextField.text = limited
+                    self._todoChanged.accept((limited, self.todoMaxLength))
+                }
+            })
+            .disposed(by: disposeBag)
+
+        addButton.rx.tap
+            .map { self.todoMaxCount }
+            .bind(to: _addTap)
+            .disposed(by: disposeBag)
+        
+        saveButton.tapRelay
+            .bind(to: _saveTap)
+            .disposed(by: disposeBag)
+
+        // Return 키 입력 시 (textFieldShouldReturn 대체)
+        todoTextField.rx.controlEvent(.editingDidEndOnExit)
+            .map { self.todoMaxCount }
+            .bind(to: _addTap)
+            .disposed(by: disposeBag)
+
+        // 키보드 등장 (textFieldDidBeginEditing 대체)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+            .map { _ in true }
+            .bind(to: _keyboardState)
+            .disposed(by: disposeBag)
+
+        // 키보드 사라짐 (textFieldDidEndEditing 대체)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+            .map { _ in false }
+            .bind(to: _keyboardState)
+            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {
@@ -228,6 +267,7 @@ final class TodoWritePage: BasePage {
                 currentTodos = datas.todos
                 
                 updateTodoLimitLabel()
+                updateTextField()
                 
                 emptyListView.isHidden = !datas.todos.isEmpty
                 todoTableView.isHidden = datas.todos.isEmpty
@@ -333,26 +373,9 @@ extension TodoWritePage: UITableViewDelegate, UITableViewDataSource {
         
         cell.setExtraInfo(todo: (currentTodos ?? [])[indexPath.row], index: indexPath.row) { [weak self] index in
             guard let self else { return }
-            delegate?.removeTodoAction(index: index)
+            _removeTap.accept(index)
         }
         
         return cell
-    }
-}
-
-// MARK: - about keyboard (UITextFieldDelegate)
-extension TodoWritePage: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard addButton.isEnabled else { return false }
-        delegate?.addTodoAction(todoMaxCount: todoMaxCount)
-        return true
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        delegate?.updateIsShowKeyboardAction(isShowKeyboard: true)
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        delegate?.updateIsShowKeyboardAction(isShowKeyboard: false)
     }
 }
