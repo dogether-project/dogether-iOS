@@ -36,6 +36,7 @@ final class StepOneView: BaseView {
     private let groupNameMaxLength: Int = 10
     
     private var currentGroupName: String?
+    private var currentIsFirstResponder: Bool?
     
     override func configureView() {
         groupNameTitleLabel.text = "그룹명"
@@ -55,7 +56,6 @@ final class StepOneView: BaseView {
         groupNameTextField.layer.cornerRadius = 12
         groupNameTextField.layer.borderWidth = 1
         groupNameTextField.layer.borderColor = UIColor.clear.cgColor
-        groupNameTextField.becomeFirstResponder()
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: groupNameTextField.frame.height))
         groupNameTextField.leftView = leftPaddingView
         groupNameTextField.leftViewMode = .always
@@ -116,12 +116,19 @@ final class StepOneView: BaseView {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupCreateViewDatas {
+            if currentIsFirstResponder != datas.isFirstResponder {
+                currentIsFirstResponder = datas.isFirstResponder
+                
+                if datas.isFirstResponder { groupNameTextField.becomeFirstResponder() }
+            }
+            
             if currentGroupName != datas.groupName {
                 currentGroupName = datas.groupName
                 
                 groupNameTextField.text = datas.groupName
                 groupNameCountLabel.text = "\(datas.groupName.count)"
             }
+            
             memberCountView.updateView(datas)
         }
     }

@@ -20,6 +20,10 @@ final class GroupCreateViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        viewModel.updateIsFirstResponder(isFirstResponder: true)
+    }
+    
     override func setViewDatas() {
         bind(viewModel.groupCreateViewDatas)
     }

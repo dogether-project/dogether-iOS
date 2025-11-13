@@ -13,6 +13,7 @@ struct GroupCreateViewDatas: BaseEntity {
     var memberCount: Int
     var duration: GroupChallengeDurations
     var startAt: GroupStartAts
+    var isFirstResponder: Bool
     
     init(
         step: CreateGroupSteps = .one,
@@ -20,11 +21,13 @@ struct GroupCreateViewDatas: BaseEntity {
         member: Int = 10,
         duration: GroupChallengeDurations = .threeDays,
         startAt: GroupStartAts = .today,
+        isFirstResponder: Bool = false
     ) {
         self.step = step
         self.groupName = groupName
         self.memberCount = member
         self.duration = duration
         self.startAt = startAt
+        self.isFirstResponder = isFirstResponder
     }
 }

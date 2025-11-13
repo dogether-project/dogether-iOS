@@ -21,9 +21,11 @@ final class GroupCreateViewModel {
 }
 
 extension GroupCreateViewModel {
+    func updateIsFirstResponder(isFirstResponder: Bool) {
+        groupCreateViewDatas.update { $0.isFirstResponder = isFirstResponder }
+    }
+    
     func updateStep(step: CreateGroupSteps?) {
-//        let stepRawValue = groupCreateViewDatas.value.step.rawValue + direction.tag
-//        guard let step = CreateGroupSteps(rawValue: stepRawValue) else { return }
         guard let step else { return }
         groupCreateViewDatas.update { $0.step = step }
     }

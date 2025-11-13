@@ -22,6 +22,10 @@ final class TodoWriteViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        viewModel.updateIsFirstResponder(isFirstResponder: true)
+    }
+    
     override func setViewDatas() {
         if let datas = datas as? TodoWriteViewDatas {
             viewModel.todoWriteViewDatas.accept(datas)
