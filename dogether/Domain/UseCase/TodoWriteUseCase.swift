@@ -8,7 +8,7 @@
 import Foundation
 
 final class TodoWriteUseCase {
-    func prefixTodo(todo: String?, todoMaxLength: Int) -> String {
-        return String((todo ?? "").prefix(todoMaxLength))
+    func prefixTodo(todo: String?, maxLength: Int) -> String {
+        return String((todo ?? "").prefix(maxLength))
     }
 }

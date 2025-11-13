@@ -10,7 +10,7 @@ import SnapKit
 
 final class ReviewFeedbackPopupView: BasePopupView {
     // MARK: - PopupViewController에서 action handling
-    let reviewFeedbackButton = DogetherButton(title: "등록하기", status: .disabled)
+    let reviewFeedbackButton = DogetherButton("등록하기")
     
     // MARK: - PopupViewController에서 delegate 지정
     let reviewFeedbackTextView = DogetherTextView(type: .reviewFeedback)

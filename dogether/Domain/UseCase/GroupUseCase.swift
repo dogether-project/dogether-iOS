@@ -14,20 +14,8 @@ final class GroupUseCase {
         self.repository = repository
     }
     
-    func createGroup(
-        groupName: String,
-        maximumMemberCount: Int,
-        startAt: GroupStartAts,
-        duration: GroupChallengeDurations
-    ) async throws -> String {
-        let createGroupRequest = CreateGroupRequest(
-            groupName: groupName,
-            maximumMemberCount: maximumMemberCount,
-            startAt: startAt.rawValue,
-            duration: duration.rawValue
-        )
-        let response = try await repository.createGroup(createGroupRequest: createGroupRequest)
-        return response.joinCode
+    func createGroup(groupCreateViewDatas: GroupCreateViewDatas) async throws -> String {
+        try await repository.createGroup(groupCreateViewDatas: groupCreateViewDatas)
     }
     
     func joinGroup(joinCode: String) async throws -> ChallengeGroupInfo {
@@ -91,5 +79,16 @@ final class GroupUseCase {
                 historyReadStatus: HistoryReadStatus(rawValue: $0.historyReadStatus),
                 achievementRate: $0.achievementRate)
         }
+    }
+}
+
+// MARK: - group create
+extension GroupUseCase {
+    func prefixGroupName(groupName: String?, maxLength: Int) -> String {
+        return String((groupName ?? "").prefix(maxLength))
+    }
+    
+    func validateMemberCount(count: Int, min: Int, max: Int) -> Bool {
+        return min <= count && count <= max
     }
 }

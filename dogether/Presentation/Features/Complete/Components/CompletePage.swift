@@ -30,7 +30,7 @@ final class CompletePage: BasePage {
 
     private let firecrackerImageView = UIImageView(image: .firecracker)
     private let titleLabel = UILabel()
-    private let completeButton = DogetherButton(title: "홈으로 가기", status: .enabled)
+    private let completeButton = DogetherButton("홈으로 가기")
     private let groupInfoView = DogetherGroupInfo()
     private let joinCodeShareButton  = JoinCodeShareButton()
 
@@ -112,7 +112,7 @@ final class CompletePage: BasePage {
             let viewData = DogetherGroupInfoViewData(
                 name: datas.groupInfo.name,
                 memberCount: datas.groupInfo.maximumMember,
-                duration: datas.groupInfo.duration,
+                duration: GroupChallengeDurations(rawValue: datas.groupInfo.duration) ?? .threeDays,    // FIXME: 추후 수정
                 startDay: datas.groupInfo.startDate,
                 endDay: datas.groupInfo.endDate
             )

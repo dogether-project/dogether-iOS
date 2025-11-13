@@ -56,7 +56,7 @@ final class CertificationContentViewController: BaseViewController {
     
     private let certificationTextView = DogetherTextView(type: .certification)
     
-    private let certificationButton = DogetherButton(title: "인증하기", status: .disabled)
+    private let certificationButton = DogetherButton("인증하기")
     
     private var certificationButtonBottomConstraint: Constraint?
     
@@ -191,11 +191,12 @@ extension CertificationContentViewController: UITextViewDelegate {
         guard let textView = textView as? DogetherTextView else { return }
         textView.updateTextInfo()
         viewModel.setText(textView.text)
-        certificationButton.setButtonStatus(
-            status: textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ? .disabled
-            : .enabled
-        )
+        // FIXME: 추후 수정
+        var viewDatas = certificationButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+        viewDatas.status = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        ? .disabled
+        : .enabled
+        certificationButton.updateView(viewDatas)
     }
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {

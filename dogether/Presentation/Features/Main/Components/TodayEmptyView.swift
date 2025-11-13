@@ -23,7 +23,7 @@ final class TodayEmptyView: BaseView {
     private let titleLabel = UILabel()
     private let subTitleLabel = UILabel()
     private let emptyStackView = UIStackView()
-    private let todoButton = DogetherButton(title: "투두 작성하기", status: .enabled)
+    private let todoButton = DogetherButton("투두 작성하기")
     
     override func configureView() {
         titleLabel.text = "오늘의 투두를 작성해보세요"

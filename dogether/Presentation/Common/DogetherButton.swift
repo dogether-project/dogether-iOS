@@ -8,34 +8,21 @@
 import UIKit
 
 final class DogetherButton: BaseButton {
-    var certificationDelegate: CertificationDelegate? {
-        didSet {
-            addAction(
-                UIAction { [weak self] _ in
-                    guard let self, let currentTodo else { return }
-                    certificationDelegate?.goCertificateViewAction(todo: currentTodo)
-                }, for: .touchUpInside
-            )
-        }
-    }
+    private let title: String
     
-    private(set) var title: String
-    private(set) var status: ButtonStatus
-    
-    private(set) var currentTodo: TodoEntity?
-    
-    init(title: String, status: ButtonStatus = .enabled) {
+    init(_ title: String) {
         self.title = title
-        self.status = status
         
         super.init(frame: .zero)
     }
     required init?(coder: NSCoder) { fatalError() }
     
+    private(set) var currentViewDatas: DogetherButtonViewDatas?
+    
     override func configureView() {
-        updateUI()
-        
         setTitle(title, for: .normal)
+        setTitleColor(ButtonStatus.enabled.textColor, for: .normal) // FIXME: 추후 삭제
+        backgroundColor = ButtonStatus.enabled.backgroundColor  // FIXME: 추후 삭제
         titleLabel?.font = Fonts.body1B
         layer.cornerRadius = 8
     }
@@ -52,30 +39,27 @@ final class DogetherButton: BaseButton {
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
-        if let datas = data as? CertificationViewDatas {
-            if currentTodo != datas.todos[datas.index] {
-                currentTodo = datas.todos[datas.index]
-                
-                isHidden = datas.rankingEntity != nil || datas.todos[datas.index].status != .waitCertification
-            }
+        guard let datas = data as? DogetherButtonViewDatas else { return }
+        
+        if currentViewDatas != datas {
+            currentViewDatas = datas
+            
+            setTitleColor(datas.status.textColor, for: .normal)
+            backgroundColor = datas.status.backgroundColor
+            isEnabled = datas.status == .enabled
+            
+            isHidden = datas.isHidden
         }
     }
 }
 
-extension DogetherButton {
-    private func updateUI() {
-        setTitleColor(status.textColor, for: .normal)
-        backgroundColor = status.backgroundColor
-        isEnabled = status == .enabled
-    }
+// MARK: - ViewDatas
+struct DogetherButtonViewDatas: BaseEntity {
+    var status: ButtonStatus
+    var isHidden: Bool
     
-    func setTitle(_ title: String) {
-        self.title = title
-    }
-    
-    func setButtonStatus(status: ButtonStatus) {
+    init(status: ButtonStatus = .enabled, isHidden: Bool = false) {
         self.status = status
-        
-        updateUI()
+        self.isHidden = isHidden
     }
 }

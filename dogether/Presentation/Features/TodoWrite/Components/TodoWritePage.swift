@@ -79,13 +79,14 @@ final class TodoWritePage: BasePage {
     }()
     private let todoTableView = UITableView()
     
-    private let saveButton = DogetherButton(title: "투두 저장", status: .disabled)
+    private let saveButton = DogetherButton("투두 저장")
     
     private let todoMaxCount: Int = 10
     private let todoMaxLength: Int = 20
-    private(set) var currentTodo: String?
-    private(set) var currentTodos: [WriteTodoEntity]?
-    private(set) var currentIsShowKeyboard: Bool?
+    private var currentTodo: String?
+    private var currentTodos: [WriteTodoEntity]?
+    private var currentIsShowKeyboard: Bool?
+    private var currentIsFirstResponder: Bool?
     
     override func configureView() {
         dateLabel.attributedText = NSAttributedString(
@@ -104,7 +105,6 @@ final class TodoWritePage: BasePage {
         todoTextField.layer.cornerRadius = 12
         todoTextField.layer.borderWidth = 0
         todoTextField.layer.borderColor = UIColor.blue300.cgColor
-        todoTextField.becomeFirstResponder()
         
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: todoTextField.frame.height))
         todoTextField.leftView = leftPaddingView
@@ -231,13 +231,22 @@ final class TodoWritePage: BasePage {
                 todoTableView.isHidden = datas.todos.isEmpty
                 todoTableView.reloadData()
                 
-                saveButton.setButtonStatus(status: datas.todos.filter { $0.enabled }.isEmpty ? .disabled : .enabled)
+                // FIXME: 추후 수정
+                var viewDatas = saveButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+                viewDatas.status = datas.todos.filter { $0.enabled }.isEmpty ? .disabled : .enabled
+                saveButton.updateView(viewDatas)
             }
             
             if currentIsShowKeyboard != datas.isShowKeyboard {
                 currentIsShowKeyboard = datas.isShowKeyboard
                 
                 todoTextField.layer.borderWidth = datas.isShowKeyboard ? 1.5 : 0
+            }
+            
+            if currentIsFirstResponder != datas.isFirstResponder {
+                currentIsFirstResponder = datas.isFirstResponder
+                
+                if datas.isFirstResponder { todoTextField.becomeFirstResponder() }
             }
         }
     }
@@ -329,7 +338,7 @@ extension TodoWritePage: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - abount keyboard (UITextFieldDelegate)
+// MARK: - about keyboard (UITextFieldDelegate)
 extension TodoWritePage: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard addButton.isEnabled else { return false }

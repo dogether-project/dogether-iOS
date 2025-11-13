@@ -24,13 +24,17 @@ final class TodoWriteViewModel {
 }
 
 extension TodoWriteViewModel {
+    func updateIsFirstResponder(isFirstResponder: Bool) {
+        todoWriteViewDatas.update { $0.isFirstResponder = isFirstResponder }
+    }
+    
     func updateIsShowKeyboard(isShowKeyboard: Bool) {
         todoWriteViewDatas.update { $0.isShowKeyboard = isShowKeyboard }
     }
     
     func updateTodo(todo: String?, todoMaxLength: Int) {
         todoWriteViewDatas.update {
-            $0.todo = todoWriteUseCase.prefixTodo(todo: todo, todoMaxLength: todoMaxLength)
+            $0.todo = todoWriteUseCase.prefixTodo(todo: todo, maxLength: todoMaxLength)
         }
     }
     

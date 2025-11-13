@@ -8,7 +8,7 @@
 import Foundation
 
 protocol GroupProtocol {
-    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse
+    func createGroup(groupCreateViewDatas: GroupCreateViewDatas) async throws -> String
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse
     func leaveGroup(groupId: String) async throws
     

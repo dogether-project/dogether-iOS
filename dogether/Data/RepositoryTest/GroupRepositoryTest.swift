@@ -8,20 +8,20 @@
 import Foundation
 
 final class GroupRepositoryTest: GroupProtocol {
-    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
-        if createGroupRequest.groupName == "1" {
+    func createGroup(groupCreateViewDatas: GroupCreateViewDatas) async throws -> String {
+        if groupCreateViewDatas.groupName == "1" {
             throw NetworkError.badRequest
         }
         
-        if createGroupRequest.groupName == "2" {
+        if groupCreateViewDatas.groupName == "2" {
             throw NetworkError.noData
         }
         
-        if createGroupRequest.groupName == "3" {
+        if groupCreateViewDatas.groupName == "3" {
             throw NetworkError.serverError(message: "서버 에러가 발생했습니다.")
         }
             
-        return CreateGroupResponse(joinCode: "000000")
+        return "000000"
     }
     
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse {

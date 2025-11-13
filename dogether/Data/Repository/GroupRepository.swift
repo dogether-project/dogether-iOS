@@ -14,8 +14,15 @@ final class GroupRepository: GroupProtocol {
         self.groupsDataSource = groupsDataSource
     }
     
-    func createGroup(createGroupRequest: CreateGroupRequest) async throws -> CreateGroupResponse {
-        try await groupsDataSource.createGroup(createGroupRequest: createGroupRequest)
+    func createGroup(groupCreateViewDatas: GroupCreateViewDatas) async throws -> String {
+        let request = CreateGroupRequest(
+            groupName: groupCreateViewDatas.groupName,
+            maximumMemberCount: groupCreateViewDatas.memberCount,
+            startAt: groupCreateViewDatas.startAt.rawValue,
+            duration: groupCreateViewDatas.duration.rawValue
+        )
+        let response = try await groupsDataSource.createGroup(createGroupRequest: request)
+        return response.joinCode
     }
     
     func joinGroup(joinGroupRequest: JoinGroupRequest) async throws -> JoinGroupResponse {

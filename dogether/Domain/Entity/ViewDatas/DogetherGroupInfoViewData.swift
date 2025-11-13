@@ -10,7 +10,7 @@ import Foundation
 struct DogetherGroupInfoViewData: BaseEntity {
     let name: String
     let memberCount: Int
-    let duration: Int
+    let duration: GroupChallengeDurations
     let startDay: String
     let endDay: String
 }
