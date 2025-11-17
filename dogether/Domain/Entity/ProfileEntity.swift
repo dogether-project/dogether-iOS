@@ -8,8 +8,8 @@
 import Foundation
 
 struct ProfileEntity: BaseEntity {
-    let name: String
-    let imageUrl: String
+    var name: String
+    var imageUrl: String
     
     init(name: String = "", imageUrl: String = "") {
         self.name = name

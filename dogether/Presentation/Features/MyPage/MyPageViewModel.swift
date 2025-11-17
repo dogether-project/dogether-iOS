@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxRelay
 
 final class MyPageViewModel {
     private let myProfileUseCase: MyProfileUseCase
@@ -20,15 +21,15 @@ final class MyPageViewModel {
 
 extension MyPageViewModel {
     func loadProfileView() async throws {
-        try await getProfile()
+        try await getMyProfile()
     }
     
-    func getProfile() async throws {
-        let profile = try await myProfileUseCase.getProfile()
+    func getMyProfile() async throws {
+        let profile = try await myProfileUseCase.getMyProfile()
         
         profileEntity.update {
             $0.name = profile.name
-            $0.imageUrl = profile.imageUrl
+            $0.imageUrl = profile.profileImageUrl
         }
     }
 }
