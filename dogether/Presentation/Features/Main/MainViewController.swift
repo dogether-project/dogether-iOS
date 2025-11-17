@@ -245,7 +245,9 @@ extension MainViewController: MainDelegate {
         let certificationViewController = CertificationViewController()
         let certificationViewDatas = CertificationViewDatas(
             title: "내 인증 정보",
-            todos: viewModel.sheetViewDatas.value.todoList,
+            todos: viewModel.sheetViewDatas.value.todoList.filter {
+                viewModel.sheetViewDatas.value.filter == .all || viewModel.sheetViewDatas.value.filter == FilterTypes(status: $0.status.rawValue)
+            },
             index: index
         )
         coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
