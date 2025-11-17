@@ -49,7 +49,7 @@ final class GroupCreatePage: BasePage {
         }
         
         stepInfoStackView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(44)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(24)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
@@ -59,19 +59,19 @@ final class GroupCreatePage: BasePage {
         }
 
         stepOneView.snp.makeConstraints {
-            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
+            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(40)
             $0.bottom.equalTo(stepButtonStackView.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepTwoView.snp.makeConstraints {
-            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(24)
+            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(40)
             $0.bottom.equalTo(stepButtonStackView.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
 
         stepThreeView.snp.makeConstraints {
-            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(34)
+            $0.top.equalTo(stepInfoStackView.snp.bottom).offset(84)
             $0.bottom.equalTo(stepButtonStackView.snp.top)
             $0.horizontalEdges.equalToSuperview().inset(36)
         }
