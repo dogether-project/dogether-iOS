@@ -25,7 +25,7 @@ final class MyPageViewController: BaseViewController {
     }
     
     override func setViewDatas() {
-        bind(viewModel.profileViewDatas)
+        bind(viewModel.profileEntity)
     }
 }
 

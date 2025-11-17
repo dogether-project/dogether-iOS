@@ -14,7 +14,11 @@ final class MyProfileRepository: MyProfileProtocol {
         self.dataSource = dataSource
     }
     
-    func getMyProfile() async throws -> MyProfileResponse {
-        try await dataSource.getMyProfile()
+    func getMyProfile() async throws -> ProfileEntity {
+        let response = try await dataSource.getMyProfile()
+        return ProfileEntity(
+            name: response.name,
+            imageUrl: response.profileImageUrl
+        )
     }
 }

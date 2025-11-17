@@ -46,69 +46,53 @@ final class MyPagePage: BasePage {
     
     private let navigationHeader = NavigationHeader(title: "마이페이지")
     
-    private let profileImageView: UIImageView = {
-        let imageView = UIImageView(image: .profile)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let nameLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .grey0
-        label.font = Fonts.head2B
-        return label
-    }()
-    
-    private let userProfileStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 20
-        return stackView
-    }()
-    
-    private let statsImageView: UIImageView = {
-        let imageView = UIImageView(image: .happyDosik)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let statsLabel: UILabel = {
-        let label = UILabel()
-        label.text = "그룹별 진행 상황을 모아봤어요!"
-        label.font = Fonts.body1S
-        label.textColor = .grey0
-        label.textAlignment = .center
-        return label
-    }()
-    
-    private let statsButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("통계 보러가기", for: .normal)
-        button.setTitleColor(.grey900, for: .normal)
-        button.titleLabel?.font = Fonts.body1B
-        button.backgroundColor = .blue300
-        button.layer.cornerRadius = 12
-        return button
-    }()
-    
-    private let statsContainerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.layer.cornerRadius = 12
-        view.layer.borderColor = UIColor.grey800.cgColor
-        view.layer.borderWidth = 1.5
-        return view
-    }()
-    
+    private let profileImageView = UIImageView()
+    private let nameLabel = UILabel()
+    private let userProfileStackView = UIStackView()
+    private let statsImageView = UIImageView()
+    private let statsLabel = UILabel()
+    private let statsButton = UIButton()
+    private let statsContainerView = UIView()
     private let myTodosListButton = MyPageButton(icon: .timer, title: "인증목록")
     private let groupManagementButton = MyPageButton(icon: .group, title: "그룹관리")
     private let settingButton = MyPageButton(icon: .setting, title: "설정")
+    private let mypageButtonStackView = UIStackView()
     
-    private let mypageButtonStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        return stackView
-    }()
+    
+    private(set) var currentName: String?
+    private(set) var currentImageUrl: String?
+    
+    override func configureView() {
+        profileImageView.image = .profile
+        profileImageView.contentMode = .scaleAspectFit
+        
+        nameLabel.textColor = .grey0
+        nameLabel.font = Fonts.head2B
+        
+        userProfileStackView.axis = .horizontal
+        userProfileStackView.spacing = 20
+        
+        statsImageView.image = .happyDosik
+        statsImageView.contentMode = .scaleAspectFit
+        
+        statsLabel.text = "그룹별 진행 상황을 모아봤어요!"
+        statsLabel.font = Fonts.body1S
+        statsLabel.textColor = .grey0
+        statsLabel.textAlignment = .center
+        
+        statsButton.setTitle("통계 보러가기", for: .normal)
+        statsButton.setTitleColor(.grey900, for: .normal)
+        statsButton.titleLabel?.font = Fonts.body1B
+        statsButton.backgroundColor = .blue300
+        statsButton.layer.cornerRadius = 12
+        
+        statsContainerView.backgroundColor = .clear
+        statsContainerView.layer.cornerRadius = 12
+        statsContainerView.layer.borderColor = UIColor.grey800.cgColor
+        statsContainerView.layer.borderWidth = 1.5
+        
+        mypageButtonStackView.axis = .vertical
+    }
     
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
@@ -167,9 +151,18 @@ final class MyPagePage: BasePage {
         }
     }
     
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
-        guard let datas = data as? ProfileViewDatas else { return }
-        nameLabel.text = datas.name
-        profileImageView.loadImage(url: datas.imageUrl)
+        if let datas = data as? ProfileEntity {
+            if currentName != datas.name {
+                currentName = datas.name
+                nameLabel.text = datas.name
+            }
+            
+            if currentImageUrl != datas.imageUrl {
+                currentImageUrl = datas.imageUrl
+                profileImageView.loadImage(url: datas.imageUrl)
+            }
+        }
     }
 }
