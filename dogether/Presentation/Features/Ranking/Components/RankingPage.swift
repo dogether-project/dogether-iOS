@@ -103,7 +103,7 @@ final class RankingPage: BasePage {
 
                 [1, 0, 2].forEach { index in
                     let ranking = datas.rankings[safe: index]
-                    let topView = RankingTopView(ranking: ranking)
+                    let topView = RankingTopView(ranking: ranking, index: index)
                     topView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedTopView(_:))))
                     rankingTopStackView.addArrangedSubview(topView)
                 }
