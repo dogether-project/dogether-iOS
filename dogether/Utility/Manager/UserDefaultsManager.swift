@@ -18,6 +18,7 @@ final class UserDefaultsManager {
         case loginType
         case userFullName
         case fcmToken
+        case lastAccessVersion
         case lastAccessDate
     }
     
@@ -39,6 +40,11 @@ final class UserDefaultsManager {
     var fcmToken: String? {
         get { userDefaults.string(forKey: UserDefaultsKey.fcmToken.rawValue) }
         set { userDefaults.set(newValue, forKey: UserDefaultsKey.fcmToken.rawValue) }
+    }
+    
+    var lastAccessVersion: String? {
+        get { userDefaults.string(forKey: UserDefaultsKey.lastAccessVersion.rawValue) }
+        set { userDefaults.set(newValue, forKey: UserDefaultsKey.lastAccessVersion.rawValue) }
     }
     
     var lastAccessDate: String? {

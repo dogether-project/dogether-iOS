@@ -22,6 +22,7 @@ final class SplashViewModel {
 
 extension SplashViewModel {
     func launchApp() async throws {
+        try await appLaunchUseCase.migrate()
         try await appLaunchUseCase.launchApp()
     }
     

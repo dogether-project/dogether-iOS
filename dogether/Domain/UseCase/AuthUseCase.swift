@@ -67,15 +67,21 @@ extension AuthUseCase: ASAuthorizationControllerDelegate {
 
 extension AuthUseCase {
     func login(loginType: LoginTypes) async throws {
-        if loginType == .apple { appleLogin() }
-        
-        let (userFullName, accessToken) = try await repository.login(
-            loginType: loginType,
-            providerId: await userInfo?.idToken ?? "",  // FIXME: 추후 카카오 확장 필요
-            name: await userInfo?.name
-        )
-        
-        try await setUserDefaults(loginType: loginType, userFullName: userFullName, accessToken: accessToken)
+        switch loginType {
+        case .apple:
+            appleLogin()
+            
+            guard let userInfo = try await userInfo else { return }
+            let (userFullName, accessToken) = try await repository.login(
+                loginType: loginType,
+                providerId: userInfo.idToken,
+                name: userInfo.name
+            )
+            
+            try await setUserDefaults(loginType: loginType, userFullName: userFullName, accessToken: accessToken)
+        case .kakao:
+            return // FIXME: 추후 카카오 확장 필요
+        }
     }
     
     private func setUserDefaults(loginType: LoginTypes, userFullName: String, accessToken: String) async throws {
@@ -97,8 +103,14 @@ extension AuthUseCase {
         guard let userDefaultLoginType = UserDefaultsManager.shared.loginType,
               let loginType = LoginTypes(rawValue: userDefaultLoginType) else { return }
         
-        if loginType == .apple { appleLogin() }
-        
-        try await repository.withdraw(loginType: loginType, authorizationCode: await userInfo?.authorizationCode)
+        switch loginType {
+        case .apple:
+            appleLogin()
+            
+            guard let userInfo = try await userInfo else { return }
+            try await repository.withdraw(loginType: loginType, authorizationCode: userInfo.authorizationCode)
+        case .kakao:
+            return // FIXME: 추후 카카오 확장 필요
+        }
     }
 }
