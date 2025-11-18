@@ -70,10 +70,15 @@ extension AuthUseCase {
         guard let userInfo = try await userInfo else { return }
         let loginRequest = LoginRequest(loginType: loginType, providerId: userInfo.idToken, name: userInfo.name)
         let response: LoginResponse = try await repository.login(loginRequest: loginRequest)
-        try await setUserDefaults(userFullName: response.name, accessToken: response.accessToken)
+        try await setUserDefaults(
+            loginType: loginType,
+            userFullName: response.name,
+            accessToken: response.accessToken
+        )
     }
     
-    func setUserDefaults(userFullName: String, accessToken: String) async throws {
+    private func setUserDefaults(loginType: LoginTypes, userFullName: String, accessToken: String) async throws {
+        UserDefaultsManager.shared.loginType = loginType.rawValue
         UserDefaultsManager.shared.userFullName = userFullName
         UserDefaultsManager.shared.accessToken = accessToken
         
@@ -88,8 +93,11 @@ extension AuthUseCase {
 
 extension AuthUseCase {
     func withdraw() async throws {
-        guard let userInfo = try await userInfo else { return }
-        let withdrawRequest = WithdrawRequest(authorizationCode: userInfo.authorizationCode)
-        try await repository.withdraw(withdrawRequest: withdrawRequest)
+        guard let userDefaultLoginType = UserDefaultsManager.shared.loginType,
+              let loginType = LoginTypes(rawValue: userDefaultLoginType) else { return }
+        
+        if loginType == .apple { appleLogin() }
+        
+        try await repository.withdraw(loginType: loginType, authorizationCode: userInfo?.authorizationCode)
     }
 }

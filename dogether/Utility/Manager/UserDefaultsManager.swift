@@ -8,7 +8,6 @@
 import Foundation
 
 final class UserDefaultsManager {
-    
     static let shared = UserDefaultsManager()
     private let userDefaults = UserDefaults.standard
     
@@ -16,6 +15,7 @@ final class UserDefaultsManager {
     
     enum UserDefaultsKey: String {
         case accessToken
+        case loginType
         case userFullName
         case fcmToken
         case lastAccessDate
@@ -24,6 +24,11 @@ final class UserDefaultsManager {
     var accessToken: String? {
         get { userDefaults.string(forKey: UserDefaultsKey.accessToken.rawValue) }
         set { userDefaults.set(newValue, forKey: UserDefaultsKey.accessToken.rawValue) }
+    }
+    
+    var loginType: String? {
+        get { userDefaults.string(forKey: UserDefaultsKey.loginType.rawValue) }
+        set { userDefaults.set(newValue, forKey: UserDefaultsKey.loginType.rawValue) }
     }
     
     var userFullName: String? {

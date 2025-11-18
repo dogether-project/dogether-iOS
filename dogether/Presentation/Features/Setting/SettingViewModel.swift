@@ -31,7 +31,6 @@ extension SettingViewModel {
     }
     
     func withdraw() async throws {
-        authUseCase.appleLogin()
         try await authUseCase.withdraw()
     }
 }
