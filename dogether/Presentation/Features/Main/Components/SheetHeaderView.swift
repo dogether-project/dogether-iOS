@@ -27,14 +27,17 @@ final class SheetHeaderView: BaseView {
     }
     
     private let dateLabel = UILabel()
+    private let dateSkeletonView = SkeletonView()
     
     private let prevButton = UIButton()
     private let nextButton = UIButton()
     
-    private(set) var currentGroupDuration: Int?
-    private(set) var currentDateOffset: Int?
+    private var currentGroupDuration: Int?
+    private var currentDateOffset: Int?
+    private var isFirst: Bool = true
     
     override func configureView() {
+        dateLabel.text = "2000.01.01"
         dateLabel.textColor = .grey0
         dateLabel.font = Fonts.head2B
         
@@ -53,6 +56,8 @@ final class SheetHeaderView: BaseView {
     
     override func configureHierarchy() {
         [dateLabel, prevButton, nextButton].forEach { addSubview($0) }
+        
+        dateLabel.addSubview(dateSkeletonView)
     }
     
     override func configureConstraints() {
@@ -69,6 +74,8 @@ final class SheetHeaderView: BaseView {
             $0.right.equalToSuperview()
             $0.width.height.equalTo(32)
         }
+        
+        dateSkeletonView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
     // MARK: - updateView
@@ -85,6 +92,12 @@ final class SheetHeaderView: BaseView {
             /// 현재는 최적화 작업 없이 계속 updateView를 호출하는 상황, 추후 최적화
 
             guard let currentGroupDuration else { return }
+            if isFirst {
+                isFirst = false
+                
+                dateSkeletonView.removeFromSuperview()
+            }
+            
             currentDateOffset = datas.dateOffset
             dateLabel.text = DateFormatterManager.formattedDate(datas.dateOffset)
             
