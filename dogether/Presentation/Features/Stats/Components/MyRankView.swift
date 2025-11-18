@@ -77,7 +77,7 @@ final class MyRankView: BaseView {
         }
         
         iconImageView.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(24)
         }
         
         rankBaseLabel.snp.makeConstraints {

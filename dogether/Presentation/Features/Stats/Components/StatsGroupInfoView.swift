@@ -36,7 +36,7 @@ final class StatsGroupInfoView: BaseView {
         let label = UILabel()
         label.text = "그룹원"
         label.font = Fonts.body2R
-        label.textColor = .grey300
+        label.textColor = .grey200
         label.textAlignment = .left
         return label
     }()
@@ -61,7 +61,7 @@ final class StatsGroupInfoView: BaseView {
         let label = UILabel()
         label.text = "초대코드"
         label.font = Fonts.body2R
-        label.textColor = .grey300
+        label.textColor = .grey200
         label.textAlignment = .left
         return label
     }()
@@ -90,7 +90,7 @@ final class StatsGroupInfoView: BaseView {
         let label = UILabel()
         label.text = "종료일"
         label.font = Fonts.body2R
-        label.textColor = .grey300
+        label.textColor = .grey200
         label.textAlignment = .left
         return label
     }()

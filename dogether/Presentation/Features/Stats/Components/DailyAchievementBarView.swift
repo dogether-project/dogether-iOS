@@ -42,7 +42,7 @@ final class DailyAchievementBarView: BaseView {
             let label = UILabel()
             label.text = "\($0)"
             label.font = Fonts.body2S
-            label.textColor = .grey500
+            label.textColor = .grey400
             return label
         }
         let stack = UIStackView(arrangedSubviews: values)
@@ -94,7 +94,7 @@ final class DailyAchievementBarView: BaseView {
     
     override func configureConstraints() {
         titleIconImageView.snp.makeConstraints {
-            $0.size.equalTo(20)
+            $0.size.equalTo(24)
         }
         
         titleStackView.snp.makeConstraints {

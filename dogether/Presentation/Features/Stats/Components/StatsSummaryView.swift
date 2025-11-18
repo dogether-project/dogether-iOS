@@ -168,7 +168,7 @@ final class StatsSummaryView: BaseView {
     
     override func configureConstraints() {
         titleIconImageView.snp.makeConstraints {
-            $0.width.height.equalTo(20)
+            $0.width.height.equalTo(24)
         }
         
         titleStackView.snp.makeConstraints {

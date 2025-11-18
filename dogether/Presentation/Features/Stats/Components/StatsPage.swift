@@ -48,7 +48,7 @@ final class StatsPage: BasePage {
         
         emptyView.createButtonTapHandler = { [weak self] in
             guard let self else { return }
-            self.coordinatorDelegate?.coordinator?.pushViewController(GroupCreateViewController())
+            coordinatorDelegate?.coordinator?.pushViewController(GroupCreateViewController())
         }
     }
     
