@@ -8,166 +8,117 @@
 import UIKit
 
 final class StatsViewController: BaseViewController {
-    var viewModel = StatsViewModel()
-    private let navigationHeader = NavigationHeader(title: "통계")
-    private let emptyView = GroupEmptyView()
-    private let scrollView = UIScrollView()
-    private let scrollContentView = UIView()
-    private var contentView: StatsContentView?
+    private let statsPage = StatsPage()
+    private let viewModel = StatsViewModel()
+    
     private var errorView: ErrorView?
-    private var bottomSheetViewController: BottomSheetViewController?
-    
+    private var bottomSheetVC: BottomSheetViewController?
+
     override func viewDidLoad() {
+        statsPage.delegate = self
+        pages = [statsPage]
+        
         super.viewDidLoad()
-        viewModel.fetchMyGroups()
+        
+        coordinator?.updateViewController = loadStatsView
     }
 
-    override func configureAction() {
-        navigationHeader.delegate = self
-        viewModel.delegate = self
-        
-        emptyView.createButtonTapHandler = { [weak self] in
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadStatsView()
+    }
+
+    override func setViewDatas() {
+        bind(viewModel.statsViewDatas)
+    }
+}
+
+extension StatsViewController {
+    private func loadStatsView() {
+        Task { [weak self] in
             guard let self else { return }
-            coordinator?.pushViewController(GroupCreateViewController())
+            do {
+                try await viewModel.loadStatsView()
+                await MainActor.run {
+                    self.showMain()
+                    self.configureBottomSheet()
+                }
+            } catch let error as NetworkError {
+                await MainActor.run {
+                    self.hideMain()
+                    self.showError(error)
+                }
+            }
         }
     }
-
-    override func configureHierarchy() {
-        view.addSubview(navigationHeader)
-        view.addSubview(emptyView)
-    }
-
-    override func configureConstraints() {
-        navigationHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.horizontalEdges.equalToSuperview()
-        }
-
-        emptyView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom)
-            $0.left.right.bottom.equalToSuperview()
+    
+    private func reloadStats(_ selected: GroupSortOption) {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await viewModel.fetchStatsForSelectedGroup(selected)
+                await MainActor.run {
+                    self.showMain()
+                    self.configureBottomSheet()
+                }
+            } catch let error as NetworkError {
+                await MainActor.run {
+                    self.hideMain()
+                    self.showError(error)
+                }
+            }
         }
     }
 }
 
+// MARK: - Error / Main Toggle
 extension StatsViewController {
-    private func displayViewForCurrentStatus() {
-        switch viewModel.statsViewStatus {
-        case .hasData:
-            showStatsContentView()
-        default:
-            showEmptyState()
-        }
+    private func showError(_ error: NetworkError) {
+        errorView?.removeFromSuperview()
+        errorView = ErrorHandlingManager.embedErrorView(
+            in: self,
+            under: statsPage.navigationHeader,
+            error: error,
+            retryHandler: { [weak self] in
+                self?.loadStatsView()
+            }
+        )
     }
     
-    private func showStatsContentView() {
-        hideEmptyState()
-        setupContentView()
-        configureBottomSheetViewController()
+    private func showMain() {
+        pages?.forEach { $0.isHidden = false }
+        errorView = nil
     }
     
-    private func showEmptyState() {
-        emptyView.isHidden = false
-    }
-    
-    private func hideEmptyState() {
-        emptyView.isHidden = true
+    private func hideMain() {
+        pages?.forEach { $0.isHidden = true }
     }
 }
 
 extension StatsViewController {
-    private func setupContentView() {
-        let contentView = StatsContentView(viewModel: viewModel)
-        self.contentView = contentView
+    private func configureBottomSheet() {
+        let datas = viewModel.statsViewDatas.value
         
-        setupScrollViewHierarchy()
-        setupConstraints(for: contentView)
+        let items = datas.groupSortOptions.map { $0.bottomSheetItem }
+        let selected = datas.selectedGroup?.bottomSheetItem
         
-        contentView.isHidden = false
-        contentView.delegate = self
-    }
-    
-    private func setupScrollViewHierarchy() {
-        view.addSubview(scrollView)
-        scrollView.addSubview(scrollContentView)
-    }
-    
-    private func setupConstraints(for contentView: StatsContentView) {
-        scrollContentView.addSubview(contentView)
-        
-        scrollView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom)
-            $0.left.right.equalToSuperview()
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+        guard !items.isEmpty else {
+            bottomSheetVC = nil
+            return
         }
         
-        scrollContentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalToSuperview()
-        }
-        
-        contentView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
-}
-
-extension StatsViewController {
-    private func configureBottomSheetViewController() {
-        let bottomSheetItem = viewModel.groupSortOptions.map { $0.bottomSheetItem }
-        let selectedItem = viewModel.selectedGroup?.bottomSheetItem
-        
-        guard !bottomSheetItem.isEmpty else { return }
-        
-        bottomSheetViewController = BottomSheetViewController(
+        bottomSheetVC = BottomSheetViewController(
             titleText: "그룹 선택",
-            bottomSheetItem: bottomSheetItem,
-            selectedItem: selectedItem
+            bottomSheetItem: items,
+            selectedItem: selected
         )
         
-        bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
-        bottomSheetViewController?.modalTransitionStyle = .coverVertical
+        bottomSheetVC?.modalPresentationStyle = .overCurrentContext
+        bottomSheetVC?.modalTransitionStyle = .coverVertical
         
-        bottomSheetViewController?.didSelectOption = { [weak self] selectedItem in
-            guard let self,
-                  let selectedGroup = selectedItem.value as? GroupSortOption else { return }
-            viewModel.fetchStatsForSelectedGroup(selectedGroup)
-        }
-    }
-}
-
-extension StatsViewController: StatsViewModelDelegate {
-    func didFetchStatsSucceed() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            scrollView.removeFromSuperview()
-            contentView?.removeFromSuperview()
-            contentView = nil
-            displayViewForCurrentStatus()
-            errorView?.removeFromSuperview()
-            errorView = nil
-        }
-    }
-    
-    func didFetchStatsFail(error: NetworkError) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            scrollView.removeFromSuperview()
-            contentView?.removeFromSuperview()
-            contentView = nil
-            emptyView.isHidden = true
-            errorView?.removeFromSuperview()
-            
-            let newErrorView = ErrorHandlingManager.embedErrorView(
-                in: self,
-                under: navigationHeader,
-                error: error,
-                retryHandler: { [weak self] in
-                    guard let self else { return }
-                    viewModel.fetchMyGroups()
-                }
-            )
-            errorView = newErrorView
+        bottomSheetVC?.didSelectOption = { [weak self] item in
+            guard let selected = item.value as? GroupSortOption else { return }
+            self?.reloadStats(selected)
         }
     }
 }
@@ -175,8 +126,8 @@ extension StatsViewController: StatsViewModelDelegate {
 extension StatsViewController: BottomSheetDelegate {
     func presentBottomSheet() {
         if presentedViewController == nil,
-           let bottomSheetViewController {
-            present(bottomSheetViewController, animated: true)
+           let bottomSheetVC {
+            present(bottomSheetVC, animated: true)
         }
     }
 }

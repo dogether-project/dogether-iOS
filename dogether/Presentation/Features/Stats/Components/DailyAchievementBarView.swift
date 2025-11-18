@@ -11,7 +11,7 @@ import SnapKit
 final class DailyAchievementBarView: BaseView {
     private let barMaxHeight: CGFloat = 187
     
-    private var dailyAchievements: [CertificationPeriod] = []
+    private var dailyAchievements: [DailyAchievementViewData] = []
     
     private let titleIconImageView: UIImageView = {
         let imageView = UIImageView()
@@ -233,7 +233,7 @@ extension DailyAchievementBarView {
 }
 
 extension DailyAchievementBarView {
-    func configure(achievements: [CertificationPeriod]) {
+    func configure(achievements: [DailyAchievementViewData]) {
         dailyAchievements = achievements.suffix(4)
         configureBars()
     }
