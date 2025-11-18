@@ -99,6 +99,12 @@ extension AuthUseCase {
 }
 
 extension AuthUseCase {
+    func logout() {
+        UserDefaultsManager.shared.loginType = nil
+        UserDefaultsManager.shared.accessToken = nil
+        UserDefaultsManager.shared.userFullName = nil
+    }
+    
     func withdraw() async throws {
         guard let userDefaultLoginType = UserDefaultsManager.shared.loginType,
               let loginType = LoginTypes(rawValue: userDefaultLoginType) else { return }
