@@ -21,23 +21,19 @@ final class StatsPage: BasePage {
     private let dailyAchievementBarView = DailyAchievementBarView()
     private let myRankView = MyRankView()
     private let statsSummaryView = StatsSummaryView()
+    private let dosikImageView = UIImageView()
+    private let dosikArmView = UIImageView()
     
-    private let dosikImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .glassDosik
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let dosikArmView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .dosikArm
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
+    private(set) var currentStatsViewDatas: StatsViewDatas?
     
     override func configureView() {
         backgroundColor = .clear
+        
+        dosikImageView.image = .glassDosik
+        dosikImageView.contentMode = .scaleAspectFit
+        
+        dosikArmView.image = .dosikArm
+        dosikArmView.contentMode = .scaleAspectFit
     }
     
     override func configureAction() {
@@ -133,15 +129,19 @@ final class StatsPage: BasePage {
         }
     }
     
-    override func updateView(_ data: any BaseEntity) {
-        guard let datas = data as? StatsViewDatas else { return }
-        
-        switch datas.status {
-        case .empty:
-            showEmptyState()
-            
-        case .hasData:
-            showStats(datas)
+    override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? StatsViewDatas {
+            if currentStatsViewDatas != datas {
+                currentStatsViewDatas = datas
+                
+                switch datas.status {
+                case .empty:
+                    showEmptyState()
+                    
+                case .hasData:
+                    showStats(datas)
+                }
+            }
         }
     }
 }
