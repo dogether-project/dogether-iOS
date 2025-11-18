@@ -74,6 +74,10 @@ final class StepButtonStackView: BaseStackView {
                     [prevButton, nextButton].forEach { addArrangedSubview($0) }
                 case .three:
                     [prevButton, createButton].forEach { addArrangedSubview($0) }
+                    
+                    // FIXME: 추후 수정
+                    let dogetherButtonViewDatas = createButton.currentViewDatas ?? DogetherButtonViewDatas()
+                    createButton.updateView(dogetherButtonViewDatas)
                 }
             }
             

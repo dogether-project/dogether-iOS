@@ -95,6 +95,10 @@ final class ExaminationModalityView: BaseView {
         contentStackView.setCustomSpacing(60, after: titleLabel)
         contentStackView.setCustomSpacing(16, after: imageView)
         contentStackView.setCustomSpacing(16, after: contentLabel)
+        
+        // FIXME: 추후 수정
+        let dogetherButtonViewDatas = closeButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+        closeButton.updateView(dogetherButtonViewDatas)
     }
     
     override func configureAction() { }

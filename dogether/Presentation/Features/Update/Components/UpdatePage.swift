@@ -54,6 +54,9 @@ final class UpdatePage: BasePage {
         updateStackView.setCustomSpacing(40, after: typoImageView)
         updateStackView.setCustomSpacing(8, after: titleLabel)
         updateStackView.setCustomSpacing(44, after: descriptionLabel)
+        
+        // FIXME: viewModel 생성 후 수정
+        updateButton.updateView(DogetherButtonViewDatas())
     }
     
     override func configureAction() { }

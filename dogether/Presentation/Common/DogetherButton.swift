@@ -21,8 +21,6 @@ final class DogetherButton: BaseButton {
     
     override func configureView() {
         setTitle(title, for: .normal)
-        setTitleColor(ButtonStatus.enabled.textColor, for: .normal) // FIXME: 추후 삭제
-        backgroundColor = ButtonStatus.enabled.backgroundColor  // FIXME: 추후 삭제
         titleLabel?.font = Fonts.body1B
         layer.cornerRadius = 8
     }

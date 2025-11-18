@@ -72,4 +72,12 @@ final class TodayEmptyView: BaseView {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }
+    
+    // MARK: - updateView
+    override func updateView(_ data: (any BaseEntity)?) {
+        
+        // FIXME: 추후 수정
+        let dogetherButtonViewDatas = todoButton.currentViewDatas ?? DogetherButtonViewDatas()
+        todoButton.updateView(dogetherButtonViewDatas)
+    }
 }

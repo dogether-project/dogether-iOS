@@ -98,6 +98,10 @@ final class CertificateImageViewController: BaseViewController {
         [galleryButton, cameraButton].forEach { certificationStackView.addArrangedSubview($0) }
         
         [imageView, todoContentLabel, certificationStackView].forEach { containerStackView.addArrangedSubview($0) }
+        
+        // FIXME: 추후 수정
+        let viewDatas = certificationButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+        certificationButton.updateView(viewDatas)
     }
     
     override func configureAction() {

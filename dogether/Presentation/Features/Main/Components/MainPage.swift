@@ -155,6 +155,10 @@ final class MainPage: BasePage {
                 todoListView.updateView(datas)
             }
             
+            if datas.status == .createTodo {
+                todayEmptyView.updateView(datas)
+            }
+            
             if currentYOffset == datas.yOffset && currentSheetStatus == datas.sheetStatus { return }
             currentYOffset = datas.yOffset
             currentSheetStatus = datas.sheetStatus

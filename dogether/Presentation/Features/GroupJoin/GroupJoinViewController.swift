@@ -68,6 +68,10 @@ final class GroupJoinViewController: BaseViewController {
     
     override func configureView() {
         updateSubTitleLabel()
+        
+        // FIXME: 추후 수정
+        let dogetherButtonViewDatas = joinButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+        joinButton.updateView(dogetherButtonViewDatas)
     }
     
     override func configureAction() {

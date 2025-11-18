@@ -74,7 +74,9 @@ final class CertificationContentViewController: BaseViewController {
     }
     
     override func configureView() {
-        
+        // FIXME: 추후 수정
+        let viewDatas = certificationButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+        certificationButton.updateView(viewDatas)
     }
     
     override func configureAction() {

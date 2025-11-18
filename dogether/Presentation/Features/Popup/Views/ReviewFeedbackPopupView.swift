@@ -66,7 +66,11 @@ final class ReviewFeedbackPopupView: BasePopupView {
         return view
     }()
     
-    override func configureView() { }
+    override func configureView() {
+        // FIXME: 추후 수정
+        let viewDatas = reviewFeedbackButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+        reviewFeedbackButton.updateView(viewDatas)
+    }
     
     override func configureAction() {
         closeButton.addAction(
