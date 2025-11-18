@@ -8,8 +8,12 @@
 import Foundation
 
 final class AuthRepositoryTest: AuthProtocol {
-    func login(loginRequest: LoginRequest) async throws -> LoginResponse {
-        return LoginResponse(name: "test", accessToken: "...")
+    func login(
+        loginType: LoginTypes,
+        providerId: String,
+        name: String?
+    ) async throws -> (userFullName: String, accessToken: String) {
+        (userFullName: "test", accessToken: "...")
     }
     
     func saveNotiToken(saveNotiTokenRequest: SaveNotiTokenRequest) async throws { }

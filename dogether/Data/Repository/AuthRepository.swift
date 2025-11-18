@@ -19,8 +19,14 @@ final class AuthRepository: AuthProtocol {
         self.notificationDataSource = notificationDataSou
     }
     
-    func login(loginRequest: LoginRequest) async throws -> LoginResponse {
-        try await authDataSource.login(loginRequest: loginRequest)
+    func login(
+        loginType: LoginTypes,
+        providerId: String,
+        name: String?
+    ) async throws -> (userFullName: String, accessToken: String) {
+        let request = LoginRequest(loginType: loginType.rawValue, providerId: providerId, name: name)
+        let response = try await authDataSource.login(loginRequest: request)
+        return (response.name, response.accessToken)
     }
     
     func saveNotiToken(saveNotiTokenRequest: SaveNotiTokenRequest) async throws {
@@ -28,8 +34,8 @@ final class AuthRepository: AuthProtocol {
     }
     
     func withdraw(loginType: LoginTypes, authorizationCode: String?) async throws {
-        let withdrawRequest = WithdrawRequest(loginType: loginType.rawValue, authorizationCode: authorizationCode)
-        try await authDataSource.withdraw(withdrawRequest: withdrawRequest)
+        let request = WithdrawRequest(loginType: loginType.rawValue, authorizationCode: authorizationCode)
+        try await authDataSource.withdraw(withdrawRequest: request)
     }
 }
 

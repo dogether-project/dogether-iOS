@@ -11,10 +11,10 @@ import Lottie
 final class OnboardingPage: BasePage {
     var delegate: OnboardingDelegate? {
         didSet {
-            signInButton.addAction(
+            appleLoginButton.addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
-                    delegate?.signInAction()
+                    delegate?.loginAction(loginType: .apple)
                 }, for: .touchUpInside
             )
         }
@@ -23,7 +23,7 @@ final class OnboardingPage: BasePage {
     private let scrollView = UIScrollView()
     private let onboardingStackView = UIStackView()
     private let pageControl = UIPageControl()
-    private let signInButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
+    private let appleLoginButton = ASAuthorizationAppleIDButton(type: .signIn, style: .white)
     
     private let onboardingStep: Int = 3
     private let pageControlHeight: CGFloat = 26
@@ -46,7 +46,7 @@ final class OnboardingPage: BasePage {
         
         pageControl.numberOfPages = onboardingStep
         
-        signInButton.cornerRadius = 12
+        appleLoginButton.cornerRadius = 12
     }
     
     override func configureAction() {
@@ -63,7 +63,7 @@ final class OnboardingPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [scrollView, pageControl, signInButton].forEach { self.addSubview($0) }
+        [scrollView, pageControl, appleLoginButton].forEach { self.addSubview($0) }
         
         [onboardingStackView].forEach { scrollView.addSubview($0) }
     }
@@ -83,7 +83,7 @@ final class OnboardingPage: BasePage {
             $0.top.equalTo(onboardingStackView.snp.bottom)
         }
         
-        signInButton.snp.makeConstraints {
+        appleLoginButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(buttonBottomPadding)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(buttonHeight)

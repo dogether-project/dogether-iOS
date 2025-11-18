@@ -67,14 +67,15 @@ extension AuthUseCase: ASAuthorizationControllerDelegate {
 
 extension AuthUseCase {
     func login(loginType: LoginTypes) async throws {
-        guard let userInfo = try await userInfo else { return }
-        let loginRequest = LoginRequest(loginType: loginType, providerId: userInfo.idToken, name: userInfo.name)
-        let response: LoginResponse = try await repository.login(loginRequest: loginRequest)
-        try await setUserDefaults(
+        if loginType == .apple { appleLogin() }
+        
+        let (userFullName, accessToken) = try await repository.login(
             loginType: loginType,
-            userFullName: response.name,
-            accessToken: response.accessToken
+            providerId: await userInfo?.idToken ?? "",  // FIXME: 추후 카카오 확장 필요
+            name: await userInfo?.name
         )
+        
+        try await setUserDefaults(loginType: loginType, userFullName: userFullName, accessToken: accessToken)
     }
     
     private func setUserDefaults(loginType: LoginTypes, userFullName: String, accessToken: String) async throws {
@@ -98,6 +99,6 @@ extension AuthUseCase {
         
         if loginType == .apple { appleLogin() }
         
-        try await repository.withdraw(loginType: loginType, authorizationCode: userInfo?.authorizationCode)
+        try await repository.withdraw(loginType: loginType, authorizationCode: await userInfo?.authorizationCode)
     }
 }
