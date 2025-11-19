@@ -11,14 +11,12 @@ import RxRelay
 
 final class TodoWriteViewModel {
     private let challengeGroupsUseCase: ChallengeGroupUseCase
-    private let todoWriteUseCase: TodoWriteUseCase
     
     private(set) var todoWriteViewDatas = BehaviorRelay<TodoWriteViewDatas>(value: TodoWriteViewDatas())
     
     init() {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
         self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
-        self.todoWriteUseCase = TodoWriteUseCase()
     }
     
 }
@@ -32,10 +30,8 @@ extension TodoWriteViewModel {
         todoWriteViewDatas.update { $0.isShowKeyboard = isShowKeyboard }
     }
     
-    func updateTodo(todo: String?, todoMaxLength: Int) {
-        todoWriteViewDatas.update {
-            $0.todo = todoWriteUseCase.prefixTodo(todo: todo, maxLength: todoMaxLength)
-        }
+    func updateTodo(todo: String) {
+        todoWriteViewDatas.update { $0.todo = todo }
     }
     
     func addTodo(todoMaxCount: Int) {

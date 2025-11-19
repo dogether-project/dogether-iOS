@@ -84,10 +84,6 @@ final class GroupUseCase {
 
 // MARK: - group create
 extension GroupUseCase {
-    func prefixGroupName(groupName: String?, maxLength: Int) -> String {
-        return String((groupName ?? "").prefix(maxLength))
-    }
-    
     func validateMemberCount(count: Int, min: Int, max: Int) -> Bool {
         return min <= count && count <= max
     }

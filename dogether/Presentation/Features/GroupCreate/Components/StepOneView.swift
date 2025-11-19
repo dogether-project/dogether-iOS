@@ -13,10 +13,9 @@ final class StepOneView: BaseView {
             groupNameTextField.addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
-                    delegate?.updateGroupNameAction(
-                        groupName: groupNameTextField.text,
-                        groupNameMaxLength: groupNameMaxLength
-                    )
+                    let groupName = String((groupNameTextField.text ?? "").prefix(groupNameMaxLength))
+                    groupNameTextField.text = groupName
+                    delegate?.updateGroupNameAction(groupName: groupName)
                 }, for: .editingChanged
             )
             

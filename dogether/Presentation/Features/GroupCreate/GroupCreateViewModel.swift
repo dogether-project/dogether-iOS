@@ -30,10 +30,8 @@ extension GroupCreateViewModel {
         groupCreateViewDatas.update { $0.step = step }
     }
     
-    func updateGroupName(groupName: String?, groupNameMaxLength: Int) {
-        groupCreateViewDatas.update {
-            $0.groupName = groupUseCase.prefixGroupName(groupName: groupName, maxLength: groupNameMaxLength)
-        }
+    func updateGroupName(groupName: String) {
+        groupCreateViewDatas.update { $0.groupName = groupName}
     }
     
     func updateMemberCount(count: Int, min: Int, max: Int) {

@@ -13,7 +13,9 @@ final class TodoWritePage: BasePage {
             todoTextField.addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
-                    delegate?.updateTodoAction(todo: todoTextField.text, todoMaxLength: todoMaxLength)
+                    let todo = String((todoTextField.text ?? "").prefix(todoMaxLength))
+                    todoTextField.text = todo
+                    delegate?.updateTodoAction(todo: todo)
                 }, for: .editingChanged
             )
             

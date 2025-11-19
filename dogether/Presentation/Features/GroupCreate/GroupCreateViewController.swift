@@ -32,7 +32,7 @@ final class GroupCreateViewController: BaseViewController {
 // MARK: - delegate
 protocol GroupCreateDelegate {
     func updateStep(step: CreateGroupSteps?)
-    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int)
+    func updateGroupNameAction(groupName: String)
     func updateCountAction(currentCount: Int, min: Int, max: Int)
     func updateDuration(duration: GroupChallengeDurations)
     func updateStartAt(startAt: GroupStartAts)
@@ -44,8 +44,8 @@ extension GroupCreateViewController: GroupCreateDelegate {
         viewModel.updateStep(step: step)
     }
     
-    func updateGroupNameAction(groupName: String?, groupNameMaxLength: Int) {
-        viewModel.updateGroupName(groupName: groupName, groupNameMaxLength: groupNameMaxLength)
+    func updateGroupNameAction(groupName: String) {
+        viewModel.updateGroupName(groupName: groupName)
     }
     
     func updateCountAction(currentCount: Int, min: Int, max: Int) {

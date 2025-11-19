@@ -38,7 +38,7 @@ final class TodoWriteViewController: BaseViewController {
 // MARK: - delegate
 protocol TodoWriteDelegate {
     func updateIsShowKeyboardAction(isShowKeyboard: Bool)
-    func updateTodoAction(todo: String?, todoMaxLength: Int)
+    func updateTodoAction(todo: String)
     func addTodoAction(todoMaxCount: Int)
     func removeTodoAction(index: Int)
     func saveTodoAction()
@@ -49,8 +49,8 @@ extension TodoWriteViewController: TodoWriteDelegate {
         viewModel.updateIsShowKeyboard(isShowKeyboard: isShowKeyboard)
     }
     
-    func updateTodoAction(todo: String?, todoMaxLength: Int) {
-        viewModel.updateTodo(todo: todo, todoMaxLength: todoMaxLength)
+    func updateTodoAction(todo: String) {
+        viewModel.updateTodo(todo: todo)
     }
     
     func addTodoAction(todoMaxCount: Int) {
