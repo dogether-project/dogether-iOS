@@ -8,11 +8,11 @@
 import Foundation
 
 struct LoginRequest: Encodable {
-    let loginType: LoginTypes
+    let loginType: String
     let providerId: String
     let name: String?
     
-    init(loginType: LoginTypes, providerId: String, name: String? = nil) {
+    init(loginType: String, providerId: String, name: String? = nil) {
         self.loginType = loginType
         self.providerId = providerId
         self.name = name

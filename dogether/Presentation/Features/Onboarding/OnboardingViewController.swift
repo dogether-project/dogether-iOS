@@ -20,14 +20,14 @@ final class OnboardingViewController: BaseViewController {
 
 // MARK: - delegate
 protocol OnboardingDelegate {
-    func signInAction()
+    func loginAction(loginType: LoginTypes)
 }
 
 extension OnboardingViewController: OnboardingDelegate {
-    func signInAction() {
+    func loginAction(loginType: LoginTypes) {
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.signInWithApple()
+            try await viewModel.login(loginType: loginType)
             
             if try await viewModel.checkParticipating() {
                 coordinator?.setNavigationController(StartViewController())

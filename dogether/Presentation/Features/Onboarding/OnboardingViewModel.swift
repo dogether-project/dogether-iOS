@@ -19,9 +19,8 @@ final class OnboardingViewModel {
         self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
 
-    func signInWithApple() async throws {
-        authUseCase.appleLogin()
-        try await authUseCase.login(loginType: .apple)
+    func login(loginType: LoginTypes) async throws {
+        try await authUseCase.login(loginType: loginType)
     }
     
     func checkParticipating() async throws -> Bool {

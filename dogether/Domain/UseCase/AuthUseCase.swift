@@ -67,13 +67,25 @@ extension AuthUseCase: ASAuthorizationControllerDelegate {
 
 extension AuthUseCase {
     func login(loginType: LoginTypes) async throws {
-        guard let userInfo = try await userInfo else { return }
-        let loginRequest = LoginRequest(loginType: loginType, providerId: userInfo.idToken, name: userInfo.name)
-        let response: LoginResponse = try await repository.login(loginRequest: loginRequest)
-        try await setUserDefaults(userFullName: response.name, accessToken: response.accessToken)
+        switch loginType {
+        case .apple:
+            appleLogin()
+            
+            guard let userInfo = try await userInfo else { return }
+            let (userFullName, accessToken) = try await repository.login(
+                loginType: loginType,
+                providerId: userInfo.idToken,
+                name: userInfo.name
+            )
+            
+            try await setUserDefaults(loginType: loginType, userFullName: userFullName, accessToken: accessToken)
+        case .kakao:
+            return // FIXME: 추후 카카오 확장 필요
+        }
     }
     
-    func setUserDefaults(userFullName: String, accessToken: String) async throws {
+    private func setUserDefaults(loginType: LoginTypes, userFullName: String, accessToken: String) async throws {
+        UserDefaultsManager.shared.loginType = loginType.rawValue
         UserDefaultsManager.shared.userFullName = userFullName
         UserDefaultsManager.shared.accessToken = accessToken
         
@@ -87,9 +99,24 @@ extension AuthUseCase {
 }
 
 extension AuthUseCase {
+    func logout() {
+        UserDefaultsManager.shared.loginType = nil
+        UserDefaultsManager.shared.accessToken = nil
+        UserDefaultsManager.shared.userFullName = nil
+    }
+    
     func withdraw() async throws {
-        guard let userInfo = try await userInfo else { return }
-        let withdrawRequest = WithdrawRequest(authorizationCode: userInfo.authorizationCode)
-        try await repository.withdraw(withdrawRequest: withdrawRequest)
+        guard let userDefaultLoginType = UserDefaultsManager.shared.loginType,
+              let loginType = LoginTypes(rawValue: userDefaultLoginType) else { return }
+        
+        switch loginType {
+        case .apple:
+            appleLogin()
+            
+            guard let userInfo = try await userInfo else { return }
+            try await repository.withdraw(loginType: loginType, authorizationCode: userInfo.authorizationCode)
+        case .kakao:
+            return // FIXME: 추후 카카오 확장 필요
+        }
     }
 }

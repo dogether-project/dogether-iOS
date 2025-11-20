@@ -26,12 +26,10 @@ extension SettingViewModel {
     }
     
     func logout() {
-        UserDefaultsManager.shared.accessToken = nil
-        UserDefaultsManager.shared.userFullName = nil
+        authUseCase.logout()
     }
     
     func withdraw() async throws {
-        authUseCase.appleLogin()
         try await authUseCase.withdraw()
     }
 }
