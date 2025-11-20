@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SnapKit
 
 final class GroupCreateViewController: BaseViewController {
     private let groupCreatePage = GroupCreatePage()
