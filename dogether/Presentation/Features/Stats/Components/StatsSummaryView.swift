@@ -184,12 +184,12 @@ final class StatsSummaryView: BaseView {
             $0.height.equalTo(88)
         }
     }
-}
-
-extension StatsSummaryView {
-    func configure(certificatedCount: Int, approvedCount: Int, rejectedCount: Int) {
-        certificatedCountLabel.text = "\(certificatedCount)개"
-        approvedCountLabel.text = "\(approvedCount)개"
-        rejectedCountLabel.text = "\(rejectedCount)개"
+    
+    override func updateView(_ data: (any BaseEntity)?) {
+        guard let datas = data as? StatsSummaryViewDatas else { return }
+        
+        certificatedCountLabel.text = "\(datas.certificatedCount)개"
+        approvedCountLabel.text = "\(datas.approvedCount)개"
+        rejectedCountLabel.text = "\(datas.rejectedCount)개"
     }
 }

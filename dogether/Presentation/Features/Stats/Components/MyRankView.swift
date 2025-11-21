@@ -92,11 +92,10 @@ final class MyRankView: BaseView {
             $0.height.equalTo(36)
         }
     }
-}
-
-extension MyRankView {
-    func configure(count: Int, rank: Int) {
-        rankBaseLabel.text = "\(count)명 중"
-        rankLabel.text = "\(rank)등"
+    
+    override func updateView(_ data: (any BaseEntity)?) {
+        guard let datas = data as? MyRankViewDatas else { return }
+        rankBaseLabel.text = "\(datas.totalMembers)명 중"
+        rankLabel.text = "\(datas.myRank)등"
     }
 }

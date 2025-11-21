@@ -154,18 +154,13 @@ final class StatsGroupInfoView: BaseView {
             $0.leading.bottom.equalToSuperview()
         }
     }
-}
-
-extension StatsGroupInfoView {
-    func configure(groupName: String,
-                   currentMemberCount: Int,
-                   maximumMemberCount: Int,
-                   joinCode: String,
-                   endDate: String
-    ) {
-        groupNameLabel.text = groupName
-        memberDataLabel.text = "\(currentMemberCount)/\(maximumMemberCount)"
-        joinCodeLabel.text = joinCode
-        endDateLabel.text = endDate
+    
+    override func updateView(_ data: (any BaseEntity)?) {
+        guard let datas = data as? StatsGroupInfoViewDatas else { return }
+        
+        groupNameLabel.text = datas.groupName
+        memberDataLabel.text = "\(datas.currentMemberCount)/\(datas.maximumMemberCount)"
+        joinCodeLabel.text = datas.joinCode
+        endDateLabel.text = datas.endDate
     }
 }

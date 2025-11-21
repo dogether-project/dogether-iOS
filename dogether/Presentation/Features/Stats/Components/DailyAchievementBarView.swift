@@ -121,6 +121,13 @@ final class DailyAchievementBarView: BaseView {
             $0.height.equalTo(20)
         }
     }
+    
+    override func updateView(_ data: (any BaseEntity)?) {
+        guard let datas = data as? DailyAchievementBarViewDatas else { return }
+
+        dailyAchievements = datas.achievements.suffix(4)
+        configureBars()
+    }
 }
 
 extension DailyAchievementBarView {
@@ -229,12 +236,5 @@ extension DailyAchievementBarView {
             $0.top.equalTo(tailImageView.snp.bottom).offset(3)
             $0.size.equalTo(12)
         }
-    }
-}
-
-extension DailyAchievementBarView {
-    func configure(achievements: [DailyAchievementViewData]) {
-        dailyAchievements = achievements.suffix(4)
-        configureBars()
     }
 }

@@ -24,8 +24,6 @@ final class StatsPage: BasePage {
     private let dosikImageView = UIImageView()
     private let dosikArmView = UIImageView()
     
-    private(set) var currentStatsViewDatas: StatsViewDatas?
-    
     override func configureView() {
         backgroundColor = .clear
         
@@ -130,18 +128,14 @@ final class StatsPage: BasePage {
     }
     
     override func updateView(_ data: (any BaseEntity)?) {
-        if let datas = data as? StatsViewDatas {
-            if currentStatsViewDatas != datas {
-                currentStatsViewDatas = datas
-                
-                switch datas.status {
-                case .empty:
-                    showEmptyState()
-                    
-                case .hasData:
-                    showStats(datas)
-                }
-            }
+        guard let datas = data as? StatsPageViewDatas else { return }
+        
+        switch datas.status {
+        case .empty:
+            showEmptyState()
+            
+        case .hasData:
+            showStats(datas)
         }
     }
 }
@@ -152,30 +146,25 @@ extension StatsPage {
         scrollView.isHidden = true
     }
     
-    private func showStats(_ datas: StatsViewDatas) {
+    private func showStats(_ datas: StatsPageViewDatas) {
         emptyView.isHidden = true
         scrollView.isHidden = false
         
-        groupInfoView.configure(
-            groupName: datas.groupName,
-            currentMemberCount: datas.currentMemberCount,
-            maximumMemberCount: datas.maxMemberCount,
-            joinCode: datas.joinCode,
-            endDate: datas.endDate
-        )
+        if let groupInfo = datas.groupInfo {
+            groupInfoView.updateView(groupInfo)
+        }
         
-        dailyAchievementBarView.configure(achievements: datas.dailyAchievements)
+        if let achievementBar = datas.achievementBar {
+            dailyAchievementBarView.updateView(achievementBar)
+        }
         
-        myRankView.configure(
-            count: datas.totalMembers,
-            rank: datas.myRank
-        )
+        if let myRank = datas.myRank {
+            myRankView.updateView(myRank)
+        }
         
-        statsSummaryView.configure(
-            certificatedCount: datas.certificatedCount,
-            approvedCount: datas.approvedCount,
-            rejectedCount: datas.rejectedCount
-        )
+        if let summary = datas.summary {
+            statsSummaryView.updateView(summary)
+        }
     }
     
     @objc private func tappedGroupSelector() {

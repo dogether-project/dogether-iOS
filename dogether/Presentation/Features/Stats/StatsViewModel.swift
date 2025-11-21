@@ -12,7 +12,7 @@ final class StatsViewModel {
     private let statsUseCase: StatsUseCase
     private let groupUseCase: GroupUseCase
     
-    private(set) var statsViewDatas = BehaviorRelay<StatsViewDatas>(value: StatsViewDatas())
+    private(set) var statsPageViewDatas = BehaviorRelay<StatsPageViewDatas>(value: StatsPageViewDatas())
     
     init() {
         let statsRepository = DIManager.shared.getStatsRepository()
@@ -32,14 +32,14 @@ extension StatsViewModel {
     private func fetchMyGroups() async throws {
         let (groupIndex, challengeGroups) = try await groupUseCase.getChallengeGroupInfos()
         
-        statsViewDatas.update {
+        statsPageViewDatas.update {
             $0.groupSortOptions = challengeGroups.map {
                 GroupSortOption(groupId: $0.id, groupName: $0.name)
             }
         }
         
         guard !challengeGroups.isEmpty else {
-            statsViewDatas.update { $0.status = .empty }
+            statsPageViewDatas.update { $0.status = .empty }
             return
         }
         
@@ -47,7 +47,9 @@ extension StatsViewModel {
             let current = challengeGroups[index]
             let selected = GroupSortOption(groupId: current.id, groupName: current.name)
             
-            statsViewDatas.update { $0.selectedGroup = selected }
+            statsPageViewDatas.update {
+                $0.selectedGroup = selected
+            }
             
             try await fetchStatsForSelectedGroup(selected)
         }
@@ -58,30 +60,41 @@ extension StatsViewModel {
     func fetchStatsForSelectedGroup(_ option: GroupSortOption) async throws {
         let response = try await statsUseCase.fetchGroupStats(groupId: option.groupId)
         
-        statsViewDatas.update {
-            $0.status = .hasData
-            
-            $0.groupName = response.groupInfo.name
-            $0.endDate = response.groupInfo.endAt
-            $0.maxMemberCount = response.groupInfo.maximumMemberCount
-            $0.currentMemberCount = response.groupInfo.currentMemberCount
-            $0.joinCode = response.groupInfo.joinCode
-            
-            $0.myRank = response.ranking.myRank
-            $0.totalMembers = response.ranking.totalMemberCount
-            
-            $0.certificatedCount = response.stats.certificatedCount
-            $0.approvedCount = response.stats.approvedCount
-            $0.rejectedCount = response.stats.rejectedCount
-            
-            $0.dailyAchievements = response.certificationPeriods.map {
+        let groupInfo = StatsGroupInfoViewDatas(
+            groupName: response.groupInfo.name,
+            currentMemberCount: response.groupInfo.currentMemberCount,
+            maximumMemberCount: response.groupInfo.maximumMemberCount,
+            joinCode: response.groupInfo.joinCode,
+            endDate: response.groupInfo.endAt
+        )
+        
+        let achievementBar = DailyAchievementBarViewDatas(
+            achievements: response.certificationPeriods.map {
                 DailyAchievementViewData(
                     day: $0.day,
                     createdCount: $0.createdCount,
                     certificationRate: $0.certificationRate
                 )
             }
-            
+        )
+        
+        let myRank = MyRankViewDatas(
+            totalMembers: response.ranking.totalMemberCount,
+            myRank: response.ranking.myRank
+        )
+        
+        let summary = StatsSummaryViewDatas(
+            certificatedCount: response.stats.certificatedCount,
+            approvedCount: response.stats.approvedCount,
+            rejectedCount: response.stats.rejectedCount
+        )
+        
+        statsPageViewDatas.update {
+            $0.status = .hasData
+            $0.groupInfo = groupInfo
+            $0.achievementBar = achievementBar
+            $0.myRank = myRank
+            $0.summary = summary
             $0.selectedGroup = option
         }
     }
