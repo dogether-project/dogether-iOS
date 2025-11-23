@@ -28,23 +28,13 @@ final class SettingPage: BasePage {
     }
     
     private let navigationHeader = NavigationHeader(title: "설정")
-    private let logoutButton = MyPageButton(icon: nil, title: "로그아웃")
-    private let withdrawButton = MyPageButton(icon: nil, title: "회원탈퇴")
-    private let appVersionView = UIView()
-    private let versionTitleLabel = UILabel()
-    private let versionLabel = UILabel()
+    private let logoutButton = SettingButton(title: "로그아웃")
+    private let withdrawButton = SettingButton(title: "회원탈퇴")
+    private let testButton = SettingButton(title: "앱 버전", text: SystemManager.appVersion)
     private let settingStackView = UIStackView()
     
     
     override func configureView() {
-        versionTitleLabel.text = "앱 버전"
-        versionTitleLabel.textColor = .grey100
-        versionTitleLabel.font = Fonts.body1R
-            
-        versionLabel.text = SystemManager.appVersion
-        versionLabel.textColor = .grey0
-        versionLabel.font = Fonts.body1R
-        
         settingStackView.axis = .vertical
     }
     
@@ -53,10 +43,7 @@ final class SettingPage: BasePage {
     }
     
     override func configureHierarchy() {
-        appVersionView.addSubview(versionTitleLabel)
-        appVersionView.addSubview(versionLabel)
-        
-        [logoutButton, withdrawButton, appVersionView].forEach { settingStackView.addArrangedSubview($0) }
+        [logoutButton, withdrawButton, testButton].forEach { settingStackView.addArrangedSubview($0) }
         
         [navigationHeader, settingStackView].forEach { addSubview($0) }
     }
@@ -65,19 +52,6 @@ final class SettingPage: BasePage {
         navigationHeader.snp.makeConstraints {
             $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
-        }
-        
-        versionTitleLabel.snp.makeConstraints {
-            $0.left.equalToSuperview().inset(8)
-            $0.centerY.equalToSuperview()
-        }
-        versionLabel.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(8)
-            $0.centerY.equalToSuperview()
-        }
-            
-        appVersionView.snp.makeConstraints {
-            $0.height.equalTo(48)
         }
         
         settingStackView.snp.makeConstraints {
