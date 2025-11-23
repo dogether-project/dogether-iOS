@@ -66,7 +66,6 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     /// ViewDatas의 변화에 Page가 update 되도록 바인딩하는 역할을 합니다
     func bind<Entity: BaseEntity>(_ relay: BehaviorRelay<Entity>) {
         relay
-            .observe(on: MainScheduler.asyncInstance)
             .distinctUntilChanged()
             .asDriver(onErrorJustReturn: relay.value)
             .drive(onNext: { [weak self] datas in
