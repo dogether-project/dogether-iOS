@@ -14,7 +14,7 @@ final class MyProfileUseCase {
         self.repository = repository
     }
     
-    func getMyProfile() async throws -> MyProfileResponse {
+    func getMyProfile() async throws -> ProfileEntity {
         try await repository.getMyProfile()
     }
 }

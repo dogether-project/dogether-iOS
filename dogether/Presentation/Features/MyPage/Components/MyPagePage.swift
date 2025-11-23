@@ -51,7 +51,7 @@ final class MyPagePage: BasePage {
     private let userProfileStackView = UIStackView()
     private let statsImageView = UIImageView()
     private let statsLabel = UILabel()
-    private let statsButton = UIButton()
+    private let statsButton = DogetherButton(title: "통계 보러가기", status: .enabled)
     private let statsContainerView = UIView()
     private let myTodosListButton = MyPageButton(icon: .timer, title: "인증목록")
     private let groupManagementButton = MyPageButton(icon: .group, title: "그룹관리")
@@ -80,12 +80,6 @@ final class MyPagePage: BasePage {
         statsLabel.textColor = .grey0
         statsLabel.textAlignment = .center
         
-        statsButton.setTitle("통계 보러가기", for: .normal)
-        statsButton.setTitleColor(.grey900, for: .normal)
-        statsButton.titleLabel?.font = Fonts.body1B
-        statsButton.backgroundColor = .blue300
-        statsButton.layer.cornerRadius = 12
-        
         statsContainerView.backgroundColor = .clear
         statsContainerView.layer.cornerRadius = 12
         statsContainerView.layer.borderColor = UIColor.grey800.cgColor
@@ -108,12 +102,12 @@ final class MyPagePage: BasePage {
     
     override func configureConstraints() {
         navigationHeader.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(16)
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview()
         }
         
         userProfileStackView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(14)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
@@ -122,7 +116,7 @@ final class MyPagePage: BasePage {
         }
         
         statsContainerView.snp.makeConstraints {
-            $0.top.equalTo(userProfileStackView.snp.bottom).offset(24)
+            $0.top.equalTo(userProfileStackView.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(251)
         }
@@ -146,7 +140,7 @@ final class MyPagePage: BasePage {
         }
         
         mypageButtonStackView.snp.makeConstraints {
-            $0.top.equalTo(statsContainerView.snp.bottom).offset(16)
+            $0.top.equalTo(statsContainerView.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
     }

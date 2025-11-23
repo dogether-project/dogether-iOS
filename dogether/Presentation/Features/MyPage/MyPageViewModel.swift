@@ -5,7 +5,6 @@
 //  Created by yujaehong on 5/17/25.
 //
 
-import Foundation
 import RxRelay
 
 final class MyPageViewModel {
@@ -29,7 +28,7 @@ extension MyPageViewModel {
         
         profileEntity.update {
             $0.name = profile.name
-            $0.imageUrl = profile.profileImageUrl
+            $0.imageUrl = profile.imageUrl
         }
     }
 }
