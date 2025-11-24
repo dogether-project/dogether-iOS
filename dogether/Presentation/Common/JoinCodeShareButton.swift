@@ -7,8 +7,8 @@
 
 import UIKit
 
-import RxSwift
-import RxCocoa
+//import RxSwift
+//import RxCocoa
 
 final class JoinCodeShareButton: BaseButton {
     private let codeLabel = UILabel()
@@ -17,9 +17,9 @@ final class JoinCodeShareButton: BaseButton {
     )
     private let stackView = UIStackView()
     
-    // ✅ 버튼 탭 이벤트 노출
-    let tapRelay = PublishRelay<Void>()
-    private let disposeBag = DisposeBag()
+//    // ✅ 버튼 탭 이벤트 노출
+//    let tapRelay = PublishRelay<Void>()
+//    private let disposeBag = DisposeBag()
     
     override func configureView() {
         layer.cornerRadius = 12
@@ -34,14 +34,16 @@ final class JoinCodeShareButton: BaseButton {
         stackView.spacing = 8
         stackView.isUserInteractionEnabled = false
         
-        // ✅ 탭 이벤트 바인딩
-        rx.tap
-            .throttle(.milliseconds(500), scheduler: MainScheduler.instance) // 중복클릭 방지
-            .bind(to: tapRelay)
-            .disposed(by: disposeBag)
+//        // ✅ 탭 이벤트 바인딩
+//        rx.tap
+//            .throttle(.milliseconds(500), scheduler: MainScheduler.instance) // 중복클릭 방지
+//            .bind(to: tapRelay)
+//            .disposed(by: disposeBag)
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        super.configureAction()
+    }
     
     override func configureHierarchy() {
         addSubview(stackView)

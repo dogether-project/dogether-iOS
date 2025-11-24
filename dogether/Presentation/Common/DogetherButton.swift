@@ -36,7 +36,9 @@ final class DogetherButton: BaseButton {
             .disposed(by: disposeBag)
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        super.configureAction()
+    }
     
     override func configureHierarchy() { }
     

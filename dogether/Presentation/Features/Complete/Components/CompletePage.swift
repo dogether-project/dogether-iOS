@@ -10,8 +10,11 @@ import UIKit
 import RxCocoa
 
 final class CompletePage: BasePage {
-    var homeTap: Signal<Void> { completeButton.tapRelay.asSignal() }
-    var shareTap: Signal<Void> { joinCodeShareButton.tapRelay.asSignal() }
+//    var homeTap: Signal<Void> { completeButton.tapRelay.asSignal() }
+//    var shareTap: Signal<Void> { joinCodeShareButton.tapRelay.asSignal() }
+    
+    var homeTap: Signal<Void> { completeButton.tap }
+    var shareTap: Signal<Void> { joinCodeShareButton.tap }
 
     private let firecrackerImageView = UIImageView(image: .firecracker)
     private let titleLabel = UILabel()

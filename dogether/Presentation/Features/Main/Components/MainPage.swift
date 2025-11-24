@@ -8,12 +8,16 @@
 import UIKit
 import SnapKit
 
+import RxSwift
+import RxRelay
+import RxCocoa
+
 final class MainPage: BasePage {
     var delegate: MainDelegate? {
         didSet {
             bottomSheetView.delegate = delegate
             
-            groupInfoView.delegate = delegate
+//            groupInfoView.delegate = delegate
             rankingButton.delegate = delegate
             
             sheetHeaderView.delegate = delegate
@@ -22,6 +26,10 @@ final class MainPage: BasePage {
             todoListView.delegate = delegate
         }
     }
+    
+    var groupInfoEvent: Signal<GroupInfoEvent> { _groupInfoEvent.asSignal() }
+    private let _groupInfoEvent = PublishRelay<GroupInfoEvent>()
+    private let disposeBag = DisposeBag()
     
     private let dogetherHeader = DogetherHeader()
     
@@ -60,6 +68,10 @@ final class MainPage: BasePage {
         let dogetherPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         dogetherPanGesture.delegate = self
         dogetherSheet.addGestureRecognizer(dogetherPanGesture)
+        
+        groupInfoView.event
+            .emit(to: _groupInfoEvent)
+            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {

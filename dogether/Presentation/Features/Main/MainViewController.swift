@@ -33,6 +33,32 @@ final class MainViewController: BaseViewController {
         bind(viewModel.sheetViewDatas)
         bind(viewModel.timerViewDatas)
     }
+    
+    override func bindAction() {
+        mainPage.groupInfoEvent
+            .emit(onNext: { [weak self] event in
+                guard let self else { return }
+                
+                switch event.action {
+                    
+                case .openGroupSelector:
+                    viewModel.bottomSheetViewDatas.update {
+                        $0.isShowSheet = true
+                    }
+                    
+                case .invite:
+                    let inviteGroup = SystemManager.inviteGroup(
+                        groupName: event.group.name,
+                        joinCode: event.group.joinCode
+                    )
+                    present(
+                        UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil),
+                        animated: true
+                    )
+                }
+            })
+            .disposed(by: disposeBag)
+    }
 }
 
 extension MainViewController {
@@ -114,7 +140,7 @@ protocol MainDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectGroupAction(index: Int)
     func addGroupAction()
-    func inviteAction()
+//    func inviteAction()
     func goPastAction()
     func goFutureAction()
     func startTimerAction()
@@ -186,10 +212,10 @@ extension MainViewController: MainDelegate {
         coordinator?.pushViewController(startViewController, datas: startViewDatas)
     }
     
-    func inviteAction() {
-        let inviteGroup = SystemManager.inviteGroup(groupName: viewModel.currentGroup.name, joinCode: viewModel.currentGroup.joinCode)
-        present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
-    }
+//    func inviteAction() {
+//        let inviteGroup = SystemManager.inviteGroup(groupName: viewModel.currentGroup.name, joinCode: viewModel.currentGroup.joinCode)
+//        present(UIActivityViewController(activityItems: inviteGroup, applicationActivities: nil), animated: true)
+//    }
     
     func goPastAction() {
         viewModel.sheetViewDatas.update {
