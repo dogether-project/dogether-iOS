@@ -1,42 +1,46 @@
 //
-//  MyPageButton.swift
+//  SettingButton.swift
 //  dogether
 //
-//  Created by seungyooooong on 3/31/25.
+//  Created by seungyooooong on 11/23/25.
 //
 
 import UIKit
 
-final class MyPageButton: BaseButton {
-    private let icon: UIImage?
+final class SettingButton: BaseButton {
     private let title: String
+    private let text: String?
     
-    init(icon: UIImage?, title: String) {
-        self.icon = icon
+    init(title: String, text: String? = nil) {
         self.title = title
+        self.text = text
         
         super.init(frame: .zero)
     }
     required init?(coder: NSCoder) { fatalError() }
     
-    private let iconImageView = UIImageView()
     private let buttonTitleLabel = UILabel()
+    private let textLabel = UILabel()
     private let chevronImageView = UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
     
     override func configureView() {
-        iconImageView.image = icon
-        
         buttonTitleLabel.text = title
-        buttonTitleLabel.textColor = .grey100
-        buttonTitleLabel.font = Fonts.body1R
+        buttonTitleLabel.textColor = .grey0
+        buttonTitleLabel.font = Fonts.body1B
+        
+        textLabel.text = text
+        textLabel.textColor = .grey0
+        textLabel.font = Fonts.body1R
+        textLabel.isHidden = text == nil
         
         chevronImageView.tintColor = .grey200
+        chevronImageView.isHidden = text != nil
     }
     
     override func configureAction() { }
     
     override func configureHierarchy() {
-        [iconImageView, buttonTitleLabel, chevronImageView].forEach { addSubview($0) }
+        [buttonTitleLabel, textLabel, chevronImageView].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -44,15 +48,14 @@ final class MyPageButton: BaseButton {
             $0.height.equalTo(48)
         }
         
-        iconImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalToSuperview().inset(8)
-            $0.width.height.equalTo(24)
-        }
-        
         buttonTitleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.left.equalTo(iconImageView.snp.right).offset(8)
+            $0.left.equalToSuperview().offset(8)
+        }
+        
+        textLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().inset(8)
         }
         
         chevronImageView.snp.makeConstraints {
