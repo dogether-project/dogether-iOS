@@ -128,45 +128,38 @@ final class StatsPage: BasePage {
     }
     
     override func updateView(_ data: (any BaseEntity)?) {
-        guard let datas = data as? StatsPageViewDatas else { return }
+        if let datas = data as? StatsPageViewDatas {
+            switch datas.status {
+            case .empty:
+                emptyView.isHidden = false
+                scrollView.isHidden = true
+                
+            case .hasData:
+                emptyView.isHidden = true
+                scrollView.isHidden = false
+            }
+        }
         
-        switch datas.status {
-        case .empty:
-            showEmptyState()
-            
-        case .hasData:
-            showStats(datas)
+        if let datas = data as? StatsGroupInfoViewDatas {
+            groupInfoView.updateView(datas)
+        }
+        
+        if let datas = data as? DailyAchievementBarViewDatas {
+            dailyAchievementBarView.updateView(datas)
+        }
+        
+        if let datas = data as? MyRankViewDatas {
+            myRankView.updateView(datas)
+        }
+        
+        if let datas = data as? StatsSummaryViewDatas {
+            statsSummaryView.updateView(datas)
         }
     }
+    
 }
 
 extension StatsPage {
-    private func showEmptyState() {
-        emptyView.isHidden = false
-        scrollView.isHidden = true
-    }
-    
-    private func showStats(_ datas: StatsPageViewDatas) {
-        emptyView.isHidden = true
-        scrollView.isHidden = false
-        
-        if let groupInfo = datas.groupInfo {
-            groupInfoView.updateView(groupInfo)
-        }
-        
-        if let achievementBar = datas.achievementBar {
-            dailyAchievementBarView.updateView(achievementBar)
-        }
-        
-        if let myRank = datas.myRank {
-            myRankView.updateView(myRank)
-        }
-        
-        if let summary = datas.summary {
-            statsSummaryView.updateView(summary)
-        }
-    }
-    
     @objc private func tappedGroupSelector() {
         delegate?.presentBottomSheet()
     }

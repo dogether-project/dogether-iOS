@@ -13,6 +13,11 @@ final class StatsViewModel {
     private let groupUseCase: GroupUseCase
     
     private(set) var statsPageViewDatas = BehaviorRelay<StatsPageViewDatas>(value: StatsPageViewDatas())
+    private(set) var groupInfoViewDatas = BehaviorRelay<StatsGroupInfoViewDatas>(value: StatsGroupInfoViewDatas())
+    private(set) var achievementBarViewDatas = BehaviorRelay<DailyAchievementBarViewDatas>(value:DailyAchievementBarViewDatas())
+    private(set) var myRankViewDatas = BehaviorRelay<MyRankViewDatas>(value: MyRankViewDatas())
+    private(set) var summaryViewDatas = BehaviorRelay<StatsSummaryViewDatas>(value: StatsSummaryViewDatas())
+    private(set) var groupSortViewDatas = BehaviorRelay<GroupSortViewDatas>(value: GroupSortViewDatas())
     
     init() {
         let statsRepository = DIManager.shared.getStatsRepository()
@@ -32,10 +37,12 @@ extension StatsViewModel {
     private func fetchMyGroups() async throws {
         let (groupIndex, challengeGroups) = try await groupUseCase.getChallengeGroupInfos()
         
-        statsPageViewDatas.update {
-            $0.groupSortOptions = challengeGroups.map {
-                GroupSortOption(groupId: $0.id, groupName: $0.name)
-            }
+        let options = challengeGroups.map {
+            GroupSortOption(groupId: $0.id, groupName: $0.name)
+        }
+        
+        groupSortViewDatas.update { viewDatas in
+            viewDatas.options = options
         }
         
         guard !challengeGroups.isEmpty else {
@@ -45,10 +52,13 @@ extension StatsViewModel {
         
         if let index = groupIndex {
             let current = challengeGroups[index]
-            let selected = GroupSortOption(groupId: current.id, groupName: current.name)
+            let selected = GroupSortOption(
+                groupId: current.id,
+                groupName: current.name
+            )
             
-            statsPageViewDatas.update {
-                $0.selectedGroup = selected
+            groupSortViewDatas.update {
+                $0.selected = selected
             }
             
             try await fetchStatsForSelectedGroup(selected)
@@ -91,11 +101,15 @@ extension StatsViewModel {
         
         statsPageViewDatas.update {
             $0.status = .hasData
-            $0.groupInfo = groupInfo
-            $0.achievementBar = achievementBar
-            $0.myRank = myRank
-            $0.summary = summary
-            $0.selectedGroup = option
+        }
+        
+        groupInfoViewDatas.accept(groupInfo)
+        achievementBarViewDatas.accept(achievementBar)
+        myRankViewDatas.accept(myRank)
+        summaryViewDatas.accept(summary)
+        
+        groupSortViewDatas.update {
+            $0.selected = option
         }
     }
 }

@@ -30,6 +30,11 @@ final class StatsViewController: BaseViewController {
 
     override func setViewDatas() {
         bind(viewModel.statsPageViewDatas)
+        bind(viewModel.groupInfoViewDatas)
+        bind(viewModel.achievementBarViewDatas)
+        bind(viewModel.myRankViewDatas)
+        bind(viewModel.summaryViewDatas)
+        bind(viewModel.groupSortViewDatas)
     }
 }
 
@@ -97,10 +102,10 @@ extension StatsViewController {
 
 extension StatsViewController {
     private func configureBottomSheet() {
-        let datas = viewModel.statsPageViewDatas.value
+        let sortDatas = viewModel.groupSortViewDatas.value
         
-        let items = datas.groupSortOptions.map { $0.bottomSheetItem }
-        let selected = datas.selectedGroup?.bottomSheetItem
+        let items = sortDatas.options.map { $0.bottomSheetItem }
+        let selected = sortDatas.selected?.bottomSheetItem
         
         guard !items.isEmpty else {
             bottomSheetVC = nil
