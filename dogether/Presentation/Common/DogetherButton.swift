@@ -12,9 +12,6 @@ import RxCocoa
 
 final class DogetherButton: BaseButton {
     private let title: String
-    // ✅ 버튼 탭 이벤트 노출 (RxRelay)
-    let tapRelay = PublishRelay<Void>()
-    private let disposeBag = DisposeBag()
 
     init(_ title: String) {
         self.title = title
@@ -29,11 +26,6 @@ final class DogetherButton: BaseButton {
         setTitle(title, for: .normal)
         titleLabel?.font = Fonts.body1B
         layer.cornerRadius = 8
-        
-        rx.tap
-            .throttle(.milliseconds(500), scheduler: MainScheduler.instance) // 중복클릭 방지
-            .bind(to: tapRelay)
-            .disposed(by: disposeBag)
     }
     
     override func configureAction() {

@@ -149,7 +149,7 @@ final class GroupInfoView: BaseView {
     }
     
     override func configureAction() {
-        groupNameStackView.addTapAction { [weak self] in
+        groupNameStackView.addTapAction { [weak self] _ in
             guard let self else { return }
             _eventRelay.accept(
                 GroupInfoEvent(
@@ -159,7 +159,7 @@ final class GroupInfoView: BaseView {
             )
         }
         
-        joinCodeStackView.addTapAction { [weak self] in
+        joinCodeStackView.addTapAction { [weak self] _ in
             guard let self else { return }
             _eventRelay.accept(
                 GroupInfoEvent(

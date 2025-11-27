@@ -12,10 +12,9 @@ import RxCocoa
 class BaseButton: UIButton {
     /// 외부 노출용 Signal
     var tap: Signal<Void> { tapRelay.asSignal() }
-    
     /// 내부 이벤트 스트림
-//    fileprivate let tapRelay = PublishRelay<Void>()
     let tapRelay = PublishRelay<Void>()
+    
     fileprivate let disposeBag = DisposeBag()
     
     override init(frame: CGRect) {

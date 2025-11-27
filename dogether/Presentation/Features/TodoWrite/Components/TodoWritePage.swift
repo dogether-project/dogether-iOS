@@ -11,15 +11,13 @@ import RxSwift
 import RxCocoa
 
 final class TodoWritePage: BasePage {
-    // ✅ 외부 노출용 Signal
-    var todoChanged: Signal<(String?, Int)> { _todoChanged.asSignal() }
+    var todoChanged: Signal<(String, Int)> { _todoChanged.asSignal() }
     var addTap: Signal<Int> { _addTap.asSignal() }
     var saveTap: Signal<Void> { _saveTap.asSignal() }
     var removeTap: Signal<Int> { _removeTap.asSignal() }
     var keyboardState: Signal<Bool> { _keyboardState.asSignal() }
 
-    // ✅ 내부 Relay
-    private let _todoChanged = PublishRelay<(String?, Int)>()
+    private let _todoChanged = PublishRelay<(String, Int)>()
     private let _addTap = PublishRelay<Int>()
     private let _saveTap = PublishRelay<Void>()
     private let _removeTap = PublishRelay<Int>()
@@ -135,8 +133,8 @@ final class TodoWritePage: BasePage {
         todoTableView.dataSource = self
         todoTableView.register(TodoWriteTableViewCell.self, forCellReuseIdentifier: TodoWriteTableViewCell.identifier)
         
-        // 텍스트 변경 → ViewModel로 전달 + 즉시 UI 갱신
         todoTextField.rx.text
+            .orEmpty
             .skip(1)
             .do(onNext: { [weak self] _ in
                 guard let self else { return }
@@ -146,7 +144,6 @@ final class TodoWritePage: BasePage {
             .bind(to: _todoChanged)
             .disposed(by: disposeBag)
         
-        // 텍스트 길이 제한 (20자)
         todoTextField.rx.controlEvent(.editingChanged)
             .withLatestFrom(todoTextField.rx.text.orEmpty)
             .subscribe(onNext: { [weak self] text in
@@ -168,19 +165,16 @@ final class TodoWritePage: BasePage {
             .bind(to: _saveTap)
             .disposed(by: disposeBag)
 
-        // Return 키 입력 시 (textFieldShouldReturn 대체)
         todoTextField.rx.controlEvent(.editingDidEndOnExit)
             .map { self.todoMaxCount }
             .bind(to: _addTap)
             .disposed(by: disposeBag)
-
-        // 키보드 등장 (textFieldDidBeginEditing 대체)
+        
         NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
             .map { _ in true }
             .bind(to: _keyboardState)
             .disposed(by: disposeBag)
 
-        // 키보드 사라짐 (textFieldDidEndEditing 대체)
         NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
             .map { _ in false }
             .bind(to: _keyboardState)

@@ -36,7 +36,7 @@ final class TodoWriteViewController: BaseViewController {
         todoWritePage.todoChanged
             .emit(onNext: { [weak self] (text, maxLen) in
                 guard let self else { return }
-                viewModel.updateTodo(todo: text, todoMaxLength: maxLen)
+                viewModel.updateTodo(todo: text)
             })
             .disposed(by: disposeBag)
         
