@@ -1,19 +1,19 @@
 //
-//  DailyAchievementBarViewDatas.swift
+//  AchievementViewDatas.swift
 //  dogether
 //
 //  Created by yujaehong on 11/26/25.
 //
 
-struct DailyAchievementBarViewDatas: BaseEntity {
-    let achievements: [DailyAchievementViewData]
+struct AchievementViewDatas: BaseEntity {
+    let achievements: [AchievementEntity]
     
-    init(achievements: [DailyAchievementViewData] = []) {
+    init(achievements: [AchievementEntity] = []) {
         self.achievements = achievements
     }
 }
 
-struct DailyAchievementViewData: Hashable {
+struct AchievementEntity: Hashable {
     let day: Int
     let createdCount: Int
     let certificationRate: Int

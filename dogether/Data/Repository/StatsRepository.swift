@@ -14,7 +14,34 @@ final class StatsRepository: StatsProtocol {
         self.dataSoruce = dataSoruce
     }
     
-    func fetchGroupStats(groupId: Int) async throws -> GroupStatsResponse {
-        try await dataSoruce.fetchGroupStats(groupId: groupId)
+    func fetchGroupStats(groupId: Int) async throws -> (
+        achievementViewDatas: AchievementViewDatas,
+        rankViewDatas: StatsRankViewDatas,
+        summaryViewDatas: StatsSummaryViewDatas
+    ) {
+        let response = try await dataSoruce.fetchGroupStats(groupId: groupId)
+        
+        let achievementViewDatas = AchievementViewDatas(
+            achievements: response.certificationPeriods.map {
+                AchievementEntity(
+                    day: $0.day,
+                    createdCount: $0.createdCount,
+                    certificationRate: $0.certificationRate
+                )
+            }
+        )
+        
+        let rankViewDatas = StatsRankViewDatas(
+            totalMembers: response.ranking.totalMemberCount,
+            myRank: response.ranking.myRank
+        )
+        
+        let summaryViewDatas = StatsSummaryViewDatas(
+            certificatedCount: response.stats.certificatedCount,
+            approvedCount: response.stats.approvedCount,
+            rejectedCount: response.stats.rejectedCount
+        )
+        
+        return (achievementViewDatas, rankViewDatas, summaryViewDatas)
     }
 }

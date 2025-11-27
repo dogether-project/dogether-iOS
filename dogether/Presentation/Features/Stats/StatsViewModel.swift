@@ -15,8 +15,8 @@ final class StatsViewModel {
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var statsPageViewDatas = BehaviorRelay<StatsPageViewDatas>(value: StatsPageViewDatas())
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
-    private(set) var achievementBarViewDatas = BehaviorRelay<DailyAchievementBarViewDatas>(value:DailyAchievementBarViewDatas())
-    private(set) var myRankViewDatas = BehaviorRelay<MyRankViewDatas>(value: MyRankViewDatas())
+    private(set) var achievementViewDatas = BehaviorRelay<AchievementViewDatas>(value:AchievementViewDatas())
+    private(set) var myRankViewDatas = BehaviorRelay<StatsRankViewDatas>(value: StatsRankViewDatas())
     private(set) var summaryViewDatas = BehaviorRelay<StatsSummaryViewDatas>(value: StatsSummaryViewDatas())
     
     // MARK: - Computed
@@ -25,6 +25,7 @@ final class StatsViewModel {
     init() {
         let statsRepository = DIManager.shared.getStatsRepository()
         let groupRepository = DIManager.shared.getGroupRepository()
+        
         self.statsUseCase = StatsUseCase(repository: statsRepository)
         self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
@@ -54,34 +55,13 @@ extension StatsViewModel {
 
 extension StatsViewModel {
     func fetchStatsForSelectedGroup() async throws {
-        let response = try await statsUseCase.fetchGroupStats(groupId: currentGroup.id)
-        
-        let achievementBar = DailyAchievementBarViewDatas(
-            achievements: response.certificationPeriods.map {
-                DailyAchievementViewData(
-                    day: $0.day,
-                    createdCount: $0.createdCount,
-                    certificationRate: $0.certificationRate
-                )
-            }
-        )
-        
-        let myRank = MyRankViewDatas(
-            totalMembers: response.ranking.totalMemberCount,
-            myRank: response.ranking.myRank
-        )
-        
-        let summary = StatsSummaryViewDatas(
-            certificatedCount: response.stats.certificatedCount,
-            approvedCount: response.stats.approvedCount,
-            rejectedCount: response.stats.rejectedCount
-        )
+        let (achievement, myRank, summary) = try await statsUseCase.fetchGroupStats(groupId: currentGroup.id)
         
         statsPageViewDatas.update {
             $0.status = .hasData
         }
         
-        achievementBarViewDatas.accept(achievementBar)
+        achievementViewDatas.accept(achievement)
         myRankViewDatas.accept(myRank)
         summaryViewDatas.accept(summary)
     }

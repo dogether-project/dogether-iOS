@@ -1,11 +1,11 @@
 //
-//  MyRankViewDatas.swift
+//  StatsRankViewDatas.swift
 //  dogether
 //
 //  Created by yujaehong on 11/26/25.
 //
 
-struct MyRankViewDatas: BaseEntity {
+struct StatsRankViewDatas: BaseEntity {
     let totalMembers: Int
     let myRank: Int
     

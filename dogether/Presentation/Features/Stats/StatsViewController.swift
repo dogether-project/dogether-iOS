@@ -31,7 +31,7 @@ final class StatsViewController: BaseViewController {
         bind(viewModel.bottomSheetViewDatas)
         bind(viewModel.statsPageViewDatas)
         bind(viewModel.groupViewDatas)
-        bind(viewModel.achievementBarViewDatas)
+        bind(viewModel.achievementViewDatas)
         bind(viewModel.myRankViewDatas)
         bind(viewModel.summaryViewDatas)
     }

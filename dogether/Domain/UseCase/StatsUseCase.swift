@@ -14,7 +14,11 @@ final class StatsUseCase {
         self.repository = repository
     }
     
-    func fetchGroupStats(groupId: Int) async throws -> GroupStatsResponse {
+    func fetchGroupStats(groupId: Int) async throws -> (
+        achievementViewDatas: AchievementViewDatas,
+        rankViewDatas: StatsRankViewDatas,
+        summaryViewDatas: StatsSummaryViewDatas
+    ) {
         try await repository.fetchGroupStats(groupId: groupId)
     }
 }

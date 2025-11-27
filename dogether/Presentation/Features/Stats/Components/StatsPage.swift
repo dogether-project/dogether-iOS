@@ -24,8 +24,8 @@ final class StatsPage: BasePage {
     private let scrollContentView = UIView()
     
     private let groupInfoView = GroupInfoView(type: .stats)
-    private let dailyAchievementBarView = DailyAchievementBarView()
-    private let myRankView = MyRankView()
+    private let achievementView = AchievementView()
+    private let statsRankView = StatsRankView()
     private let statsSummaryView = StatsSummaryView()
     private let dosikImageView = UIImageView()
     private let dosikArmView = UIImageView()
@@ -47,9 +47,6 @@ final class StatsPage: BasePage {
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
         
-//        let tap = UITapGestureRecognizer(target: self, action: #selector(tappedGroupSelector))
-//        groupInfoView.groupSelectorStackView.addGestureRecognizer(tap)
-        
         emptyView.createButtonTapHandler = { [weak self] in
             guard let self else { return }
             coordinatorDelegate?.coordinator?.pushViewController(GroupCreateViewController())
@@ -64,7 +61,7 @@ final class StatsPage: BasePage {
         scrollView.addSubview(scrollContentView)
         
         [ groupInfoView, dosikImageView, dosikArmView,
-          dailyAchievementBarView, myRankView, statsSummaryView
+          achievementView, statsRankView, statsSummaryView
         ].forEach { scrollContentView.addSubview($0) }
         
         addSubview(bottomSheetView)
@@ -111,24 +108,24 @@ final class StatsPage: BasePage {
             $0.height.equalTo(28.4)
         }
         
-        dailyAchievementBarView.snp.makeConstraints {
+        achievementView.snp.makeConstraints {
             $0.top.equalTo(groupInfoView.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(343)
         }
         
-        myRankView.snp.makeConstraints {
-            $0.top.equalTo(dailyAchievementBarView.snp.bottom).offset(16)
+        statsRankView.snp.makeConstraints {
+            $0.top.equalTo(achievementView.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(16)
             $0.height.equalTo(180)
             $0.bottom.equalToSuperview().inset(22)
         }
         
         statsSummaryView.snp.makeConstraints {
-            $0.top.equalTo(dailyAchievementBarView.snp.bottom).offset(16)
-            $0.leading.equalTo(myRankView.snp.trailing).offset(18)
+            $0.top.equalTo(achievementView.snp.bottom).offset(16)
+            $0.leading.equalTo(statsRankView.snp.trailing).offset(18)
             $0.trailing.equalToSuperview().inset(16)
-            $0.width.equalTo(myRankView.snp.width)
+            $0.width.equalTo(statsRankView.snp.width)
             $0.height.equalTo(180)
             $0.bottom.equalToSuperview().inset(22)
         }
@@ -161,12 +158,12 @@ final class StatsPage: BasePage {
             groupInfoView.updateView(datas.groups[datas.index])
         }
         
-        if let datas = data as? DailyAchievementBarViewDatas {
-            dailyAchievementBarView.updateView(datas)
+        if let datas = data as? AchievementViewDatas {
+            achievementView.updateView(datas)
         }
         
-        if let datas = data as? MyRankViewDatas {
-            myRankView.updateView(datas)
+        if let datas = data as? StatsRankViewDatas {
+            statsRankView.updateView(datas)
         }
         
         if let datas = data as? StatsSummaryViewDatas {

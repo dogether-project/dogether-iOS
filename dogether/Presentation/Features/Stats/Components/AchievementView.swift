@@ -1,5 +1,5 @@
 //
-//  DailyAchievementBarView.swift
+//  AchievementView.swift
 //  dogether
 //
 //  Created by yujaehong on 4/30/25.
@@ -8,10 +8,10 @@
 import UIKit
 import SnapKit
 
-final class DailyAchievementBarView: BaseView {
+final class AchievementView: BaseView {
     private let barMaxHeight: CGFloat = 187
     
-    private var dailyAchievements: [DailyAchievementViewData] = []
+    private var achievements: [AchievementEntity] = []
     
     private let titleIconImageView: UIImageView = {
         let imageView = UIImageView()
@@ -123,19 +123,19 @@ final class DailyAchievementBarView: BaseView {
     }
     
     override func updateView(_ data: (any BaseEntity)?) {
-        guard let datas = data as? DailyAchievementBarViewDatas else { return }
+        guard let datas = data as? AchievementViewDatas else { return }
 
-        dailyAchievements = datas.achievements.suffix(4)
+        achievements = datas.achievements.suffix(4)
         configureBars()
     }
 }
 
-extension DailyAchievementBarView {
+extension AchievementView {
     private func configureBars() {
         barStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         dayLabelStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        let data = dailyAchievements.suffix(4)
+        let data = achievements.suffix(4)
         
         for (index, achievement) in data.enumerated() {
             let barContainer = UIView()

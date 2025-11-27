@@ -1,5 +1,5 @@
 //
-//  MyRankView.swift
+//  StatsRankView.swift
 //  dogether
 //
 //  Created by yujaehong on 4/30/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class MyRankView: BaseView {
+final class StatsRankView: BaseView {
     private let iconImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .chart.withRenderingMode(.alwaysTemplate)
@@ -94,7 +94,7 @@ final class MyRankView: BaseView {
     }
     
     override func updateView(_ data: (any BaseEntity)?) {
-        guard let datas = data as? MyRankViewDatas else { return }
+        guard let datas = data as? StatsRankViewDatas else { return }
         rankBaseLabel.text = "\(datas.totalMembers)명 중"
         rankLabel.text = "\(datas.myRank)등"
     }
