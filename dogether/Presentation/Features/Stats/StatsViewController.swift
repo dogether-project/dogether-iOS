@@ -100,6 +100,7 @@ extension StatsViewController {
 protocol StatsDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectGroupAction(index: Int)
+    func addGroupAction()
 }
 
 extension StatsViewController: StatsDelegate {
@@ -112,5 +113,9 @@ extension StatsViewController: StatsDelegate {
         viewModel.saveLastSelectedGroupIndex(index: index)
         
         reloadStats(index: index)
+    }
+    
+    func addGroupAction() {
+        coordinator?.pushViewController(GroupCreateViewController())
     }
 }

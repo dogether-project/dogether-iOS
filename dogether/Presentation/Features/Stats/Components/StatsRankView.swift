@@ -9,64 +9,44 @@ import UIKit
 import SnapKit
 
 final class StatsRankView: BaseView {
-    private let iconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .chart.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .grey0
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "내 순위"
-        label.font = Fonts.body1S
-        label.textColor = .grey0
-        return label
-    }()
-    
-    private lazy var titleStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [iconImageView, titleLabel])
-        stack.axis = .horizontal
-        stack.spacing = 4
-        stack.alignment = .center
-        return stack
-    }()
-    
-    private let rankBaseLabel: UILabel = {
-        let label = UILabel()
-        label.font = Fonts.body1S
-        label.textColor = .grey200
-        label.textAlignment = .center
-        return label
-    }()
-    
-    private let rankLabel: UILabel = {
-        let label = UILabel()
-        label.font = Fonts.emphasis2B
-        label.textColor = .blue300
-        label.textAlignment = .center
-        return label
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) { fatalError() }
+    private let iconImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let titleStackView = UIStackView()
+    private let rankBaseLabel = UILabel()
+    private let rankLabel = UILabel()
     
     override func configureView() {
         backgroundColor = .grey800
         layer.cornerRadius = 12
         layer.masksToBounds = true
+        
+        iconImageView.image = .chart.withRenderingMode(.alwaysTemplate)
+        iconImageView.tintColor = .grey0
+        iconImageView.contentMode = .scaleAspectFit
+        
+        titleLabel.text = "내 순위"
+        titleLabel.font = Fonts.body1S
+        titleLabel.textColor = .grey0
+        
+        titleStackView.axis = .horizontal
+        titleStackView.spacing = 8
+        titleStackView.alignment = .center
+        
+        rankBaseLabel.font = Fonts.body1S
+        rankBaseLabel.textColor = .grey200
+        rankBaseLabel.textAlignment = .center
+        
+        rankLabel.font = Fonts.emphasis2B
+        rankLabel.textColor = .blue300
+        rankLabel.textAlignment = .center
     }
     
     override func configureAction() { }
     
     override func configureHierarchy() {
-        addSubview(titleStackView)
-        addSubview(rankBaseLabel)
-        addSubview(rankLabel)
+        [iconImageView, titleLabel].forEach { titleStackView.addArrangedSubview($0) }
+        
+        [titleStackView, rankBaseLabel, rankLabel].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -93,6 +73,7 @@ final class StatsRankView: BaseView {
         }
     }
     
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? StatsRankViewDatas else { return }
         rankBaseLabel.text = "\(datas.totalMembers)명 중"

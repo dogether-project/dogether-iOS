@@ -9,87 +9,59 @@ import UIKit
 import SnapKit
 
 final class AchievementView: BaseView {
+    private let titleIconImageView = UIImageView(image: .today2)
+    private let titleLabel = UILabel()
+    private let titleStackView = UIStackView()
+    private let yAxisStackView = UIStackView()
+    private let barStackView = UIStackView()
+    private let dayLabelStackView = UIStackView()
+    
     private let barMaxHeight: CGFloat = 187
-    
-    private var achievements: [AchievementEntity] = []
-    
-    private let titleIconImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .today2
-        imageView.tintColor = .grey0
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "인증한 기간"
-        label.font = Fonts.body1S
-        label.textColor = .grey0
-        return label
-    }()
-    
-    private lazy var titleStackView: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [titleIconImageView, titleLabel])
-        stack.axis = .horizontal
-        stack.spacing = 8
-        stack.alignment = .center
-        return stack
-    }()
-    
-    private let yAxisStackView: UIStackView = {
-        let values = [10, 8, 6, 4, 2, 0].map {
-            let label = UILabel()
-            label.text = "\($0)"
-            label.font = Fonts.body2S
-            label.textColor = .grey400
-            return label
-        }
-        let stack = UIStackView(arrangedSubviews: values)
-        stack.axis = .vertical
-        stack.spacing = 15
-        stack.alignment = .leading
-        stack.distribution = .fillEqually
-        return stack
-    }()
-    
-    private let barStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 20
-        stack.alignment = .bottom
-        return stack
-    }()
-    
-    private let dayLabelStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 20
-        stack.alignment = .top
-        return stack
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
     
     override func configureView() {
         backgroundColor = .grey800
         layer.cornerRadius = 12
         clipsToBounds = true
+        
+        titleIconImageView.tintColor = .grey0
+        titleIconImageView.contentMode = .scaleAspectFit
+        
+        titleLabel.text = "인증한 기간"
+        titleLabel.font = Fonts.body1S
+        titleLabel.textColor = .grey0
+        
+        titleStackView.axis = .horizontal
+        titleStackView.spacing = 8
+        titleStackView.alignment = .center
+        
+        yAxisStackView.axis = .vertical
+        yAxisStackView.spacing = 15
+        yAxisStackView.alignment = .leading
+        yAxisStackView.distribution = .fillEqually
+        
+        barStackView.axis = .horizontal
+        barStackView.spacing = 20
+        barStackView.alignment = .bottom
+        
+        dayLabelStackView.axis = .horizontal
+        dayLabelStackView.spacing = 20
+        dayLabelStackView.alignment = .top
     }
     
-    override func configureAction() {}
+    override func configureAction() { }
     
     override func configureHierarchy() {
-        addSubview(titleStackView)
-        addSubview(yAxisStackView)
-        addSubview(barStackView)
-        addSubview(dayLabelStackView)
+        [titleIconImageView, titleLabel].forEach { titleStackView.addArrangedSubview($0) }
+        
+        [10, 8, 6, 4, 2, 0].map {
+            let label = UILabel()
+            label.text = "\($0)"
+            label.font = Fonts.body2S
+            label.textColor = .grey400
+            return label
+        }.forEach { yAxisStackView.addArrangedSubview($0) }
+        
+        [titleStackView, yAxisStackView, barStackView, dayLabelStackView].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -122,20 +94,14 @@ final class AchievementView: BaseView {
         }
     }
     
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? AchievementViewDatas else { return }
-
-        achievements = datas.achievements.suffix(4)
-        configureBars()
-    }
-}
-
-extension AchievementView {
-    private func configureBars() {
+        // FIXME: achievementBarView.updateView & xAxisView.updateView 방향으로 추후 수정
         barStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         dayLabelStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        let data = achievements.suffix(4)
+        let data = datas.achievements.suffix(4)
         
         for (index, achievement) in data.enumerated() {
             let barContainer = UIView()
@@ -189,7 +155,9 @@ extension AchievementView {
             dayLabelStackView.addArrangedSubview(dayLabel)
         }
     }
-    
+}
+
+extension AchievementView {
     private func addSpeechBubble(to container: UIView, ratio: CGFloat) {
         let bubbleContainer = UIView()
         bubbleContainer.backgroundColor = .blue300

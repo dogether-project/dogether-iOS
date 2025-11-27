@@ -13,6 +13,7 @@ final class StatsPage: BasePage {
             bottomSheetView.statsDelegate = delegate
             
             groupInfoView.statsDelegate = delegate
+            emptyView.statsDelegate = delegate
         }
     }
     
@@ -27,30 +28,20 @@ final class StatsPage: BasePage {
     private let achievementView = AchievementView()
     private let statsRankView = StatsRankView()
     private let statsSummaryView = StatsSummaryView()
-    private let dosikImageView = UIImageView()
-    private let dosikArmView = UIImageView()
+    private let dosikImageView = UIImageView(image: .glassDosik)
+    private let dosikArmView = UIImageView(image: .dosikArm)
     
     private let bottomSheetView = BottomSheetView(hasAddButton: false)
     
 //    private var errorView: ErrorView?
     
     override func configureView() {
-        backgroundColor = .clear
-        
-        dosikImageView.image = .glassDosik
         dosikImageView.contentMode = .scaleAspectFit
-        
-        dosikArmView.image = .dosikArm
         dosikArmView.contentMode = .scaleAspectFit
     }
     
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
-        
-        emptyView.createButtonTapHandler = { [weak self] in
-            guard let self else { return }
-            coordinatorDelegate?.coordinator?.pushViewController(GroupCreateViewController())
-        }
     }
     
     override func configureHierarchy() {
