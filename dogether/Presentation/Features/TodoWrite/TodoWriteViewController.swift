@@ -15,8 +15,6 @@ final class TodoWriteViewController: BaseViewController {
     private let viewModel = TodoWriteViewModel()
     
     override func viewDidLoad() {
-        todoWritePage.delegate = self
-        
         pages = [todoWritePage]
         
         super.viewDidLoad()
@@ -33,39 +31,49 @@ final class TodoWriteViewController: BaseViewController {
         
         bind(viewModel.todoWriteViewDatas)
     }
-}
-
-// MARK: - delegate
-protocol TodoWriteDelegate {
-    func updateIsShowKeyboardAction(isShowKeyboard: Bool)
-    func updateTodoAction(todo: String)
-    func addTodoAction(todoMaxCount: Int)
-    func removeTodoAction(index: Int)
-    func saveTodoAction()
-}
-
-extension TodoWriteViewController: TodoWriteDelegate {
-    func updateIsShowKeyboardAction(isShowKeyboard: Bool) {
-        viewModel.updateIsShowKeyboard(isShowKeyboard: isShowKeyboard)
-    }
     
-    func updateTodoAction(todo: String) {
-        viewModel.updateTodo(todo: todo)
-    }
-    
-    func addTodoAction(todoMaxCount: Int) {
-        viewModel.addTodo(todoMaxCount: todoMaxCount)
-    }
-    
-    func removeTodoAction(index: Int) {
-        viewModel.removeTodo(index: index)
-    }
-    
-    func saveTodoAction() {
-        coordinator?.showPopup(self, type: .alert, alertType: .saveTodo) { [weak self] _ in
-            guard let self else { return }
-            trySaveTodo()
-        }
+    override func bindAction() {
+        todoWritePage.todoChanged
+            .emit(onNext: { [weak self] (text, maxLen) in
+                guard let self else { return }
+                viewModel.updateTodo(todo: text)
+            })
+            .disposed(by: disposeBag)
+        
+        todoWritePage.addTap
+            .emit(onNext: { [weak self] maxCount in
+                guard let self else { return }
+                viewModel.addTodo(todoMaxCount: maxCount)
+            })
+            .disposed(by: disposeBag)
+        
+        todoWritePage.removeTap
+            .emit(onNext: { [weak self] index in
+                guard let self else { return }
+                viewModel.removeTodo(index: index)
+            })
+            .disposed(by: disposeBag)
+        
+        todoWritePage.saveTap
+            .emit(onNext: { [weak self] in
+                guard let self else { return }
+                coordinator?.showPopup(
+                    self,
+                    type: .alert,
+                    alertType: .saveTodo
+                ) { [weak self] _ in
+                    self?.trySaveTodo()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        
+        todoWritePage.keyboardState
+            .emit(onNext: { [weak self] isShow in
+                guard let self else { return }
+                viewModel.updateIsShowKeyboard(isShowKeyboard: isShow)
+            })
+            .disposed(by: disposeBag)
     }
 }
 

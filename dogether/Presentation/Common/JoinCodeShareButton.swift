@@ -28,7 +28,9 @@ final class JoinCodeShareButton: BaseButton {
         stackView.isUserInteractionEnabled = false
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        super.configureAction()
+    }
     
     override func configureHierarchy() {
         addSubview(stackView)

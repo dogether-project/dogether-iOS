@@ -15,7 +15,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     var datas: (any BaseEntity)?
     var pages: Array<BasePage>?
     
-    private let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +31,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
         configurePages(pages)
         
         setViewDatas()
+        bindAction()
     }
     
     /// 뷰의 시각적인 속성을 설정하는 역할을 합니다
@@ -62,6 +63,9 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     
     /// View를 구성하는 필수 데이터를 세팅하고 바인딩하는 역할을 합니다
     func setViewDatas() { }
+    
+    /// 버튼이나 제스처, Rx 이벤트 바인딩
+    func bindAction() { }
     
     /// ViewDatas의 변화에 Page가 update 되도록 바인딩하는 역할을 합니다
     func bind<Entity: BaseEntity>(_ relay: BehaviorRelay<Entity>) {

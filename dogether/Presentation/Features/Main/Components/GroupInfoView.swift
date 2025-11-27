@@ -7,20 +7,40 @@
 
 import UIKit
 
-final class GroupInfoView: BaseView {
-    var delegate: MainDelegate? {
-        didSet {
-            groupNameStackView.addTapAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
-            }
-            
-            joinCodeStackView.addTapAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.inviteAction()
-            }
-        }
+import RxSwift
+import RxRelay
+import RxCocoa
+
+struct GroupInfoEvent {
+    enum Action {
+        case openGroupSelector
+        case invite
     }
+
+    let action: Action
+    let group: ChallengeGroupInfo
+}
+
+final class GroupInfoView: BaseView {
+//    var delegate: MainDelegate? {
+//        didSet {
+//            groupNameStackView.addTapAction { [weak self] in
+//                guard let self else { return }
+//                delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
+//            }
+//            
+//            joinCodeStackView.addTapAction { [weak self] in
+//                guard let self else { return }
+//                delegate?.inviteAction()
+//            }
+//        }
+//    }
+    
+    // ✅ 외부 노출용 이벤트 스트림
+    var event: Signal<GroupInfoEvent> { _eventRelay.asSignal() }
+    
+    private let _eventRelay = PublishRelay<GroupInfoEvent>()
+    private let disposeBag = DisposeBag()
     
     private let hasCopyImage: Bool
     private(set) var challengeGroupInfo: ChallengeGroupInfo
@@ -128,7 +148,27 @@ final class GroupInfoView: BaseView {
         durationProgressView.transform = CGAffineTransform(translationX: 0, y: 1)   // MARK: 디자인 디테일 반영
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        groupNameStackView.addTapAction { [weak self] _ in
+            guard let self else { return }
+            _eventRelay.accept(
+                GroupInfoEvent(
+                    action: .openGroupSelector,
+                    group: challengeGroupInfo
+                )
+            )
+        }
+        
+        joinCodeStackView.addTapAction { [weak self] _ in
+            guard let self else { return }
+            _eventRelay.accept(
+                GroupInfoEvent(
+                    action: .invite,
+                    group: challengeGroupInfo
+                )
+            )
+        }
+    }
     
     override func configureHierarchy() {
         [nameLabel, changeGroupImageView, nameSpacerView].forEach { groupNameStackView.addArrangedSubview($0) }

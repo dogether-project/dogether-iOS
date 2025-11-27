@@ -7,26 +7,11 @@
 
 import UIKit
 
+import RxCocoa
+
 final class CompletePage: BasePage {
-    weak var delegate: CompleteDelegate? {
-        didSet {
-            completeButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    delegate?.goHomeAction()
-                },
-                for: .touchUpInside
-            )
-            
-            joinCodeShareButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    delegate?.shareJoinCodeAction()
-                },
-                for: .touchUpInside
-            )
-        }
-    }
+    var homeTap: Signal<Void> { completeButton.tap }
+    var shareTap: Signal<Void> { joinCodeShareButton.tap }
 
     private let firecrackerImageView = UIImageView(image: .firecracker)
     private let titleLabel = UILabel()

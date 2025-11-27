@@ -7,9 +7,12 @@
 
 import UIKit
 
+import RxSwift
+import RxCocoa
+
 final class DogetherButton: BaseButton {
     private let title: String
-    
+
     init(_ title: String) {
         self.title = title
         
@@ -25,7 +28,9 @@ final class DogetherButton: BaseButton {
         layer.cornerRadius = 8
     }
     
-    override func configureAction() { }
+    override func configureAction() {
+        super.configureAction()
+    }
     
     override func configureHierarchy() { }
     
