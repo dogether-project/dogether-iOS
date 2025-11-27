@@ -12,12 +12,15 @@ final class StatsViewModel {
     private let statsUseCase: StatsUseCase
     private let groupUseCase: GroupUseCase
     
+    private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var statsPageViewDatas = BehaviorRelay<StatsPageViewDatas>(value: StatsPageViewDatas())
-    private(set) var groupInfoViewDatas = BehaviorRelay<StatsGroupInfoViewDatas>(value: StatsGroupInfoViewDatas())
+    private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
     private(set) var achievementBarViewDatas = BehaviorRelay<DailyAchievementBarViewDatas>(value:DailyAchievementBarViewDatas())
     private(set) var myRankViewDatas = BehaviorRelay<MyRankViewDatas>(value: MyRankViewDatas())
     private(set) var summaryViewDatas = BehaviorRelay<StatsSummaryViewDatas>(value: StatsSummaryViewDatas())
-    private(set) var groupSortViewDatas = BehaviorRelay<GroupSortViewDatas>(value: GroupSortViewDatas())
+    
+    // MARK: - Computed
+    var currentGroup: GroupEntity { groupViewDatas.value.groups[groupViewDatas.value.index] }
     
     init() {
         let statsRepository = DIManager.shared.getStatsRepository()
@@ -35,48 +38,23 @@ extension StatsViewModel {
 
 extension StatsViewModel {
     private func fetchMyGroups() async throws {
-        let (groupIndex, challengeGroups) = try await groupUseCase.getChallengeGroupInfos()
+        let (groupIndex, groups) = try await groupUseCase.getGroups()
         
-        let options = challengeGroups.map {
-            GroupSortOption(groupId: $0.id, groupName: $0.name)
-        }
+        guard let groupIndex else { return }
+        groupViewDatas.accept(GroupViewDatas(index: groupIndex, groups: groups))
         
-        groupSortViewDatas.update { viewDatas in
-            viewDatas.options = options
-        }
-        
-        guard !challengeGroups.isEmpty else {
+        guard !groups.isEmpty else {
             statsPageViewDatas.update { $0.status = .empty }
             return
         }
         
-        if let index = groupIndex {
-            let current = challengeGroups[index]
-            let selected = GroupSortOption(
-                groupId: current.id,
-                groupName: current.name
-            )
-            
-            groupSortViewDatas.update {
-                $0.selected = selected
-            }
-            
-            try await fetchStatsForSelectedGroup(selected)
-        }
+        try await fetchStatsForSelectedGroup()
     }
 }
 
 extension StatsViewModel {
-    func fetchStatsForSelectedGroup(_ option: GroupSortOption) async throws {
-        let response = try await statsUseCase.fetchGroupStats(groupId: option.groupId)
-        
-        let groupInfo = StatsGroupInfoViewDatas(
-            groupName: response.groupInfo.name,
-            currentMemberCount: response.groupInfo.currentMemberCount,
-            maximumMemberCount: response.groupInfo.maximumMemberCount,
-            joinCode: response.groupInfo.joinCode,
-            endDate: response.groupInfo.endAt
-        )
+    func fetchStatsForSelectedGroup() async throws {
+        let response = try await statsUseCase.fetchGroupStats(groupId: currentGroup.id)
         
         let achievementBar = DailyAchievementBarViewDatas(
             achievements: response.certificationPeriods.map {
@@ -103,13 +81,16 @@ extension StatsViewModel {
             $0.status = .hasData
         }
         
-        groupInfoViewDatas.accept(groupInfo)
         achievementBarViewDatas.accept(achievementBar)
         myRankViewDatas.accept(myRank)
         summaryViewDatas.accept(summary)
-        
-        groupSortViewDatas.update {
-            $0.selected = option
+    }
+}
+
+extension StatsViewModel {
+    func saveLastSelectedGroupIndex(index: Int) {
+        Task {
+            try await groupUseCase.saveLastSelectedGroup(groupId: groupViewDatas.value.groups[index].id)
         }
     }
 }

@@ -18,7 +18,7 @@ protocol GroupManagementViewModelDelegate: AnyObject {
 }
 
 final class GroupManagementViewModel {
-    private(set) var groups: [ChallengeGroupInfo] = []
+    private(set) var groups: [GroupEntity] = []
     
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
@@ -40,7 +40,7 @@ extension GroupManagementViewModel {
         Task { @MainActor [weak self] in
             guard let self else { return }
             do {
-                let (_, groups) = try await groupUseCase.getChallengeGroupInfos()
+                let (_, groups) = try await groupUseCase.getGroups()
                 self.groups = groups
                 viewStatus = groups.isEmpty ? .empty : .hasData
                 delegate?.didFetchSucceed()

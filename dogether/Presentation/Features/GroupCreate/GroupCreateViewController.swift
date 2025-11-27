@@ -68,7 +68,7 @@ extension GroupCreateViewController: GroupCreateDelegate {
                     let completeViewDatas = CompleteViewDatas(
                         groupType: .create,
                         joinCode: joinCode,
-                        groupInfo: ChallengeGroupInfo(
+                        groupEntity: GroupEntity(
                             name: viewModel.groupCreateViewDatas.value.groupName
                         )
                     )

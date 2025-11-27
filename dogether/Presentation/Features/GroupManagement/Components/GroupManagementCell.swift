@@ -174,7 +174,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
 }
 
 extension GroupManagementCell {
-    func configure(with group: ChallengeGroupInfo) {
+    func configure(with group: GroupEntity) {
         titleLabel.text = group.name
         memberValueLabel.text = "\(group.currentMember)/\(group.maximumMember)"
         dateValueLabel.text = group.endDate

@@ -8,21 +8,31 @@
 import UIKit
 
 final class StatsPage: BasePage {
-    weak var delegate: BottomSheetDelegate?
+    var delegate: StatsDelegate? {
+        didSet {
+            bottomSheetView.statsDelegate = delegate
+            
+            groupInfoView.statsDelegate = delegate
+        }
+    }
     
-    let navigationHeader = NavigationHeader(title: "통계")
+    private let navigationHeader = NavigationHeader(title: "통계")
     
     private let emptyView = GroupEmptyView()
     
     private let scrollView = UIScrollView()
     private let scrollContentView = UIView()
     
-    private let groupInfoView = StatsGroupInfoView()
+    private let groupInfoView = GroupInfoView(type: .stats)
     private let dailyAchievementBarView = DailyAchievementBarView()
     private let myRankView = MyRankView()
     private let statsSummaryView = StatsSummaryView()
     private let dosikImageView = UIImageView()
     private let dosikArmView = UIImageView()
+    
+    private let bottomSheetView = BottomSheetView(hasAddButton: false)
+    
+//    private var errorView: ErrorView?
     
     override func configureView() {
         backgroundColor = .clear
@@ -37,8 +47,8 @@ final class StatsPage: BasePage {
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(tappedGroupSelector))
-        groupInfoView.groupSelectorStackView.addGestureRecognizer(tap)
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(tappedGroupSelector))
+//        groupInfoView.groupSelectorStackView.addGestureRecognizer(tap)
         
         emptyView.createButtonTapHandler = { [weak self] in
             guard let self else { return }
@@ -53,14 +63,11 @@ final class StatsPage: BasePage {
         addSubview(scrollView)
         scrollView.addSubview(scrollContentView)
         
-        [
-            groupInfoView,
-            dosikImageView,
-            dosikArmView,
-            dailyAchievementBarView,
-            myRankView,
-            statsSummaryView
+        [ groupInfoView, dosikImageView, dosikArmView,
+          dailyAchievementBarView, myRankView, statsSummaryView
         ].forEach { scrollContentView.addSubview($0) }
+        
+        addSubview(bottomSheetView)
     }
     
     override func configureConstraints() {
@@ -105,7 +112,7 @@ final class StatsPage: BasePage {
         }
         
         dailyAchievementBarView.snp.makeConstraints {
-            $0.top.equalTo(groupInfoView.snp.bottom).offset(12)
+            $0.top.equalTo(groupInfoView.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(343)
         }
@@ -125,9 +132,18 @@ final class StatsPage: BasePage {
             $0.height.equalTo(180)
             $0.bottom.equalToSuperview().inset(22)
         }
+        
+        bottomSheetView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
+    // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
+        if let datas = data as? BottomSheetViewDatas {
+            bottomSheetView.updateView(datas)
+        }
+        
         if let datas = data as? StatsPageViewDatas {
             switch datas.status {
             case .empty:
@@ -140,8 +156,9 @@ final class StatsPage: BasePage {
             }
         }
         
-        if let datas = data as? StatsGroupInfoViewDatas {
-            groupInfoView.updateView(datas)
+        if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
+            bottomSheetView.updateView(datas)
+            groupInfoView.updateView(datas.groups[datas.index])
         }
         
         if let datas = data as? DailyAchievementBarViewDatas {
@@ -155,12 +172,5 @@ final class StatsPage: BasePage {
         if let datas = data as? StatsSummaryViewDatas {
             statsSummaryView.updateView(datas)
         }
-    }
-    
-}
-
-extension StatsPage {
-    @objc private func tappedGroupSelector() {
-        delegate?.presentBottomSheet()
     }
 }

@@ -24,7 +24,7 @@ final class GroupJoinViewModel {
 }
 
 extension GroupJoinViewModel {
-    func joinGroup() async throws -> ChallengeGroupInfo {
+    func joinGroup() async throws -> GroupEntity {
         try await groupUseCase.joinGroup(joinCode: groupJoinViewDatas.value.code)
     }
 }

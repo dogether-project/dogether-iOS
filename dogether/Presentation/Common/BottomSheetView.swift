@@ -9,14 +9,31 @@ import UIKit
 import SnapKit
 
 final class BottomSheetView: BaseView {
-    var delegate: MainDelegate? {
+    var mainDelegate: MainDelegate? {
         didSet {
             backgroundView.addTapAction { [weak self] _ in
                 guard let self else { return }
-                delegate?.updateBottomSheetVisibleAction(isShowSheet: false)
+                mainDelegate?.updateBottomSheetVisibleAction(isShowSheet: false)
             }
         }
     }
+    
+    var statsDelegate: StatsDelegate? {
+        didSet {
+            backgroundView.addTapAction { [weak self] _ in
+                guard let self else { return }
+                statsDelegate?.updateBottomSheetVisibleAction(isShowSheet: false)
+            }
+        }
+    }
+    private let hasAddButton: Bool
+    
+    init(hasAddButton: Bool = true) {
+        self.hasAddButton = hasAddButton
+        
+        super.init(frame: .zero)
+    }
+    required init?(coder: NSCoder) { fatalError() }
     
     private(set) var backgroundView = UIView()
     private(set) var sheetView = UIView()
@@ -70,13 +87,14 @@ final class BottomSheetView: BaseView {
         }
     }
     
+    // MARK: - updateView
     override func updateView(_ data: any BaseEntity) {
         if let data = data as? GroupViewDatas {
             sheetTitleLabel.text = "그룹 선택"
             itemListStackView.arrangedSubviews.forEach { itemListStackView.removeArrangedSubview($0) }
             
             sheetHeight = 24 + 28 + 20
-            + 49 * CGFloat(data.groups.count < 5 ? data.groups.count + 1 : data.groups.count)
+            + 49 * CGFloat(data.groups.count < 5 && hasAddButton ? data.groups.count + 1 : data.groups.count)
             + UIApplication.safeAreaOffset.bottom
             
             data.groups.enumerated().forEach { index, group in
@@ -85,7 +103,7 @@ final class BottomSheetView: BaseView {
                 )
             }
             
-            if data.groups.count < 5 {
+            if data.groups.count < 5 && hasAddButton {
                 itemListStackView.addArrangedSubview(addGroupButton())
             }
         }
@@ -112,8 +130,14 @@ extension BottomSheetView {
         button.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                delegate?.updateBottomSheetVisibleAction(isShowSheet: false)
-                delegate?.selectGroupAction(index: index)
+                if let delegate = mainDelegate {
+                    delegate.updateBottomSheetVisibleAction(isShowSheet: false)
+                    delegate.selectGroupAction(index: index)
+                }
+                if let delegate = statsDelegate {
+                    delegate.updateBottomSheetVisibleAction(isShowSheet: false)
+                    delegate.selectGroupAction(index: index)
+                }
             }, for: .touchUpInside
         )
         
@@ -152,8 +176,10 @@ extension BottomSheetView {
         button.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
-                delegate?.updateBottomSheetVisibleAction(isShowSheet: false)
-                delegate?.addGroupAction()
+                if let delegate = mainDelegate {
+                    delegate.updateBottomSheetVisibleAction(isShowSheet: false)
+                    delegate.addGroupAction()
+                }
             }, for: .touchUpInside
         )
         
