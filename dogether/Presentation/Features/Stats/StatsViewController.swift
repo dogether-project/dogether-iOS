@@ -29,7 +29,6 @@ final class StatsViewController: BaseViewController {
 
     override func setViewDatas() {
         bind(viewModel.bottomSheetViewDatas)
-        bind(viewModel.statsPageViewDatas)
         bind(viewModel.groupViewDatas)
         bind(viewModel.achievementViewDatas)
         bind(viewModel.myRankViewDatas)

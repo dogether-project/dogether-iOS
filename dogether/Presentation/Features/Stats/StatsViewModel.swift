@@ -13,9 +13,8 @@ final class StatsViewModel {
     private let groupUseCase: GroupUseCase
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
-    private(set) var statsPageViewDatas = BehaviorRelay<StatsPageViewDatas>(value: StatsPageViewDatas())
     private(set) var groupViewDatas = BehaviorRelay<GroupViewDatas>(value: GroupViewDatas())
-    private(set) var achievementViewDatas = BehaviorRelay<AchievementViewDatas>(value:AchievementViewDatas())
+    private(set) var achievementViewDatas = BehaviorRelay<AchievementViewDatas>(value: AchievementViewDatas())
     private(set) var myRankViewDatas = BehaviorRelay<StatsRankViewDatas>(value: StatsRankViewDatas())
     private(set) var summaryViewDatas = BehaviorRelay<StatsSummaryViewDatas>(value: StatsSummaryViewDatas())
     
@@ -44,11 +43,6 @@ extension StatsViewModel {
         guard let groupIndex else { return }
         groupViewDatas.accept(GroupViewDatas(index: groupIndex, groups: groups))
         
-        guard !groups.isEmpty else {
-            statsPageViewDatas.update { $0.status = .empty }
-            return
-        }
-        
         try await fetchStatsForSelectedGroup()
     }
 }
@@ -56,10 +50,6 @@ extension StatsViewModel {
 extension StatsViewModel {
     func fetchStatsForSelectedGroup() async throws {
         let (achievement, myRank, summary) = try await statsUseCase.fetchGroupStats(groupId: currentGroup.id)
-        
-        statsPageViewDatas.update {
-            $0.status = .hasData
-        }
         
         achievementViewDatas.accept(achievement)
         myRankViewDatas.accept(myRank)

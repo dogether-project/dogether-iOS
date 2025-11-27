@@ -132,21 +132,17 @@ final class StatsPage: BasePage {
             bottomSheetView.updateView(datas)
         }
         
-        if let datas = data as? StatsPageViewDatas {
-            switch datas.status {
-            case .empty:
+        if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
+            if datas.groups.isEmpty {
+                emptyView.isHidden = true
+                scrollView.isHidden = false
+            } else {
                 emptyView.isHidden = false
                 scrollView.isHidden = true
                 
-            case .hasData:
-                emptyView.isHidden = true
-                scrollView.isHidden = false
+                bottomSheetView.updateView(datas)
+                groupInfoView.updateView(datas.groups[datas.index])
             }
-        }
-        
-        if let datas = data as? GroupViewDatas, datas.groups.count > 0 {
-            bottomSheetView.updateView(datas)
-            groupInfoView.updateView(datas.groups[datas.index])
         }
         
         if let datas = data as? AchievementViewDatas {
