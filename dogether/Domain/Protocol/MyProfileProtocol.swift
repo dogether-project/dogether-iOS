@@ -8,5 +8,5 @@
 import Foundation
 
 protocol MyProfileProtocol {
-    func getMyProfile() async throws -> ProfileEntity
+    func getMyProfile() async throws -> ProfileViewDatas
 }

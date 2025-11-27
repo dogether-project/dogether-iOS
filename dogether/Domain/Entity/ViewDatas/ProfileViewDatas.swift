@@ -1,5 +1,5 @@
 //
-//  ProfileEntity.swift
+//  ProfileViewDatas.swift
 //  dogether
 //
 //  Created by seungyooooong on 7/20/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ProfileEntity: BaseEntity {
+struct ProfileViewDatas: BaseEntity {
     var name: String
     var imageUrl: String
     

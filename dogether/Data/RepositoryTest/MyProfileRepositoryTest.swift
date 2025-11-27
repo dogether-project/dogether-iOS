@@ -8,7 +8,7 @@
 import Foundation
 
 final class MyProfileRepositoryTest: MyProfileProtocol {
-    func getMyProfile() async throws -> ProfileEntity {
-        return ProfileEntity(name: "두식", imageUrl: "")
+    func getMyProfile() async throws -> ProfileViewDatas {
+        return ProfileViewDatas(name: "두식", imageUrl: "")
     }
 }

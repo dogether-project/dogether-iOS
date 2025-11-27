@@ -45,10 +45,7 @@ final class MyPagePage: BasePage {
     }
     
     private let navigationHeader = NavigationHeader(title: "마이페이지")
-    
-    private let profileImageView = UIImageView()
-    private let nameLabel = UILabel()
-    private let userProfileStackView = UIStackView()
+    private let profileView = ProfileView()
     private let statsImageView = UIImageView()
     private let statsLabel = UILabel()
     private let statsButton = DogetherButton("통계 보러가기")
@@ -58,20 +55,7 @@ final class MyPagePage: BasePage {
     private let settingButton = MyPageButton(icon: .setting, title: "설정")
     private let mypageButtonStackView = UIStackView()
     
-    
-    private(set) var currentName: String?
-    private(set) var currentImageUrl: String?
-    
     override func configureView() {
-        profileImageView.image = .profile
-        profileImageView.contentMode = .scaleAspectFit
-        
-        nameLabel.textColor = .grey0
-        nameLabel.font = Fonts.head2B
-        
-        userProfileStackView.axis = .horizontal
-        userProfileStackView.spacing = 20
-        
         statsImageView.image = .happyDosik
         statsImageView.contentMode = .scaleAspectFit
         
@@ -93,11 +77,10 @@ final class MyPagePage: BasePage {
     }
     
     override func configureHierarchy() {
-        [profileImageView, nameLabel].forEach { userProfileStackView.addArrangedSubview($0) }
         [statsImageView, statsLabel, statsButton].forEach { statsContainerView.addSubview($0) }
         [myTodosListButton, groupManagementButton, settingButton].forEach { mypageButtonStackView.addArrangedSubview($0) }
         
-        [navigationHeader, userProfileStackView, statsContainerView, mypageButtonStackView].forEach { addSubview($0) }
+        [navigationHeader, profileView, statsContainerView, mypageButtonStackView].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -106,17 +89,13 @@ final class MyPagePage: BasePage {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        userProfileStackView.snp.makeConstraints {
+        profileView.snp.makeConstraints {
             $0.top.equalTo(navigationHeader.snp.bottom).offset(8)
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
-        profileImageView.snp.makeConstraints {
-            $0.width.height.equalTo(48)
-        }
-        
         statsContainerView.snp.makeConstraints {
-            $0.top.equalTo(userProfileStackView.snp.bottom).offset(16)
+            $0.top.equalTo(profileView.snp.bottom).offset(16)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(251)
         }
@@ -147,19 +126,12 @@ final class MyPagePage: BasePage {
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
-        if let datas = data as? ProfileEntity {
-            if currentName != datas.name {
-                currentName = datas.name
-                nameLabel.text = datas.name
-            }
-            
-            if currentImageUrl != datas.imageUrl {
-                currentImageUrl = datas.imageUrl
-                profileImageView.loadImage(url: datas.imageUrl)
-            }
-            
-            let dogetherButtonViewDatas = statsButton.currentViewDatas ?? DogetherButtonViewDatas()
-            statsButton.updateView(dogetherButtonViewDatas)
+        if let datas = data as? ProfileViewDatas {
+            profileView.updateView(datas)
+        }
+        
+        if let datas = data as? DogetherButtonViewDatas {
+            statsButton.updateView(datas)
         }
     }
 }

@@ -5,15 +5,15 @@
 //  Created by seungyooooong on 3/31/25.
 //
 
-import UIKit
-
 final class MyPageViewController: BaseViewController {
-    private let viewModel = MyPageViewModel()
     private let myPage = MyPagePage()
+    private let viewModel = MyPageViewModel()
     
     override func viewDidLoad() {
         myPage.delegate = self
+        
         pages = [myPage]
+        
         super.viewDidLoad()
         
         coordinator?.updateViewController = loadProfileView
@@ -21,11 +21,13 @@ final class MyPageViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         loadProfileView()
     }
     
     override func setViewDatas() {
-        bind(viewModel.profileEntity)
+        bind(viewModel.profileViewDatas)
+        bind(viewModel.statsButtonViewDatas)
     }
 }
 
@@ -36,14 +38,13 @@ extension MyPageViewController {
             do {
                 try await viewModel.loadProfileView()
             } catch let error as NetworkError {
-                await MainActor.run {
+                await MainActor.run { [weak self] in
+                    guard let self else { return }
                     ErrorHandlingManager.presentErrorView(
                         error: error,
                         presentingViewController: self,
                         coordinator: coordinator,
-                        retryHandler: { [weak self] in
-                            self?.loadProfileView()
-                        }
+                        retryHandler: loadProfileView
                     )
                 }
             }
