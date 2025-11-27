@@ -51,7 +51,7 @@ final class MyPagePage: BasePage {
     private let userProfileStackView = UIStackView()
     private let statsImageView = UIImageView()
     private let statsLabel = UILabel()
-    private let statsButton = DogetherButton(title: "통계 보러가기", status: .enabled)
+    private let statsButton = DogetherButton("통계 보러가기")
     private let statsContainerView = UIView()
     private let myTodosListButton = MyPageButton(icon: .timer, title: "인증목록")
     private let groupManagementButton = MyPageButton(icon: .group, title: "그룹관리")
@@ -157,6 +157,9 @@ final class MyPagePage: BasePage {
                 currentImageUrl = datas.imageUrl
                 profileImageView.loadImage(url: datas.imageUrl)
             }
+            
+            let dogetherButtonViewDatas = statsButton.currentViewDatas ?? DogetherButtonViewDatas()
+            statsButton.updateView(dogetherButtonViewDatas)
         }
     }
 }
