@@ -39,7 +39,7 @@ extension GroupJoinViewController {
                         CompleteViewController(),
                         datas: CompleteViewDatas(
                             groupType: .join,
-                            groupInfo: groupInfo
+                            groupEntity: groupInfo
                         )
                     )
                 }

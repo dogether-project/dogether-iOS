@@ -8,5 +8,9 @@
 import Foundation
 
 protocol StatsProtocol {
-    func fetchGroupStats(groupId: Int) async throws -> GroupStatsResponse
+    func fetchGroupStats(groupId: Int) async throws -> (
+        achievementViewDatas: AchievementViewDatas,
+        rankViewDatas: StatsRankViewDatas,
+        summaryViewDatas: StatsSummaryViewDatas
+    )
 }

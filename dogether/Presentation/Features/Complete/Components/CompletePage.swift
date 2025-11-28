@@ -114,11 +114,11 @@ final class CompletePage: BasePage {
         switch datas.groupType {
         case .join:
             let viewData = DogetherGroupInfoViewData(
-                name: datas.groupInfo.name,
-                memberCount: datas.groupInfo.maximumMember,
-                duration: GroupChallengeDurations(rawValue: datas.groupInfo.duration) ?? .threeDays,    // FIXME: 추후 수정
-                startDay: datas.groupInfo.startDate,
-                endDay: datas.groupInfo.endDate
+                name: datas.groupEntity.name,
+                memberCount: datas.groupEntity.maximumMember,
+                duration: GroupChallengeDurations(rawValue: datas.groupEntity.duration) ?? .threeDays,    // FIXME: 추후 수정
+                startDay: datas.groupEntity.startDate,
+                endDay: datas.groupEntity.endDate
             )
             
             groupInfoView.updateView(viewData)

@@ -9,15 +9,9 @@ import UIKit
 
 final class CertificationSummaryView: BaseView {
     private let stackView = UIStackView()
-    private let achievedView = CertificationSummaryStatView(icon: .certificationGray, title: "달성")
-    private let certifiedView = CertificationSummaryStatView(icon: .approve, title: "인정")
-    private let notCertifiedView = CertificationSummaryStatView(icon: .reject, title: "노인정")
-    
-    init() {
-        super.init(frame: .zero)
-    }
-    
-    required init?(coder: NSCoder) { fatalError() }
+    private let achievedView = CertificationSummaryStatView(type: .achievement)
+    private let certifiedView = CertificationSummaryStatView(type: .approve)
+    private let notCertifiedView = CertificationSummaryStatView(type: .reject)
 
     override func configureView() {
         stackView.axis = .horizontal
@@ -25,11 +19,11 @@ final class CertificationSummaryView: BaseView {
         stackView.spacing = 11
     }
     
-    override func configureAction() {
-    }
+    override func configureAction() { }
 
     override func configureHierarchy() {
         [achievedView, certifiedView, notCertifiedView].forEach { stackView.addArrangedSubview($0) }
+        
         addSubview(stackView)
     }
 
@@ -44,8 +38,9 @@ extension CertificationSummaryView {
     func configure(totalCertificatedCount: Int,
                    totalApprovedCount: Int,
                    totalRejectedCount: Int) {
-        achievedView.countLabel.text = "\(totalCertificatedCount)개"
-        certifiedView.countLabel.text = "\(totalApprovedCount)개"
-        notCertifiedView.countLabel.text = "\(totalRejectedCount)개"
+        // FIXME: 추후 Rx 도입 시 updateView로 수정
+        achievedView.updateView("\(totalCertificatedCount)개")
+        certifiedView.updateView("\(totalApprovedCount)개")
+        notCertifiedView.updateView("\(totalRejectedCount)개")
     }
 }

@@ -8,13 +8,14 @@
 import Foundation
 
 struct GroupStatsResponse: Decodable {
-    let groupInfo: GroupInformation
-    let certificationPeriods: [CertificationPeriod]
-    let ranking: Ranking
-    let stats: Stats
+//    let group: GroupEntityInGroupStats  // MARK: 사용 안함
+    let certificationPeriods: [CertificationPeriodEntityInGroupStats]
+    let ranking: RankingEntityInGroupStats
+    let stats: StatsEntityInGroupStats
 }
 
-struct GroupInformation: Decodable {
+// MARK: 사용 안함
+struct GroupEntityInGroupStats: Decodable {
     let name: String
     let maximumMemberCount: Int
     let currentMemberCount: Int
@@ -22,19 +23,19 @@ struct GroupInformation: Decodable {
     let endAt: String
 }
 
-struct CertificationPeriod: Decodable {
+struct CertificationPeriodEntityInGroupStats: Decodable {
     let day: Int
     let createdCount: Int
     let certificatedCount: Int
     let certificationRate: Int
 }
 
-struct Ranking: Decodable {
+struct RankingEntityInGroupStats: Decodable {
     let totalMemberCount: Int
     let myRank: Int
 }
 
-struct Stats: Decodable {
+struct StatsEntityInGroupStats: Decodable {
     let certificatedCount: Int
     let approvedCount: Int
     let rejectedCount: Int

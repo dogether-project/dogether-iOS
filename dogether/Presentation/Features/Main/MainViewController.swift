@@ -53,9 +53,7 @@ extension MainViewController {
                     return
                 }
                 
-                try await viewModel.setSheetViewDatasForCurrentGroup(
-                    currentGroup: groupViewDatas.groups[groupViewDatas.index]
-                )
+                try await viewModel.setSheetViewDatasForCurrentGroup()
 
             } catch let error as NetworkError {
                 await MainActor.run {
@@ -176,7 +174,7 @@ extension MainViewController: MainDelegate {
         viewModel.sheetViewDatas.update { $0.dateOffset = 0 }
         
         Task {
-            try await viewModel.setSheetViewDatasForCurrentGroup(currentGroup: viewModel.currentGroup)
+            try await viewModel.setSheetViewDatasForCurrentGroup()
         }
     }
     
@@ -198,7 +196,7 @@ extension MainViewController: MainDelegate {
         }
         
         Task {
-            try await viewModel.setSheetViewDatasForCurrentGroup(currentGroup: viewModel.currentGroup)
+            try await viewModel.setSheetViewDatasForCurrentGroup()
         }
     }
     
@@ -209,7 +207,7 @@ extension MainViewController: MainDelegate {
         }
         
         Task {
-            try await viewModel.setSheetViewDatasForCurrentGroup(currentGroup: viewModel.currentGroup)
+            try await viewModel.setSheetViewDatasForCurrentGroup()
         }
     }
     

@@ -20,6 +20,7 @@ struct BottomSheetItem: Hashable {
     let value: AnyHashable
 }
 
+// FIXME: 인증 목록 Rx 도입 작업 후 삭제
 final class BottomSheetViewController: BaseViewController {
     
     // MARK: - Properties

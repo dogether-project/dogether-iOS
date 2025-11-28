@@ -53,7 +53,7 @@ extension MainViewModel {
 
 // MARK: - set
 extension MainViewModel {
-    func setSheetViewDatasForCurrentGroup(currentGroup: GroupEntity) async throws {
+    func setSheetViewDatasForCurrentGroup() async throws {
         if currentGroup.status == .ready {
             sheetViewDatas.update { $0.status = .timer }
             return
