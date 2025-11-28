@@ -9,29 +9,9 @@ import UIKit
 import SnapKit
 
 final class EmptyStateView: BaseView {
-    
-    private let imageView: UIImageView = {
-        let imageView = UIImageView(image: .embarrassedDosik)
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = Fonts.head2B
-        label.textColor = .grey200
-        label.textAlignment = .center
-        return label
-    }()
-    
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = Fonts.body2R
-        label.textColor = .grey400
-        label.textAlignment = .center
-        label.numberOfLines = 2
-        return label
-    }()
+    private let imageView = UIImageView(image: .embarrassedDosik)
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
     
     private let title: String
     private let descriptionText: String
@@ -39,23 +19,30 @@ final class EmptyStateView: BaseView {
     init(title: String, description: String) {
         self.title = title
         self.descriptionText = description
+        
         super.init(frame: .zero)
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError() }
     
     override func configureView() {
         backgroundColor = .clear
+        
+        imageView.contentMode = .scaleAspectFit
+        
         titleLabel.text = title
+        titleLabel.font = Fonts.head2B
+        titleLabel.textColor = .grey200
+        titleLabel.textAlignment = .center
+        
         descriptionLabel.text = descriptionText
+        descriptionLabel.font = Fonts.body2R
+        descriptionLabel.textColor = .grey400
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.numberOfLines = 2
     }
     
     override func configureHierarchy() {
-        addSubview(imageView)
-        addSubview(titleLabel)
-        addSubview(descriptionLabel)
+        [imageView, titleLabel, descriptionLabel].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {

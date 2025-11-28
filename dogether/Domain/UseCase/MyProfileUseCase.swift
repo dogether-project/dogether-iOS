@@ -14,8 +14,7 @@ final class MyProfileUseCase {
         self.repository = repository
     }
     
-    func getProfileInfo() async throws -> ProfileInfo {
-        let response = try await repository.getMyProfile()
-        return ProfileInfo(name: response.name, imageUrl: response.profileImageUrl)
+    func getMyProfile() async throws -> ProfileViewDatas {
+        try await repository.getMyProfile()
     }
 }
