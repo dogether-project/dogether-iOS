@@ -7,24 +7,15 @@
 
 import Foundation
 
-enum GroupManagementViewStatus {
-    case empty
-    case hasData
-}
-
-protocol GroupManagementViewModelDelegate: AnyObject {
-    func didFetchSucceed()
-    func didFetchFail(error: NetworkError)
-}
+import RxRelay
 
 final class GroupManagementViewModel {
-    private(set) var groups: [GroupEntity] = []
-    
     private let authUseCase: AuthUseCase
     private let groupUseCase: GroupUseCase
     
-    var viewStatus: GroupManagementViewStatus = .empty
-    weak var delegate: GroupManagementViewModelDelegate?
+    private(set) var viewDatas = BehaviorRelay<GroupManagementViewDatas>(
+        value: GroupManagementViewDatas()
+    )
     
     init() {
         let authRepository = DIManager.shared.getAuthRepository()
@@ -36,24 +27,12 @@ final class GroupManagementViewModel {
 }
 
 extension GroupManagementViewModel {
-    func fetchMyGroup() {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            do {
-                let (_, groups) = try await groupUseCase.getGroups()
-                self.groups = groups
-                viewStatus = groups.isEmpty ? .empty : .hasData
-                delegate?.didFetchSucceed()
-            } catch let error as NetworkError {
-                delegate?.didFetchFail(error: error)
-            }
-        }
+    func loadGroups() async throws {
+        let (_, groups) = try await groupUseCase.getGroups()
+        viewDatas.update { $0.groups = groups }
     }
-}
-
-extension GroupManagementViewModel {
+    
     func leaveGroup(groupId: Int) async throws {
         try await groupUseCase.leaveGroup(groupId: groupId)
     }
 }
-

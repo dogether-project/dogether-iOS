@@ -20,14 +20,23 @@ final class GroupEmptyView: BaseView {
         }
     }
     
+    var groupManagementDelegate: GroupManagementDelegate? {
+        didSet {
+            createGroupButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    groupManagementDelegate?.addGroupAction()
+                },
+                for: .touchUpInside
+            )
+        }
+    }
+    
     private let emptyStateView = EmptyStateView(
         title: "소속된 그룹이 없어요",
         description: "새로운 그룹을 만들어 함께 시작해보세요!"
     )
     private let createGroupButton = DogetherButton("그룹 만들기")
-    
-    // FIXME: GroupManagementViewController Rx 도입 이후 삭제
-    var createButtonTapHandler: (() -> Void)?
     
     override func configureView() {
         // FIXME: GroupManagementViewController Rx 도입 이후 수정
@@ -35,15 +44,7 @@ final class GroupEmptyView: BaseView {
         createGroupButton.updateView(dogetherButtonViewDatas)
     }
     
-    override func configureAction() {
-        // FIXME: GroupManagementViewController Rx 도입 이후 삭제
-        createGroupButton.addAction(
-            UIAction { [weak self] _ in
-                self?.createButtonTapHandler?()
-            },
-            for: .touchUpInside
-        )
-    }
+    override func configureAction() { }
     
     override func configureHierarchy() {
         addSubview(emptyStateView)
