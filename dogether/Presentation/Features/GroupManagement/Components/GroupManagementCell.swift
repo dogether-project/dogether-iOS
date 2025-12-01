@@ -20,7 +20,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = Fonts.head2B
-        label.textColor = .grey100
+        label.textColor = .grey0
         return label
     }()
 
@@ -28,7 +28,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
         let label = UILabel()
         label.text = "그룹원"
         label.font = Fonts.smallR
-        label.textColor = .grey300
+        label.textColor = .grey200
         return label
     }()
 
@@ -36,7 +36,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
         let label = UILabel()
         label.text = "" // 없애기
         label.font = Fonts.smallR
-        label.textColor = .grey100
+        label.textColor = .grey0
         return label
     }()
 
@@ -44,7 +44,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
         let label = UILabel()
         label.text = "종료일"
         label.font = Fonts.smallR
-        label.textColor = .grey300
+        label.textColor = .grey200
         return label
     }()
 
@@ -52,7 +52,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
         let label = UILabel()
         label.text = "" // 없애기
         label.font = Fonts.smallR
-        label.textColor = .grey100
+        label.textColor = .grey0
         return label
     }()
 
@@ -60,7 +60,7 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
         let label = UILabel()
         label.text = "초대코드"
         label.font = Fonts.smallR
-        label.textColor = .grey300
+        label.textColor = .grey200
         return label
     }()
 
@@ -68,14 +68,14 @@ final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
         let label = UILabel()
         label.text = "" // 없애기
         label.font = Fonts.smallR
-        label.textColor = .grey100
+        label.textColor = .grey0
         return label
     }()
 
     private let leaveButton: UIButton = {
         let button = UIButton()
         button.setTitle("탈퇴하기", for: .normal)
-        button.setTitleColor(.grey100, for: .normal)
+        button.setTitleColor(.grey0, for: .normal)
         button.backgroundColor = .grey700
         button.titleLabel?.font = Fonts.body2S
         button.layer.cornerRadius = 6
