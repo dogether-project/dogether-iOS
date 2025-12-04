@@ -104,55 +104,13 @@ final class ExaminationModalityView: BaseView {
     override func configureAction() { }
     
     override func configureHierarchy() {
-        [scrollView, closeButton].forEach { addSubview($0) }
-        [contentStackView].forEach { scrollView.addSubview($0) }
     }
     
     override func configureConstraints() {
-        scrollView.snp.makeConstraints {
-            $0.top.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(50 + 16 + 16)
-            $0.horizontalEdges.equalToSuperview()
-        }
-        
-        closeButton.snp.makeConstraints {
-            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
-        }
-        
-        contentStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(44)
-            $0.bottom.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(16)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(36)
-        }
-        
-        imageView.snp.makeConstraints {
-            $0.width.height.equalTo(scrollView.snp.width).offset(-32)
-        }
-        
-        examinationStackView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(48)
-        }
     }
 }
  
 extension ExaminationModalityView {
-    func setReview(review: ReviewModel) {
-        imageView.image = .logo
-        imageView.loadImage(url: review.mediaUrl)
-        imageView.updateCertificator(certificator: review.doer)
-        imageView.updateCertificationContent(certificationContent: review.content)
-        
-        contentLabel.attributedText = NSAttributedString(
-            string: review.todoContent,
-            attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
-        )
-    }
     
     func updateButtonBackgroundColor(type: FilterTypes) {
         rejectButton.backgroundColor = type == .reject ? .dogetherRed : .grey0

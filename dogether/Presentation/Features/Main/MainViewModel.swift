@@ -46,7 +46,7 @@ extension MainViewModel {
         return try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date)
     }
     
-    func getReviews() async throws -> [ReviewModel] {
+    func getReviews() async throws -> [ReviewEntity] {
         return try await todoCertificationsUseCase.getReviews()
     }
 }
