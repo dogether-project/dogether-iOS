@@ -21,6 +21,10 @@ final class ModalityViewController: BaseViewController {
     }
     
     override func setViewDatas() {
+        if let datas = datas as? ExaminateViewDatas {
+            viewModel.examinateViewDatas.accept(datas)
+        }
+        
         bind(viewModel.examinateViewDatas)
         bind(viewModel.examinateButtonViewDatas)
     }
@@ -37,6 +41,5 @@ protocol ExaminateDelegate {
 extension ModalityViewController: ExaminateDelegate {
     func updateReviewsAction(reviews: [ReviewEntity]) {
         viewModel.setReviews(reviews: reviews)
-        
     }
 }

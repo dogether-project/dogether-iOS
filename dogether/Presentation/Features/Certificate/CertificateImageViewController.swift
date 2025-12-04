@@ -15,12 +15,7 @@ final class CertificateImageViewController: BaseViewController {
     
     private let navigationHeader = NavigationHeader(title: "인증 하기")
     
-    private var imageView = CertificationImageView(
-        image: .cameraDosik.imageWithPadding(
-            insets: UIEdgeInsets(top: 41 * 4, left: 62 * 4, bottom: 83 * 4, right: 62 * 4), backgroundColor: .grey800
-        ),
-        certificationContent: "인증 사진을 업로드 해주세요!"
-    )
+    private let imageView = CertificationImageView(type: .camera)
     
     private let todoContentLabel = {
         let label = UILabel()
@@ -288,8 +283,9 @@ extension CertificateImageViewController {
     }
     
     private func pickerCompletion(image: UIImage) {
-        imageView.image = image
-        imageView.updateCertificationContent()
+        // FIXME: 추후 수정
+        let certificationImageViewDatas = CertificationImageViewDatas(image: image, content: "")
+        imageView.updateView(certificationImageViewDatas)
         
         // FIXME: 추후 S3Manager를 NetworkManager로 합치면서 loading 로직도 제거해요
         Task {

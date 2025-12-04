@@ -32,7 +32,7 @@ final class ExaminationModalityView: BaseView {
         return label
     }()
     
-    private var imageView = CertificationImageView(image: .logo)
+    private var imageView = CertificationImageView(type: .logo)
     
     private let contentLabel = {
         let label = UILabel()

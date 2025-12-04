@@ -18,12 +18,14 @@ final class ExaminatePage: BasePage {
     private let closeButton = DogetherButton("보내기")
     private let contentStackView = UIStackView()
     private let titleLabel = UILabel()
-    private let imageView = CertificationImageView(image: .logo)
+    private let imageView = CertificationImageView(type: .logo)
     private let contentLabel = UILabel()
     private let rejectButton = ExaminateButton(type: .reject)
     private let approveButton = ExaminateButton(type: .approve)
     private let examinationStackView = UIStackView()
     private let reviewFeedbackView = ReviewFeedbackView()
+    
+    private(set) var currentReview: ReviewEntity?
     
     override func configureView() {
         contentStackView.axis = .vertical
@@ -145,13 +147,17 @@ final class ExaminatePage: BasePage {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? ExaminateViewDatas {
-//            imageView.updateView(datas.reviews[datas.index])   // FIXME: 추후 수정
-//            imageView.image = .logo
-//            imageView.loadImage(url: datas.mediaUrl)
-//            imageView.updateCertificator(certificator: datas.doer)
-//            imageView.updateCertificationContent(certificationContent: datas.content)
-            
-            if datas.reviews.count > datas.index {  // FIXME: 추후 수정
+            if currentReview != datas.reviews[datas.index] {
+                currentReview = datas.reviews[datas.index]
+                
+                let certificationImageViewDatas = CertificationImageViewDatas(
+                    image: .logo,
+                    imageUrl: datas.reviews[datas.index].mediaUrl,
+                    content: datas.reviews[datas.index].content,
+                    certificator: datas.reviews[datas.index].doer
+                )
+                imageView.updateView(certificationImageViewDatas)
+                
                 contentLabel.attributedText = NSAttributedString(
                     string: datas.reviews[datas.index].todoContent,
                     attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
