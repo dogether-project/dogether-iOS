@@ -55,4 +55,9 @@ final class ExaminateButton: BaseButton {
             $0.width.height.equalTo(24)
         }
     }
+    
+    // MARK: - updateView
+    override func updateView(_ data: UIColor) {
+        backgroundColor = data
+    }
 }

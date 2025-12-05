@@ -17,25 +17,9 @@ enum DefaultImageTypes {
         case .logo:
             return .logo
         case .camera:
-            return .cameraDosik.imageWithPadding(
-                insets: UIEdgeInsets(
-                    top: 41 * 4,
-                    left: 62 * 4,
-                    bottom: 83 * 4,
-                    right: 62 * 4
-                ),
-                backgroundColor: .grey800
-            )
+            return .cameraDosik.setDefaultImagePadding()
         case .embarrassed:
-            return .embarrassedDosik.imageWithPadding(
-                insets: UIEdgeInsets(
-                    top: 41 * 4,
-                    left: 62 * 4,
-                    bottom: 83 * 4,
-                    right: 62 * 4
-                ),
-                backgroundColor: .grey800
-            )
+            return .embarrassedDosik.setDefaultImagePadding()
         }
     }
     

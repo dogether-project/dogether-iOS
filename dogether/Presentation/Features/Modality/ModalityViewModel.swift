@@ -25,10 +25,34 @@ final class ModalityViewModel {
         self.todoCertificationsUseCase = TodoCertificationsUseCase(repository: todoCertificationsRepository)
     }
     
+    func setIndex(direction: Directions) {
+        examinateViewDatas.update {
+            $0.index = examinateViewDatas.value.index + direction.tag
+        }
+    }
+    
     func setReviews(reviews: [ReviewEntity]) {
         examinateViewDatas.update {
             $0.index = 0
             $0.reviews = reviews
+        }
+    }
+    
+    func setResult(result: ReviewResults? = nil) {
+        examinateViewDatas.update {
+            $0.result = result
+        }
+    }
+    
+    func setFeedback(feedback: String = "") {
+        examinateViewDatas.update {
+            $0.feedback = feedback
+        }
+    }
+    
+    func setButtonStatus(status: ButtonStatus) {
+        examinateButtonViewDatas.update {
+            $0.status = status
         }
     }
     

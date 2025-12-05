@@ -28,18 +28,44 @@ final class ModalityViewController: BaseViewController {
         bind(viewModel.examinateViewDatas)
         bind(viewModel.examinateButtonViewDatas)
     }
-    
-//    func updateView() {
-//        todoExaminationModalityView.setReview(review: viewModel.reviews[viewModel.current])
-//    }
 }
 
 protocol ExaminateDelegate {
     func updateReviewsAction(reviews: [ReviewEntity])
+    func examinateAction(type: FilterTypes, reviewResult: ReviewResults)
+    func sendAction()
 }
 
 extension ModalityViewController: ExaminateDelegate {
     func updateReviewsAction(reviews: [ReviewEntity]) {
         viewModel.setReviews(reviews: reviews)
+    }
+    
+    func examinateAction(type: FilterTypes, reviewResult: ReviewResults) {
+        viewModel.setResult(result: reviewResult)
+        viewModel.setFeedback()
+        viewModel.setButtonStatus(status: type == .approve ? .enabled : .disabled)
+
+        coordinator?.showPopup(self, type: .reviewFeedback) { [weak self] reviewFeedback in
+            guard let self, let reviewFeedback = reviewFeedback as? String else { return }
+            viewModel.setFeedback(feedback: reviewFeedback)
+            viewModel.setButtonStatus(status: .enabled)
+        }
+    }
+    
+    func sendAction() {
+        Task {
+            try await viewModel.reviewTodo()
+            await MainActor.run {
+                if viewModel.examinateViewDatas.value.reviews.count == viewModel.examinateViewDatas.value.index + 1 {
+                    coordinator?.hideModal()
+                } else {
+                    viewModel.setIndex(direction: .next)
+                    viewModel.setResult()
+                    viewModel.setFeedback()
+                    viewModel.setButtonStatus(status: .disabled)
+                }
+            }
+        }
     }
 }
