@@ -14,13 +14,8 @@ final class ExaminatePage: BasePage {
                 button.addAction(
                     UIAction { [weak self, weak button] _ in
                         guard let self, let button,
-                              let type = FilterTypes.allCases.first(where: { $0.tag == button.tag }),
-                              let reviewResult = type.reviewResult else { return }
-                        
-                        delegate?.examinateAction(type: type, reviewResult: reviewResult)
-                        
-                        rejectButton.updateView(type == .reject ? .dogetherRed : .grey0)
-                        approveButton.updateView(type == .approve ? .blue300 : .grey0)
+                              let type = FilterTypes.allCases.first(where: { $0.tag == button.tag }) else { return }
+                        delegate?.examinateAction(type: type)
                     }, for: .touchUpInside
                 )
             }
@@ -29,9 +24,6 @@ final class ExaminatePage: BasePage {
                 UIAction { [weak self] _ in
                     guard let self else { return }
                     delegate?.sendAction()
-                    
-                    rejectButton.updateView(.grey0)
-                    approveButton.updateView(.grey0)
                 }, for: .touchUpInside
             )
         }
@@ -50,6 +42,7 @@ final class ExaminatePage: BasePage {
     
     private(set) var currentReview: ReviewEntity?
     private(set) var currentFeedback: String?
+    private(set) var currentResult: ReviewResults?
     
     override func configureView() {
         contentStackView.axis = .vertical
@@ -150,6 +143,13 @@ final class ExaminatePage: BasePage {
                         $0.horizontalEdges.equalToSuperview()
                     }
                 }
+            }
+            
+            if currentResult != datas.result {
+                currentResult = datas.result
+                
+                rejectButton.updateView(datas.result == .reject ? .dogetherRed : .grey0)
+                approveButton.updateView(datas.result == .approve ? .blue300 : .grey0)
             }
         }
             

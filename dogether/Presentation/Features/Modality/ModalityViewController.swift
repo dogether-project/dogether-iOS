@@ -32,7 +32,7 @@ final class ModalityViewController: BaseViewController {
 
 protocol ExaminateDelegate {
     func updateReviewsAction(reviews: [ReviewEntity])
-    func examinateAction(type: FilterTypes, reviewResult: ReviewResults)
+    func examinateAction(type: FilterTypes)
     func sendAction()
 }
 
@@ -41,8 +41,8 @@ extension ModalityViewController: ExaminateDelegate {
         viewModel.setReviews(reviews: reviews)
     }
     
-    func examinateAction(type: FilterTypes, reviewResult: ReviewResults) {
-        viewModel.setResult(result: reviewResult)
+    func examinateAction(type: FilterTypes) {
+        viewModel.setResult(result: type.reviewResult)
         viewModel.setFeedback()
         viewModel.setButtonStatus(status: type == .approve ? .enabled : .disabled)
 
