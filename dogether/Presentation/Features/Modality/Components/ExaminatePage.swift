@@ -33,6 +33,7 @@ final class ExaminatePage: BasePage {
     private let sendButton = DogetherButton("보내기")
     private let contentStackView = UIStackView()
     private let titleLabel = UILabel()
+    private let descriptionView = ExaminateDescriptionView()
     private let imageView = CertificationImageView(type: .logo)
     private let contentLabel = UILabel()
     private let rejectButton = ExaminateButton(type: .reject)
@@ -57,7 +58,7 @@ final class ExaminatePage: BasePage {
         contentLabel.numberOfLines = 0
         
         examinationStackView.axis = .horizontal
-        examinationStackView.spacing = 11
+        examinationStackView.spacing = 8
         examinationStackView.distribution = .fillEqually
     }
     
@@ -66,8 +67,11 @@ final class ExaminatePage: BasePage {
     override func configureHierarchy() {
         [rejectButton, approveButton].forEach { examinationStackView.addArrangedSubview($0) }
         
-        [titleLabel, imageView, contentLabel, examinationStackView].forEach { contentStackView.addArrangedSubview($0) }
-        contentStackView.setCustomSpacing(60, after: titleLabel)
+        [ titleLabel, descriptionView,
+          imageView, contentLabel, examinationStackView
+        ].forEach { contentStackView.addArrangedSubview($0) }
+        contentStackView.setCustomSpacing(4, after: titleLabel)
+        contentStackView.setCustomSpacing(24, after: descriptionView)
         contentStackView.setCustomSpacing(16, after: imageView)
         contentStackView.setCustomSpacing(16, after: contentLabel)
         
@@ -87,14 +91,17 @@ final class ExaminatePage: BasePage {
         }
         
         contentStackView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(44)
+            $0.top.equalToSuperview().inset(40)
             $0.bottom.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
             $0.height.equalTo(36)
+        }
+        
+        descriptionView.snp.makeConstraints {
+            $0.height.equalTo(25)
         }
         
         imageView.snp.makeConstraints {
