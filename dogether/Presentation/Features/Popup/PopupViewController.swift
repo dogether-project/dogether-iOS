@@ -11,96 +11,69 @@ import SnapKit
 import Combine
 
 final class PopupViewController: BaseViewController {
+    private let popupPage = PopupPage()
     var viewModel = PopupViewModel()
     
     var completion: ((Any) -> Void)?
-    var pickerCompletion: ((UIImage) -> Void)?
-    
-    private var popupView = BasePopupView()
     
     private var popupViewCenterYConstraint: Constraint?
     private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
+        popupPage.delegate = self
+        
+        pages = [popupPage]
+        
         super.viewDidLoad()
         
-        observeKeyboardNotifications()
+        onAppear()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if let popupView = popupView as? ReviewFeedbackPopupView {
-            popupView.reviewFeedbackTextView.becomeFirstResponder()
-        }
+//        if let popupView = popupView as? ReviewFeedbackPopupView {
+//            popupView.reviewFeedbackTextView.becomeFirstResponder()
+//        }
     }
     
-    override func configureView() {
-        view.backgroundColor = .grey900.withAlphaComponent(0.8)
+    override func setViewDatas() {
+        if let datas = datas as? AlertPopupViewDatas {
+            viewModel.alertPopupViewDatas.accept(datas)
+        }
         
-        popupView = getPopupView()
-    }
-    
-    override func configureAction() {
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissPopup)))
-        
-        popupView.delegate = self
-    }
-    
-    override func configureHierarchy() {
-        [popupView].forEach { view.addSubview($0) }
-    }
-    
-    override func configureConstraints() {
-        popupView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(16)
-            
-            popupViewCenterYConstraint = $0.centerY.equalToSuperview().constraint
-        }
+        bind(viewModel.alertPopupViewDatas)
     }
 }
 
-extension PopupViewController {
-    private func getPopupView() -> BasePopupView {
-        guard let popupType = viewModel.popupType else { return BasePopupView() }
-        switch popupType {
-        case .alert:
-            guard let alertType = viewModel.alertType else { return BasePopupView() }
-            let alertView = AlertPopupView(type: alertType)
-            alertView.confirmButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self else { return }
-                    completion?(())
-                    hidePopup()
-                }, for: .touchUpInside
-            )
-            return alertView
-            
-        case .reviewFeedback:
-            let reviewFeedbackPopupView = ReviewFeedbackPopupView()
-            reviewFeedbackPopupView.reviewFeedbackTextView.delegate = self
-            reviewFeedbackPopupView.reviewFeedbackButton.addAction(
-                UIAction { [weak self] _ in
-                    guard let self, let reviewFeedback = viewModel.stringContent else { return }
-                    completion?(reviewFeedback)
-                    hidePopup()
-                }, for: .touchUpInside
-            )
-            return reviewFeedbackPopupView
-        }
-    }
-}
-
-extension PopupViewController: PopupDelegate {
-    func hidePopup() {
-        coordinator?.hidePopup()
-    }
-}
-
-extension PopupViewController {
-    @objc private func dismissPopup() {
-        hidePopup()
-    }
-}
+//extension PopupViewController {
+//    private func getPopupView() -> BasePopupView {
+//        guard let popupType = viewModel.popupType else { return BasePopupView() }
+//        switch popupType {
+//        case .alert:
+//            guard let alertType = viewModel.alertType else { return BasePopupView() }
+//            let alertView = AlertPopupView(type: alertType)
+//            alertView.confirmButton.addAction(
+//                UIAction { [weak self] _ in
+//                    guard let self else { return }
+//                    completion?(())
+//                    hidePopup()
+//                }, for: .touchUpInside
+//            )
+//            return alertView
+//            
+//        case .reviewFeedback:
+//            let reviewFeedbackPopupView = ReviewFeedbackPopupView()
+//            reviewFeedbackPopupView.reviewFeedbackTextView.delegate = self
+//            reviewFeedbackPopupView.reviewFeedbackButton.addAction(
+//                UIAction { [weak self] _ in
+//                    guard let self, let reviewFeedback = viewModel.stringContent else { return }
+//                    completion?(reviewFeedback)
+//                    hidePopup()
+//                }, for: .touchUpInside
+//            )
+//            return reviewFeedbackPopupView
+//        }
+//    }
+//}
 
 // MARK: - about keyboard
 extension PopupViewController: UITextViewDelegate {
@@ -124,23 +97,23 @@ extension PopupViewController: UITextViewDelegate {
         textView.updateTextInfo()
         viewModel.setStringContent(textView.text)
         
-        if let popupView = popupView as? ReviewFeedbackPopupView {
-            // FIXME: 추후 수정
-            var viewDatas = popupView.reviewFeedbackButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
-            viewDatas.status = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ? .disabled
-            : .enabled
-            popupView.reviewFeedbackButton.updateView(viewDatas)
-        }
+//        if let popupView = popupView as? ReviewFeedbackPopupView {
+//            // FIXME: 추후 수정
+//            var viewDatas = popupView.reviewFeedbackButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
+//            viewDatas.status = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+//            ? .disabled
+//            : .enabled
+//            popupView.reviewFeedbackButton.updateView(viewDatas)
+//        }
     }
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         guard let textView = textView as? DogetherTextView else { return false }
         textView.focusOn()
         
-        if let popupView = popupView as? ReviewFeedbackPopupView {
-            popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
-        }
+//        if let popupView = popupView as? ReviewFeedbackPopupView {
+//            popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
+//        }
         return true
     }
     
@@ -148,9 +121,9 @@ extension PopupViewController: UITextViewDelegate {
         guard let textView = textView as? DogetherTextView else { return false }
         textView.focusOff()
         
-        if let popupView = popupView as? ReviewFeedbackPopupView {
-            popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
-        }
+//        if let popupView = popupView as? ReviewFeedbackPopupView {
+//            popupView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
+//        }
         return true
     }
     
@@ -192,5 +165,37 @@ extension PopupViewController: UITextViewDelegate {
             
             view.layoutIfNeeded()
         }
+    }
+}
+
+protocol AlertPopupDelegate {
+    func hidePopup()
+}
+
+extension PopupViewController: AlertPopupDelegate {
+    private func onAppear() {
+        // MARK: - setup for popup ui
+        // FIXME: 추후 수정
+        view.backgroundColor = .grey900.withAlphaComponent(0.8)
+        view.addTapAction { [weak self] _ in
+            guard let self else { return }
+            hidePopup()
+        }
+        pages?.forEach { page in
+            page.snp.remakeConstraints {
+                $0.centerX.equalTo(view)
+                $0.horizontalEdges.equalTo(view).inset(16)
+
+                $0.centerY.equalTo(view)
+//                popupViewCenterYConstraint = $0.centerY.equalToSuperview().constraint
+            }
+        }
+        
+        // FIXME: 추후 수정
+        observeKeyboardNotifications()
+    }
+    
+    func hidePopup() {
+        coordinator?.hidePopup()
     }
 }

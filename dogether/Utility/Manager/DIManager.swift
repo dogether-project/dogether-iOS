@@ -57,15 +57,6 @@ extension DIManager {
         }
     }
     
-    func getPopupRepository(buildMode: BuildModes? = nil) -> PopupProtocol {
-        switch buildMode ?? defaultBuildMode {
-        case .debug:
-            return PopupRepositoryTest()
-        case .live:
-            return PopupRepository()
-        }
-    }
-    
     func getTodoCertificationsRepository(buildMode: BuildModes? = nil) -> TodoCertificationsProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:

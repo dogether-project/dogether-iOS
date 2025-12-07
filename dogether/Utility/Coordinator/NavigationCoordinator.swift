@@ -95,6 +95,10 @@ extension NavigationCoordinator {
     ) {
         let popupViewController = PopupViewController()
         
+        // FIXME: 추후 수정
+        let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
+        popupViewController.datas = alertPopupViewDatas
+        
         popupViewController.coordinator = self
         popupViewController.completion = completion
         popupViewController.modalPresentationStyle = .overFullScreen

@@ -7,8 +7,12 @@
 
 import UIKit
 
+import RxRelay
+
 final class PopupViewModel {
-    private let popupUseCase: PopupUseCase
+    private let challengeGrouopUseCase: ChallengeGroupUseCase
+    
+    private(set) var alertPopupViewDatas = BehaviorRelay<AlertPopupViewDatas>(value: AlertPopupViewDatas())
     
     private(set) var stringContent: String?
     
@@ -17,8 +21,8 @@ final class PopupViewModel {
     var todoInfo: TodoEntity?
     
     init() {
-        let popupRepository = DIManager.shared.getPopupRepository()
-        self.popupUseCase = PopupUseCase(repository: popupRepository)
+        let challengeGroupRepository = DIManager.shared.getChallengeGroupsRepository()
+        self.challengeGrouopUseCase = ChallengeGroupUseCase(repository: challengeGroupRepository)
     }
 }
 
