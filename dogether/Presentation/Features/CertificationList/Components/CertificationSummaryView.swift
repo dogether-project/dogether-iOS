@@ -32,15 +32,11 @@ final class CertificationSummaryView: BaseView {
             $0.edges.equalToSuperview()
         }
     }
-}
-
-extension CertificationSummaryView {
-    func configure(totalCertificatedCount: Int,
-                   totalApprovedCount: Int,
-                   totalRejectedCount: Int) {
-        // FIXME: 추후 Rx 도입 시 updateView로 수정
-        achievedView.updateView("\(totalCertificatedCount)개")
-        certifiedView.updateView("\(totalApprovedCount)개")
-        notCertifiedView.updateView("\(totalRejectedCount)개")
+    
+    override func updateView(_ data: any BaseEntity) {
+        guard let datas = data as? CertificationListViewDatas else { return }
+        achievedView.updateView("\(datas.totalCertificatedCount)개")
+        certifiedView.updateView("\(datas.totalApprovedCount)개")
+        notCertifiedView.updateView("\(datas.totalRejectedCount)개")
     }
 }

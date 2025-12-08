@@ -68,13 +68,13 @@ struct GroupTodoCertification: Codable {
 // MARK: - View 전용 Presentation Model
 
 /// 인증 섹션의 유형 (날짜 or 그룹 기준)
-enum CertificationSectionType {
+enum CertificationSectionType: Hashable {
     case daily(dateString: String)
     case group(groupName: String)
 }
 
 /// 하나의 인증 리스트 아이템
-struct CertificationItem {
+struct CertificationItem: Hashable {
     let id: Int
     let content: String
     let status: String
@@ -85,7 +85,7 @@ struct CertificationItem {
 }
 
 /// 섹션별 인증 묶음
-struct CertificationSection {
+struct CertificationSection: Hashable {
     let type: CertificationSectionType
     let certifications: [CertificationItem]
 }

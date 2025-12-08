@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 final class CertificationFilterView: BaseView {
-    
     weak var delegate: BottomSheetDelegate?
     
     private let scrollView = UIScrollView()

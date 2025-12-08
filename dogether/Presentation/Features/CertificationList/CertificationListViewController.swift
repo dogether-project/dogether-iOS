@@ -5,82 +5,94 @@
 //  Created by yujaehong on 4/21/25.
 //
 
-import Foundation
+import UIKit
 
 final class CertificationListViewController: BaseViewController {
-    var viewModel = CertificationListViewModel()
-    private let navigationHeader = NavigationHeader(title: "인증 목록")
-    private let emptyView = CertificationListEmptyView()
-    private var contentView: CertificationListContentView?
+    private let certificationListPage = CertificationListPage()
+    private let viewModel = CertificationListViewModel()
+    
     private var errorView: ErrorView?
     private var bottomSheetViewController: BottomSheetViewController?
     
     override func viewDidLoad() {
+        certificationListPage.delegate = self
+        pages = [certificationListPage]
+        
         super.viewDidLoad()
-        viewModel.executeSort(option: .todoCompletionDate)
+        
+        certificationListPage.setBottomSheetDelegate(self)
+        
+        coordinator?.updateViewController = loadCertificationListView
+        
+        configureBottomSheetViewController()
     }
     
-    override func configureView() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadCertificationListView()
     }
     
-    override func configureAction() {
-        navigationHeader.delegate = self
-        viewModel.delegate = self
-    }
-    
-    override func configureHierarchy() {
-        [navigationHeader, emptyView].forEach { view.addSubview($0) }
-    }
-    
-    override func configureConstraints() {
-        navigationHeader.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.horizontalEdges.equalToSuperview()
+    override func setViewDatas() {
+        if let datas = datas as? CertificationListViewDatas {
+            viewModel.certificationListViewDatas.accept(datas)
         }
         
-        emptyView.snp.makeConstraints {
-            $0.top.equalTo(navigationHeader.snp.bottom)
-            $0.left.right.bottom.equalToSuperview()
-        }
+        bind(viewModel.certificationListViewDatas)
     }
 }
 
 extension CertificationListViewController {
-    private func displayViewForCurrentStatus() {
-        if viewModel.viewStatus == .hasData,
-           contentView == nil {
-            let contentView = CertificationListContentView(viewModel: viewModel)
-            self.contentView = contentView
-            self.contentView?.delegate = self
-            self.contentView?.filterView.delegate = self
-            view.addSubview(contentView)
-            contentView.snp.makeConstraints {
-                $0.top.equalTo(navigationHeader.snp.bottom)
-                $0.left.right.bottom.equalToSuperview()
+    
+    private func loadCertificationListView() {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await viewModel.executeSort(option: .todoCompletionDate)
+                await MainActor.run {
+                    self.showMainContentViews()
+                    self.errorView?.removeFromSuperview()
+                    self.errorView = nil
+                }
+            } catch let error as NetworkError {
+                await MainActor.run {
+                    self.hideMainContentViews()
+                    self.showErrorView(error: error)
+                }
             }
-            contentView.isHidden = false
-            emptyView.isHidden = true
-            
-            configureSortButtonTitle()
-            configureBottomSheetViewController()
         }
     }
     
-    private func configureSortButtonTitle() {
-        let defaultOption: CertificationSortOption = .todoCompletionDate
-        contentView?
-            .filterView
-            .sortButton
-            .updateSelectedOption(defaultOption.bottomSheetItem)
+    private func showErrorView(error: NetworkError) {
+        errorView?.removeFromSuperview()
+        
+        errorView = ErrorHandlingManager.embedErrorView(
+            in: self,
+            under: certificationListPage.navigationHeader,
+            error: error,
+            retryHandler: { [weak self] in
+                guard let self else { return }
+                self.loadCertificationListView()
+            }
+        )
     }
     
+    private func showMainContentViews() {
+        certificationListPage.isHidden = false
+    }
+    
+    private func hideMainContentViews() {
+        certificationListPage.isHidden = true
+    }
+}
+
+extension CertificationListViewController {
     private func configureBottomSheetViewController() {
-        let bottomSheetItem = CertificationSortOption.allCases.map { $0.bottomSheetItem }
-        let selectedItem = viewModel.selectedGroup?.bottomSheetItem
+        let items = CertificationSortOption.allCases.map { $0.bottomSheetItem }
+        let selectedItem = viewModel.certificationListViewDatas.value.selectedSortOption.bottomSheetItem
         
         bottomSheetViewController = BottomSheetViewController(
             titleText: "정렬",
-            bottomSheetItem: bottomSheetItem,
+            bottomSheetItem: items,
             selectedItem: selectedItem
         )
         
@@ -88,78 +100,76 @@ extension CertificationListViewController {
         bottomSheetViewController?.modalTransitionStyle = .coverVertical
         
         bottomSheetViewController?.didSelectOption = { [weak self] selected in
-            guard let self else { return }
+            guard let self,
+                  let sortOption = selected.value as? CertificationSortOption else { return }
             
-            viewModel.selectedGroup = selected.value as? CertificationSortOption
-            
-            contentView?
-                .filterView
-                .sortButton
-                .updateSelectedOption(selected)
-            
-            if let sortOption = selected.value as? CertificationSortOption {
-                viewModel.executeSort(option: sortOption)
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    try await self.viewModel.executeSort(option: sortOption)
+                } catch let error as NetworkError {
+                    await MainActor.run {
+                        self.showErrorView(error: error)
+                    }
+                }
             }
         }
     }
 }
 
-// MARK: - ViewModel 로 부터 갱신된 데이터를 가져와서 ContentView 업데이트
-extension CertificationListViewController: CertificationListViewModelDelegate {
-    func updateContentView() {
-        DispatchQueue.main.async {
-            self.displayViewForCurrentStatus()
-            self.contentView?.reloadData()
-            self.contentView?.makeContentOffset()
-            self.errorView?.removeFromSuperview()
-            self.errorView = nil
-        }
-    }
-
-    func didFetchFail(error: NetworkError) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            
-            contentView?.removeFromSuperview()
-            contentView = nil
-            emptyView.removeFromSuperview()
-            errorView?.removeFromSuperview()
-            
-            let newErrorView = ErrorHandlingManager.embedErrorView(
-                in: self,
-                under: navigationHeader,
-                error: error,
-                retryHandler: { [weak self] in
-                    guard let self else { return }
-                    viewModel.executeSort(option: .todoCompletionDate)
-                }
-            )
-            errorView = newErrorView
-        }
-    }
-}
-
-// MARK: - ContentView 에서 전달하는 이벤트를 받기 위한 Delegate
-extension CertificationListViewController: CertificationListContentViewDelegate {
-    func didTapFilter(selectedFilter: FilterTypes) {
-        viewModel.currentFilter = selectedFilter
+extension CertificationListViewController: CertificationListPageDelegate {
+    
+    func certificationListPageDidChangeFilter(_ filter: FilterTypes) {
+        viewModel.changeFilter(filter)
     }
     
-    func didTapCertification(title: String, todos: [TodoEntity], index: Int) {
+    func certificationListPageDidSelectCertification(
+        title: String,
+        todos: [TodoEntity],
+        index: Int
+    ) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(title: title, todos: todos, index: index)
-        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
+        let certificationViewDatas = CertificationViewDatas(
+            title: title,
+            todos: todos,
+            index: index
+        )
+        coordinator?.pushViewController(
+            certificationViewController,
+            datas: certificationViewDatas
+        )
     }
     
-    func didScrollToBottom() {
-        viewModel.loadNextPage()
+    func certificationListPageDidReachBottom() {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                try await viewModel.loadNextPage()
+            } catch let error as NetworkError {
+                await MainActor.run {
+                    self.showErrorView(error: error)
+                }
+            }
+        }
     }
 }
 
 extension CertificationListViewController: BottomSheetDelegate {
     func presentBottomSheet() {
-        if presentedViewController == nil, let bottomSheetViewController {
-            present(bottomSheetViewController, animated: true)
-        }
+        guard presentedViewController == nil,
+              let bottomSheetViewController
+        else { return }
+        
+        present(bottomSheetViewController, animated: true)
     }
+}
+
+protocol CertificationListPageDelegate: AnyObject {
+    func certificationListPageDidChangeFilter(_ filter: FilterTypes)
+    func certificationListPageDidSelectCertification(
+        title: String,
+        todos: [TodoEntity],
+        index: Int
+    )
+    func certificationListPageDidReachBottom()
 }
