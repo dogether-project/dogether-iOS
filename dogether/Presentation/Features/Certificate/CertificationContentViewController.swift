@@ -48,7 +48,7 @@ final class CertificationContentViewController: BaseViewController {
         }
         
         imageView.snp.makeConstraints {
-            $0.width.height.equalTo(24)
+            $0.width.height.equalTo(16)
         }
         
         return view
