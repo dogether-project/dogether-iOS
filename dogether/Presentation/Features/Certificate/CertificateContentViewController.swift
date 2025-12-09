@@ -1,5 +1,5 @@
 //
-//  CertificationContentViewController.swift
+//  CertificateContentViewController.swift
 //  dogether
 //
 //  Created by seungyooooong on 5/13/25.
@@ -10,8 +10,8 @@ import SnapKit
 
 import Combine
 
-final class CertificationContentViewController: BaseViewController {
-    var viewModel = CertificateViewModel()
+final class CertificateContentViewController: BaseViewController {
+    private let viewModel = CertificateViewModel()
     
     private let navigationHeader = NavigationHeader(title: "인증 하기")
     
@@ -131,7 +131,7 @@ final class CertificationContentViewController: BaseViewController {
     }
 }
 // MARK: - Keyboard
-extension CertificationContentViewController {
+extension CertificateContentViewController {
     private func observeKeyboardNotifications() {
         NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
             .compactMap { notification -> CGFloat? in
@@ -173,7 +173,7 @@ extension CertificationContentViewController {
 }
 
 // MARK: - UITextFieldDelegate
-extension CertificationContentViewController: UITextViewDelegate {
+extension CertificateContentViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
@@ -191,8 +191,8 @@ extension CertificationContentViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         guard let textView = textView as? DogetherTextView else { return }
-        textView.updateTextInfo()
-        viewModel.setText(textView.text)
+//        textView.updateTextInfo()
+//        viewModel.setText(textView.text)
         // FIXME: 추후 수정
         var viewDatas = certificationButton.currentViewDatas ?? DogetherButtonViewDatas(status: .disabled)
         viewDatas.status = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -203,7 +203,7 @@ extension CertificationContentViewController: UITextViewDelegate {
     
     func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         guard let textView = textView as? DogetherTextView else { return false }
-        textView.focusOn()
+//        textView.focusOn()
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
         return true
@@ -211,7 +211,7 @@ extension CertificationContentViewController: UITextViewDelegate {
     
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         guard let textView = textView as? DogetherTextView else { return false }
-        textView.focusOff()
+//        textView.focusOff()
         
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: nil))
         return true
@@ -220,7 +220,7 @@ extension CertificationContentViewController: UITextViewDelegate {
     @objc private func dismissKeyboard() { view.endEditing(true) }
 }
 
-extension CertificationContentViewController {
+extension CertificateContentViewController {
     private func tryCertifyTodo() {
         Task {
             do {

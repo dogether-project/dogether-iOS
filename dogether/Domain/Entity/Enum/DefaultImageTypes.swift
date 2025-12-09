@@ -23,6 +23,7 @@ enum DefaultImageTypes {
         }
     }
     
+    // FIXME: 추후에 CertificationImageView에서 content와 분리 필요, (grey200으로 색 변경)
     var content: String? {
         switch self {
         case .logo:
