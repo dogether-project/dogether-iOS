@@ -60,7 +60,7 @@ final class ExaminateStackView: BaseStackView {
         
         return view
     }()
-    private let reviewFeedbackTextView = DogetherTextView(type: .reviewFeedback)
+    private let examinateTextView = DogetherTextView(type: .examination)
     private let registerButton = DogetherButton("등록하기")
     
     private(set) var currentIsFirstResponder: Bool?
@@ -78,7 +78,7 @@ final class ExaminateStackView: BaseStackView {
     }
     
     override func configureAction() {
-        reviewFeedbackTextView.delegate = self
+        examinateTextView.delegate = self
         observeKeyboardNotifications()
     }
      
@@ -86,12 +86,12 @@ final class ExaminateStackView: BaseStackView {
         [closeButton].forEach { closeContainerView.addSubview($0) }
         
         [ closeContainerView, titleLabel, descriptionView,
-          reviewFeedbackTextView, registerButton
+          examinateTextView, registerButton
         ].forEach { addArrangedSubview($0) }
         
         setCustomSpacing(12, after: titleLabel)
         setCustomSpacing(20, after: descriptionView)
-        setCustomSpacing(24, after: reviewFeedbackTextView)
+        setCustomSpacing(24, after: examinateTextView)
     }
      
     override func configureConstraints() {
@@ -112,7 +112,7 @@ final class ExaminateStackView: BaseStackView {
             $0.height.equalTo(40)
         }
         
-        reviewFeedbackTextView.snp.makeConstraints {
+        examinateTextView.snp.makeConstraints {
             $0.height.equalTo(135)
         }
     }
@@ -123,8 +123,12 @@ final class ExaminateStackView: BaseStackView {
             if currentIsFirstResponder != datas.isFirstResponder {
                 currentIsFirstResponder = datas.isFirstResponder
                 
-                if datas.isFirstResponder { reviewFeedbackTextView.becomeFirstResponder() }
+                if datas.isFirstResponder { examinateTextView.becomeFirstResponder() }
             }
+        }
+        
+        if let datas = data as? DogetherTextViewDatas {
+            examinateTextView.updateView(datas)
         }
         
         if let datas = data as? DogetherButtonViewDatas {
@@ -153,11 +157,11 @@ extension ExaminateStackView {
     
     @objc func keyboardWillShow(_ notification: Notification) {
         guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        delegate?.updateKeyboardHeightAction(height: frame.height - UIApplication.safeAreaOffset.bottom + 16)
+        delegate?.updateKeyboardHeightAction(height: frame.height)
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {
-        delegate?.updateKeyboardHeightAction(height: 16)
+        delegate?.updateKeyboardHeightAction(height: 0)
     }
 }
 
@@ -184,7 +188,6 @@ extension ExaminateStackView: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         guard let textView = textView as? DogetherTextView else { return }
-        textView.updateTextInfo()
         delegate?.updateFeedbackAction(feedback: textView.text)
     }
     
@@ -192,18 +195,6 @@ extension ExaminateStackView: UITextViewDelegate {
         if registerButton.isEnabled {
             registerButton.sendActions(for: .touchUpInside)
         }
-        return true
-    }
-    
-    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        guard let textView = textView as? DogetherTextView else { return false }
-        textView.focusOn()
-        return true
-    }
-    
-    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        guard let textView = textView as? DogetherTextView else { return false }
-        textView.focusOff()
         return true
     }
 }

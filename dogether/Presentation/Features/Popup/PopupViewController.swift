@@ -38,6 +38,7 @@ final class PopupViewController: BaseViewController {
         if let datas = datas as? ExaminatePopupViewDatas {
             viewModel.examinatePopupViewDatas.accept(datas)
             bind(viewModel.examinatePopupViewDatas)
+            bind(viewModel.examinateTextViewDatas)
             bind(viewModel.registerButtonViewDatas)
         }
     }
@@ -92,6 +93,8 @@ extension PopupViewController: PopupDelegate {
             guard let self else { return }
             view.layoutIfNeeded()
         }
+        
+        viewModel.updateIsFirstResponder(isFirstResponder: height > 0)
     }
     
     func updateFeedbackAction(feedback: String) {

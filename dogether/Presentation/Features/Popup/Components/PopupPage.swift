@@ -54,6 +54,10 @@ final class PopupPage: BasePage {
             }
             
             examinateStackView.updateView(datas)
+        }
+        
+        if let datas = data as? DogetherTextViewDatas {
+            examinateStackView.updateView(datas)
             
             if datas.isShowKeyboard {
                 addTapAction { [weak self] _ in
