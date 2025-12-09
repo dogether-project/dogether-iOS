@@ -10,24 +10,24 @@ import UIKit
 import RxRelay
 
 final class PopupViewModel {
-    private let challengeGrouopUseCase: ChallengeGroupUseCase
-    
-    private(set) var alertPopupViewDatas = BehaviorRelay<AlertPopupViewDatas>(value: AlertPopupViewDatas())
-    
-    private(set) var stringContent: String?
-    
-    var popupType: PopupTypes?
-    var alertType: AlertTypes?
-    var todoInfo: TodoEntity?
-    
-    init() {
-        let challengeGroupRepository = DIManager.shared.getChallengeGroupsRepository()
-        self.challengeGrouopUseCase = ChallengeGroupUseCase(repository: challengeGroupRepository)
-    }
+    private(set) var alertPopupViewDatas = BehaviorRelay<AlertPopupViewDatas?>(value: nil)
+    private(set) var examinatePopupViewDatas = BehaviorRelay<ExaminatePopupViewDatas?>(value: nil)
+    private(set) var registerButtonViewDatas = BehaviorRelay<DogetherButtonViewDatas>(
+        value: DogetherButtonViewDatas(status: .disabled)
+    )
 }
 
 extension PopupViewModel {
-    func setStringContent(_ text: String) {
-        stringContent = text
+    func updateIsFirstResponder(isFirstResponder: Bool) {
+        examinatePopupViewDatas.update { $0?.isFirstResponder = isFirstResponder }
+    }
+    
+    func updateKeyboardHeight(height: CGFloat) {
+        examinatePopupViewDatas.update { $0?.keyboardHeight = height }
+    }
+    
+    func updateFeedback(feedback: String) {
+        examinatePopupViewDatas.update { $0?.feedback = feedback }
+        registerButtonViewDatas.update { $0.status = feedback.count > 0 ? .enabled : .disabled }
     }
 }

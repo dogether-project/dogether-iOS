@@ -8,7 +8,7 @@
 import UIKit
 
 final class AlertStackView: BaseStackView {
-    var delegate: AlertPopupDelegate? {
+    var delegate: PopupDelegate? {
         didSet {
             cancelButton.addAction(
                 UIAction { [weak self] _ in
@@ -16,9 +16,18 @@ final class AlertStackView: BaseStackView {
                     delegate?.hidePopup()
                 }, for: .touchUpInside
             )
+            
+            confirmButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.hidePopup()
+                    delegate?.completeAction()
+                }, for: .touchUpInside
+            )
         }
     }
     
+    private let imageContainerView = UIView()
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
     private let messageLabel = UILabel()
@@ -53,25 +62,30 @@ final class AlertStackView: BaseStackView {
         buttonStackView.distribution = .fillEqually
     }
     
-    override func configureAction() { addTapAction { _ in return } }
+    override func configureAction() { }
     
     override func configureHierarchy() {
+        [imageView].forEach { imageContainerView.addSubview($0) }
         [cancelButton, confirmButton].forEach { buttonStackView.addArrangedSubview($0) }
         
-        [imageView, titleLabel, messageLabel, buttonStackView].forEach { addArrangedSubview($0) }
+        [imageContainerView, titleLabel, messageLabel, buttonStackView].forEach { addArrangedSubview($0) }
         setCustomSpacing(12, after: imageView)
         setCustomSpacing(8, after: titleLabel)
         setCustomSpacing(24, after: messageLabel)
     }
 
     override func configureConstraints() {
-        buttonStackView.snp.makeConstraints {
-            $0.height.equalTo(48)
+        imageContainerView.snp.makeConstraints {
+            $0.height.equalTo(40)
         }
- 
+        
         imageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.size.equalTo(40)
+        }
+        
+        buttonStackView.snp.makeConstraints {
+            $0.height.equalTo(48)
         }
     }
     
@@ -84,12 +98,12 @@ final class AlertStackView: BaseStackView {
                 if let image = type.image {
                     imageView.image = image
                     
-                    if !arrangedSubviews.contains(imageView) {
-                        insertArrangedSubview(imageView, at: 0)
+                    if !arrangedSubviews.contains(imageContainerView) {
+                        insertArrangedSubview(imageContainerView, at: 0)
                     }
                 } else {
-                    if arrangedSubviews.contains(imageView) {
-                        removeArrangedSubview(imageView)
+                    if arrangedSubviews.contains(imageContainerView) {
+                        removeArrangedSubview(imageContainerView)
                     }
                 }
                 

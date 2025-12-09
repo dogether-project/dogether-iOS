@@ -10,7 +10,7 @@ import Foundation
 struct AlertPopupViewDatas: BaseEntity {
     let type: AlertTypes?
     
-    init(type: AlertTypes? = nil) {
+    init(type: AlertTypes?) {
         self.type = type
     }
 }

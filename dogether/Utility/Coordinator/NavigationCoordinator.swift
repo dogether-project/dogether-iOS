@@ -89,24 +89,25 @@ extension NavigationCoordinator {
         _ viewController: BaseViewController,
         type: PopupTypes,
         alertType: AlertTypes? = nil,
-        todoInfo: TodoEntity? = nil,
         animated: Bool = true,
         completion: ((Any) -> Void)? = nil
     ) {
         let popupViewController = PopupViewController()
         
-        // FIXME: 추후 수정
-        let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
-        popupViewController.datas = alertPopupViewDatas
+        switch type {
+        case .alert:
+            let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
+            popupViewController.datas = alertPopupViewDatas
+            
+        case .reviewFeedback:
+            let examinatePopupViewDatas = ExaminatePopupViewDatas()
+            popupViewController.datas = examinatePopupViewDatas
+        }
         
         popupViewController.coordinator = self
         popupViewController.completion = completion
         popupViewController.modalPresentationStyle = .overFullScreen
         popupViewController.modalTransitionStyle = .crossDissolve
-        
-        popupViewController.viewModel.popupType = type
-        popupViewController.viewModel.alertType = alertType
-        popupViewController.viewModel.todoInfo = todoInfo
         
         viewController.present(popupViewController, animated: animated)
     }

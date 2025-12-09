@@ -14,6 +14,7 @@ final class DogetherTextView: BaseTextView {
     
     init(type: TextViewTypes) {
         self.type = type
+        
         super.init(frame: .zero, textContainer: nil)
     }
     required init?(coder: NSCoder) { fatalError() }
@@ -73,7 +74,9 @@ final class DogetherTextView: BaseTextView {
      
     override func configureConstraints() {
         placeHolder.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(8.5) // FIXME: 8.5 -> 16   // ???: 좀 떨어져있음 (border or cornerRadius 의심 중)
+            // FIXME: 8.5 -> 16
+            // ???: 좀 떨어져있음 (border or cornerRadius 의심 중)
+            $0.top.equalToSuperview().offset(8.5)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.width.equalToSuperview().offset(-32)
         }
@@ -139,7 +142,7 @@ extension DogetherTextView {
             case .certification:
                 return 75
             case .reviewFeedback:
-                return 130
+                return 105
             }
         }
     }
