@@ -20,7 +20,7 @@ final class CertificationCell: UICollectionViewCell {
     
     private let statusButton: FilterButton = {
         let button = FilterButton(type: .wait)
-        button.isUserInteractionEnabled = false // 버튼처럼 보이지만 동작은 안 하게
+        button.isUserInteractionEnabled = false
         return button
     }()
     

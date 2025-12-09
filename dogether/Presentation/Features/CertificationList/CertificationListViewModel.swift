@@ -11,6 +11,10 @@ import RxRelay
 final class CertificationListViewModel {
     private let useCase: CertificationListUseCase
     
+    private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
+    private(set) var sortSheetDatas = BehaviorRelay<CertificationSortSheetDatas>(
+        value: CertificationSortSheetDatas()
+    )
     private(set) var certificationListViewDatas =
         BehaviorRelay<CertificationListViewDatas>(value: CertificationListViewDatas())
     
@@ -24,6 +28,8 @@ final class CertificationListViewModel {
 
 extension CertificationListViewModel {
     func executeSort(option: CertificationSortOption) async throws {
+        sortSheetDatas.update { $0.selected = option }
+        
         certificationListViewDatas.update {
             $0.selectedSortOption = option
             $0.currentPage = 0

@@ -9,7 +9,14 @@ import UIKit
 import SnapKit
 
 final class CertificationFilterView: BaseView {
-    weak var delegate: BottomSheetDelegate?
+    var delegate: CertificationListPageDelegate? {
+        didSet {
+            sortButton.addTapAction { [weak self] _ in
+                guard let self else { return }
+                self.delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
+            }
+        }
+    }
     
     private let scrollView = UIScrollView()
     private let contentStackView = UIStackView()
@@ -85,13 +92,6 @@ extension CertificationFilterView {
     }
     
     private func setupButtons() {
-        sortButton.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                delegate?.presentBottomSheet()
-            }, for: .touchUpInside
-        )
-        
         contentStackView.addArrangedSubview(sortButton)
         [allButton, waitButton, approveButton, rejectButton].forEach { contentStackView.addArrangedSubview($0) }
     }

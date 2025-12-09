@@ -7,12 +7,6 @@
 
 import UIKit
 
-protocol CertificationListContentViewDelegate: AnyObject {
-    func didTapFilter(selectedFilter: FilterTypes)
-    func didTapCertification(title: String, todos: [TodoEntity], index: Int)
-    func didScrollToBottom()
-}
-
 final class CertificationListContentView: BaseView {
     weak var delegate: CertificationListContentViewDelegate?
     
@@ -111,10 +105,6 @@ final class CertificationListContentView: BaseView {
 }
 
 extension CertificationListContentView {
-    func setBottomSheetDelegate(_ delegate: BottomSheetDelegate) {
-        filterView.delegate = delegate
-    }
-    
     func makeContentOffset() {
         collectionView.contentOffset = .zero
     }

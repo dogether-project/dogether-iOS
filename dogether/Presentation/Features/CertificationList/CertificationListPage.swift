@@ -8,28 +8,31 @@
 import UIKit
 
 final class CertificationListPage: BasePage {
-    weak var delegate: CertificationListPageDelegate?
-    
-    func setBottomSheetDelegate(_ delegate: BottomSheetDelegate) {
-        contentView.setBottomSheetDelegate(delegate)
+    var delegate: CertificationListPageDelegate? {
+        didSet {
+            bottomSheetView.certificationDelegate = delegate
+            contentView.filterView.delegate = delegate
+            contentView.delegate = self
+        }
     }
     
     let navigationHeader = NavigationHeader(title: "인증 목록")
     
     private let emptyView = CertificationListEmptyView()
     private let contentView = CertificationListContentView()
+    private let bottomSheetView = BottomSheetView(hasAddButton: false)
     
     override func configureView() {
-        backgroundColor = .clear
+//        backgroundColor = .clear
     }
     
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
-        contentView.delegate = self
     }
     
     override func configureHierarchy() {
         [navigationHeader, emptyView, contentView].forEach { addSubview($0) }
+        addSubview(bottomSheetView)
     }
     
     override func configureConstraints() {
@@ -47,24 +50,43 @@ final class CertificationListPage: BasePage {
             $0.top.equalTo(navigationHeader.snp.bottom)
             $0.left.right.bottom.equalToSuperview()
         }
+        
+        bottomSheetView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     override func updateView(_ data: any BaseEntity) {
-        guard let datas = data as? CertificationListViewDatas else { return }
-        
-        switch datas.viewStatus {
-        case .empty:
-            emptyView.isHidden = false
-            contentView.isHidden = true
-            
-        case .hasData:
-            emptyView.isHidden = true
-            contentView.isHidden = false
-            contentView.updateView(datas)
+        if let datas = data as? CertificationSortSheetDatas {
+            bottomSheetView.updateView(datas)
         }
-        
-        contentView.isLastPage = datas.isLastPage
+
+        if let datas = data as? BottomSheetViewDatas {
+            bottomSheetView.updateView(datas)
+        }
+
+        if let datas = data as? CertificationListViewDatas {
+
+            switch datas.viewStatus {
+            case .empty:
+                emptyView.isHidden = false
+                contentView.isHidden = true
+
+            case .hasData:
+                emptyView.isHidden = true
+                contentView.isHidden = false
+                contentView.updateView(datas)
+            }
+
+            contentView.isLastPage = datas.isLastPage
+        }
     }
+}
+
+protocol CertificationListContentViewDelegate: AnyObject {
+    func didTapFilter(selectedFilter: FilterTypes)
+    func didTapCertification(title: String, todos: [TodoEntity], index: Int)
+    func didScrollToBottom()
 }
 
 extension CertificationListPage: CertificationListContentViewDelegate {

@@ -26,6 +26,16 @@ final class BottomSheetView: BaseView {
             }
         }
     }
+    
+    weak var certificationDelegate: CertificationListPageDelegate? {
+        didSet {
+            backgroundView.addTapAction { [weak self] _ in
+                guard let self else { return }
+                certificationDelegate?.updateBottomSheetVisibleAction(isShowSheet: false)
+            }
+        }
+    }
+    
     private let hasAddButton: Bool
     
     init(hasAddButton: Bool = true) {
@@ -105,6 +115,22 @@ final class BottomSheetView: BaseView {
             
             if data.groups.count < 5 && hasAddButton {
                 itemListStackView.addArrangedSubview(addGroupButton())
+            }
+        }
+        
+        if let data = data as? CertificationSortSheetDatas {
+            sheetTitleLabel.text = "정렬"
+            itemListStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+            sheetHeight = 24 + 28 + 20
+                + 49 * CGFloat(data.items.count)
+                + UIApplication.safeAreaOffset.bottom
+
+            data.items.forEach { option in
+                let isSelected = (option == data.selected)
+                itemListStackView.addArrangedSubview(
+                    sortItemButton(option: option, isSelected: isSelected)
+                )
             }
         }
         
@@ -205,6 +231,46 @@ extension BottomSheetView {
         titleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(addGroupImageView.snp.right).offset(8)
+        }
+        
+        return button
+    }
+    
+    func sortItemButton(option: CertificationSortOption, isSelected: Bool) -> UIButton {
+        let button = UIButton()
+        button.backgroundColor = .grey700
+        
+        button.addAction(
+            UIAction { [weak self] _ in
+                guard let self else { return }
+                certificationDelegate?.updateBottomSheetVisibleAction(isShowSheet: false)
+                certificationDelegate?.selectSortOption(option: option)
+            },
+            for: .touchUpInside
+        )
+        
+        let titleLabel = UILabel()
+        titleLabel.text = option.displayName
+        titleLabel.textColor = isSelected ? .blue300 : .grey400
+        titleLabel.font = isSelected ? Fonts.body1B : Fonts.body1S
+        
+        let checkImageView = UIImageView(image: .check)
+        checkImageView.isHidden = !isSelected
+        
+        [titleLabel, checkImageView].forEach { button.addSubview($0) }
+        
+        button.snp.makeConstraints { $0.height.equalTo(49) }
+        
+        titleLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalToSuperview().inset(24)
+            $0.right.equalTo(checkImageView.snp.left)
+        }
+        
+        checkImageView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(24)
+            $0.right.equalToSuperview().inset(24)
         }
         
         return button

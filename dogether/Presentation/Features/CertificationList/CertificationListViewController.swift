@@ -12,7 +12,6 @@ final class CertificationListViewController: BaseViewController {
     private let viewModel = CertificationListViewModel()
     
     private var errorView: ErrorView?
-    private var bottomSheetViewController: BottomSheetViewController?
     
     override func viewDidLoad() {
         certificationListPage.delegate = self
@@ -20,11 +19,7 @@ final class CertificationListViewController: BaseViewController {
         
         super.viewDidLoad()
         
-        certificationListPage.setBottomSheetDelegate(self)
-        
         coordinator?.updateViewController = loadCertificationListView
-        
-        configureBottomSheetViewController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,11 +33,12 @@ final class CertificationListViewController: BaseViewController {
         }
         
         bind(viewModel.certificationListViewDatas)
+        bind(viewModel.bottomSheetViewDatas)
+        bind(viewModel.sortSheetDatas)
     }
 }
 
 extension CertificationListViewController {
-    
     private func loadCertificationListView() {
         Task { [weak self] in
             guard let self else { return }
@@ -85,39 +81,32 @@ extension CertificationListViewController {
     }
 }
 
-extension CertificationListViewController {
-    private func configureBottomSheetViewController() {
-        let items = CertificationSortOption.allCases.map { $0.bottomSheetItem }
-        let selectedItem = viewModel.certificationListViewDatas.value.selectedSortOption.bottomSheetItem
-        
-        bottomSheetViewController = BottomSheetViewController(
-            titleText: "정렬",
-            bottomSheetItem: items,
-            selectedItem: selectedItem
-        )
-        
-        bottomSheetViewController?.modalPresentationStyle = .overCurrentContext
-        bottomSheetViewController?.modalTransitionStyle = .coverVertical
-        
-        bottomSheetViewController?.didSelectOption = { [weak self] selected in
-            guard let self,
-                  let sortOption = selected.value as? CertificationSortOption else { return }
-            
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    try await self.viewModel.executeSort(option: sortOption)
-                } catch let error as NetworkError {
-                    await MainActor.run {
-                        self.showErrorView(error: error)
-                    }
-                }
-            }
-        }
-    }
+protocol CertificationListPageDelegate: AnyObject {
+    func updateBottomSheetVisibleAction(isShowSheet: Bool)
+    func selectSortOption(option: CertificationSortOption)
+    func certificationListPageDidChangeFilter(_ filter: FilterTypes)
+    func certificationListPageDidSelectCertification(
+        title: String,
+        todos: [TodoEntity],
+        index: Int
+    )
+    func certificationListPageDidReachBottom()
 }
 
 extension CertificationListViewController: CertificationListPageDelegate {
+    func updateBottomSheetVisibleAction(isShowSheet: Bool) {
+        viewModel.bottomSheetViewDatas.update { $0.isShowSheet = isShowSheet }
+    }
+
+    func selectSortOption(option: CertificationSortOption) {
+        Task {
+            do {
+                try await viewModel.executeSort(option: option)
+            } catch {
+                await MainActor.run { self.showErrorView(error: error as! NetworkError) }
+            }
+        }
+    }
     
     func certificationListPageDidChangeFilter(_ filter: FilterTypes) {
         viewModel.changeFilter(filter)
@@ -152,24 +141,4 @@ extension CertificationListViewController: CertificationListPageDelegate {
             }
         }
     }
-}
-
-extension CertificationListViewController: BottomSheetDelegate {
-    func presentBottomSheet() {
-        guard presentedViewController == nil,
-              let bottomSheetViewController
-        else { return }
-        
-        present(bottomSheetViewController, animated: true)
-    }
-}
-
-protocol CertificationListPageDelegate: AnyObject {
-    func certificationListPageDidChangeFilter(_ filter: FilterTypes)
-    func certificationListPageDidSelectCertification(
-        title: String,
-        todos: [TodoEntity],
-        index: Int
-    )
-    func certificationListPageDidReachBottom()
 }
