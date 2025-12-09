@@ -65,11 +65,7 @@ extension CertificationListViewModel {
 }
 
 extension CertificationListViewModel {
-    private func fetchSortedList(
-        option: CertificationSortOption,
-        page: Int,
-        isReset: Bool
-    ) async throws {
+    private func fetchSortedList(option: CertificationSortOption, page: Int, isReset: Bool) async throws {
         let result = try await useCase.fetchSortedList(option: option, page: page)
         
         if isReset {
@@ -93,10 +89,7 @@ extension CertificationListViewModel {
         }
     }
     
-    private func filterSections(
-        source: [CertificationSection],
-        filter: FilterTypes
-    ) -> [CertificationSection] {
+    private func filterSections(source: [CertificationSection], filter: FilterTypes) -> [CertificationSection] {
         guard filter != .all else { return source }
         
         return source.compactMap { section in

@@ -8,7 +8,11 @@
 import UIKit
 
 final class CertificationListContentView: BaseView {
-    weak var delegate: CertificationListContentViewDelegate?
+    var delegate: CertificationListPageDelegate? {
+        didSet {
+            filterView.delegate = delegate
+        }
+    }
     
     private var sections: [CertificationSection] = []
     var isLastPage: Bool = false
@@ -24,7 +28,7 @@ final class CertificationListContentView: BaseView {
     
     private lazy var summaryView = CertificationSummaryView()
     
-    let filterView = CertificationFilterView()
+    private let filterView = CertificationFilterView()
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -91,8 +95,8 @@ final class CertificationListContentView: BaseView {
         
         setupHeaderLabelText(count: datas.totalCertificatedCount)
         
-        filterView.sortButton.updateSelectedOption(datas.selectedSortOption.bottomSheetItem)
-        
+        filterView.updateView(datas)
+
         collectionView.reloadData()
         makeContentOffset()
     }

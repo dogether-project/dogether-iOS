@@ -34,8 +34,6 @@ final class CertificationFilterView: BaseView {
     private var rejectButton = FilterButton(type: .reject)
     private var approveButton = FilterButton(type: .approve)
     
-    var filterSelected: ((FilterTypes) -> Void)?
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -66,6 +64,12 @@ final class CertificationFilterView: BaseView {
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalToSuperview()
         }
+    }
+    
+    override func updateView(_ data: any BaseEntity) {
+        guard let datas = data as? CertificationListViewDatas else { return }
+        sortButton.updateSelectedOption(datas.selectedSortOption.bottomSheetItem)
+        applyFilter(datas.currentFilter)
     }
 }
 

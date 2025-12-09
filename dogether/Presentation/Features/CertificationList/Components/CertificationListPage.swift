@@ -11,8 +11,7 @@ final class CertificationListPage: BasePage {
     var delegate: CertificationListPageDelegate? {
         didSet {
             bottomSheetView.certificationDelegate = delegate
-            contentView.filterView.delegate = delegate
-            contentView.delegate = self
+            contentView.delegate = delegate
         }
     }
     
@@ -56,11 +55,11 @@ final class CertificationListPage: BasePage {
     }
     
     override func updateView(_ data: any BaseEntity) {
-        if let datas = data as? CertificationSortSheetDatas {
+        if let datas = data as? BottomSheetViewDatas {
             bottomSheetView.updateView(datas)
         }
-
-        if let datas = data as? BottomSheetViewDatas {
+        
+        if let datas = data as? CertificationSortSheetDatas {
             bottomSheetView.updateView(datas)
         }
 
@@ -75,34 +74,9 @@ final class CertificationListPage: BasePage {
                 emptyView.isHidden = true
                 contentView.isHidden = false
                 contentView.updateView(datas)
-                contentView.filterView.applyFilter(datas.currentFilter)
             }
 
             contentView.isLastPage = datas.isLastPage
         }
-    }
-}
-
-protocol CertificationListContentViewDelegate: AnyObject {
-    func didTapFilter(selectedFilter: FilterTypes)
-    func didTapCertification(title: String, todos: [TodoEntity], index: Int)
-    func didScrollToBottom()
-}
-
-extension CertificationListPage: CertificationListContentViewDelegate {
-    func didTapFilter(selectedFilter: FilterTypes) {
-        delegate?.certificationListPageDidChangeFilter(selectedFilter)
-    }
-    
-    func didTapCertification(title: String, todos: [TodoEntity], index: Int) {
-        delegate?.certificationListPageDidSelectCertification(
-            title: title,
-            todos: todos,
-            index: index
-        )
-    }
-    
-    func didScrollToBottom() {
-        delegate?.certificationListPageDidReachBottom()
     }
 }

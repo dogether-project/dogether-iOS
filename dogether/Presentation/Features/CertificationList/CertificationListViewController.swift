@@ -28,10 +28,6 @@ final class CertificationListViewController: BaseViewController {
     }
     
     override func setViewDatas() {
-        if let datas = datas as? CertificationListViewDatas {
-            viewModel.certificationListViewDatas.accept(datas)
-        }
-        
         bind(viewModel.certificationListViewDatas)
         bind(viewModel.bottomSheetViewDatas)
         bind(viewModel.sortSheetDatas)
@@ -85,19 +81,17 @@ protocol CertificationListPageDelegate: AnyObject {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectSortOption(option: CertificationSortOption)
     func certificationListPageDidChangeFilter(_ filter: FilterTypes)
-    func certificationListPageDidSelectCertification(
-        title: String,
-        todos: [TodoEntity],
-        index: Int
-    )
+    func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int)
     func certificationListPageDidReachBottom()
+    func didTapCertification(title: String, todos: [TodoEntity], index: Int)
+    func didScrollToBottom()
 }
 
 extension CertificationListViewController: CertificationListPageDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool) {
         viewModel.bottomSheetViewDatas.update { $0.isShowSheet = isShowSheet }
     }
-
+    
     func selectSortOption(option: CertificationSortOption) {
         Task {
             do {
@@ -112,26 +106,33 @@ extension CertificationListViewController: CertificationListPageDelegate {
         viewModel.changeFilter(filter)
     }
     
-    func certificationListPageDidSelectCertification(
-        title: String,
-        todos: [TodoEntity],
-        index: Int
-    ) {
+    func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(
-            title: title,
-            todos: todos,
-            index: index
-        )
-        coordinator?.pushViewController(
-            certificationViewController,
-            datas: certificationViewDatas
-        )
+        let certificationViewDatas = CertificationViewDatas(title: title, todos: todos, index: index)
+        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
     }
     
     func certificationListPageDidReachBottom() {
         Task { [weak self] in
             guard let self else { return }
+            do {
+                try await viewModel.loadNextPage()
+            } catch let error as NetworkError {
+                await MainActor.run {
+                    self.showErrorView(error: error)
+                }
+            }
+        }
+    }
+    
+    func didTapCertification(title: String, todos: [TodoEntity], index: Int) {
+        let vc = CertificationViewController()
+        let datas = CertificationViewDatas(title: title, todos: todos, index: index)
+        coordinator?.pushViewController(vc, datas: datas)
+    }
+    
+    func didScrollToBottom() {
+        Task {
             do {
                 try await viewModel.loadNextPage()
             } catch let error as NetworkError {
