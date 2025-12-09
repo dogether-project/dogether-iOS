@@ -53,12 +53,6 @@ final class CertificationListContentView: BaseView {
         collectionView.showsVerticalScrollIndicator = false
     }
     
-    override func configureAction() {
-        filterView.filterSelected = { [weak self] filter in
-            self?.delegate?.didTapFilter(selectedFilter: filter)
-        }
-    }
-    
     override func configureHierarchy() {
         [headerLabel, summaryView, filterView, collectionView].forEach { addSubview($0) }
     }

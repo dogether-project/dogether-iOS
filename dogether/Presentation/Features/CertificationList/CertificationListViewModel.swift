@@ -40,11 +40,14 @@ extension CertificationListViewModel {
     }
     
     func changeFilter(_ filter: FilterTypes) {
-        let filteredSections = filterSections(source: rawSections, filter: filter)
+        let currentFilter = certificationListViewDatas.value.currentFilter
+        let newFilter: FilterTypes = (currentFilter == filter) ? .all : filter
+        
+        let filteredSections = filterSections(source: rawSections, filter: newFilter)
         let status: CertificationListViewStatus = filteredSections.isEmpty ? .empty : .hasData
         
         certificationListViewDatas.update {
-            $0.currentFilter = filter
+            $0.currentFilter = newFilter
             $0.sections = filteredSections
             $0.viewStatus = status
         }

@@ -23,7 +23,6 @@ final class CertificationListPage: BasePage {
     private let bottomSheetView = BottomSheetView(hasAddButton: false)
     
     override func configureView() {
-//        backgroundColor = .clear
     }
     
     override func configureAction() {
@@ -76,6 +75,7 @@ final class CertificationListPage: BasePage {
                 emptyView.isHidden = true
                 contentView.isHidden = false
                 contentView.updateView(datas)
+                contentView.filterView.applyFilter(datas.currentFilter)
             }
 
             contentView.isLastPage = datas.isLastPage

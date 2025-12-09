@@ -13,7 +13,14 @@ final class CertificationFilterView: BaseView {
         didSet {
             sortButton.addTapAction { [weak self] _ in
                 guard let self else { return }
-                self.delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
+                delegate?.updateBottomSheetVisibleAction(isShowSheet: true)
+            }
+            
+            [allButton, waitButton, approveButton, rejectButton].forEach { button in
+                button.addTapAction { [weak self] _ in
+                    guard let self else { return }
+                    delegate?.certificationListPageDidChangeFilter(button.type)
+                }
             }
         }
     }
@@ -22,7 +29,6 @@ final class CertificationFilterView: BaseView {
     private let contentStackView = UIStackView()
     let sortButton = CertificationSortButton()
     
-    private var currentFilter: FilterTypes = .all   // FIXME: View에서 변수를 관리하는 건 좋지 않은 것 같아요 나중에 CertificationListViewModel로 빼주세요
     private var allButton = FilterButton(type: .all)
     private var waitButton = FilterButton(type: .wait)
     private var rejectButton = FilterButton(type: .reject)
@@ -39,25 +45,9 @@ final class CertificationFilterView: BaseView {
     }
     
     override func configureView() {
-        setFilter(filter: .all)
         setupScrollView()
         setupContentStackView()
         setupButtons()
-    }
-    
-    override func configureAction() {
-        // FIXME: View에서 Action을 들고있는 건 좋지 않은 것 같아요 나중에 CertificationListViewController로 빼주세요
-        // ???: 다만, filterSelected에 넣지 않은 이유는 View -> ViewController 형태의 역방향 호출 방법에 대해 논의하고 싶어서입니다
-        [allButton, waitButton, approveButton, rejectButton].forEach { button in
-            button.addAction(
-                UIAction { [weak self, weak button] _ in
-                    guard let self, let button else { return }
-                    Task { @MainActor in
-                        self.setFilter(filter: button.type)
-                    }
-                }, for: .touchUpInside
-            )
-        }
     }
     
     override func configureHierarchy() {
@@ -96,17 +86,10 @@ extension CertificationFilterView {
         [allButton, waitButton, approveButton, rejectButton].forEach { contentStackView.addArrangedSubview($0) }
     }
     
-    private func setFilter(filter: FilterTypes) {
-        if currentFilter == filter {
-            currentFilter = .all
-        } else {
-            currentFilter = filter
-        }
-        
-        filterSelected?(currentFilter)
-        allButton.setIsColorful(currentFilter == .all)
-        waitButton.setIsColorful(currentFilter == .wait)
-        rejectButton.setIsColorful(currentFilter == .reject)
-        approveButton.setIsColorful(currentFilter == .approve)
+    func applyFilter(_ filter: FilterTypes) {
+        allButton.setIsColorful(filter == .all)
+        waitButton.setIsColorful(filter == .wait)
+        rejectButton.setIsColorful(filter == .reject)
+        approveButton.setIsColorful(filter == .approve)
     }
 }
