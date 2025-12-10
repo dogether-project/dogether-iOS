@@ -31,12 +31,12 @@ final class CertificateContentPage: BasePage {
         
         let label = UILabel()
         label.text = "한번 인증한 내용은 바꿀 수 없어요"
-        label.textColor = .grey400
+        label.textColor = .grey200
         label.font = Fonts.body2S
         
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
         stackView.axis = .horizontal
-        stackView.spacing = 8
+        stackView.spacing = 4
         
         [stackView].forEach { view.addSubview($0) }
         
@@ -91,7 +91,7 @@ final class CertificateContentPage: BasePage {
         
         descriptionLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(navigationHeader.snp.bottom).offset(32)
+            $0.top.equalTo(navigationHeader.snp.bottom).offset(40)
             $0.height.equalTo(36)
         }
         
@@ -102,7 +102,7 @@ final class CertificateContentPage: BasePage {
         }
         
         certificationTextView.snp.makeConstraints {
-            $0.top.equalTo(descriptionView.snp.bottom).offset(32)
+            $0.top.equalTo(descriptionView.snp.bottom).offset(48)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalTo(106)
         }

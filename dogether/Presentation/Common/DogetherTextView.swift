@@ -116,7 +116,7 @@ extension DogetherTextView {
         var placeHolder: String {
             switch self {
             case .certification:
-                return "팀원이 이해하기 쉽도록 인증에 대한 설명을 입력하세요."
+                return "팀원이 이해하기 쉽도록 인증에 대한\n설명을 입력하세요."
             case .examination:
                 return "텍스트를 입력하세요"
             }
