@@ -29,14 +29,14 @@ final class CertificateImageViewController: BaseViewController {
     }
 }
 
-protocol CertificateDelegate {
+protocol CertificateImageDelegate {
     func goCertificateContentViewAction()
     func showPopupAction(type: AlertTypes)
     func presentPickerControllerAction(pickerController: UIViewController)
     func uploadImageAction(image: UIImage)
 }
 
-extension CertificateImageViewController: CertificateDelegate {
+extension CertificateImageViewController: CertificateImageDelegate {
     func goCertificateContentViewAction() {
         let certificateContentViewController = CertificateContentViewController()
         let certificateViewDatas = viewModel.certificateViewDatas.value

@@ -10,7 +10,7 @@ import UIKit
 import PhotosUI
 
 final class CertificateImagePage: BasePage {
-    var delegate: CertificateDelegate? {
+    var delegate: CertificateImageDelegate? {
         didSet {
             certificateButton.addAction(
                 UIAction { [weak self] _ in

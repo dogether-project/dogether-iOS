@@ -38,10 +38,10 @@ final class GroupJoinPage: BasePage {
     
     private let codeMaxLength = 8
     
-    private var currentStatus: GroupJoinStatus?
-    private var currentKeyboardHeight: CGFloat?
-    private var currentIsFirstResponder: Bool?
-    private var isFirst: Bool = true
+    private(set) var currentStatus: GroupJoinStatus?
+    private(set) var currentKeyboardHeight: CGFloat?
+    private(set) var currentIsFirstResponder: Bool?
+    private(set) var isFirst: Bool = true
     
     override func configureView() {
         titleLabel.text = "초대코드 입력"
@@ -136,7 +136,7 @@ final class GroupJoinPage: BasePage {
                 currentKeyboardHeight = datas.keyboardHeight
                 
                 joinButton.snp.updateConstraints {
-                    $0.bottom.equalToSuperview().inset(datas.keyboardHeight)
+                    $0.bottom.equalToSuperview().inset(datas.keyboardHeight + 16)
                 }
                 UIView.animate(withDuration: 0.35) { [weak self] in
                     guard let self else { return }
@@ -177,11 +177,11 @@ extension GroupJoinPage {
     
     @objc func keyboardWillShow(_ notification: Notification) {
         guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        delegate?.updateKeyboardHeightAction(height: frame.height - UIApplication.safeAreaOffset.bottom + 16)
+        delegate?.updateKeyboardHeightAction(height: frame.height - UIApplication.safeAreaOffset.bottom)
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {
-        delegate?.updateKeyboardHeightAction(height: 16)
+        delegate?.updateKeyboardHeightAction(height: 0)
     }
 }
 
