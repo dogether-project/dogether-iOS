@@ -68,7 +68,7 @@ final class CertificationFilterView: BaseView {
     
     override func updateView(_ data: any BaseEntity) {
         guard let datas = data as? CertificationListViewDatas else { return }
-        sortButton.updateSelectedOption(datas.selectedSortOption.bottomSheetItem)
+        sortButton.updateSelectedOption(datas.selectedSortOption)
         applyFilter(datas.currentFilter)
     }
 }

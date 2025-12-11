@@ -12,9 +12,7 @@ final class CertificationListViewModel {
     private let useCase: CertificationListUseCase
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
-    private(set) var sortSheetDatas = BehaviorRelay<CertificationSortSheetDatas>(
-        value: CertificationSortSheetDatas()
-    )
+    private(set) var sortViewDatas = BehaviorRelay<SortViewDatas>(value: SortViewDatas())
     private(set) var certificationListViewDatas =
         BehaviorRelay<CertificationListViewDatas>(value: CertificationListViewDatas())
     
@@ -27,9 +25,14 @@ final class CertificationListViewModel {
 }
 
 extension CertificationListViewModel {
-    func executeSort(option: CertificationSortOption) async throws {
-        sortSheetDatas.update { $0.selected = option }
-        
+    func updateSortIndex(index: Int) {
+        // FIXME: sort list fetch 작업 추가 예정
+        sortViewDatas.update { $0.index = index }
+    }
+}
+
+extension CertificationListViewModel {
+    func executeSort(option: SortOptions) async throws {
         certificationListViewDatas.update {
             $0.selectedSortOption = option
             $0.currentPage = 0
@@ -65,7 +68,7 @@ extension CertificationListViewModel {
 }
 
 extension CertificationListViewModel {
-    private func fetchSortedList(option: CertificationSortOption, page: Int, isReset: Bool) async throws {
+    private func fetchSortedList(option: SortOptions, page: Int, isReset: Bool) async throws {
         let result = try await useCase.fetchSortedList(option: option, page: page)
         
         if isReset {

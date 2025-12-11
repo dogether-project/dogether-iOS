@@ -5,8 +5,6 @@
 //  Created by yujaehong on 4/21/25.
 //
 
-import UIKit
-
 final class CertificationListViewController: BaseViewController {
     private let certificationListPage = CertificationListPage()
     private let viewModel = CertificationListViewModel()
@@ -15,6 +13,7 @@ final class CertificationListViewController: BaseViewController {
     
     override func viewDidLoad() {
         certificationListPage.delegate = self
+        
         pages = [certificationListPage]
         
         super.viewDidLoad()
@@ -24,13 +23,14 @@ final class CertificationListViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         loadCertificationListView()
     }
     
     override func setViewDatas() {
         bind(viewModel.certificationListViewDatas)
         bind(viewModel.bottomSheetViewDatas)
-        bind(viewModel.sortSheetDatas)
+        bind(viewModel.sortViewDatas)
     }
 }
 
@@ -41,45 +41,23 @@ extension CertificationListViewController {
             do {
                 try await viewModel.executeSort(option: .todoCompletionDate)
                 await MainActor.run {
-                    self.showMainContentViews()
+//                    self.showMainContentViews()
                     self.errorView?.removeFromSuperview()
                     self.errorView = nil
                 }
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    self.hideMainContentViews()
-                    self.showErrorView(error: error)
-                }
+//            } catch let error as NetworkError {
+//                await MainActor.run {
+//                    self.hideMainContentViews()
+//                    self.showErrorView(error: error)
+//                }
             }
         }
     }
-    
-    private func showErrorView(error: NetworkError) {
-        errorView?.removeFromSuperview()
-        
-        errorView = ErrorHandlingManager.embedErrorView(
-            in: self,
-            under: certificationListPage.navigationHeader,
-            error: error,
-            retryHandler: { [weak self] in
-                guard let self else { return }
-                self.loadCertificationListView()
-            }
-        )
-    }
-    
-    private func showMainContentViews() {
-        certificationListPage.isHidden = false
-    }
-    
-    private func hideMainContentViews() {
-        certificationListPage.isHidden = true
-    }
 }
 
-protocol CertificationListPageDelegate: AnyObject {
+protocol CertificationListPageDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
-    func selectSortOption(option: CertificationSortOption)
+    func selectSortAction(index: Int)
     func certificationListPageDidChangeFilter(_ filter: FilterTypes)
     func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int)
     func certificationListPageDidReachBottom()
@@ -92,14 +70,8 @@ extension CertificationListViewController: CertificationListPageDelegate {
         viewModel.bottomSheetViewDatas.update { $0.isShowSheet = isShowSheet }
     }
     
-    func selectSortOption(option: CertificationSortOption) {
-        Task {
-            do {
-                try await viewModel.executeSort(option: option)
-            } catch {
-                await MainActor.run { self.showErrorView(error: error as! NetworkError) }
-            }
-        }
+    func selectSortAction(index: Int) {
+        viewModel.updateSortIndex(index: index)
     }
     
     func certificationListPageDidChangeFilter(_ filter: FilterTypes) {
@@ -117,10 +89,10 @@ extension CertificationListViewController: CertificationListPageDelegate {
             guard let self else { return }
             do {
                 try await viewModel.loadNextPage()
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    self.showErrorView(error: error)
-                }
+//            } catch let error as NetworkError {
+//                await MainActor.run {
+//                    self.showErrorView(error: error)
+//                }
             }
         }
     }
@@ -135,10 +107,10 @@ extension CertificationListViewController: CertificationListPageDelegate {
         Task {
             do {
                 try await viewModel.loadNextPage()
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    self.showErrorView(error: error)
-                }
+//            } catch let error as NetworkError {
+//                await MainActor.run {
+//                    self.showErrorView(error: error)
+//                }
             }
         }
     }

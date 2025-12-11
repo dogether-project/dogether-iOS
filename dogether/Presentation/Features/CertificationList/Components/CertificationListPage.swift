@@ -10,27 +10,25 @@ import UIKit
 final class CertificationListPage: BasePage {
     var delegate: CertificationListPageDelegate? {
         didSet {
-            bottomSheetView.certificationDelegate = delegate
             contentView.delegate = delegate
+            
+            bottomSheetView.certificationDelegate = delegate
         }
     }
     
-    let navigationHeader = NavigationHeader(title: "인증 목록")
-    
+    private let navigationHeader = NavigationHeader(title: "인증 목록")
     private let emptyView = CertificationListEmptyView()
     private let contentView = CertificationListContentView()
     private let bottomSheetView = BottomSheetView(hasAddButton: false)
     
-    override func configureView() {
-    }
+    override func configureView() { }
     
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
     }
     
     override func configureHierarchy() {
-        [navigationHeader, emptyView, contentView].forEach { addSubview($0) }
-        addSubview(bottomSheetView)
+        [navigationHeader, emptyView, contentView, bottomSheetView].forEach { addSubview($0) }
     }
     
     override func configureConstraints() {
@@ -59,7 +57,7 @@ final class CertificationListPage: BasePage {
             bottomSheetView.updateView(datas)
         }
         
-        if let datas = data as? CertificationSortSheetDatas {
+        if let datas = data as? SortViewDatas {
             bottomSheetView.updateView(datas)
         }
 

@@ -15,7 +15,7 @@ struct CertificationListViewDatas: BaseEntity {
     var totalRejectedCount: Int
     
     var currentFilter: FilterTypes
-    var selectedSortOption: CertificationSortOption
+    var selectedSortOption: SortOptions
     
     var currentPage: Int
     var isLastPage: Bool
@@ -28,7 +28,7 @@ struct CertificationListViewDatas: BaseEntity {
         totalApprovedCount: Int = 0,
         totalRejectedCount: Int = 0,
         currentFilter: FilterTypes = .all,
-        selectedSortOption: CertificationSortOption = .todoCompletionDate,
+        selectedSortOption: SortOptions = .todoCompletionDate,
         currentPage: Int = 0,
         isLastPage: Bool = false,
         viewStatus: CertificationListViewStatus = .empty

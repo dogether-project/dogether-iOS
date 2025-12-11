@@ -62,7 +62,7 @@ final class CertificationSortButton: BaseButton {
         }
     }
     
-    func updateSelectedOption(_ option: BottomSheetItem) {
+    func updateSelectedOption(_ option: SortOptions) {
         sortTitleLabel.text = option.displayName
     }
 }

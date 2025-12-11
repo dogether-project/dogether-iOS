@@ -27,7 +27,7 @@ final class BottomSheetView: BaseView {
         }
     }
     
-    weak var certificationDelegate: CertificationListPageDelegate? {
+    var certificationDelegate: CertificationListPageDelegate? {
         didSet {
             backgroundView.addTapAction { [weak self] _ in
                 guard let self else { return }
@@ -101,7 +101,7 @@ final class BottomSheetView: BaseView {
     override func updateView(_ data: any BaseEntity) {
         if let data = data as? GroupViewDatas {
             sheetTitleLabel.text = "그룹 선택"
-            itemListStackView.arrangedSubviews.forEach { itemListStackView.removeArrangedSubview($0) }
+            itemListStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
             
             sheetHeight = 24 + 28 + 20
             + 49 * CGFloat(data.groups.count < 5 && hasAddButton ? data.groups.count + 1 : data.groups.count)
@@ -118,18 +118,17 @@ final class BottomSheetView: BaseView {
             }
         }
         
-        if let data = data as? CertificationSortSheetDatas {
+        if let data = data as? SortViewDatas {
             sheetTitleLabel.text = "정렬"
             itemListStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
             sheetHeight = 24 + 28 + 20
-                + 49 * CGFloat(data.items.count)
+                + 49 * CGFloat(data.options.count)
                 + UIApplication.safeAreaOffset.bottom
 
-            data.items.forEach { option in
-                let isSelected = (option == data.selected)
+            data.options.enumerated().forEach { index, option in
                 itemListStackView.addArrangedSubview(
-                    sortItemButton(option: option, isSelected: isSelected)
+                    itemButton(index: index, title: option.displayName, isSelected: index == data.index)
                 )
             }
         }
@@ -163,6 +162,10 @@ extension BottomSheetView {
                 if let delegate = statsDelegate {
                     delegate.updateBottomSheetVisibleAction(isShowSheet: false)
                     delegate.selectGroupAction(index: index)
+                }
+                if let delegate = certificationDelegate {
+                    delegate.updateBottomSheetVisibleAction(isShowSheet: false)
+                    delegate.selectSortAction(index: index)
                 }
             }, for: .touchUpInside
         )
@@ -231,46 +234,6 @@ extension BottomSheetView {
         titleLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(addGroupImageView.snp.right).offset(8)
-        }
-        
-        return button
-    }
-    
-    func sortItemButton(option: CertificationSortOption, isSelected: Bool) -> UIButton {
-        let button = UIButton()
-        button.backgroundColor = .grey700
-        
-        button.addAction(
-            UIAction { [weak self] _ in
-                guard let self else { return }
-                certificationDelegate?.updateBottomSheetVisibleAction(isShowSheet: false)
-                certificationDelegate?.selectSortOption(option: option)
-            },
-            for: .touchUpInside
-        )
-        
-        let titleLabel = UILabel()
-        titleLabel.text = option.displayName
-        titleLabel.textColor = isSelected ? .blue300 : .grey400
-        titleLabel.font = isSelected ? Fonts.body1B : Fonts.body1S
-        
-        let checkImageView = UIImageView(image: .check)
-        checkImageView.isHidden = !isSelected
-        
-        [titleLabel, checkImageView].forEach { button.addSubview($0) }
-        
-        button.snp.makeConstraints { $0.height.equalTo(49) }
-        
-        titleLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.left.equalToSuperview().inset(24)
-            $0.right.equalTo(checkImageView.snp.left)
-        }
-        
-        checkImageView.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(24)
-            $0.right.equalToSuperview().inset(24)
         }
         
         return button
