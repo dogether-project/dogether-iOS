@@ -99,7 +99,7 @@ extension NavigationCoordinator {
             let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
             popupViewController.datas = alertPopupViewDatas
             
-        case .reviewFeedback:
+        case .examinate:
             let examinatePopupViewDatas = ExaminatePopupViewDatas()
             popupViewController.datas = examinatePopupViewDatas
         }

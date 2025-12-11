@@ -46,7 +46,7 @@ extension ModalityViewController: ExaminateDelegate {
         viewModel.setFeedback()
         viewModel.setButtonStatus(status: type == .approve ? .enabled : .disabled)
 
-        coordinator?.showPopup(self, type: .reviewFeedback) { [weak self] reviewFeedback in
+        coordinator?.showPopup(self, type: .examinate) { [weak self] reviewFeedback in
             guard let self, let reviewFeedback = reviewFeedback as? String else { return }
             viewModel.setFeedback(feedback: reviewFeedback)
             viewModel.setButtonStatus(status: .enabled)
