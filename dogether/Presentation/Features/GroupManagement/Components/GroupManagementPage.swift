@@ -17,8 +17,8 @@ final class GroupManagementPage: BasePage {
     private let navigationHeader = NavigationHeader(title: "그룹 관리")
     private let emptyView = GroupEmptyView()
     private let tableView = UITableView()
-
-    private var currentGroups: [GroupEntity] = []
+    
+    private(set) var currentGroups: [GroupEntity]?
 
     override func configureView() {
         tableView.backgroundColor = .clear
@@ -29,14 +29,13 @@ final class GroupManagementPage: BasePage {
 
     override func configureAction() {
         navigationHeader.delegate = coordinatorDelegate
+        
         tableView.dataSource = self
         tableView.delegate = self
     }
 
     override func configureHierarchy() {
-        addSubview(navigationHeader)
-        addSubview(emptyView)
-        addSubview(tableView)
+        [navigationHeader, emptyView, tableView].forEach { addSubview($0) }
     }
 
     override func configureConstraints() {
@@ -60,36 +59,32 @@ final class GroupManagementPage: BasePage {
     override func updateView(_ data: any BaseEntity) {
         guard let datas = data as? GroupManagementViewDatas else { return }
 
-        currentGroups = datas.groups
-
-        if currentGroups.isEmpty {
-            emptyView.isHidden = false
-            tableView.isHidden = true
-        } else {
-            emptyView.isHidden = true
-            tableView.isHidden = false
-            tableView.isUserInteractionEnabled = true
-            tableView.reloadData()
+        if currentGroups != datas.groups {
+            currentGroups = datas.groups
+            
+            if datas.groups.isEmpty {
+                emptyView.isHidden = false
+                tableView.isHidden = true
+            } else {
+                emptyView.isHidden = true
+                tableView.isHidden = false
+                tableView.isUserInteractionEnabled = true
+                tableView.reloadData()
+            }
         }
     }
 }
 
 extension GroupManagementPage: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        currentGroups.count
+        currentGroups?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "GroupManagementCell", for: indexPath) as? GroupManagementCell else { return UITableViewCell() }
 
-        let group = currentGroups[indexPath.row]
-        cell.configure(with: group)
-
-        cell.onLeaveButtonTapped = { [weak self] in
-            guard let self else { return }
-            delegate?.leaveGroupTapped(group)
-        }
+        cell.updateView(currentGroups?[indexPath.row])
+        cell.delegate = delegate
 
         return cell
     }

@@ -5,15 +5,16 @@
 //  Created by yujaehong on 4/21/25.
 //
 
-import UIKit
+import Foundation
 
 final class GroupManagementViewController: BaseViewController {
-    private let page = GroupManagementPage()
+    private let groupManagementPage = GroupManagementPage()
     private let viewModel = GroupManagementViewModel()
 
     override func viewDidLoad() {
-        page.delegate = self
-        pages = [page]
+        groupManagementPage.delegate = self
+        
+        pages = [groupManagementPage]
         
         super.viewDidLoad()
 
@@ -22,11 +23,12 @@ final class GroupManagementViewController: BaseViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         loadGroups()
     }
 
     override func setViewDatas() {
-        bind(viewModel.viewDatas)
+        bind(viewModel.groupManagementViewDatas)
     }
 }
 
@@ -34,36 +36,29 @@ extension GroupManagementViewController {
     private func loadGroups() {
         Task { [weak self] in
             guard let self else { return }
-
             do {
                 try await viewModel.loadGroups()
-                await MainActor.run {
-                    self.showMain()
-                }
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    self.hideMain()
-                    self.showError(error)
-                }
+//                await MainActor.run {
+//                    self.showMain()
+//                }
+//            } catch let error as NetworkError {
+//                await MainActor.run {
+//                    self.hideMain()
+//                    self.showError(error)
+//                }
             }
         }
     }
 }
 
-extension GroupManagementViewController {
-    private func showError(_ error: NetworkError) {}
-    private func showMain() {}
-    private func hideMain() {}
-}
-
 // MARK: - delegate
 protocol GroupManagementDelegate: AnyObject {
-    func leaveGroupTapped(_ group: GroupEntity)
+    func leaveGroupAction(_ group: GroupEntity)
     func addGroupAction()
 }
 
 extension GroupManagementViewController: GroupManagementDelegate {
-    func leaveGroupTapped(_ group: GroupEntity) {
+    func leaveGroupAction(_ group: GroupEntity) {
         coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { [weak self] _ in
             guard let self else { return }
             tryLeaveGroup(groupId: group.id)
@@ -77,15 +72,14 @@ extension GroupManagementViewController: GroupManagementDelegate {
 
 extension GroupManagementViewController {
     private func tryLeaveGroup(groupId: Int) {
-        Task {
+        Task { [weak self] in
+            guard let self else { return }
             do {
                 try await viewModel.leaveGroup(groupId: groupId)
-                await MainActor.run {
-                    loadGroups()
-                }
-            } catch let error as NetworkError {
-                hideMain()
-                showError(error)
+                loadGroups()
+//            } catch let error as NetworkError {
+//                hideMain()
+//                showError(error)
             }
         }
     }
