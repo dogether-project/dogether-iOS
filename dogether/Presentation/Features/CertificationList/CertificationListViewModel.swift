@@ -5,22 +5,22 @@
 //  Created by yujaehong on 4/23/25.
 //
 
-import Foundation
 import RxRelay
 
 final class CertificationListViewModel {
-    private let useCase: CertificationListUseCase
+    private let userUseCase: UserUseCase
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
     private(set) var sortViewDatas = BehaviorRelay<SortViewDatas>(value: SortViewDatas())
-    private(set) var certificationListViewDatas =
-        BehaviorRelay<CertificationListViewDatas>(value: CertificationListViewDatas())
+    private(set) var statsViewDatas = BehaviorRelay<StatsViewDatas>(value: StatsViewDatas())
+    private(set) var certificationListViewDatas = BehaviorRelay<CertificationListViewDatas>(
+        value: CertificationListViewDatas()
+    )
     
-    private var rawSections: [CertificationSection] = []
     
     init() {
-        let repository = DIManager.shared.getCertificationListRepository()
-        self.useCase = CertificationListUseCase(repository: repository)
+        let repository = DIManager.shared.getUserRepository()
+        self.userUseCase = UserUseCase(repository: repository)
     }
 }
 
@@ -46,7 +46,7 @@ extension CertificationListViewModel {
         let currentFilter = certificationListViewDatas.value.currentFilter
         let newFilter: FilterTypes = (currentFilter == filter) ? .all : filter
         
-        let filteredSections = filterSections(source: rawSections, filter: newFilter)
+        let filteredSections = filterSections(filter: newFilter)
         let status: CertificationListViewStatus = filteredSections.isEmpty ? .empty : .hasData
         
         certificationListViewDatas.update {
@@ -69,41 +69,38 @@ extension CertificationListViewModel {
 
 extension CertificationListViewModel {
     private func fetchSortedList(option: SortOptions, page: Int, isReset: Bool) async throws {
-        let result = try await useCase.fetchSortedList(option: option, page: page)
+        let (statsViewDatas, certificationListViewDatas) = try await userUseCase.getCertificationListViewDatas(option: option, page: page)
         
         if isReset {
-            rawSections = result.sections
+            self.certificationListViewDatas.update { $0.sections = certificationListViewDatas.sections }
         } else {
-            rawSections.append(contentsOf: result.sections)
+            self.certificationListViewDatas.update {
+                $0.sections = $0.sections + certificationListViewDatas.sections
+            }
         }
         
-        let filter = certificationListViewDatas.value.currentFilter
-        let filteredSections = filterSections(source: rawSections, filter: filter)
+        let filter = self.certificationListViewDatas.value.currentFilter
+        let filteredSections = filterSections(filter: filter)
         let status: CertificationListViewStatus = filteredSections.isEmpty ? .empty : .hasData
         
-        certificationListViewDatas.update {
+        self.statsViewDatas.accept(statsViewDatas)
+        self.certificationListViewDatas.update {
             $0.sections = filteredSections
-            $0.totalCertificatedCount = result.stats.totalCertificatedCount
-            $0.totalApprovedCount = result.stats.totalApprovedCount
-            $0.totalRejectedCount = result.stats.totalRejectedCount
-            $0.isLastPage = !result.hasNext
+            $0.isLastPage = certificationListViewDatas.isLastPage
             $0.currentPage = page
             $0.viewStatus = status
         }
     }
     
-    private func filterSections(source: [CertificationSection], filter: FilterTypes) -> [CertificationSection] {
-        guard filter != .all else { return source }
+    private func filterSections(filter: FilterTypes) -> [SectionEntity] {
+        if filter == .all { return certificationListViewDatas.value.sections }
         
-        return source.compactMap { section in
-            let filteredCerts = section.certifications.filter { cert in
-                guard let type = FilterTypes(status: cert.status) else { return false }
+        return certificationListViewDatas.value.sections.compactMap { section in
+            let filteredCerts = section.todos.filter { cert in
+                guard let type = FilterTypes(status: cert.status.rawValue) else { return false }
                 return type == filter
             }
-            return filteredCerts.isEmpty ? nil : CertificationSection(
-                type: section.type,
-                certifications: filteredCerts
-            )
+            return filteredCerts.isEmpty ? nil : SectionEntity(type: section.type, todos: filteredCerts)
         }
     }
 }

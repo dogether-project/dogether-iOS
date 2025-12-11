@@ -8,11 +8,7 @@
 import Foundation
 
 struct CertificationListViewDatas: BaseEntity {
-    var sections: [CertificationSection]
-    
-    var totalCertificatedCount: Int
-    var totalApprovedCount: Int
-    var totalRejectedCount: Int
+    var sections: [SectionEntity]
     
     var currentFilter: FilterTypes
     var selectedSortOption: SortOptions
@@ -23,10 +19,7 @@ struct CertificationListViewDatas: BaseEntity {
     var viewStatus: CertificationListViewStatus
     
     init(
-        sections: [CertificationSection] = [],
-        totalCertificatedCount: Int = 0,
-        totalApprovedCount: Int = 0,
-        totalRejectedCount: Int = 0,
+        sections: [SectionEntity] = [],
         currentFilter: FilterTypes = .all,
         selectedSortOption: SortOptions = .todoCompletionDate,
         currentPage: Int = 0,
@@ -34,13 +27,20 @@ struct CertificationListViewDatas: BaseEntity {
         viewStatus: CertificationListViewStatus = .empty
     ) {
         self.sections = sections
-        self.totalCertificatedCount = totalCertificatedCount
-        self.totalApprovedCount = totalApprovedCount
-        self.totalRejectedCount = totalRejectedCount
         self.currentFilter = currentFilter
         self.selectedSortOption = selectedSortOption
         self.currentPage = currentPage
         self.isLastPage = isLastPage
         self.viewStatus = viewStatus
     }
+}
+
+enum SectionType: BaseEntity {
+    case daily(dateString: String)
+    case group(groupName: String)
+}
+
+struct SectionEntity: BaseEntity {
+    let type: SectionType
+    let todos: [TodoEntity]
 }

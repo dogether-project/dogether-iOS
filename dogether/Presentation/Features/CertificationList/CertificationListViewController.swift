@@ -9,8 +9,6 @@ final class CertificationListViewController: BaseViewController {
     private let certificationListPage = CertificationListPage()
     private let viewModel = CertificationListViewModel()
     
-    private var errorView: ErrorView?
-    
     override func viewDidLoad() {
         certificationListPage.delegate = self
         
@@ -28,9 +26,10 @@ final class CertificationListViewController: BaseViewController {
     }
     
     override func setViewDatas() {
-        bind(viewModel.certificationListViewDatas)
         bind(viewModel.bottomSheetViewDatas)
         bind(viewModel.sortViewDatas)
+        bind(viewModel.statsViewDatas)
+        bind(viewModel.certificationListViewDatas)
     }
 }
 
@@ -38,19 +37,7 @@ extension CertificationListViewController {
     private func loadCertificationListView() {
         Task { [weak self] in
             guard let self else { return }
-            do {
-                try await viewModel.executeSort(option: .todoCompletionDate)
-                await MainActor.run {
-//                    self.showMainContentViews()
-                    self.errorView?.removeFromSuperview()
-                    self.errorView = nil
-                }
-//            } catch let error as NetworkError {
-//                await MainActor.run {
-//                    self.hideMainContentViews()
-//                    self.showErrorView(error: error)
-//                }
-            }
+            try await viewModel.executeSort(option: .todoCompletionDate)
         }
     }
 }

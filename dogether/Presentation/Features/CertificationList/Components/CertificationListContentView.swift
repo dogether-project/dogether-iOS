@@ -14,7 +14,7 @@ final class CertificationListContentView: BaseView {
         }
     }
     
-    private var sections: [CertificationSection] = []
+    private var sections: [SectionEntity] = []
     var isLastPage: Bool = false
     private var isPagingRequestInProgress = false
     
@@ -26,7 +26,7 @@ final class CertificationListContentView: BaseView {
         return label
     }()
     
-    private lazy var summaryView = CertificationSummaryView()
+    private let summaryView = CertificationSummaryView()
     
     private let filterView = CertificationFilterView()
     
@@ -40,6 +40,8 @@ final class CertificationListContentView: BaseView {
         layout.itemSize = CGSize(width: itemWidth, height: 166)
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
+    
+    private(set) var currentStatsViewDatas: StatsViewDatas?
     
     override func configureView() {
         collectionView.register(
@@ -86,19 +88,24 @@ final class CertificationListContentView: BaseView {
     }
     
     override func updateView(_ data: any BaseEntity) {
-        guard let datas = data as? CertificationListViewDatas else { return }
+        if let datas = data as? StatsViewDatas {
+            if currentStatsViewDatas != datas {
+                currentStatsViewDatas = datas
+                
+                setupHeaderLabelText(count: datas.achievementCount)
+                summaryView.updateView(datas)
+            }
+        }
         
-        sections = datas.sections
-        isLastPage = datas.isLastPage
-        
-        summaryView.updateView(datas)
-        
-        setupHeaderLabelText(count: datas.totalCertificatedCount)
-        
-        filterView.updateView(datas)
-
-        collectionView.reloadData()
-        makeContentOffset()
+        if let datas = data as? CertificationListViewDatas {
+            sections = datas.sections
+            isLastPage = datas.isLastPage
+            
+            filterView.updateView(datas)
+            
+            collectionView.reloadData()
+            makeContentOffset()
+        }
     }
 }
 
@@ -128,7 +135,7 @@ extension CertificationListContentView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        return sections[section].certifications.count
+        return sections[section].todos.count
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -138,7 +145,7 @@ extension CertificationListContentView: UICollectionViewDataSource {
             for: indexPath
         ) as! CertificationCell
         
-        let certification = sections[indexPath.section].certifications[indexPath.item]
+        let certification = sections[indexPath.section].todos[indexPath.item]
         cell.configure(with: certification)
         return cell
     }
@@ -192,8 +199,7 @@ extension CertificationListContentView: UICollectionViewDelegate {
             title = groupName
         }
         
-        let todos = section.certifications.map { TodoEntity(from: $0) }
-        delegate?.didTapCertification(title: title, todos: todos, index: indexPath.item)
+        delegate?.didTapCertification(title: title, todos: section.todos, index: indexPath.item)
     }
 }
 

@@ -9,7 +9,7 @@ import Foundation
 import RxRelay
 
 final class StatsViewModel {
-    private let statsUseCase: StatsUseCase
+    private let userUseCase: UserUseCase
     private let groupUseCase: GroupUseCase
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
@@ -22,10 +22,10 @@ final class StatsViewModel {
     var currentGroup: GroupEntity { groupViewDatas.value.groups[groupViewDatas.value.index] }
     
     init() {
-        let statsRepository = DIManager.shared.getStatsRepository()
+        let userRepository = DIManager.shared.getUserRepository()
         let groupRepository = DIManager.shared.getGroupRepository()
         
-        self.statsUseCase = StatsUseCase(repository: statsRepository)
+        self.userUseCase = UserUseCase(repository: userRepository)
         self.groupUseCase = GroupUseCase(repository: groupRepository)
     }
 }
@@ -43,13 +43,13 @@ extension StatsViewModel {
         guard let groupIndex else { return }
         groupViewDatas.accept(GroupViewDatas(index: groupIndex, groups: groups))
         
-        try await fetchStatsForSelectedGroup()
+        try await fetchStatsViewDatas()
     }
 }
 
 extension StatsViewModel {
-    func fetchStatsForSelectedGroup() async throws {
-        let (achievement, myRank, summary) = try await statsUseCase.fetchGroupStats(groupId: currentGroup.id)
+    func fetchStatsViewDatas() async throws {
+        let (achievement, myRank, summary) = try await userUseCase.getStatsViewDatas(groupId: currentGroup.id)
         
         achievementViewDatas.accept(achievement)
         myRankViewDatas.accept(myRank)

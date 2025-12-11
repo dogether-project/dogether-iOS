@@ -1,31 +1,42 @@
 //
-//  MyProfileRouter.swift
+//  UserRouter.swift
 //  dogether
 //
-//  Created by yujaehong on 5/17/25.
+//  Created by seungyooooong on 12/11/25.
 //
 
 import Foundation
 
-enum MyProfileRouter: NetworkEndpoint {
+enum UserRouter: NetworkEndpoint {
+    case getMyGroupActivity(groupId: Int)
+    case getMyActivity(sort: String, page: String)
     case getMyProfile
-    
+
     var path: String {
         switch self {
+        case .getMyGroupActivity(let groupId):
+            return Path.api + Path.v1 + Path.my + Path.groups + "/\(groupId)/activity"
+        case .getMyActivity:
+            return Path.api + Path.v1 + Path.my + "/activity"
         case .getMyProfile:
-            return Path.api + Path.v1 + Path.myProfile
+            return Path.api + Path.v1 + Path.my + "/profile"
         }
     }
     
     var method: NetworkMethod {
         switch self {
-        case .getMyProfile:
+        case .getMyGroupActivity, .getMyActivity, .getMyProfile:
             return .get
         }
     }
     
     var parameters: [URLQueryItem]? {
         switch self {
+        case let .getMyActivity(sort, page):
+            return [
+                .init(name: "sortBy", value: sort),
+                .init(name: "page", value: page)
+            ]
         default:
             return nil
         }

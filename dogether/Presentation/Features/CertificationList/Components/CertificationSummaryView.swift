@@ -34,9 +34,9 @@ final class CertificationSummaryView: BaseView {
     }
     
     override func updateView(_ data: any BaseEntity) {
-        guard let datas = data as? CertificationListViewDatas else { return }
-        achievedView.updateView("\(datas.totalCertificatedCount)개")
-        certifiedView.updateView("\(datas.totalApprovedCount)개")
-        notCertifiedView.updateView("\(datas.totalRejectedCount)개")
+        guard let datas = data as? StatsViewDatas else { return }
+        achievedView.updateView("\(datas.achievementCount)개")
+        certifiedView.updateView("\(datas.approveCount)개")
+        notCertifiedView.updateView("\(datas.rejectCount)개")
     }
 }

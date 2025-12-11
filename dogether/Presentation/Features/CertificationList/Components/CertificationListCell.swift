@@ -53,10 +53,10 @@ final class CertificationCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    func configure(with certificationItem: CertificationItem) {
+    func configure(with certificationItem: TodoEntity) {
         imageView.loadImage(url: certificationItem.certificationMediaUrl)
         
-        if let filterType = FilterTypes(status: certificationItem.status) {
+        if let filterType = FilterTypes(status: certificationItem.status.rawValue) {
             statusButton.update(type: filterType)
         }
     }

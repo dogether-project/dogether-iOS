@@ -8,28 +8,23 @@
 import RxRelay
 
 final class MyPageViewModel {
-    private let myProfileUseCase: MyProfileUseCase
+    private let userUseCase: UserUseCase
     
     private(set) var profileViewDatas = BehaviorRelay<ProfileViewDatas>(value: ProfileViewDatas())
     private(set) var statsButtonViewDatas = BehaviorRelay<DogetherButtonViewDatas>(value: DogetherButtonViewDatas())
     
     init() {
-        let myProfileRepository = DIManager.shared.getMyProfileRepository()
-        self.myProfileUseCase = MyProfileUseCase(repository: myProfileRepository)
+        let repository = DIManager.shared.getUserRepository()
+        self.userUseCase = UserUseCase(repository: repository)
     }
 }
 
 extension MyPageViewModel {
     func loadProfileView() async throws {
-        try await getMyProfile()
+        try await fetchMyProfile()
     }
     
-    func getMyProfile() async throws {
-        let profile = try await myProfileUseCase.getMyProfile()
-        
-        profileViewDatas.update {
-            $0.name = profile.name
-            $0.imageUrl = profile.imageUrl
-        }
+    func fetchMyProfile() async throws {
+        profileViewDatas.accept(try await userUseCase.getProfileViewDatas())
     }
 }
