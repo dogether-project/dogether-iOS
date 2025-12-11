@@ -49,12 +49,12 @@ final class AlertStackView: BaseStackView {
         messageLabel.numberOfLines = 0
         
         cancelButton.setTitleColor(.grey200, for: .normal)
-        cancelButton.titleLabel?.font = Fonts.body1S
+        cancelButton.titleLabel?.font = Fonts.body1B
         cancelButton.layer.cornerRadius = 8
         cancelButton.backgroundColor = .grey500
         
         confirmButton.setTitleColor(.grey800, for: .normal)
-        confirmButton.titleLabel?.font = Fonts.body1S
+        confirmButton.titleLabel?.font = Fonts.body1B
         confirmButton.layer.cornerRadius = 8
         
         buttonStackView.axis = .horizontal
