@@ -9,7 +9,7 @@ import UIKit
 
 enum PopupTypes {
     case alert
-    case reviewFeedback
+    case examinate
 }
 
 enum AlertTypes {

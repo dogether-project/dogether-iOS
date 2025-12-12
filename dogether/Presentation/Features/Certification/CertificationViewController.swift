@@ -93,7 +93,7 @@ extension CertificationViewController: CertificationDelegate {
     
     func goCertificateViewAction(todo: TodoEntity) {
         let certificateImageViewController = CertificateImageViewController()
-        certificateImageViewController.viewModel.todoInfo = todo
-        coordinator?.pushViewController(certificateImageViewController)
+        let certificateViewDatas = CertificateViewDatas(todo: todo)
+        coordinator?.pushViewController(certificateImageViewController, datas: certificateViewDatas)
     }
 }

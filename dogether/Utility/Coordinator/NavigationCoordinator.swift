@@ -89,20 +89,25 @@ extension NavigationCoordinator {
         _ viewController: BaseViewController,
         type: PopupTypes,
         alertType: AlertTypes? = nil,
-        todoInfo: TodoEntity? = nil,
         animated: Bool = true,
         completion: ((Any) -> Void)? = nil
     ) {
         let popupViewController = PopupViewController()
         
+        switch type {
+        case .alert:
+            let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
+            popupViewController.datas = alertPopupViewDatas
+            
+        case .examinate:
+            let examinatePopupViewDatas = ExaminatePopupViewDatas()
+            popupViewController.datas = examinatePopupViewDatas
+        }
+        
         popupViewController.coordinator = self
         popupViewController.completion = completion
         popupViewController.modalPresentationStyle = .overFullScreen
         popupViewController.modalTransitionStyle = .crossDissolve
-        
-        popupViewController.viewModel.popupType = type
-        popupViewController.viewModel.alertType = alertType
-        popupViewController.viewModel.todoInfo = todoInfo
         
         viewController.present(popupViewController, animated: animated)
     }
@@ -118,11 +123,10 @@ extension NavigationCoordinator {
 
 // MARK: modality
 extension NavigationCoordinator {
-    func showModal(reviews: [ReviewModel]? = nil) {
+    func showModal(reviews: [ReviewEntity]) {
         if let modalityWindow {
             if let viewController = modalityWindow.rootViewController as? ModalityViewController {
-                viewController.viewModel.setReviews(reviews)
-                viewController.updateView()
+                viewController.updateReviewsAction(reviews: reviews)
             }
         } else {
             let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
@@ -130,7 +134,7 @@ extension NavigationCoordinator {
             let modalityViewController = ModalityViewController()
             
             modalityViewController.coordinator = self
-            modalityViewController.viewModel.setReviews(reviews)
+            modalityViewController.datas = ExaminateViewDatas(reviews: reviews)
             window.frame = UIScreen.main.bounds
             window.rootViewController = modalityViewController
             window.windowLevel = .alert + 1
@@ -157,8 +161,7 @@ extension NavigationCoordinator: NotificationHandler {
             Task { [weak self] in
                 guard let self else { return }
                 let repository = DIManager.shared.getTodoCertificationsRepository()
-                let response = try await repository.getReviews()
-                let reviews = response.dailyTodoCertifications
+                let reviews = try await repository.getReviews()
                 
                 if reviews.isEmpty { return }
                 await MainActor.run { self.showModal(reviews: reviews) }

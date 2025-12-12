@@ -35,7 +35,9 @@ final class CompletePage: BasePage {
     private let joinCodeShareButton  = JoinCodeShareButton()
 
     private let noticeView = {
-        let imageView = UIImageView(image: .notice)
+        let imageView = UIImageView(image: .notice.withRenderingMode(.alwaysTemplate))
+        imageView.tintColor = .grey400
+        
         let label = UILabel()
         label.text = "카카오톡, 문자 등을 통해 공유해보세요 !"
         label.textColor = .grey400
@@ -44,7 +46,9 @@ final class CompletePage: BasePage {
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
         stackView.axis = .horizontal
         stackView.spacing = 4
-        imageView.snp.makeConstraints { $0.width.height.equalTo(20) }
+        
+        imageView.snp.makeConstraints { $0.size.equalTo(16) }
+        
         return stackView
     }()
 

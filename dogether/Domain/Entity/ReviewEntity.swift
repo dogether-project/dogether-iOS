@@ -1,13 +1,13 @@
 //
-//  ReviewModel.swift
+//  ReviewEntity.swift
 //  dogether
 //
-//  Created by seungyooooong on 2/5/25.
+//  Created by seungyooooong on 12/4/25.
 //
 
 import Foundation
 
-struct ReviewModel: Decodable {
+struct ReviewEntity: BaseEntity {
     let id: Int
     let content: String
     let mediaUrl: String

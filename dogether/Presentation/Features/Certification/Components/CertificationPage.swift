@@ -121,7 +121,7 @@ final class CertificationPage: BasePage {
                 attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
             )
             
-            reviewFeedbackView.updateView(datas)
+            reviewFeedbackView.updateView(datas.todos[datas.index].reviewFeedback ?? "")
             
             // FIXME: 추후 수정
             var dogetherButtonViewDatas = certificateButton.currentViewDatas ?? DogetherButtonViewDatas()
