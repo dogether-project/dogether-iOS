@@ -34,10 +34,15 @@ final class CertificationListViewController: BaseViewController {
 }
 
 extension CertificationListViewController {
+    // MARK: () -> Void 타입이어야 updateViewController지정 가능
     private func loadCertificationListView() {
+        loadCertificationListView(page: 0)
+    }
+    
+    private func loadCertificationListView(page: Int) {
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.executeSort()
+            try await viewModel.loadCertificationList(page: page)
         }
     }
 }
@@ -46,9 +51,7 @@ protocol CertificationListPageDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectSortAction(index: Int)
     func selectFilterAction(filterType: FilterTypes)
-    func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int)
-    func certificationListPageDidReachBottom()
-    func didTapCertification(title: String, todos: [TodoEntity], index: Int)
+    func selectCertificationAction(title: String, todos: [TodoEntity], index: Int)
     func didScrollToBottom()
 }
 
@@ -67,40 +70,13 @@ extension CertificationListViewController: CertificationListPageDelegate {
         viewModel.updateFilter(filter: filterType)
     }
     
-    func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int) {
+    func selectCertificationAction(title: String, todos: [TodoEntity], index: Int) {
         let certificationViewController = CertificationViewController()
         let certificationViewDatas = CertificationViewDatas(title: title, todos: todos, index: index)
         coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
     }
     
-    func certificationListPageDidReachBottom() {
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                try await viewModel.loadNextPage()
-//            } catch let error as NetworkError {
-//                await MainActor.run {
-//                    self.showErrorView(error: error)
-//                }
-            }
-        }
-    }
-    
-    func didTapCertification(title: String, todos: [TodoEntity], index: Int) {
-        let vc = CertificationViewController()
-        let datas = CertificationViewDatas(title: title, todos: todos, index: index)
-        coordinator?.pushViewController(vc, datas: datas)
-    }
-    
     func didScrollToBottom() {
-        Task {
-            do {
-                try await viewModel.loadNextPage()
-//            } catch let error as NetworkError {
-//                await MainActor.run {
-//                    self.showErrorView(error: error)
-//                }
-            }
-        }
+        loadCertificationListView(page: viewModel.certificationListViewDatas.value.currentPage + 1)
     }
 }

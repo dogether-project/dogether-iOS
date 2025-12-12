@@ -211,7 +211,7 @@ extension CertificationListContentView: UICollectionViewDelegate {
             title = groupName
         }
         
-        delegate?.didTapCertification(title: title, todos: section.todos, index: indexPath.item)
+        delegate?.selectCertificationAction(title: title, todos: section.todos, index: indexPath.item)
     }
 }
 
