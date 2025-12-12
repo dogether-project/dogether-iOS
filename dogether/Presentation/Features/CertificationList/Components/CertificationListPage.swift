@@ -58,6 +58,7 @@ final class CertificationListPage: BasePage {
         }
         
         if let datas = data as? SortViewDatas {
+            contentView.updateView(datas)
             bottomSheetView.updateView(datas)
         }
         

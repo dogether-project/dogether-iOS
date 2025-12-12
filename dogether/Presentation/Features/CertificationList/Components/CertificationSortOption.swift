@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SortOptions: String, CaseIterable {
+enum SortOptions: String, CaseIterable, BaseEntity {
     case todoCompletionDate = "투두 완료일순"
     case groupCreationDate = "그룹 생성일순"
 

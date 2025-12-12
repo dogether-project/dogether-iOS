@@ -37,7 +37,7 @@ extension CertificationListViewController {
     private func loadCertificationListView() {
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.executeSort(option: .todoCompletionDate)
+            try await viewModel.executeSort()
         }
     }
 }
@@ -45,7 +45,7 @@ extension CertificationListViewController {
 protocol CertificationListPageDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectSortAction(index: Int)
-    func certificationListPageDidChangeFilter(_ filter: FilterTypes)
+    func selectFilterAction(filterType: FilterTypes)
     func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int)
     func certificationListPageDidReachBottom()
     func didTapCertification(title: String, todos: [TodoEntity], index: Int)
@@ -59,10 +59,12 @@ extension CertificationListViewController: CertificationListPageDelegate {
     
     func selectSortAction(index: Int) {
         viewModel.updateSortIndex(index: index)
+        
+        loadCertificationListView()
     }
     
-    func certificationListPageDidChangeFilter(_ filter: FilterTypes) {
-        viewModel.changeFilter(filter)
+    func selectFilterAction(filterType: FilterTypes) {
+        viewModel.updateFilter(filter: filterType)
     }
     
     func certificationListPageDidSelectCertification(title: String, todos: [TodoEntity], index: Int) {

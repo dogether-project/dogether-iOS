@@ -84,7 +84,7 @@ final class UserRepository: UserProtocol {
             }
         } else if let certificationsGroupedByGroupCreatedAt = response.certificationsGroupedByGroupCreatedAt {
             sections = certificationsGroupedByGroupCreatedAt.map { group in
-                let items = group.certificationInfo.map { info in
+                let todos = group.certificationInfo.map { info in
                     TodoEntity(
                         id: info.id,
                         content: info.content,
@@ -95,7 +95,7 @@ final class UserRepository: UserProtocol {
                     )
                 }
                 
-                return SectionEntity(type: .group(groupName: group.groupName), todos: items)
+                return SectionEntity(type: .group(groupName: group.groupName), todos: todos)
             }
         } else { sections = [] }
         

@@ -36,7 +36,7 @@ struct CertificationEntityInGetMyActivityResponse: Decodable {
     var status: String
     var certificationContent: String
     var certificationMediaUrl: String
-    var reviewFeedback: String
+    var reviewFeedback: String?
 }
 
 struct PageInfoInGetMyActivityResponse: Decodable {

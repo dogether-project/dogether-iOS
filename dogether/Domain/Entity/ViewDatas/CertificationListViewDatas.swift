@@ -10,9 +10,6 @@ import Foundation
 struct CertificationListViewDatas: BaseEntity {
     var sections: [SectionEntity]
     
-    var currentFilter: FilterTypes
-    var selectedSortOption: SortOptions
-    
     var currentPage: Int
     var isLastPage: Bool
     
@@ -20,15 +17,11 @@ struct CertificationListViewDatas: BaseEntity {
     
     init(
         sections: [SectionEntity] = [],
-        currentFilter: FilterTypes = .all,
-        selectedSortOption: SortOptions = .todoCompletionDate,
         currentPage: Int = 0,
         isLastPage: Bool = false,
         viewStatus: CertificationListViewStatus = .empty
     ) {
         self.sections = sections
-        self.currentFilter = currentFilter
-        self.selectedSortOption = selectedSortOption
         self.currentPage = currentPage
         self.isLastPage = isLastPage
         self.viewStatus = viewStatus

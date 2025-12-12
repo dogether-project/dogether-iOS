@@ -88,6 +88,10 @@ final class CertificationListContentView: BaseView {
     }
     
     override func updateView(_ data: any BaseEntity) {
+        if let datas = data as? SortViewDatas {
+            filterView.updateView(datas)
+        }
+        
         if let datas = data as? StatsViewDatas {
             if currentStatsViewDatas != datas {
                 currentStatsViewDatas = datas
