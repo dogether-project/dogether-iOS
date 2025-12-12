@@ -25,7 +25,8 @@ enum DogetherCodes: String, Decodable {
 
     // MARK: - Failure Code
     case CF0001 = "CF-0001"
-    case AUF0001 = "AUF-0001"
+    case ATF0001 = "ATF-0001"
+    case ATF0002 = "ATF-0002"
     case MF0001 = "MF-0001"
     case CGF0001 = "CGF-0001"
     case CGF0002 = "CGF-0002"
@@ -61,7 +62,8 @@ enum DogetherCodes: String, Decodable {
 
         // MARK: - Failure
         case .CF0001: return "서버 애플리케이션에 예상치 못한 문제가 발생"
-        case .AUF0001: return "인증 & 인가 도메인 예기치 못한 문제 발생"
+        case .ATF0001: return "인증 & 인가 도메인 예기치 못한 문제 발생"
+        case .ATF0002: return "애플 로그인 리보크 작업 필요"
         case .MF0001: return "회원 도메인 예기치 못한 문제 발생"
         case .CGF0001: return "챌린지 그룹 도메인 예기치 못한 문제 발생"
         case .CGF0002: return "사용자가 이미 참여한 그룹" //

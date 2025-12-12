@@ -119,6 +119,11 @@ final class AlertStackView: BaseStackView {
                     )
                 }
                 
+                buttonStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+                [ type.cancelText == nil ? nil : cancelButton,
+                  type.buttonText == nil ? nil : confirmButton
+                ].compactMap { $0 }.forEach { buttonStackView.addArrangedSubview($0) }
+                
                 cancelButton.setTitle(type.cancelText, for: .normal)
                 
                 confirmButton.setTitle(type.buttonText, for: .normal)
