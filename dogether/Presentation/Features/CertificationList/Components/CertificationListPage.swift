@@ -67,19 +67,10 @@ final class CertificationListPage: BasePage {
         }
 
         if let datas = data as? CertificationListViewDatas {
-
-            switch datas.viewStatus {
-            case .empty:
-                emptyView.isHidden = false
-                contentView.isHidden = true
-
-            case .hasData:
-                emptyView.isHidden = true
-                contentView.isHidden = false
-                contentView.updateView(datas)
-            }
-
-            contentView.isLastPage = datas.isLastPage
+            emptyView.isHidden = !datas.sections.isEmpty
+            contentView.isHidden = datas.sections.isEmpty
+            
+            contentView.updateView(datas)
         }
     }
 }

@@ -40,16 +40,8 @@ extension CertificationListViewModel {
     }
     
     func updateFilter(filter: FilterTypes) {
-        let filter: FilterTypes = (sortViewDatas.value.filter == filter) ? .all : filter
-        sortViewDatas.update { $0.filter = filter }
-        
-        let filteredSections = filterSections()
-        let status: CertificationListViewStatus = filteredSections.isEmpty ? .empty : .hasData
-        
-        certificationListViewDatas.update {
-            $0.sections = filteredSections
-            $0.viewStatus = status
-        }
+        let filter: FilterTypes = (certificationListViewDatas.value.filter == filter) ? .all : filter
+        certificationListViewDatas.update { $0.filter = filter }
     }
     
     func loadNextPage() async throws {
@@ -74,27 +66,10 @@ extension CertificationListViewModel {
             }
         }
         
-        let filteredSections = filterSections()
-        let status: CertificationListViewStatus = filteredSections.isEmpty ? .empty : .hasData
-        
         self.statsViewDatas.accept(statsViewDatas)
         self.certificationListViewDatas.update {
-            $0.sections = filteredSections
             $0.isLastPage = certificationListViewDatas.isLastPage
             $0.currentPage = page
-            $0.viewStatus = status
-        }
-    }
-    
-    private func filterSections() -> [SectionEntity] {
-        if sortViewDatas.value.filter == .all { return certificationListViewDatas.value.sections }
-        
-        return certificationListViewDatas.value.sections.compactMap { section in
-            let filteredCerts = section.todos.filter { cert in
-                guard let type = FilterTypes(status: cert.status.rawValue) else { return false }
-                return type == sortViewDatas.value.filter
-            }
-            return filteredCerts.isEmpty ? nil : SectionEntity(type: section.type, todos: filteredCerts)
         }
     }
 }

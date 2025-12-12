@@ -10,15 +10,12 @@ import Foundation
 struct SortViewDatas: BaseEntity {
     var index: Int
     let options: [SortOptions]
-    var filter: FilterTypes
     
     init(
         index: Int = 0,
-        options: [SortOptions] = SortOptions.allCases,
-        filter: FilterTypes = .all
+        options: [SortOptions] = SortOptions.allCases
     ) {
         self.index = index
         self.options = options
-        self.filter = filter
     }
 }

@@ -14,36 +14,33 @@ final class CertificationListContentView: BaseView {
         }
     }
     
-    private var sections: [SectionEntity] = []
-    var isLastPage: Bool = false
-    private var isPagingRequestInProgress = false
-    
-    private let headerLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .grey0
-        label.font = Fonts.head1B
-        label.numberOfLines = 0
-        return label
-    }()
-    
+    private let headerLabel = UILabel()
     private let summaryView = CertificationSummaryView()
-    
     private let filterView = CertificationFilterView()
+    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    private let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+    private(set) var currentStatsViewDatas: StatsViewDatas?
+    private(set) var currentSection: [SectionEntity]?
+    private(set) var currentFilter: FilterTypes?
+    private(set) var currentIsLastPage: Bool = false
+    
+    private(set) var sections: [SectionEntity] = []
+    private(set) var isPagingRequestInProgress: Bool = false
+    
+    override func configureView() {
+        headerLabel.textColor = .grey0
+        headerLabel.font = Fonts.head1B
+        headerLabel.numberOfLines = 0
+        
+        guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         layout.scrollDirection = .vertical
-        let spacing: CGFloat = 11
+        let spacing: CGFloat = 12
         let inset: CGFloat = 16
         let totalSpacing = spacing + inset * 2
         let itemWidth = (UIScreen.main.bounds.width - totalSpacing) / 2
         layout.itemSize = CGSize(width: itemWidth, height: 166)
-        return UICollectionView(frame: .zero, collectionViewLayout: layout)
-    }()
-    
-    private(set) var currentStatsViewDatas: StatsViewDatas?
-    
-    override func configureView() {
+        
+        collectionView.collectionViewLayout = layout
         collectionView.register(
             CertificationCell.self,
             forCellWithReuseIdentifier: CertificationCell.reuseIdentifier
@@ -102,22 +99,34 @@ final class CertificationListContentView: BaseView {
         }
         
         if let datas = data as? CertificationListViewDatas {
-            sections = datas.sections
-            isLastPage = datas.isLastPage
+            if currentSection != datas.sections || currentFilter != datas.filter {
+                currentSection = datas.sections
+                
+                sections = datas.sections.compactMap { section in
+                    let filteredTodos = section.todos.filter {
+                        datas.filter == .all || datas.filter == FilterTypes(status: $0.status.rawValue)
+                    }
+                    return filteredTodos.isEmpty ? nil : SectionEntity(type: section.type, todos: filteredTodos)
+                }
+            }
             
-            filterView.updateView(datas)
+            if currentFilter != datas.filter {
+                currentFilter = datas.filter
+                
+                filterView.updateView(datas)
+            }
+            
+            if currentIsLastPage != datas.isLastPage {
+                currentIsLastPage = datas.isLastPage
+            }
             
             collectionView.reloadData()
-            makeContentOffset()
+            collectionView.contentOffset = .zero
         }
     }
 }
 
 extension CertificationListContentView {
-    func makeContentOffset() {
-        collectionView.contentOffset = .zero
-    }
-    
     private func setupHeaderLabelText(count: Int) {
         let fullText = "대단해요!\n총 \(count)개의 투두를 달성했어요"
         let attributedString = NSMutableAttributedString(string: fullText)
@@ -144,10 +153,11 @@ extension CertificationListContentView: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: CertificationCell.reuseIdentifier,
-            for: indexPath
-        ) as! CertificationCell
+            for: indexPath) as? CertificationCell else {
+            return UICollectionViewCell()
+        }
         
         let certification = sections[indexPath.section].todos[indexPath.item]
         cell.configure(with: certification)
@@ -159,19 +169,17 @@ extension CertificationListContentView: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         viewForSupplementaryElementOfKind kind: String,
                         at indexPath: IndexPath) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionHeader else {
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let header = collectionView.dequeueReusableSupplementaryView(
+                  ofKind: kind,
+                  withReuseIdentifier: CertificationSectionHeader.reuseIdentifier,
+                  for: indexPath
+              ) as? CertificationSectionHeader else {
             return UICollectionReusableView()
         }
-        
-        let header = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: CertificationSectionHeader.reuseIdentifier,
-            for: indexPath
-        ) as! CertificationSectionHeader
-        
         let section = sections[indexPath.section]
-        let title: String
         
+        let title: String
         switch section.type {
         case .daily(let dateString):
             title = dateString
@@ -194,8 +202,8 @@ extension CertificationListContentView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         let section = sections[indexPath.section]
+
         let title: String
-        
         switch section.type {
         case .daily(let dateString):
             title = dateString
@@ -209,7 +217,7 @@ extension CertificationListContentView: UICollectionViewDelegate {
 
 extension CertificationListContentView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard !isLastPage else {
+        if currentIsLastPage {
             isPagingRequestInProgress = false
             return
         }

@@ -9,7 +9,7 @@ import UIKit
 
 final class CertificationSortButton: BaseButton {
     private let sortTitleLabel = UILabel()
-    private let arrowImageView = UIImageView(image: .chevronDownBlue)  // FIXME: 추후 아이콘 통이
+    private let arrowImageView = UIImageView(image: .chevronDownBlue)  // FIXME: 추후 아이콘 통일
     
     override func configureView() {
         backgroundColor = .clear

@@ -9,22 +9,20 @@ import Foundation
 
 struct CertificationListViewDatas: BaseEntity {
     var sections: [SectionEntity]
-    
+    var filter: FilterTypes
     var currentPage: Int
     var isLastPage: Bool
     
-    var viewStatus: CertificationListViewStatus
-    
     init(
         sections: [SectionEntity] = [],
+        filter: FilterTypes = .all,
         currentPage: Int = 0,
         isLastPage: Bool = false,
-        viewStatus: CertificationListViewStatus = .empty
     ) {
         self.sections = sections
+        self.filter = filter
         self.currentPage = currentPage
         self.isLastPage = isLastPage
-        self.viewStatus = viewStatus
     }
 }
 

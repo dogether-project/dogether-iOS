@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SnapKit
 
 final class CertificationFilterView: BaseView {
     var delegate: CertificationListPageDelegate? {
@@ -21,16 +20,25 @@ final class CertificationFilterView: BaseView {
     }
     
     private let scrollView = UIScrollView()
-    let sortButton = CertificationSortButton()
+    private let stackView = UIStackView()
+    private let sortButton = CertificationSortButton()
     private let filterStackView = FilterStackView()
     
     override func configureView() {
-        setupScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        
+        stackView.axis = .horizontal
+        stackView.spacing = 8
     }
+    
+    override func configureAction() { }
     
     override func configureHierarchy() {
         addSubview(scrollView)
-        scrollView.addSubview(filterStackView)
+        
+        scrollView.addSubview(stackView)
+        
+        [sortButton, filterStackView].forEach { stackView.addArrangedSubview($0) }
     }
     
     override func configureConstraints() {
@@ -39,7 +47,7 @@ final class CertificationFilterView: BaseView {
             $0.height.equalTo(32)
         }
         
-        filterStackView.snp.makeConstraints {
+        stackView.snp.makeConstraints {
             $0.verticalEdges.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.height.equalToSuperview()
@@ -50,13 +58,10 @@ final class CertificationFilterView: BaseView {
     override func updateView(_ data: any BaseEntity) {
         if let datas = data as? SortViewDatas {
             sortButton.updateView(datas.options[datas.index])
+        }
+        
+        if let datas = data as? CertificationListViewDatas {
             filterStackView.updateView(datas.filter)
         }
-    }
-}
-
-extension CertificationFilterView {
-    private func setupScrollView() {
-        scrollView.showsHorizontalScrollIndicator = false
     }
 }
