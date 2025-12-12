@@ -26,7 +26,7 @@ final class UserUseCase {
         statsViewDatas: StatsViewDatas,
         certificationListViewDatas: CertificationListViewDatas
     ) {
-        try await repository.getCertificationList(option: option, page: page)
+        try await repository.getCertificationListViewDatas(option: option, page: page)
     }
     
     func getProfileViewDatas() async throws -> ProfileViewDatas {

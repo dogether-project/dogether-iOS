@@ -37,12 +37,12 @@ extension CertificationListViewModel {
 extension CertificationListViewModel {
     func loadCertificationList(page: Int) async throws {
         if page > 0 && certificationListViewDatas.value.isLastPage { return }
-        try await fetchList(page: page)
+        try await fetchCertificationListViewDatas(page: page)
     }
 }
 
 extension CertificationListViewModel {
-    private func fetchList(page: Int) async throws {
+    private func fetchCertificationListViewDatas(page: Int) async throws {
         let (statsViewDatas, certificationListViewDatas) = try await userUseCase.getCertificationListViewDatas(
             option: sortViewDatas.value.options[sortViewDatas.value.index],
             page: page

@@ -14,7 +14,7 @@ protocol UserProtocol {
         summaryViewDatas: StatsSummaryViewDatas
     )
     
-    func getCertificationList(option: SortOptions, page: Int) async throws -> (
+    func getCertificationListViewDatas(option: SortOptions, page: Int) async throws -> (
         statsViewDatas: StatsViewDatas,
         certificationListViewDatas: CertificationListViewDatas
     )
