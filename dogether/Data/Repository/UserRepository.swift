@@ -59,8 +59,8 @@ final class UserRepository: UserProtocol {
         
         let sections: [SectionEntity]
         if let certificationsGroupedByTodoCompletedAt = response.certificationsGroupedByTodoCompletedAt {
-            let todos: [TodoEntity] = certificationsGroupedByTodoCompletedAt.flatMap { daily in
-                daily.certificationInfo.map { info in
+            sections = certificationsGroupedByTodoCompletedAt.map { daily in
+                let todos = daily.certificationInfo.map { info in
                     TodoEntity(
                         id: info.id,
                         content: info.content,
@@ -71,16 +71,7 @@ final class UserRepository: UserProtocol {
                         createdAt: daily.createdAt
                     )
                 }
-            }
-            
-            // ???: 직접 sort를 해주는 이유가 있나요?
-            let grouped = Dictionary(grouping: todos, by: { $0.createdAt ?? "" })
-            
-            sections = grouped.keys.sorted(by: >).map { date in
-                SectionEntity(
-                    type: .daily(dateString: date),
-                    todos: grouped[date] ?? []
-                )
+                return SectionEntity(type: .daily(dateString: daily.createdAt), todos: todos)
             }
         } else if let certificationsGroupedByGroupCreatedAt = response.certificationsGroupedByGroupCreatedAt {
             sections = certificationsGroupedByGroupCreatedAt.map { group in
