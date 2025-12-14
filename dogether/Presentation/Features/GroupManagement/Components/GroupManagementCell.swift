@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class GroupManagementCell: BaseTableViewCell, ReusableProtocol {
+final class GroupManagementCell: BaseTableViewCell {
     var delegate: GroupManagementDelegate? {
         didSet {
             leaveButton.addAction(
