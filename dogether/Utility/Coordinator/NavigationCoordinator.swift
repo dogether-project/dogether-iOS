@@ -86,30 +86,32 @@ extension NavigationCoordinator {
 // MARK: popup
 extension NavigationCoordinator {
     func showPopup(
-        _ viewController: BaseViewController,
         type: PopupTypes,
         alertType: AlertTypes? = nil,
         animated: Bool = true,
         completion: ((Any) -> Void)? = nil
     ) {
-        let popupViewController = PopupViewController()
-        
-        switch type {
-        case .alert:
-            let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
-            popupViewController.datas = alertPopupViewDatas
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let popupViewController = PopupViewController()
             
-        case .examinate:
-            let examinatePopupViewDatas = ExaminatePopupViewDatas()
-            popupViewController.datas = examinatePopupViewDatas
+            switch type {
+            case .alert:
+                let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
+                popupViewController.datas = alertPopupViewDatas
+                
+            case .examinate:
+                let examinatePopupViewDatas = ExaminatePopupViewDatas()
+                popupViewController.datas = examinatePopupViewDatas
+            }
+            
+            popupViewController.coordinator = self
+            popupViewController.completion = completion
+            popupViewController.modalPresentationStyle = .overFullScreen
+            popupViewController.modalTransitionStyle = .crossDissolve
+            
+            navigationController.viewControllers.last?.present(popupViewController, animated: animated)
         }
-        
-        popupViewController.coordinator = self
-        popupViewController.completion = completion
-        popupViewController.modalPresentationStyle = .overFullScreen
-        popupViewController.modalTransitionStyle = .crossDissolve
-        
-        viewController.present(popupViewController, animated: animated)
     }
     
     func hidePopup(animated: Bool = true) {

@@ -44,14 +44,9 @@ extension CertificateImageViewController: CertificateImageDelegate {
     }
     
     func showPopupAction(type: AlertTypes) {
-        coordinator?.showPopup(
-            self,
-            type: .alert,
-            alertType: type,
-            completion:  { _ in
-                SystemManager().openSettingApp()
-            }
-        )
+        coordinator?.showPopup(type: .alert, alertType: type) { _ in
+            SystemManager().openSettingApp()
+        }
     }
     
     func presentPickerControllerAction(pickerController: UIViewController) {

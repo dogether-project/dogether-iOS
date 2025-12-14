@@ -42,7 +42,7 @@ extension OnboardingViewController: OnboardingDelegate {
             } catch let error as NetworkError {
                 if case let .dogetherError(code, _) = error {
                     if code == .ATF0002 {
-                        coordinator?.showPopup(self, type: .alert, alertType: .needRevoke)
+                        coordinator?.showPopup(type: .alert, alertType: .needRevoke)
                     }
                 }
             }

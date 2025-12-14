@@ -9,17 +9,12 @@ import Foundation
 
 enum NetworkError: Error {
     case invalidURL
-    case badRequest
-    case unauthorized
-    case forbidden
-    case notFound
     case serverError(message: String)
-    case decodingFailed
+    case parse
     case noData
     case sslError(URLError)
     case connectionFailed(URLError)
-    case unexpectedStatusCode(code: Int)
-    case unknown(Error)
+    case unknown
     case dogetherError(code: DogetherCodes, message: String)
 }
 
@@ -27,17 +22,12 @@ extension NetworkError {
     var description: String {
         switch self {
         case .invalidURL: return "유효하지 않은 URL입니다."
-        case .badRequest: return "잘못된 요청입니다. 입력값을 확인해주세요."
-        case .unauthorized: return "비인증 상태"
-        case .forbidden: return "권한 거부"
-        case .notFound: return "요청한 리소스를 찾을 수 없습니다."
         case .serverError(let code): return "서버 오류가 발생했습니다. (코드: \(code))"
-        case .decodingFailed: return "응답 데이터를 해석할 수 없습니다."
+        case .parse: return "응답 데이터를 해석할 수 없습니다."
         case .noData: return "데이터가 없습니다."
         case .sslError(let error): return "보안 연결 실패: \(error.localizedDescription)"
         case .connectionFailed(let error): return "네트워크 연결이 불안정합니다. \(error.localizedDescription)"
-        case .unexpectedStatusCode(let code): return "예기치 못한 상태 코드가 반환되었습니다. (코드: \(code))"
-        case .unknown(let error): return "\(error.localizedDescription)"
+        case .unknown: return "알 수 없는 오류가 발생했습니다."
         case .dogetherError(code: let code, message: let message): return "\(code.description) (\(message))"
         }
     }

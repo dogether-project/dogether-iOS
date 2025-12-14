@@ -200,16 +200,16 @@ extension ErrorHandlingManager {
                 leftActionType: .retry,
                 rightActionType: nil
             )
-        case .badRequest:
-            return ErrorTemplateConfig(
-                image: .iceDosik,
-                title: "일시적인 문제가 발생했어요.",
-                subtitle: "잠시 후 다시 시도해주세요.",
-                leftButtonTitle: "홈으로 돌아가기",
-                rightButtonTitle: nil,
-                leftActionType: .goHome,
-                rightActionType: nil
-            )
+//        case .badRequest:
+//            return ErrorTemplateConfig(
+//                image: .iceDosik,
+//                title: "일시적인 문제가 발생했어요.",
+//                subtitle: "잠시 후 다시 시도해주세요.",
+//                leftButtonTitle: "홈으로 돌아가기",
+//                rightButtonTitle: nil,
+//                leftActionType: .goHome,
+//                rightActionType: nil
+//            )
         default:
             return ErrorTemplateConfig(
                 image: .iceDosik,

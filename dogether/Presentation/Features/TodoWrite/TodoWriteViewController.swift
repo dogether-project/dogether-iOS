@@ -62,7 +62,7 @@ extension TodoWriteViewController: TodoWriteDelegate {
     }
     
     func saveTodoAction() {
-        coordinator?.showPopup(self, type: .alert, alertType: .saveTodo) { [weak self] _ in
+        coordinator?.showPopup(type: .alert, alertType: .saveTodo) { [weak self] _ in
             guard let self else { return }
             trySaveTodo()
         }

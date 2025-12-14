@@ -25,6 +25,7 @@ enum AlertTypes {
     case saveTodo
     
     // MARK: detail errors
+    case needLogout
     case needRevoke
     
     var title: String {
@@ -43,6 +44,8 @@ enum AlertTypes {
             return "정말 회원탈퇴를 하시겠어요?"
         case .saveTodo:
             return "투두를 저장하시겠습니까?"
+        case .needLogout:
+            return "로그인 정보가 만료됐어요"
         case .needRevoke:
             return "로그인 연결을 해제해주세요"
         }
@@ -62,6 +65,8 @@ enum AlertTypes {
             return "탈퇴하면 모든 데이터가 삭제되며\n복구할 수 없어요."
         case .saveTodo:
             return "한 번 저장한 투두는 수정과 삭제가 불가능합니다"
+        case .needLogout:
+            return "다시 로그인해 주세요."
         case .needRevoke:
             return "로그인이 정상적으로 진행되지 않아 Apple 계정에서 dogether 연결을 해제해야 해요. 아래 경로로 이동해 삭제한 뒤 다시 시도해주세요.\n\n '설정 > 내 AppleID > Apple로 로그인 > dogether > 삭제'"
         default:
@@ -90,7 +95,7 @@ enum AlertTypes {
             return "로그아웃"
         case .saveTodo:
             return "저장하기"
-        case .needRevoke:
+        case .needLogout, .needRevoke:
             return "확인"
 //        default:
 //            return nil
@@ -101,14 +106,14 @@ enum AlertTypes {
         switch self {
         case .leaveGroup, .withdraw:
             return .dogetherRed
-        case .pushNotice, .gallery, .camera, .logout, .saveTodo, .needRevoke:
+        case .pushNotice, .gallery, .camera, .logout, .saveTodo, .needLogout, .needRevoke:
             return .blue300
         }
     }
     
     var image: UIImage? {
         switch self {
-        case .pushNotice, .gallery, .camera, .saveTodo, .needRevoke:
+        case .pushNotice, .gallery, .camera, .saveTodo, .needLogout, .needRevoke:
             return .caution
         default:
             return nil

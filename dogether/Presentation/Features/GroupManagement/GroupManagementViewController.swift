@@ -59,7 +59,7 @@ protocol GroupManagementDelegate: AnyObject {
 
 extension GroupManagementViewController: GroupManagementDelegate {
     func leaveGroupAction(_ group: GroupEntity) {
-        coordinator?.showPopup(self, type: .alert, alertType: .leaveGroup) { [weak self] _ in
+        coordinator?.showPopup(type: .alert, alertType: .leaveGroup) { [weak self] _ in
             guard let self else { return }
             tryLeaveGroup(groupId: group.id)
         }

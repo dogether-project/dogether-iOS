@@ -53,14 +53,15 @@ protocol SettingDelegate {
 
 extension SettingViewController: SettingDelegate {
     func logoutAction() {
-        coordinator?.showPopup(self, type: .alert, alertType: .logout) { _ in
-            self.viewModel.logout()
-            self.coordinator?.setNavigationController(OnboardingViewController())
+        coordinator?.showPopup(type: .alert, alertType: .logout) { [weak self] _ in
+            guard let self else { return }
+            viewModel.logout()
+            coordinator?.setNavigationController(OnboardingViewController())
         }
     }
     
     func withdrawAction() {
-        coordinator?.showPopup(self, type: .alert, alertType: .withdraw) { [weak self] _ in
+        coordinator?.showPopup(type: .alert, alertType: .withdraw) { [weak self] _ in
             guard let self else { return }
             tryWithdraw()
         }

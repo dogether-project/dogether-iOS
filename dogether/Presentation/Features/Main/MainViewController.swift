@@ -85,15 +85,8 @@ extension MainViewController {
             case .notDetermined:
                 try await userNoti.requestAuthorization(options: [.alert, .badge, .sound])
             case .denied:
-                await MainActor.run {
-                    self.coordinator?.showPopup(
-                        self,
-                        type: .alert,
-                        alertType: .pushNotice,
-                        completion:  { _ in
-                            SystemManager().openSettingApp()
-                        }
-                    )
+                coordinator?.showPopup(type: .alert, alertType: .pushNotice) { _ in
+                    SystemManager().openSettingApp()
                 }
             default:    // MARK: .authorized, .provisional, .ephemeral
                 break
