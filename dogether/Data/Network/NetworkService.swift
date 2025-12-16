@@ -80,7 +80,7 @@ class NetworkService {
             default:
                 throw NetworkError.unexpectedStatusCode(code: statusCode)
             }
-        } catch let error as DecodingError {
+        } catch _ as DecodingError {
             throw NetworkError.decodingFailed
         } catch let error as URLError {
             if error.code == .secureConnectionFailed || error.code == .serverCertificateUntrusted || error.code == .serverCertificateHasBadDate || error.code == .serverCertificateHasUnknownRoot {

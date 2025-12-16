@@ -20,7 +20,7 @@ final class CertificationCell: UICollectionViewCell {
     
     private let statusButton: FilterButton = {
         let button = FilterButton(type: .wait)
-        button.isUserInteractionEnabled = false // 버튼처럼 보이지만 동작은 안 하게
+        button.isUserInteractionEnabled = false
         return button
     }()
     
@@ -44,19 +44,17 @@ final class CertificationCell: UICollectionViewCell {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError()
-    }
+    required init?(coder: NSCoder) { fatalError() }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
     }
     
-    func configure(with certificationItem: CertificationItem) {
+    func configure(with certificationItem: TodoEntity) {
         imageView.loadImage(url: certificationItem.certificationMediaUrl)
         
-        if let filterType = FilterTypes(status: certificationItem.status) {
+        if let filterType = FilterTypes(status: certificationItem.status.rawValue) {
             statusButton.update(type: filterType)
         }
     }

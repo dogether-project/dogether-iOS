@@ -66,30 +66,12 @@ extension DIManager {
         }
     }
     
-    func getCertificationListRepository(buildMode: BuildModes? = nil) -> CertificationListProtocol {
+    func getUserRepository(buildMode: BuildModes? = nil) -> UserProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:
-            return CertificationListRepositoryTest()
+            return UserRepositoryTest()
         case .live:
-            return CertificationListRepository()
-        }
-    }
-    
-    func getStatsRepository(buildMode: BuildModes? = nil) -> StatsProtocol {
-        switch buildMode ?? defaultBuildMode {
-        case .debug:
-            return StatsRepositoryTest()
-        case .live:
-            return StatsRepository()
-        }
-    }
-    
-    func getMyProfileRepository(buildMode: BuildModes? = nil) -> MyProfileProtocol {
-        switch buildMode ?? defaultBuildMode {
-        case .debug:
-            return MyProfileRepositoryTest()
-        case .live:
-            return MyProfileRepository()
+            return UserRepository()
         }
     }
 }

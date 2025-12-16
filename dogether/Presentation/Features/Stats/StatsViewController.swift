@@ -58,7 +58,7 @@ extension StatsViewController {
         Task { [weak self] in
             guard let self else { return }
             do {
-                try await viewModel.fetchStatsForSelectedGroup()
+                try await viewModel.fetchStatsViewDatas()
                 await MainActor.run {
                     self.showMain()
                 }

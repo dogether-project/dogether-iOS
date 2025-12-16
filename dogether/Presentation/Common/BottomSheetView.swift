@@ -26,6 +26,16 @@ final class BottomSheetView: BaseView {
             }
         }
     }
+    
+    var certificationDelegate: CertificationListPageDelegate? {
+        didSet {
+            backgroundView.addTapAction { [weak self] _ in
+                guard let self else { return }
+                certificationDelegate?.updateBottomSheetVisibleAction(isShowSheet: false)
+            }
+        }
+    }
+    
     private let hasAddButton: Bool
     
     init(hasAddButton: Bool = true) {
@@ -91,7 +101,7 @@ final class BottomSheetView: BaseView {
     override func updateView(_ data: any BaseEntity) {
         if let data = data as? GroupViewDatas {
             sheetTitleLabel.text = "그룹 선택"
-            itemListStackView.arrangedSubviews.forEach { itemListStackView.removeArrangedSubview($0) }
+            itemListStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
             
             sheetHeight = 24 + 28 + 20
             + 49 * CGFloat(data.groups.count < 5 && hasAddButton ? data.groups.count + 1 : data.groups.count)
@@ -105,6 +115,21 @@ final class BottomSheetView: BaseView {
             
             if data.groups.count < 5 && hasAddButton {
                 itemListStackView.addArrangedSubview(addGroupButton())
+            }
+        }
+        
+        if let data = data as? SortViewDatas {
+            sheetTitleLabel.text = "정렬"
+            itemListStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+
+            sheetHeight = 24 + 28 + 20
+                + 49 * CGFloat(data.options.count)
+                + UIApplication.safeAreaOffset.bottom
+
+            data.options.enumerated().forEach { index, option in
+                itemListStackView.addArrangedSubview(
+                    itemButton(index: index, title: option.displayName, isSelected: index == data.index)
+                )
             }
         }
         
@@ -137,6 +162,10 @@ extension BottomSheetView {
                 if let delegate = statsDelegate {
                     delegate.updateBottomSheetVisibleAction(isShowSheet: false)
                     delegate.selectGroupAction(index: index)
+                }
+                if let delegate = certificationDelegate {
+                    delegate.updateBottomSheetVisibleAction(isShowSheet: false)
+                    delegate.selectSortAction(index: index)
                 }
             }, for: .touchUpInside
         )
