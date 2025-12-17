@@ -19,11 +19,15 @@ class NetworkManager {
         
         do {
             let response: ServerResponse<T> = try await NetworkService.shared.request(endpoint)
+            
+            if T.self == EmptyData.self { return EmptyData() as! T }
+            
             guard let data = response.data else {
                 if let dogetherCode = DogetherCodes(rawValue: response.code) {
                     throw NetworkError.dogetherError(code: dogetherCode, message: response.message)
                 } else { throw NetworkError.unknown }
             }
+            
             return data
         } catch {
             if checkCommonError(error) {
@@ -46,8 +50,8 @@ class NetworkManager {
 extension NetworkManager {
     private func checkCommonError(_ error: Error) -> Bool {
         guard let error = error as? NetworkError, case let .dogetherError(code, _) = error else { return true }
-        return !(code == .ATF0002 ||
-                 code == .ATF0003 || code == .CGF0002 || code == .CGF0003 || code == .CGF0004 || code == .CGF0005)
+        return !(code == .ATF0002 || code == .ATF0003 ||
+                 code == .CGF0002 || code == .CGF0003 || code == .CGF0004 || code == .CGF0005)
     }
     
     private func handleCommonError<T: Decodable>(_ endpoint: NetworkEndpoint) async throws -> T {
