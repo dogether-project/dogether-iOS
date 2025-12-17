@@ -97,10 +97,7 @@ extension NetworkManager {
             if case let .dogetherError(code, _) = error, code == .ATF0003 {
                 coordinator?.showPopup(type: .alert, alertType: .needLogout) { [weak self] _ in
                     guard let self else { return }
-                    // FIXME: logout 로직 임시 구현, 추후 로직 자체를 UserDefaultManager로 이동
-                    UserDefaultsManager.shared.loginType = nil
-                    UserDefaultsManager.shared.accessToken = nil
-                    UserDefaultsManager.shared.userFullName = nil
+                    UserDefaultsManager.logout()
                     coordinator?.setNavigationController(OnboardingViewController())
                 }
             }

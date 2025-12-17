@@ -100,9 +100,7 @@ extension AuthUseCase {
 
 extension AuthUseCase {
     func logout() {
-        UserDefaultsManager.shared.loginType = nil
-        UserDefaultsManager.shared.accessToken = nil
-        UserDefaultsManager.shared.userFullName = nil
+        UserDefaultsManager.logout()
     }
     
     func withdraw() async throws {
