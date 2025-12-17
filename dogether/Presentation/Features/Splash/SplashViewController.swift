@@ -25,41 +25,26 @@ extension SplashViewController {
             LoadingManager.shared.showLoading()
             defer { LoadingManager.shared.hideLoading() }
             
-            do {
-                try await viewModel.launchApp()
-                
-                if try await viewModel.checkUpdate() {
-                    coordinator?.setNavigationController(UpdateViewController())
-                    return
-                }
-                
-                if viewModel.checkLogin() {
-                    coordinator?.setNavigationController(OnboardingViewController())
-                    return
-                }
-                
-                if try await viewModel.checkParticipating() {
-                    coordinator?.setNavigationController(StartViewController())
-                    return
-                }
-                
-                await MainActor.run { [weak self] in
-                    guard let self else { return }
-                    coordinator?.setNavigationController(MainViewController())
-                }
-            } catch {
-                await MainActor.run {
-                    ErrorHandlingManager.presentErrorView(
-                        error: error,
-                        presentingViewController: self,
-                        coordinator: coordinator,
-                        retryHandler: { [weak self] in
-                            guard let self else { return }
-                            onAppear()
-                        },
-                        showCloseButton: false
-                    )
-                }
+            try await viewModel.launchApp()
+            
+            if try await viewModel.checkUpdate() {
+                coordinator?.setNavigationController(UpdateViewController())
+                return
+            }
+            
+            if viewModel.checkLogin() {
+                coordinator?.setNavigationController(OnboardingViewController())
+                return
+            }
+            
+            if try await viewModel.checkParticipating() {
+                coordinator?.setNavigationController(StartViewController())
+                return
+            }
+            
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                coordinator?.setNavigationController(MainViewController())
             }
         }
     }

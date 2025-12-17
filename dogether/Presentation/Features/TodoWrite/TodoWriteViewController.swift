@@ -64,29 +64,11 @@ extension TodoWriteViewController: TodoWriteDelegate {
     func saveTodoAction() {
         coordinator?.showPopup(type: .alert, alertType: .saveTodo) { [weak self] _ in
             guard let self else { return }
-            trySaveTodo()
-        }
-    }
-}
-
-extension TodoWriteViewController {
-    private func trySaveTodo() {
-        Task {
-            do {
+            Task {
                 try await self.viewModel.createTodos()
                 await MainActor.run {
                     self.coordinator?.popViewController()
                 }
-            } catch let error as NetworkError {
-                ErrorHandlingManager.presentErrorView(
-                    error: error,
-                    presentingViewController: self,
-                    coordinator: self.coordinator,
-                    retryHandler: { [weak self] in
-                        guard let self else { return }
-                        trySaveTodo()
-                    }
-                )
             }
         }
     }

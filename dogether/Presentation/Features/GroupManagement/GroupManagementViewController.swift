@@ -61,26 +61,15 @@ extension GroupManagementViewController: GroupManagementDelegate {
     func leaveGroupAction(_ group: GroupEntity) {
         coordinator?.showPopup(type: .alert, alertType: .leaveGroup) { [weak self] _ in
             guard let self else { return }
-            tryLeaveGroup(groupId: group.id)
+            Task { [weak self] in
+                guard let self else { return }
+                try await viewModel.leaveGroup(groupId: group.id)
+                loadGroups()
+            }
         }
     }
     
     func addGroupAction() {
         coordinator?.pushViewController(GroupCreateViewController())
-    }
-}
-
-extension GroupManagementViewController {
-    private func tryLeaveGroup(groupId: Int) {
-        Task { [weak self] in
-            guard let self else { return }
-            do {
-                try await viewModel.leaveGroup(groupId: groupId)
-                loadGroups()
-//            } catch let error as NetworkError {
-//                hideMain()
-//                showError(error)
-            }
-        }
     }
 }

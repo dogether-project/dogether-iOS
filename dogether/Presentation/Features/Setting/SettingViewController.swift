@@ -20,31 +20,6 @@ final class SettingViewController: BaseViewController {
     }
 }
 
-extension SettingViewController {
-    private func tryWithdraw() {
-        Task {
-            do {
-                try await viewModel.withdraw()
-                viewModel.logout()
-                await MainActor.run {
-                    coordinator?.setNavigationController(OnboardingViewController())
-                }
-            } catch let error as NetworkError {
-                ErrorHandlingManager.presentErrorView(
-                    error: error,
-                    presentingViewController: self,
-                    coordinator: coordinator,
-                    retryHandler: { [weak self] in
-                        guard let self else { return }
-                        tryWithdraw()
-                    }
-                )
-            }
-        }
-    }
-}
-
-
 // MARK: - delegate
 protocol SettingDelegate {
     func logoutAction()
@@ -63,7 +38,14 @@ extension SettingViewController: SettingDelegate {
     func withdrawAction() {
         coordinator?.showPopup(type: .alert, alertType: .withdraw) { [weak self] _ in
             guard let self else { return }
-            tryWithdraw()
+            Task { [weak self] in
+                guard let self else { return }
+                try await viewModel.withdraw()
+                viewModel.logout()
+                await MainActor.run {
+                    self.coordinator?.setNavigationController(OnboardingViewController())
+                }
+            }
         }
     }
 }

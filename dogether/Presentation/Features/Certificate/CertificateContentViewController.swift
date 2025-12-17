@@ -51,29 +51,11 @@ extension CertificateContentViewController: CertificateContentDelegate {
     }
     
     func certifyTodoAction() {
-        tryCertifyTodo()
-    }
-}
-
-extension CertificateContentViewController {
-    private func tryCertifyTodo() {
         Task {
-            do {
-                try await self.viewModel.certifyTodo()
-                
-                // FIXME: certifyTodo 함수 안에서 에러 케이스 핸들링 하시면서 수정해주세요, 아래 3라인은 성공했을 때 액션입니다
-                await MainActor.run {
-                    self.coordinator?.popViewControllers(num: 2)
-                }
-            } catch let error as NetworkError {
-                ErrorHandlingManager.presentErrorView(
-                    error: error,
-                    presentingViewController: self,
-                    coordinator: self.coordinator,
-                    retryHandler: { [weak self] in
-                        self?.tryCertifyTodo()
-                    }
-                )
+            try await self.viewModel.certifyTodo()
+            
+            await MainActor.run {
+                self.coordinator?.popViewControllers(num: 2)
             }
         }
     }

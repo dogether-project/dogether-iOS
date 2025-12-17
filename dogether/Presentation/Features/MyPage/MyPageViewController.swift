@@ -35,19 +35,7 @@ extension MyPageViewController {
     private func loadProfileView() {
         Task { [weak self] in
             guard let self else { return }
-            do {
-                try await viewModel.loadProfileView()
-            } catch let error as NetworkError {
-                await MainActor.run { [weak self] in
-                    guard let self else { return }
-                    ErrorHandlingManager.presentErrorView(
-                        error: error,
-                        presentingViewController: self,
-                        coordinator: coordinator,
-                        retryHandler: loadProfileView
-                    )
-                }
-            }
+            try await viewModel.loadProfileView()
         }
     }
 }

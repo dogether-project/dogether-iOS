@@ -29,42 +29,6 @@ final class GroupJoinViewController: BaseViewController {
     }
 }
 
-extension GroupJoinViewController {
-    private func tryJoinGroup() {
-        Task {
-            do {
-                let groupInfo = try await viewModel.joinGroup()
-                await MainActor.run {
-                    coordinator?.setNavigationController(
-                        CompleteViewController(),
-                        datas: CompleteViewDatas(
-                            groupType: .join,
-                            groupEntity: groupInfo
-                        )
-                    )
-                }
-            } catch let error as NetworkError {
-                if case let .dogetherError(code, _) = error, code == .CGF0005 {
-                    await MainActor.run { [weak self] in
-                        guard let self else { return }
-                        viewModel.updateStatus(status: .invalidCode)
-                    }
-                } else {
-                    ErrorHandlingManager.presentErrorView(
-                        error: error,
-                        presentingViewController: self,
-                        coordinator: coordinator,
-                        retryHandler: { [weak self] in
-                            guard let self else { return }
-                            tryJoinGroup()
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
-
 protocol GroupJoinDelegate {
     func updateCodeAction(code: String, codeMaxLength: Int)
     func updateKeyboardHeightAction(height: CGFloat)
@@ -81,6 +45,31 @@ extension GroupJoinViewController: GroupJoinDelegate {
     }
     
     func joinGroupAction() {
-        tryJoinGroup()  // FIXME: 추후 수정
+        Task {
+            do {
+                let groupInfo = try await viewModel.joinGroup()
+                await MainActor.run {
+                    coordinator?.setNavigationController(
+                        CompleteViewController(),
+                        datas: CompleteViewDatas(
+                            groupType: .join,
+                            groupEntity: groupInfo
+                        )
+                    )
+                }
+            } catch let error as NetworkError {
+                if case let .dogetherError(code, _) = error {
+                    if code == .CGF0002 {
+//                        coordinator?.showPopup(type: .alert, alertType: .alreadyParticipated)
+                    }
+                    if code == .CGF0003 {
+//                        coordinator?.showPopup(type: .alert, alertType: .fullGroup)
+                    }
+                    if code == .CGF0004 || code == .CGF0005 {
+//                        coordinator?.showPopup(type: .alert, alertType: .unableToParticipate)
+                    }
+                }
+            }
+        }
     }
 }

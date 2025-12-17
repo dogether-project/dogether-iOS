@@ -44,31 +44,15 @@ extension MainViewController {
     private func loadMainView(selectedIndex: Int?) {
         Task { [weak self] in
             guard let self else { return }
-            do {
-                let groupViewDatas = try await viewModel.getGroups()
-                viewModel.groupViewDatas.accept(groupViewDatas)
-                
-                if groupViewDatas.groups.isEmpty {
-                    coordinator?.setNavigationController(StartViewController())
-                    return
-                }
-                
-                try await viewModel.setSheetViewDatasForCurrentGroup()
-
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    ErrorHandlingManager.presentErrorView(
-                        error: error,
-                        presentingViewController: self,
-                        coordinator: self.coordinator,
-                        retryHandler: { [weak self] in
-                            guard let self else { return }
-                            loadMainView()
-                        },
-                        showCloseButton: false
-                    )
-                }
+            let groupViewDatas = try await viewModel.getGroups()
+            viewModel.groupViewDatas.accept(groupViewDatas)
+            
+            if groupViewDatas.groups.isEmpty {
+                coordinator?.setNavigationController(StartViewController())
+                return
             }
+            
+            try await viewModel.setSheetViewDatasForCurrentGroup()
         }
     }
 }
@@ -119,7 +103,7 @@ protocol MainDelegate {
 extension MainViewController: MainDelegate {
     private func onAppear() {
         checkAuthorization()
-        coordinator?.updateViewController = loadMainView
+        coordinator?.updateViewController = loadMainView    // FIXME: updateViewController 지정 로직 viewWillAppear로 이동 필요
         
         // ???: 화면 전환을 고려하면 일부러 강한 참조를 걸어야할까
         // TODO: 알림 권한을 거부한 사용자에 대한 로직은 추후에 추가
