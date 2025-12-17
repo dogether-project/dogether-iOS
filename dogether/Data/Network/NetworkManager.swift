@@ -22,7 +22,14 @@ class NetworkManager {
             guard let data = response.data else { throw NetworkError.parse }
             return data
         } catch {
-            throw mapError(error)
+            if checkCommonError(error) {
+                LoadingManager.shared.hideLoading()
+                let data: T = try await handleCommonError(endpoint)
+                LoadingManager.shared.showLoading()
+                return data
+            } else {
+                throw handleDetailError(error)
+            }
         }
     }
     
@@ -33,35 +40,71 @@ class NetworkManager {
         do {
             let _: ServerResponse<EmptyData> = try await NetworkService.shared.request(endpoint)
         } catch {
-            throw mapError(error)
+            if checkCommonError(error) {
+                LoadingManager.shared.hideLoading()
+                let data: Void = try await handleCommonError(endpoint)
+                LoadingManager.shared.showLoading()
+                return data
+            } else {
+                throw handleDetailError(error)
+            }
+        }
+    }
+}
+
+// MARK: - handle error
+extension NetworkManager {
+    private func checkCommonError(_ error: Error) -> Bool {
+        guard let error = error as? NetworkError, case let .dogetherError(code, _) = error else { return true }
+        return !(code == .ATF0002 ||
+                 code == .ATF0003 || code == .CGF0002 || code == .CGF0003 || code == .CGF0004 || code == .CGF0005)
+    }
+    
+    private func handleCommonError<T: Decodable>(_ endpoint: NetworkEndpoint) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            coordinator?.showErrorView { [weak self] in
+                guard let self else { return }
+                Task {
+                    do {
+                        let result: T = try await self.request(endpoint)
+                        continuation.resume(returning: result)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
         }
     }
     
-    private func mapError(_ error: Error) -> NetworkError {
-        if let error = error as? NetworkError {
-            if case let .dogetherError(code, _) = error {
-                switch code {
-                case .CF0001, .ATF0001, .MF0001, .CGF0001, .DTF0001,
-                        .DTCF0001, .DTHF0001, .MAF0001, .NF0001, .AIF0001:
-                    // 일반적인 에러
-                    break
-                case .ATF0003:
-                    coordinator?.showPopup(type: .alert, alertType: .needLogout) { [weak self] _ in
-                        guard let self else { return }
-                        // FIXME: logout 로직 임시 구현
-                        UserDefaultsManager.shared.loginType = nil
-                        UserDefaultsManager.shared.accessToken = nil
-                        UserDefaultsManager.shared.userFullName = nil
-                        coordinator?.setNavigationController(OnboardingViewController())
+    private func handleCommonError(_ endpoint: NetworkEndpoint) async throws -> Void {
+        try await withCheckedThrowingContinuation { continuation in
+            coordinator?.showErrorView { [weak self] in
+                guard let self else { return }
+                Task {
+                    do {
+                        let result: Void = try await self.request(endpoint)
+                        continuation.resume(returning: result)
+                    } catch {
+                        continuation.resume(throwing: error)
                     }
-                    break
-                default: break
+                }
+            }
+        }
+    }
+    
+    private func handleDetailError(_ error: Error) -> NetworkError {
+        if let error = error as? NetworkError {
+            if case let .dogetherError(code, _) = error, code == .ATF0003 {
+                coordinator?.showPopup(type: .alert, alertType: .needLogout) { [weak self] _ in
+                    guard let self else { return }
+                    // FIXME: logout 로직 임시 구현, 추후 로직 자체를 UserDefaultManager로 이동
+                    UserDefaultsManager.shared.loginType = nil
+                    UserDefaultsManager.shared.accessToken = nil
+                    UserDefaultsManager.shared.userFullName = nil
+                    coordinator?.setNavigationController(OnboardingViewController())
                 }
             }
             return error
-        } else {
-            // 일반적인 에러
-            return NetworkError.unknown
-        }
+        } else { return NetworkError.unknown }
     }
 }

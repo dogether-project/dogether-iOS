@@ -50,14 +50,6 @@ extension NavigationCoordinator {
         
         navigationController.pushViewController(viewController, animated: animated)
     }
-    
-    func presentViewController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
-        viewController.coordinator = self
-        viewController.datas = datas
-        updateViewController = nil
-        
-        navigationController.present(viewController, animated: animated)
-    }
 
     func popViewController(animated: Bool = true) {
         updateViewController = nil
@@ -74,12 +66,6 @@ extension NavigationCoordinator {
         updateViewController = nil
         
         navigationController.popToViewController(targetViewController, animated: animated)
-    }
-    
-    func dismissViewController(animated: Bool = true) {
-        updateViewController = nil
-
-        navigationController.presentedViewController?.dismiss(animated: animated)
     }
 }
 
@@ -149,6 +135,33 @@ extension NavigationCoordinator {
     func hideModal() {
         modalityWindow?.isHidden = true
         modalityWindow = nil
+    }
+}
+
+// MARK: error
+extension NavigationCoordinator {
+    func showErrorView(completion: @escaping () -> Void) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if let errorViewController = navigationController.presentedViewController as? ErrorViewController {
+                errorViewController.completions.append(completion)
+            } else {
+                let errorViewController = ErrorViewController()
+                
+                errorViewController.coordinator = self
+                errorViewController.completions.append(completion)
+                errorViewController.modalPresentationStyle = .overFullScreen
+                errorViewController.modalTransitionStyle = .crossDissolve
+                
+                navigationController.present(errorViewController, animated: true)
+            }
+        }
+    }
+    
+    func dismissErrorView(completion: @escaping () -> Void) {
+        updateViewController = nil
+
+        navigationController.presentedViewController?.dismiss(animated: true) { completion() }
     }
 }
 
