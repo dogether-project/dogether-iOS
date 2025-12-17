@@ -17,14 +17,14 @@ final class GroupManagementViewController: BaseViewController {
         pages = [groupManagementPage]
         
         super.viewDidLoad()
-
-        coordinator?.updateViewController = loadGroups
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         loadGroups()
+        
+        coordinator?.updateViewController = loadGroups
     }
 
     override func setViewDatas() {

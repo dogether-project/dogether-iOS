@@ -15,14 +15,14 @@ final class CertificationListViewController: BaseViewController {
         pages = [certificationListPage]
         
         super.viewDidLoad()
-        
-        coordinator?.updateViewController = loadCertificationListView
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         loadCertificationListView()
+        
+        coordinator?.updateViewController = loadCertificationListView
     }
     
     override func setViewDatas() {

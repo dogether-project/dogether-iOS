@@ -15,14 +15,14 @@ final class MyPageViewController: BaseViewController {
         pages = [myPage]
         
         super.viewDidLoad()
-        
-        coordinator?.updateViewController = loadProfileView
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         loadProfileView()
+        
+        coordinator?.updateViewController = loadProfileView
     }
     
     override func setViewDatas() {
