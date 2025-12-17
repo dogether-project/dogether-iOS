@@ -19,7 +19,11 @@ class NetworkManager {
         
         do {
             let response: ServerResponse<T> = try await NetworkService.shared.request(endpoint)
-            guard let data = response.data else { throw NetworkError.parse }
+            guard let data = response.data else {
+                if let dogetherCode = DogetherCodes(rawValue: response.code) {
+                    throw NetworkError.dogetherError(code: dogetherCode, message: response.message)
+                } else { throw NetworkError.unknown }
+            }
             return data
         } catch {
             if checkCommonError(error) {
@@ -34,21 +38,7 @@ class NetworkManager {
     }
     
     func request(_ endpoint: NetworkEndpoint) async throws -> Void {
-        LoadingManager.shared.showLoading()
-        defer { LoadingManager.shared.hideLoading() }
-        
-        do {
-            let _: ServerResponse<EmptyData> = try await NetworkService.shared.request(endpoint)
-        } catch {
-            if checkCommonError(error) {
-                LoadingManager.shared.hideLoading()
-                let data: Void = try await handleCommonError(endpoint)
-                LoadingManager.shared.showLoading()
-                return data
-            } else {
-                throw handleDetailError(error)
-            }
-        }
+        let _: EmptyData = try await request(endpoint)
     }
 }
 
@@ -67,22 +57,6 @@ extension NetworkManager {
                 Task {
                     do {
                         let result: T = try await self.request(endpoint)
-                        continuation.resume(returning: result)
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
-        }
-    }
-    
-    private func handleCommonError(_ endpoint: NetworkEndpoint) async throws -> Void {
-        try await withCheckedThrowingContinuation { continuation in
-            coordinator?.showErrorView { [weak self] in
-                guard let self else { return }
-                Task {
-                    do {
-                        let result: Void = try await self.request(endpoint)
                         continuation.resume(returning: result)
                     } catch {
                         continuation.resume(throwing: error)

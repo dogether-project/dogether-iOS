@@ -59,14 +59,15 @@ extension GroupJoinViewController: GroupJoinDelegate {
                 }
             } catch let error as NetworkError {
                 if case let .dogetherError(code, _) = error {
-                    if code == .CGF0002 {
-//                        coordinator?.showPopup(type: .alert, alertType: .alreadyParticipated)
-                    }
-                    if code == .CGF0003 {
-//                        coordinator?.showPopup(type: .alert, alertType: .fullGroup)
-                    }
-                    if code == .CGF0004 || code == .CGF0005 {
-//                        coordinator?.showPopup(type: .alert, alertType: .unableToParticipate)
+                    guard let alertType: AlertTypes =
+                            code == .CGF0002 ? .alreadyParticipated :
+                                code == .CGF0003 ? .fullGroup :
+                                code == .CGF0004 || code == .CGF0005 ? .unableToParticipate :
+                                nil else { return }
+                    
+                    coordinator?.showPopup(type: .alert, alertType: alertType) { [weak self] _ in
+                        guard let self else { return }
+                        coordinator?.popViewController()
                     }
                 }
             }

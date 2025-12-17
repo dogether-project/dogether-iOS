@@ -27,6 +27,9 @@ enum AlertTypes {
     // MARK: detail errors
     case needLogout
     case needRevoke
+    case alreadyParticipated
+    case fullGroup
+    case unableToParticipate
     
     var title: String {
         switch self {
@@ -48,6 +51,12 @@ enum AlertTypes {
             return "로그인 정보가 만료됐어요"
         case .needRevoke:
             return "로그인 연결을 해제해주세요"
+        case .alreadyParticipated:
+            return "이미 참여한 그룹이에요"
+        case .fullGroup:
+            return "그룹 인원이 가득 찼어요"
+        case .unableToParticipate:
+            return "참여할 수 없는 그룹이에요"
         }
     }
     
@@ -69,6 +78,12 @@ enum AlertTypes {
             return "다시 로그인해 주세요."
         case .needRevoke:
             return "로그인이 정상적으로 진행되지 않아 Apple 계정에서 dogether 연결을 해제해야 해요. 아래 경로로 이동해 삭제한 뒤 다시 시도해주세요.\n\n '설정 > 내 AppleID > Apple로 로그인 > dogether > 삭제'"
+        case .alreadyParticipated:
+            return "해당 그룹은 다시 참여하실 수 없어요."
+        case .fullGroup:
+            return "다른 그룹에 참여하거나 새로 만들어주세요."
+        case .unableToParticipate:
+            return "종료되었거나 유효하지 않은 그룹이에요."
         default:
             return nil
         }
@@ -80,6 +95,8 @@ enum AlertTypes {
             return "나중에"
         case .leaveGroup, .withdraw, .saveTodo:
             return "뒤로가기"
+        case .alreadyParticipated, .fullGroup, .unableToParticipate:
+            return "다시 입력하기"
         default:
             return nil
         }
@@ -95,7 +112,7 @@ enum AlertTypes {
             return "로그아웃"
         case .saveTodo:
             return "저장하기"
-        case .needLogout, .needRevoke:
+        case .needLogout, .needRevoke, .alreadyParticipated, .fullGroup, .unableToParticipate:
             return "확인"
 //        default:
 //            return nil
@@ -106,14 +123,16 @@ enum AlertTypes {
         switch self {
         case .leaveGroup, .withdraw:
             return .dogetherRed
-        case .pushNotice, .gallery, .camera, .logout, .saveTodo, .needLogout, .needRevoke:
+        case .pushNotice, .gallery, .camera, .logout, .saveTodo,
+                .needLogout, .needRevoke, .alreadyParticipated, .fullGroup, .unableToParticipate:
             return .blue300
         }
     }
     
     var image: UIImage? {
         switch self {
-        case .pushNotice, .gallery, .camera, .saveTodo, .needLogout, .needRevoke:
+        case .pushNotice, .gallery, .camera, .saveTodo,
+                .needLogout, .needRevoke, .alreadyParticipated, .fullGroup, .unableToParticipate:
             return .caution
         default:
             return nil

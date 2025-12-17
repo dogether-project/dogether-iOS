@@ -48,12 +48,8 @@ class NetworkService {
         
         let request = configureRequest(url: url, endpoint)
         
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            let decoded = try JSONDecoder().decode(ServerResponse<T>.self, from: data)
-            return decoded
-        } catch {
-            throw NetworkError.parse
-        }
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let decoded = try JSONDecoder().decode(ServerResponse<T>.self, from: data)
+        return decoded
     }
 }

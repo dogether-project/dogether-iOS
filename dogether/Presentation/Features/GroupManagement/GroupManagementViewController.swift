@@ -36,17 +36,7 @@ extension GroupManagementViewController {
     private func loadGroups() {
         Task { [weak self] in
             guard let self else { return }
-            do {
-                try await viewModel.loadGroups()
-//                await MainActor.run {
-//                    self.showMain()
-//                }
-//            } catch let error as NetworkError {
-//                await MainActor.run {
-//                    self.hideMain()
-//                    self.showError(error)
-//                }
-            }
+            try await viewModel.loadGroups()
         }
     }
 }
