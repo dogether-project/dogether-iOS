@@ -40,59 +40,15 @@ extension StatsViewController {
     private func loadStatsView() {
         Task { [weak self] in
             guard let self else { return }
-            do {
-                try await viewModel.loadStatsView()
-                await MainActor.run {
-                    self.showMain()
-                }
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    self.hideMain()
-                    self.showError(error)
-                }
-            }
+            try await viewModel.loadStatsView()
         }
     }
     
-    private func reloadStats(index: Int) {
+    private func reloadStats() {
         Task { [weak self] in
             guard let self else { return }
-            do {
-                try await viewModel.fetchStatsViewDatas()
-                await MainActor.run {
-                    self.showMain()
-                }
-            } catch let error as NetworkError {
-                await MainActor.run {
-                    self.hideMain()
-                    self.showError(error)
-                }
-            }
+            try await viewModel.fetchStatsViewDatas()
         }
-    }
-}
-
-// MARK: - Error / Main Toggle
-extension StatsViewController {
-    private func showError(_ error: NetworkError) {
-//        errorView?.removeFromSuperview()
-//        errorView = ErrorHandlingManager.embedErrorView(
-//            in: self,
-//            under: statsPage.navigationHeader,
-//            error: error,
-//            retryHandler: { [weak self] in
-//                self?.loadStatsView()
-//            }
-//        )
-    }
-    
-    private func showMain() {
-//        pages?.forEach { $0.isHidden = false }
-//        errorView = nil
-    }
-    
-    private func hideMain() {
-//        pages?.forEach { $0.isHidden = true }
     }
 }
 
@@ -111,7 +67,7 @@ extension StatsViewController: StatsDelegate {
         viewModel.groupViewDatas.update { $0.index = index }
         viewModel.saveLastSelectedGroupIndex(index: index)
         
-        reloadStats(index: index)
+        reloadStats()
     }
     
     func addGroupAction() {

@@ -16,6 +16,11 @@ final class NavigationCoordinator: NSObject {
     private let navigationController: UINavigationController
     private var modalityWindow: UIWindow? = nil
     
+    private var lastViewController: UIViewController? {
+        if let modalityWindow { return modalityWindow.rootViewController }
+        else { return navigationController.viewControllers.last }
+    }
+    
     var updateViewController: (() -> Void)? = nil
     
     init(navigationController: UINavigationController) {
@@ -50,14 +55,6 @@ extension NavigationCoordinator {
         
         navigationController.pushViewController(viewController, animated: animated)
     }
-    
-    func presentViewController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
-        viewController.coordinator = self
-        viewController.datas = datas
-        updateViewController = nil
-        
-        navigationController.present(viewController, animated: animated)
-    }
 
     func popViewController(animated: Bool = true) {
         updateViewController = nil
@@ -75,49 +72,41 @@ extension NavigationCoordinator {
         
         navigationController.popToViewController(targetViewController, animated: animated)
     }
-    
-    func dismissViewController(animated: Bool = true) {
-        updateViewController = nil
-
-        navigationController.presentedViewController?.dismiss(animated: animated)
-    }
 }
 
 // MARK: popup
 extension NavigationCoordinator {
     func showPopup(
-        _ viewController: BaseViewController,
         type: PopupTypes,
         alertType: AlertTypes? = nil,
         animated: Bool = true,
         completion: ((Any) -> Void)? = nil
     ) {
-        let popupViewController = PopupViewController()
-        
-        switch type {
-        case .alert:
-            let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
-            popupViewController.datas = alertPopupViewDatas
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            let popupViewController = PopupViewController()
             
-        case .examinate:
-            let examinatePopupViewDatas = ExaminatePopupViewDatas()
-            popupViewController.datas = examinatePopupViewDatas
+            switch type {
+            case .alert:
+                let alertPopupViewDatas = AlertPopupViewDatas(type: alertType)
+                popupViewController.datas = alertPopupViewDatas
+                
+            case .examinate:
+                let examinatePopupViewDatas = ExaminatePopupViewDatas()
+                popupViewController.datas = examinatePopupViewDatas
+            }
+            
+            popupViewController.coordinator = self
+            popupViewController.completion = completion
+            popupViewController.modalPresentationStyle = .overFullScreen
+            popupViewController.modalTransitionStyle = .crossDissolve
+            
+            lastViewController?.present(popupViewController, animated: animated)
         }
-        
-        popupViewController.coordinator = self
-        popupViewController.completion = completion
-        popupViewController.modalPresentationStyle = .overFullScreen
-        popupViewController.modalTransitionStyle = .crossDissolve
-        
-        viewController.present(popupViewController, animated: animated)
     }
     
     func hidePopup(animated: Bool = true) {
-        if let modalityWindow {
-            modalityWindow.rootViewController?.dismiss(animated: animated)
-        } else {
-            navigationController.viewControllers.last?.dismiss(animated: animated)
-        }
+        lastViewController?.dismiss(animated: animated)
     }
 }
 
@@ -147,6 +136,33 @@ extension NavigationCoordinator {
     func hideModal() {
         modalityWindow?.isHidden = true
         modalityWindow = nil
+    }
+}
+
+// MARK: error
+extension NavigationCoordinator {
+    func showErrorView(completion: @escaping () -> Void) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if let errorViewController = navigationController.presentedViewController as? ErrorViewController {
+                errorViewController.completions.append(completion)
+            } else {
+                let errorViewController = ErrorViewController()
+                
+                errorViewController.coordinator = self
+                errorViewController.completions.append(completion)
+                errorViewController.modalPresentationStyle = .overFullScreen
+                errorViewController.modalTransitionStyle = .crossDissolve
+                
+                navigationController.present(errorViewController, animated: true)
+            }
+        }
+    }
+    
+    func dismissErrorView(completion: @escaping () -> Void) {
+        updateViewController = nil
+
+        navigationController.presentedViewController?.dismiss(animated: true) { completion() }
     }
 }
 

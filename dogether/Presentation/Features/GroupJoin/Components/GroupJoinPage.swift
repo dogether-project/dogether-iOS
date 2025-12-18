@@ -38,7 +38,6 @@ final class GroupJoinPage: BasePage {
     
     private let codeMaxLength = 8
     
-    private(set) var currentStatus: GroupJoinStatus?
     private(set) var currentKeyboardHeight: CGFloat?
     private(set) var currentIsFirstResponder: Bool?
     private(set) var isFirst: Bool = true
@@ -47,6 +46,10 @@ final class GroupJoinPage: BasePage {
         titleLabel.text = "초대코드 입력"
         titleLabel.textColor = .grey0
         titleLabel.font = Fonts.emphasis2B
+        
+        subTitleLabel.text = "초대받은 링크에서 초대코드를 확인할 수 있어요"
+        subTitleLabel.textColor = .grey200
+        subTitleLabel.font = Fonts.body1R
         
         codeTextField.attributedPlaceholder = NSAttributedString(
             string: "코드입력 (8자리)",
@@ -115,16 +118,6 @@ final class GroupJoinPage: BasePage {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupJoinViewDatas {
-            if currentStatus != datas.status {
-                currentStatus = datas.status
-                
-                subTitleLabel.text = datas.status.text
-                subTitleLabel.textColor = datas.status.textColor
-                subTitleLabel.font = datas.status.font
-                
-                codeTextField.layer.borderColor = datas.status.borderColor.cgColor
-            }
-            
             // MARK: subTitleLabel 등 일반 UI의 구성을 최초 진행, 이후 joinButton 애니메이션을 위해 위치 조정
             if isFirst {
                 isFirst = false
