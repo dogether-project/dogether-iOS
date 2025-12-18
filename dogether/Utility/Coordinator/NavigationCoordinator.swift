@@ -16,6 +16,11 @@ final class NavigationCoordinator: NSObject {
     private let navigationController: UINavigationController
     private var modalityWindow: UIWindow? = nil
     
+    private var lastViewController: UIViewController? {
+        if let modalityWindow { return modalityWindow.rootViewController }
+        else { return navigationController.viewControllers.last }
+    }
+    
     var updateViewController: (() -> Void)? = nil
     
     init(navigationController: UINavigationController) {
@@ -96,16 +101,12 @@ extension NavigationCoordinator {
             popupViewController.modalPresentationStyle = .overFullScreen
             popupViewController.modalTransitionStyle = .crossDissolve
             
-            navigationController.viewControllers.last?.present(popupViewController, animated: animated)
+            lastViewController?.present(popupViewController, animated: animated)
         }
     }
     
     func hidePopup(animated: Bool = true) {
-        if let modalityWindow {
-            modalityWindow.rootViewController?.dismiss(animated: animated)
-        } else {
-            navigationController.viewControllers.last?.dismiss(animated: animated)
-        }
+        lastViewController?.dismiss(animated: animated)
     }
 }
 
