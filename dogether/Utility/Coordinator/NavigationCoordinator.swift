@@ -21,6 +21,7 @@ final class NavigationCoordinator: NSObject {
         else { return navigationController.viewControllers.last }
     }
     
+    // MARK: 날짜 이동, pushNotice에 반응하여 viewController 자체를 update하는 임시 함수
     var updateViewController: (() -> Void)? = nil
     
     init(navigationController: UINavigationController) {

@@ -38,29 +38,11 @@ final class MainViewController: BaseViewController {
 }
 
 extension MainViewController {
-    // MARK: () -> Void 타입이어야 updateViewController지정 가능
-    private func loadMainView() {
-        loadMainView(selectedIndex: nil)
+    private func onAppear() {
+        checkAuthorization()
+        getReviews()
     }
     
-    private func loadMainView(selectedIndex: Int?) {
-        Task { [weak self] in
-            guard let self else { return }
-            let groupViewDatas = try await viewModel.getGroups()
-            viewModel.groupViewDatas.accept(groupViewDatas)
-            
-            if groupViewDatas.groups.isEmpty {
-                coordinator?.setNavigationController(StartViewController())
-                return
-            }
-            
-            try await viewModel.setSheetViewDatasForCurrentGroup()
-        }
-    }
-}
-
-// MARK: - update UI
-extension MainViewController {
     private func checkAuthorization() {
         Task { [weak self] in
             guard let self else { return }
@@ -77,6 +59,34 @@ extension MainViewController {
             default:    // MARK: .authorized, .provisional, .ephemeral
                 break
             }
+        }
+    }
+    
+    private func getReviews() {
+        // ???: 화면 전환을 고려하면 일부러 강한 참조를 걸어야할까
+        Task { [weak self] in
+            guard let self else { return }
+            let reviews = try await viewModel.getReviews()
+            if reviews.isEmpty { return }
+            
+            await MainActor.run {
+                self.coordinator?.showModal(reviews: reviews)
+            }
+        }
+    }
+    
+    private func loadMainView() {
+        Task { [weak self] in
+            guard let self else { return }
+            let groupViewDatas = try await viewModel.getGroups()
+            viewModel.groupViewDatas.accept(groupViewDatas)
+            
+            if groupViewDatas.groups.isEmpty {
+                coordinator?.setNavigationController(StartViewController())
+                return
+            }
+            
+            try await viewModel.setSheetViewDatasForCurrentGroup()
         }
     }
 }
@@ -103,22 +113,6 @@ protocol MainDelegate {
 }
 
 extension MainViewController: MainDelegate {
-    private func onAppear() {
-        checkAuthorization()
-        
-        // ???: 화면 전환을 고려하면 일부러 강한 참조를 걸어야할까
-        // TODO: 알림 권한을 거부한 사용자에 대한 로직은 추후에 추가
-        Task { [weak self] in
-            guard let self else { return }
-            let reviews = try await viewModel.getReviews()
-            if reviews.isEmpty { return }
-            
-            await MainActor.run {
-                self.coordinator?.showModal(reviews: reviews)
-            }
-        }
-    }
-    
     func updateAlphaBySheet(alpha: CGFloat) {
         viewModel.sheetViewDatas.update { $0.alpha = alpha }
     }

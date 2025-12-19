@@ -44,14 +44,7 @@ final class PopupViewController: BaseViewController {
     }
 }
 
-protocol PopupDelegate {
-    func completeAction()
-    func hidePopup()
-    func updateKeyboardHeightAction(height: CGFloat)
-    func updateFeedbackAction(feedback: String)
-}
-
-extension PopupViewController: PopupDelegate {
+extension PopupViewController {
     private func onAppear() {
         // MARK: - setup for popup ui
         // FIXME: 추후 수정
@@ -68,7 +61,16 @@ extension PopupViewController: PopupDelegate {
             }
         }
     }
-    
+}
+
+protocol PopupDelegate {
+    func completeAction()
+    func hidePopup()
+    func updateKeyboardHeightAction(height: CGFloat)
+    func updateFeedbackAction(feedback: String)
+}
+
+extension PopupViewController: PopupDelegate {
     func completeAction() {
         let param: Any = viewModel.examinatePopupViewDatas.value?.feedback as Any
         completion?(param)

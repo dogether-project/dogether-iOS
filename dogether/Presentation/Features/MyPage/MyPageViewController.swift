@@ -15,14 +15,8 @@ final class MyPageViewController: BaseViewController {
         pages = [myPage]
         
         super.viewDidLoad()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         
-        loadProfileView()
-        
-        coordinator?.updateViewController = loadProfileView
+        onAppear()
     }
     
     override func setViewDatas() {
@@ -32,7 +26,7 @@ final class MyPageViewController: BaseViewController {
 }
 
 extension MyPageViewController {
-    private func loadProfileView() {
+    private func onAppear() {
         Task { [weak self] in
             guard let self else { return }
             try await viewModel.loadProfileView()
