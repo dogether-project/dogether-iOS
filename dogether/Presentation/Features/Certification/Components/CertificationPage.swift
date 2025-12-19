@@ -26,7 +26,7 @@ final class CertificationPage: BasePage {
     private let certificationScrollView = UIScrollView()
     private let certificationStackView = UIStackView()
     private let certificationListView = CertificationListView()
-    private let statusView = TodoStatusButton(type: .waitCertification)
+    private let statusView = TodoStatusButton()
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
     private let certificateButton = DogetherButton("인증하기")
@@ -88,7 +88,6 @@ final class CertificationPage: BasePage {
         
         statusView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.height.equalTo(32)
         }
         
         contentLabel.snp.makeConstraints {
