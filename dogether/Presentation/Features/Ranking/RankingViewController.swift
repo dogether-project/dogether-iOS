@@ -17,14 +17,14 @@ final class RankingViewController: BaseViewController {
         pages = [rankingPage]
         
         super.viewDidLoad()
-        
-        coordinator?.updateViewController = loadRankingView
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         loadRankingView()
+        
+        coordinator?.updateViewController = loadRankingView
     }
     
     override func setViewDatas() {

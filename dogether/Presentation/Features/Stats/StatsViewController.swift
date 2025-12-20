@@ -17,14 +17,14 @@ final class StatsViewController: BaseViewController {
         pages = [statsPage]
         
         super.viewDidLoad()
-        
-        coordinator?.updateViewController = loadStatsView
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         loadStatsView()
+        
+        coordinator?.updateViewController = loadStatsView
     }
 
     override func setViewDatas() {

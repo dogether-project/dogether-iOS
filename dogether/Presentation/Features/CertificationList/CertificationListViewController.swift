@@ -16,13 +16,14 @@ final class CertificationListViewController: BaseViewController {
         
         super.viewDidLoad()
         
-        coordinator?.updateViewController = loadCertificationListView
+        onAppear()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        loadCertificationListView()
+        // FIXME: 추후에 API 세분화 되면 Stats API만 updateViewController 지정, 호출 필요 x
+//        coordinator?.updateViewController = loadSummaryView
     }
     
     override func setViewDatas() {
@@ -34,12 +35,11 @@ final class CertificationListViewController: BaseViewController {
 }
 
 extension CertificationListViewController {
-    // MARK: () -> Void 타입이어야 updateViewController지정 가능
-    private func loadCertificationListView() {
-        loadCertificationListView(page: 0)
+    private func onAppear() {
+        loadCertificationListView()
     }
     
-    private func loadCertificationListView(page: Int) {
+    private func loadCertificationListView(page: Int = 0) {
         Task { [weak self] in
             guard let self else { return }
             try await viewModel.loadCertificationList(page: page)

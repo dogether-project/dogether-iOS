@@ -21,7 +21,13 @@ final class NavigationCoordinator: NSObject {
         else { return navigationController.viewControllers.last }
     }
     
+    // MARK: 날짜 이동, pushNotice에 반응하여 viewController 자체를 update하는 임시 함수
     var updateViewController: (() -> Void)? = nil
+    private func updateIfNeeded(_ types: UIViewController.Type...) {
+        guard let lastViewController, types.contains(where: { lastViewController.isKind(of: $0) }) else { return }
+
+        updateViewController?()
+    }
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -184,13 +190,19 @@ extension NavigationCoordinator: NotificationHandler {
             }
             
         case .review:
-            guard let currentViewController = navigationController.viewControllers.last,
-                  let _ = currentViewController as? MainViewController else { return }
+            updateIfNeeded(
+                MainViewController.self,
+                RankingViewController.self,
+                StatsViewController.self
+            )
             
-            updateViewController?()
-            
-        default:
-            return
+        case .join:
+            updateIfNeeded(
+                MainViewController.self,
+                RankingViewController.self,
+                StatsViewController.self,
+                GroupManagementViewController.self
+            )
         }
     }
     
