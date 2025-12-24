@@ -54,6 +54,7 @@ final class FilterButton: BaseButton {
         
         stackView.axis = .horizontal
         stackView.spacing = 4
+        stackView.alignment = .center
         stackView.isUserInteractionEnabled = false
     }
     
@@ -67,11 +68,9 @@ final class FilterButton: BaseButton {
     }
     
     override func configureConstraints() {
-        self.snp.makeConstraints {
-            $0.width.equalTo(type.width)
-        }
-        
         stackView.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().inset(6)
+            $0.horizontalEdges.equalToSuperview().inset(12)
             $0.center.equalToSuperview()
         }
         
@@ -88,31 +87,7 @@ final class FilterButton: BaseButton {
             backgroundColor = isColorful ? type.backgroundColor : .clear
             layer.borderColor = isColorful ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
             icon.tintColor = isColorful ? .grey900 : .grey400
-            label.textColor = isColorful ? .grey900 : .grey400
-        }
-    }
-}
-
-extension FilterButton {
-    // FIXME: 기존 updateView와는 성질이 다름, button이 가진 고유 type 자체를 바꿔버리는 일이라 고민이 필요함
-    func update(type: FilterTypes, isColorful: Bool = true) {
-        // icon, label, 색, width 전부 갱신
-        icon.image = type.image?.withRenderingMode(.alwaysTemplate)
-        label.text = type.rawValue
-        
-        backgroundColor = isColorful ? type.backgroundColor : .grey800
-        layer.borderColor = isColorful ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
-        
-        icon.tintColor = isColorful ? .grey900 : .grey400
-        label.textColor = isColorful ? .grey900 : .grey400
-        
-        icon.snp.updateConstraints {
-            $0.width.height.equalTo(18)
-        }
-        
-        // 너비도 갱신
-        self.snp.updateConstraints {
-            $0.width.equalTo(type.width)
+            label.textColor = isColorful ? .grey800 : .grey300
         }
     }
 }

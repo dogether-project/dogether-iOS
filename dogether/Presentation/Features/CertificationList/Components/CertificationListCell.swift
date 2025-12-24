@@ -6,29 +6,21 @@
 //
 
 import UIKit
-import Kingfisher
 
 final class CertificationCell: UICollectionViewCell {
     static let reuseIdentifier = "CertificationCell"
     
-    private let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
-    private let statusButton: FilterButton = {
-        let button = FilterButton(type: .wait)
-        button.isUserInteractionEnabled = false
-        return button
-    }()
+    private let imageView = UIImageView()
+    private let statusButton = TodoStatusButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.layer.cornerRadius = 12
-        self.layer.masksToBounds = true
+        layer.cornerRadius = 12
+        layer.masksToBounds = true
+        
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         
         contentView.addSubview(imageView)
         contentView.addSubview(statusButton)
@@ -40,7 +32,6 @@ final class CertificationCell: UICollectionViewCell {
         statusButton.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(12)
             $0.bottom.equalToSuperview().offset(-12)
-            $0.height.equalTo(32)
         }
     }
     
@@ -48,14 +39,13 @@ final class CertificationCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
         imageView.image = nil
     }
     
     func configure(with certificationItem: TodoEntity) {
         imageView.loadImage(url: certificationItem.certificationMediaUrl)
         
-        if let filterType = FilterTypes(status: certificationItem.status.rawValue) {
-            statusButton.update(type: filterType)
-        }
+        statusButton.updateView(certificationItem.status)
     }
 }
