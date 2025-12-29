@@ -11,7 +11,7 @@ class NetworkService {
     private let serverURL: URL?
     
     // MARK: 배포마다 releaseMode 수정 (추후 자동화)
-    static let shared = NetworkService(releaseMode: .prod)
+    static let shared = NetworkService(releaseMode: .dev)
     private init (releaseMode: ReleaseModes) {
         self.serverURL = URL(string: releaseMode.urlString)
     }
