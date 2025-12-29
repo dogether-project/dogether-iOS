@@ -31,15 +31,12 @@ final class LoadingViewController: BaseViewController {
 extension LoadingViewController {
     private func onAppear() {
         // MARK: - setup for loading ui
-        // FIXME: 추후 수정, LoadingViewModel & LoadingViewDatas & isShowLoading 적용
-        view.isHidden = true
-        view.isUserInteractionEnabled = true
-        view.backgroundColor = .grey900.withAlphaComponent(0.8)
+        view.backgroundColor = .clear
         
         Task { [weak self] in
             guard let self else { return }
             try? await Task.sleep(nanoseconds: 1_000_000_000)
-            view.isHidden = false
+            viewModel.updateIsShowLoading(isShowLoading: true)
         }
     }
 }

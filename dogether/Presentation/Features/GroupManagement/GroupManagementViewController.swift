@@ -36,6 +36,7 @@ extension GroupManagementViewController {
     private func loadGroups() {
         Task { [weak self] in
             guard let self else { return }
+            LoadingManager.shared.isShowLoading = true
             try await viewModel.loadGroups()
         }
     }
