@@ -34,12 +34,22 @@ final class NavigationCoordinator: NSObject {
         super.init()
         
         NotificationCenter.default.addObserver(
-            self, selector: #selector(updateLastAccessDate), name: .NSCalendarDayChanged, object: nil
+            self,
+            selector: #selector(updateLastAccessDate),
+            name: .NSCalendarDayChanged, object: nil
         )
+        
+        NotificationCenter.default.addObserver(
+             self,
+             selector: #selector(handleInviteNotification(_:)),
+             name: .didReceiveInviteCode,
+             object: nil
+         )
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .NSCalendarDayChanged, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didReceiveInviteCode, object: nil)
     }
 }
 
@@ -218,5 +228,21 @@ extension NavigationCoordinator: NotificationHandler {
 extension NavigationCoordinator: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return navigationController.viewControllers.count > 1
+    }
+}
+
+// MARK: - DeepLink
+extension NavigationCoordinator {
+    @objc private func handleInviteNotification(_ notification: Notification) {
+        guard let inviteCode = notification.object as? String else { return }
+        
+        routeToInvite(code: inviteCode)
+    }
+    
+    private func routeToInvite(code: String) {
+        let joinVC = GroupJoinViewController()
+        joinVC.coordinator = self
+        joinVC.datas = GroupJoinDeepLinkViewDatas(inviteCode: code)
+        navigationController.pushViewController(joinVC, animated: true)
     }
 }

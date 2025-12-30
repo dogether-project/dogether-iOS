@@ -118,6 +118,24 @@ final class GroupJoinPage: BasePage {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? GroupJoinViewDatas {
+            
+            if codeTextField.text != datas.code {
+                codeTextField.text = datas.code
+            }
+            
+            
+//<<<<<<< HEAD
+//=======
+//            if currentStatus != datas.status {
+//                currentStatus = datas.status
+//                
+//                subTitleLabel.text = datas.status.text
+//                subTitleLabel.textColor = datas.status.textColor
+//                subTitleLabel.font = datas.status.font
+//                
+//                codeTextField.layer.borderColor = datas.status.borderColor.cgColor
+//            }
+//>>>>>>> 978a33f (feat #154: 그룹 초대 딥링크 생성 및 진입 플로우 구현)
             // MARK: subTitleLabel 등 일반 UI의 구성을 최초 진행, 이후 joinButton 애니메이션을 위해 위치 조정
             if isFirst {
                 isFirst = false

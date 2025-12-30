@@ -7,6 +7,8 @@
 
 import UIKit
 
+import ChottuLinkSDK
+
 struct SystemManager {
     static let appleID = 6741416012
     static let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -33,16 +35,32 @@ struct SystemManager {
 }
 
 extension SystemManager {
-    static func inviteGroup(groupName: String, joinCode: String) -> [Any] {
-        ["""
-        ✨ [\(groupName)]에서 당신의 참여를 기다리고 있어요
+    // FIXME: 딥링크 생성 중 로딩UI 추가 필요
+    static func inviteGroup(groupName: String, joinCode: String) async throws -> [Any] {
+          let destinationURL =
+          "https://dogether.site/invite?code=\(joinCode)"
 
-        작심삼일도 괜찮아요.
-        투두 챌린지 서비스 두게더에서
-        팀원들과 함께 목표 달성을 시작해보세요 💪
+          let builder = CLDynamicLinkBuilder(
+              destinationURL: destinationURL,
+              domain: "dogether-app.chottu.link"
+          )
+          .setIOSBehaviour(CLDynamicLinkBehaviour.app)
+          .setAndroidBehaviour(CLDynamicLinkBehaviour.app)
+          .build()
 
-        초대코드: \(joinCode) (복사해서 붙여넣기)
-        https://apps.apple.com/kr/app/id\(SystemManager.appleID)
-        """]
-    }
+          let shortURL = try await ChottuLink.createDynamicLink(for: builder)
+
+          return ["""
+          ✨ [\(groupName)]에서 당신의 참여를 기다리고 있어요
+
+          작심삼일도 괜찮아요.
+          투두 챌린지 서비스 두게더에서
+          팀원들과 함께 목표 달성을 시작해보세요 💪
+          
+          👉 초대코드: \(joinCode)
+
+          👉 초대 링크:
+          \(shortURL!)
+          """]
+      }
 }

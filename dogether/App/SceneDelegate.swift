@@ -7,6 +7,8 @@
 
 import UIKit
 
+import ChottuLinkSDK
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -31,6 +33,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        guard let url = userActivity.webpageURL else { return }
+
+        Task {
+            do {
+                let resolved = try await ChottuLink.getAppLinkDataFromUrl(
+                    from: url.absoluteString
+                )
+
+                if let destinationURL = resolved.link {
+                    DeepLinkManager.shared.handle(link: destinationURL)
+                }
+
+            } catch {
+                // FIXME: 딥링크 resolve 실패 시 처리 (기본 진입 플로우로 처리해야할지?)
+                // resolve 실패? 링크가 앱 안에서 어디로 가야 하는지 최종 목적지를 알아내지 못함
+            }
+        }
+    }
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

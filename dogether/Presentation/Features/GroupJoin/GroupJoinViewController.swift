@@ -26,6 +26,13 @@ final class GroupJoinViewController: BaseViewController {
     override func setViewDatas() {
         bind(viewModel.groupJoinViewDatas)
         bind(viewModel.joinButtonViewDatas)
+        
+          if let datas = datas as? GroupJoinDeepLinkViewDatas {
+              viewModel.updateCode(
+                  code: datas.inviteCode,
+                  codeMaxLength: 8
+              )
+          }
     }
 }
 
