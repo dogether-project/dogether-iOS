@@ -28,9 +28,10 @@ final class ChallengeGroupUseCase {
     }
     
     func readTodo(todo: TodoEntity) async throws {
+        guard let todoHistoryId = todo.historyId else { return }
         // MARK: 이미 thumbnailStatus 가 done인 투두는 read API 호출할 필요 x
         if todo.thumbnailStatus == .done { return }
-        try await repository.readTodo(todoId: String(todo.id))
+        try await repository.readTodo(todoHistoryId: String(todoHistoryId))
     }
     
     func certifyTodo(todoId: Int, content: String, mediaUrl: String) async throws {

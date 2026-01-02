@@ -25,6 +25,7 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
                 id: $0.id,
                 content: $0.content,
                 status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
+                canRequestReview: $0.canRequestCertificationReview,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
                 reviewFeedback: $0.reviewFeedback
@@ -40,10 +41,13 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
         let currentIndex = response.currentTodoHistoryToReadIndex
         let memberTodos = response.todos.map {
             TodoEntity(
-                id: $0.id,
+                historyId: $0.historyId,
+                id: $0.todoId,
                 content: $0.content,
                 status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
                 thumbnailStatus: $0.isRead ? .done : .yet,
+                canRequestCertification: $0.canRequestCertification,
+                canRequestReview: $0.canRequestCertificationReview,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
                 reviewFeedback: $0.reviewFeedback
@@ -52,8 +56,8 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
         return (currentIndex, memberTodos)
     }
     
-    func readTodo(todoId: String) async throws {
-        try await challengeGroupsDataSource.readTodo(todoId: todoId)
+    func readTodo(todoHistoryId: String) async throws {
+        try await challengeGroupsDataSource.readTodo(todoHistoryId: todoHistoryId)
     }
     
     func certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest) async throws {
