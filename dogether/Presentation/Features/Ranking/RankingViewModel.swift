@@ -11,7 +11,7 @@ import RxRelay
 
 final class RankingViewModel {
     private let groupUseCase: GroupUseCase
-    private let challengeGroupsUseCase: ChallengeGroupUseCase
+    private let challengeGroupsUseCase: ChallengeGroupsUseCase
     
     private(set) var rankingViewDatas = BehaviorRelay<RankingViewDatas>(value: RankingViewDatas())
     
@@ -20,7 +20,7 @@ final class RankingViewModel {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
         
         self.groupUseCase = GroupUseCase(repository: groupRepository)
-        self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
+        self.challengeGroupsUseCase = ChallengeGroupsUseCase(repository: challengeGroupsRepository)
     }
 }
 

@@ -13,8 +13,8 @@ struct TodoEntity: BaseEntity {
     let content: String
     var status: TodoStatus
     var thumbnailStatus: ThumbnailStatus
-    var canRequestCertification: Bool
-    var canRequestReview: Bool
+    var canRemindCertification: Bool
+    var canRemindReview: Bool
     var certificationContent: String?
     var certificationMediaUrl: String?
     var reviewFeedback: String?
@@ -26,8 +26,8 @@ struct TodoEntity: BaseEntity {
         content: String,
         status: TodoStatus,
         thumbnailStatus: ThumbnailStatus = .yet,
-        canRequestCertification: Bool = false,
-        canRequestReview: Bool = false,
+        canRemindCertification: Bool = false,
+        canRemindReview: Bool = false,
         certificationContent: String? = nil,
         certificationMediaUrl: String? = nil,
         reviewFeedback: String? = nil,
@@ -38,11 +38,19 @@ struct TodoEntity: BaseEntity {
         self.content = content
         self.status = status
         self.thumbnailStatus = thumbnailStatus
-        self.canRequestCertification = canRequestCertification
-        self.canRequestReview = canRequestReview
+        self.canRemindCertification = canRemindCertification
+        self.canRemindReview = canRemindReview
         self.certificationContent = certificationContent
         self.certificationMediaUrl = certificationMediaUrl
         self.reviewFeedback = reviewFeedback
         self.createdAt = createdAt
+    }
+}
+
+extension TodoEntity {
+    func with(createdAt: String) -> Self {
+        var todo = self
+        todo.createdAt = createdAt
+        return todo
     }
 }

@@ -8,13 +8,17 @@
 import RxRelay
 
 final class CertificationViewModel {
-    private let challengeGroupsUseCase: ChallengeGroupUseCase
+    private let challengeGroupsUseCase: ChallengeGroupsUseCase
+    private let todosUseCase: TodosUseCase
     
     private(set) var certificationViewDatas = BehaviorRelay<CertificationViewDatas>(value: CertificationViewDatas())
     
     init() {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
-        self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
+        let todosRepository = DIManager.shared.getTodosRepository()
+        
+        self.challengeGroupsUseCase = ChallengeGroupsUseCase(repository: challengeGroupsRepository)
+        self.todosUseCase = TodosUseCase(repository: todosRepository)
     }
 }
 
@@ -35,5 +39,9 @@ extension CertificationViewModel {
         try await challengeGroupsUseCase.readTodo(
             todo: certificationViewDatas.value.todos[index ?? certificationViewDatas.value.index]
         )
+    }
+    
+    func remindTodo(remindType: RemindTypes, todoId: Int) async throws {
+        try await todosUseCase.remindTodo(remindType: remindType, todoId: todoId)
     }
 }

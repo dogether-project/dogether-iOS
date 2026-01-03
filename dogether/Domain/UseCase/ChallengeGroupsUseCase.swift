@@ -1,5 +1,5 @@
 //
-//  ChallengeGroupUseCase.swift
+//  ChallengeGroupsUseCase.swift
 //  dogether
 //
 //  Created by seungyooooong on 3/30/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ChallengeGroupUseCase {
+final class ChallengeGroupsUseCase {
     private let repository: ChallengeGroupsProtocol
     
     init(repository: ChallengeGroupsProtocol) {
@@ -20,7 +20,7 @@ final class ChallengeGroupUseCase {
     }
     
     func getMyTodos(groupId: Int, date: String) async throws -> [TodoEntity] {
-        try await repository.getMyTodos(groupId: String(groupId), date: date)
+        try await repository.getMyTodos(groupId: String(groupId), date: date).map { $0.with(createdAt: date) }
     }
     
     func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, todos: [TodoEntity]) {
@@ -32,10 +32,5 @@ final class ChallengeGroupUseCase {
         // MARK: 이미 thumbnailStatus 가 done인 투두는 read API 호출할 필요 x
         if todo.thumbnailStatus == .done { return }
         try await repository.readTodo(todoHistoryId: String(todoHistoryId))
-    }
-    
-    func certifyTodo(todoId: Int, content: String, mediaUrl: String) async throws {
-        let certifyTodoRequest = CertifyTodoRequest(content: content, mediaUrl: mediaUrl)
-        try await repository.certifyTodo(todoId: String(todoId), certifyTodoRequest: certifyTodoRequest)
     }
 }

@@ -12,12 +12,24 @@ final class CertificationPage: BasePage {
         didSet {
             thumbnailListView.delegate = delegate
             certificationListView.delegate = delegate
-//            certificateButton.addAction(
-//                UIAction { [weak self] _ in
-//                    guard let self, let currentTodo else { return }
-//                    delegate?.goCertificateViewAction(todo: currentTodo)
-//                }, for: .touchUpInside
-//            )
+            certificateButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.goCertificateViewAction(todo: currentTodo)
+                }, for: .touchUpInside
+            )
+            remindCertificationButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.remindTodoAction(remindType: .certification, todoId: currentTodo.id)
+                }, for: .touchUpInside
+            )
+            remindReviewButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.remindTodoAction(remindType: .review, todoId: currentTodo.id)
+                }, for: .touchUpInside
+            )
         }
     }
     
@@ -29,7 +41,9 @@ final class CertificationPage: BasePage {
     private let statusView = TodoStatusButton()
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
-//    private let certificateButton = DogetherButton("인증하기")
+    private let certificateButton = DogetherButton("인증하기")
+    private let remindCertificationButton = DogetherButton("인증 재촉하기")
+    private let remindReviewButton = DogetherButton("검사 재촉하기")
     
     private var currentTodo: TodoEntity?
     
@@ -54,7 +68,9 @@ final class CertificationPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [navigationHeader, thumbnailListView, certificationScrollView/*, certificateButton*/].forEach { addSubview($0) }
+        [ navigationHeader, thumbnailListView, certificationScrollView,
+          certificateButton, remindCertificationButton, remindReviewButton
+        ].forEach { addSubview($0) }
         certificationScrollView.addSubview(certificationStackView)
     }
      
@@ -98,9 +114,17 @@ final class CertificationPage: BasePage {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
-//        certificateButton.snp.makeConstraints {
-//            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
-//        }
+        certificateButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        remindCertificationButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        remindReviewButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
     }
     
     // MARK: - updateView
@@ -122,10 +146,12 @@ final class CertificationPage: BasePage {
             
             reviewFeedbackView.updateView(datas.todos[datas.index].reviewFeedback ?? "")
             
-            // FIXME: 추후 수정
-//            var dogetherButtonViewDatas = certificateButton.currentViewDatas ?? DogetherButtonViewDatas()
-//            dogetherButtonViewDatas.isHidden = datas.rankingEntity != nil || datas.todos[datas.index].status != .waitCertification
-//            certificateButton.updateView(dogetherButtonViewDatas)
+            let date = DateFormatterManager.formattedDate().split(separator: ".").joined(separator: "-")
+            let isWaitCertification = datas.todos[datas.index].status == .waitCertification
+            let isToday = datas.todos[datas.index].createdAt == date || datas.rankingEntity != nil
+            certificateButton.isHidden = !(isWaitCertification && isToday)
+            remindCertificationButton.isHidden = !datas.todos[datas.index].canRemindCertification
+            remindReviewButton.isHidden = !datas.todos[datas.index].canRemindReview
         }
     }
 }

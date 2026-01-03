@@ -45,6 +45,7 @@ protocol CertificationDelegate {
     func certificationTapAction(_ scrollView: UIScrollView, _ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
     func certificationListScrollEndAction(index: Int)
     func goCertificateViewAction(todo: TodoEntity)
+    func remindTodoAction(remindType: RemindTypes, todoId: Int)
 }
 
 extension CertificationViewController: CertificationDelegate {
@@ -97,5 +98,12 @@ extension CertificationViewController: CertificationDelegate {
         let certificateImageViewController = CertificateImageViewController()
         let certificateViewDatas = CertificateViewDatas(todo: todo)
         coordinator?.pushViewController(certificateImageViewController, datas: certificateViewDatas)
+    }
+    
+    func remindTodoAction(remindType: RemindTypes, todoId: Int) {
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.remindTodo(remindType: remindType, todoId: todoId)
+        }
     }
 }

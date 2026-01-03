@@ -9,7 +9,6 @@ import Foundation
 
 enum ChallengeGroupsRouter: NetworkEndpoint {
     case createTodos(groupId: String, createTodosRequest: CreateTodosRequest)
-    case certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest)
     case getMyTodos(groupId: String, date: String)
     case getMyYesterdayTodos
     case getMemberTodos(groupId: String, memberId: String)
@@ -19,8 +18,6 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
         switch self {
         case .createTodos(let groupId, _):
             return Path.api + Path.v1 + Path.challengeGroups + "/\(groupId)/todos"
-        case .certifyTodo(let todoId, _):   // FIXME: 추후 TodosRouter 분리
-            return Path.api + Path.v1 + Path.todos + "/\(todoId)/certify"
         case .getMyTodos(let groupId, _):
             return Path.api + Path.v2 + Path.challengeGroups + "/\(groupId)/my-todos"
         case .getMyYesterdayTodos:
@@ -36,7 +33,7 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
         switch self {
         case .getMyTodos, .getMyYesterdayTodos, .getMemberTodos:
             return .get
-        case .createTodos, .certifyTodo, .readTodo:
+        case .createTodos, .readTodo:
             return .post
         }
     }
@@ -64,8 +61,6 @@ enum ChallengeGroupsRouter: NetworkEndpoint {
         switch self {
         case .createTodos(_, let createTodosRequest):
             return createTodosRequest
-        case .certifyTodo(_, let certifyTodoRequest):
-            return certifyTodoRequest
         default:
             return nil
         }
