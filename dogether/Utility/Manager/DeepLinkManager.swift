@@ -8,24 +8,21 @@
 import Foundation
 
 final class DeepLinkManager {
-
     static let shared = DeepLinkManager()
-    
-    func handle(link: URL, metadata: [String: Any]? = nil) {
 
-        guard let components = URLComponents(
-            url: link,
-            resolvingAgainstBaseURL: false
-        ) else { return }
+    private(set) var pendingInviteCode: String?
 
-        let code = components.queryItems?
-            .first(where: { $0.name == "code" })?.value
+    func handle(link: URL) {
+        guard let components = URLComponents(url: link, resolvingAgainstBaseURL: false),
+              let code = components.queryItems?
+                .first(where: { $0.name == "code" })?.value
+        else { return }
 
-        guard let code else { return }
+        pendingInviteCode = code
+    }
 
-        NotificationCenter.default.post(
-            name: .didReceiveInviteCode,
-            object: code
-        )
+    func consumeInviteCode() -> String? {
+        defer { pendingInviteCode = nil }
+        return pendingInviteCode
     }
 }
