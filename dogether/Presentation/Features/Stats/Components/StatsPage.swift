@@ -51,8 +51,8 @@ final class StatsPage: BasePage {
         addSubview(scrollView)
         scrollView.addSubview(scrollContentView)
         
-        [ groupInfoView, dosikImageView, dosikArmView,
-          achievementView, statsRankView, statsSummaryView
+        [ groupInfoView, dosikImageView, achievementView,
+          dosikArmView, statsRankView, statsSummaryView
         ].forEach { scrollContentView.addSubview($0) }
         
         addSubview(bottomSheetView)
