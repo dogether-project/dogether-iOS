@@ -16,7 +16,7 @@ enum TodosRouter: NetworkEndpoint {
         case .certifyTodo(let todoId, _):
             return Path.api + Path.v1 + Path.todos + "/\(todoId)/certify"
         case .remindTodo(let todoId, _):
-            return Path.api + Path.v1 + Path.todos + "\(todoId)/reminders"
+            return Path.api + Path.v1 + Path.todos + "/\(todoId)/reminders"
         }
     }
     
