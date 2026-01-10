@@ -104,6 +104,7 @@ extension CertificationViewController: CertificationDelegate {
         Task { [weak self] in
             guard let self else { return }
             try await viewModel.remindTodo(remindType: remindType, todoId: todoId)
+            // TODO: 재촉 메시지가 전송되었어요 토스트 메시지 노출 및 버튼 비활성화
         }
     }
 }
