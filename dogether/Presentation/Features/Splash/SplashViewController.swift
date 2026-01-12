@@ -33,14 +33,17 @@ extension SplashViewController {
                 return
             }
             
+            let rootVC: BaseViewController
+            
             if try await viewModel.checkParticipating() {
-                coordinator?.setNavigationController(StartViewController())
-                return
+                rootVC = StartViewController()
+            } else {
+                rootVC = MainViewController()
             }
             
             await MainActor.run { [weak self] in
                 guard let self else { return }
-                coordinator?.setNavigationController(MainViewController())
+                coordinator?.setNavigationController(rootVC)
             }
             
             if let code = DeepLinkManager.shared.consumeInviteCode() {
@@ -50,7 +53,7 @@ extension SplashViewController {
                         GroupJoinViewController(),
                         datas: GroupJoinDeepLinkViewDatas(inviteCode: code)
                     )
-                } 
+                }
             }
         }
     }
