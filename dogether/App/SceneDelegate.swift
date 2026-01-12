@@ -67,7 +67,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     if let code = DeepLinkManager.shared.consumeInviteCode() {
                         await MainActor.run { [weak self] in
                             guard let self else { return }
-                            coordinator?.routeToInvite(code: code)
+                            coordinator?.pushViewController(
+                                GroupJoinViewController(),
+                                datas: GroupJoinDeepLinkViewDatas(inviteCode: code)
+                            )
                         }
                     }
                 }

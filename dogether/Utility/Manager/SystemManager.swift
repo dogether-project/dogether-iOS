@@ -13,6 +13,7 @@ struct SystemManager {
     static let appleID = 6741416012
     static let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     static let appStoreOpenUrlString = "itms-apps://itunes.apple.com/app/apple-store/\(SystemManager.appleID)"
+    static let chottuLinkAPIKey = "c_app_O6DbHOINzQfp7Cu6a1Bmk3PYBGsyOwAj"
     
     func terminateApp() {
         UIApplication.shared.perform(#selector(NSXPCConnection.suspend))

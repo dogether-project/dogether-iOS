@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ChottuLinkDelegate {
         
         // MARK: - ChottuLink 
         let config = CLConfiguration(
-            apiKey: "c_app_O6DbHOINzQfp7Cu6a1Bmk3PYBGsyOwAj",
+            apiKey: SystemManager.chottuLinkAPIKey,
             delegate: self
         )
         ChottuLink.initialize(config: config)

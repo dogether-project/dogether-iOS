@@ -222,13 +222,3 @@ extension NavigationCoordinator: UIGestureRecognizerDelegate {
         return navigationController.viewControllers.count > 1
     }
 }
-
-// MARK: - DeepLink
-extension NavigationCoordinator {
-    func routeToInvite(code: String) {
-        let joinVC = GroupJoinViewController()
-        joinVC.coordinator = self
-        joinVC.datas = GroupJoinDeepLinkViewDatas(inviteCode: code)
-        navigationController.pushViewController(joinVC, animated: true)
-    }
-}
