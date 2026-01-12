@@ -134,24 +134,24 @@ final class CertificationPage: BasePage {
         thumbnailListView.updateView(datas)
         certificationListView.updateView(datas)
         
-        if currentTodo != datas.todos[datas.index] {
-            currentTodo = datas.todos[datas.index]
+        if let todo = datas.todos[safe: datas.index], currentTodo != todo {
+            currentTodo = todo
             
-            statusView.updateView(datas.todos[datas.index].status)
+            statusView.updateView(todo.status)
             
             contentLabel.attributedText = NSAttributedString(
-                string:  datas.todos[datas.index].content,
+                string: todo.content,
                 attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
             )
             
-            reviewFeedbackView.updateView(datas.todos[datas.index].reviewFeedback ?? "")
+            reviewFeedbackView.updateView(todo.reviewFeedback ?? "")
             
             let date = DateFormatterManager.formattedDate().split(separator: ".").joined(separator: "-")
-            let isWaitCertification = datas.todos[datas.index].status == .waitCertification
-            let isToday = datas.todos[datas.index].createdAt == date || datas.rankingEntity != nil
+            let isWaitCertification = todo.status == .waitCertification
+            let isToday = todo.createdAt == date || datas.rankingEntity != nil
             certificateButton.isHidden = !(isWaitCertification && isToday)
-            remindCertificationButton.isHidden = !datas.todos[datas.index].canRemindCertification
-            remindReviewButton.isHidden = !datas.todos[datas.index].canRemindReview
+            remindCertificationButton.isHidden = !todo.canRemindCertification
+            remindReviewButton.isHidden = !todo.canRemindReview
         }
     }
 }

@@ -36,9 +36,9 @@ extension CertificationViewModel {
     
     func readTodo(index: Int? = nil) async throws {
         if certificationViewDatas.value.rankingEntity == nil { return }
-        try await challengeGroupsUseCase.readTodo(
-            todo: certificationViewDatas.value.todos[index ?? certificationViewDatas.value.index]
-        )
+        let index = index ?? certificationViewDatas.value.index
+        guard let todo = certificationViewDatas.value.todos[safe: index] else { return }
+        try await challengeGroupsUseCase.readTodo(todo: todo)
     }
     
     func remindTodo(remindType: RemindTypes, todoId: Int) async throws {

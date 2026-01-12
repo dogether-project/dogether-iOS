@@ -22,9 +22,9 @@ final class CertificationViewController: BaseViewController {
     }
     
     override func setViewDatas() {
-        if let datas = datas as? CertificationViewDatas {
-            viewModel.certificationViewDatas.accept(datas)
-        }
+//        if let datas = datas as? CertificationViewDatas {
+//            viewModel.certificationViewDatas.accept(datas)
+//        }
         
         bind(viewModel.certificationViewDatas)
     }
@@ -34,6 +34,7 @@ extension CertificationViewController {
     private func onAppear() {
         Task { [weak self] in
             guard let self else { return }
+            // TODO: 상황에 따른 API 호출 및 데이터 바인딩 로직 추가
             try await viewModel.readTodo()
         }
     }
