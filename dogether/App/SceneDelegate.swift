@@ -7,8 +7,6 @@
 
 import UIKit
 
-import ChottuLinkSDK
-
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -32,46 +30,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
-        if let userActivity = connectionOptions.userActivities.first,
-           let url = userActivity.webpageURL {
-            Task {
-                do {
-                    let resolved = try await ChottuLink.getAppLinkDataFromUrl(
-                        from: url.absoluteString
-                    )
-                    
-                    if let destinationURL = resolved.link {
-                        DeepLinkManager.shared.handle(link: destinationURL)
-                    }
-                } catch {
-                    // FIXME: 딥링크 resolve 실패 시 처리 (기본 진입 플로우로 처리해야할지?)
-                    // resolve 실패? 링크가 앱 안에서 어디로 가야 하는지 최종 목적지를 알아내지 못함
-                }
-            }
+        Task { @MainActor in
+            try await DeepLinkManager.shared.resolveUrl(userActivity: connectionOptions.userActivities.first)
         }
     }
     
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        guard let url = userActivity.webpageURL else { return }
+        Task { @MainActor in
+            try await DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
 
-        Task {
-            do {
-                let resolved = try await ChottuLink.getAppLinkDataFromUrl(
-                    from: url.absoluteString
-                )
-
-                if let destinationURL = resolved.link {
-                    DeepLinkManager.shared.handle(link: destinationURL)
-
-                    if let code = DeepLinkManager.shared.consumeInviteCode() {
-                        let groupJoinViewController = GroupJoinViewController()
-                        let groupJoinViewDatas = GroupJoinViewDatas(code: code)
-                        coordinator?.pushViewController(groupJoinViewController, datas: groupJoinViewDatas)
-                    }
-                }
-            } catch {
-                // FIXME: 딥링크 resolve 실패 시 처리
-            }
+            // ???: 초대 코드를 입력하는 화면에서 딥링크를 타고 들어왔을 때도 해당 로직을 타며 새 창이 뜨는 문제를 발견했습니다.
+            /// 그냥 무조건 스플래시뷰로 이동시켜서 모든 상황에서 동일한 로직을 태우도록 만들면 어떨까요?
+            /// 아니면 모든 상황에서 스플레시 뷰로 이동하지 않고, 스플레시 뷰와 동일한 로직을 태우도록 설계하는 것도 좋을 것 같습니다
+            
+//            if let code = DeepLinkManager.shared.consumeInviteCode() {
+//                let groupJoinViewController = GroupJoinViewController()
+//                let groupJoinViewDatas = GroupJoinViewDatas(code: code)
+//                coordinator?.pushViewController(groupJoinViewController, datas: groupJoinViewDatas)
+//            }
+            coordinator?.setNavigationController(SplashViewController())
         }
     }
 

@@ -7,18 +7,23 @@
 
 import Foundation
 
+import ChottuLinkSDK
+
 final class DeepLinkManager {
     static let shared = DeepLinkManager()
 
-    private(set) var pendingInviteCode: String?
-
-    func handle(link: URL) {
-        guard let components = URLComponents(url: link, resolvingAgainstBaseURL: false),
-              let code = components.queryItems?
-                .first(where: { $0.name == "code" })?.value
-        else { return }
-
-        pendingInviteCode = code
+    private var pendingInviteCode: String?
+    
+    func resolveUrl(userActivity: NSUserActivity?) async throws {
+        if let userActivity, let url = userActivity.webpageURL {
+            let resolved = try await ChottuLink.getAppLinkDataFromUrl(from: url.absoluteString)
+            
+            if let destinationURL = resolved.link,
+               let components = URLComponents(url: destinationURL, resolvingAgainstBaseURL: false),
+               let code = components.queryItems?.first(where: { $0.name == "code" })?.value {
+                pendingInviteCode = code
+            }
+        }
     }
 
     func consumeInviteCode() -> String? {
