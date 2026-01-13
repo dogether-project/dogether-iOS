@@ -34,14 +34,19 @@ final class GroupJoinViewController: BaseViewController {
 }
 
 protocol GroupJoinDelegate {
-    func updateCodeAction(code: String, codeMaxLength: Int)
+    func updateCodeAction(code: String)
+    func updateButtonStatusAction(status: ButtonStatus)
     func updateKeyboardHeightAction(height: CGFloat)
     func joinGroupAction()
 }
 
 extension GroupJoinViewController: GroupJoinDelegate {
-    func updateCodeAction(code: String, codeMaxLength: Int) {
-        viewModel.updateCode(code: code, codeMaxLength: codeMaxLength)
+    func updateCodeAction(code: String) {
+        viewModel.updateCode(code: code)
+    }
+    
+    func updateButtonStatusAction(status: ButtonStatus) {
+        viewModel.updateButtonStatus(status: status)
     }
     
     func updateKeyboardHeightAction(height: CGFloat) {
