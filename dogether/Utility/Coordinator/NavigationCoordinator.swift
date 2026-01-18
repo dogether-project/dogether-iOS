@@ -47,12 +47,20 @@ final class NavigationCoordinator: NSObject {
 
 // MARK: view
 extension NavigationCoordinator {
-    func setNavigationController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
-        viewController.coordinator = self
-        viewController.datas = datas
+    func setNavigationController(
+        _ viewControllers: BaseViewController...,
+        datas: (any BaseEntity)? = nil,
+        animated: Bool = true
+    ) {
+        // MARK: 하나 이상의 viewController 확인
+        if viewControllers.isEmpty { return }
+        
+        // MARK: 마지막 viewController에만 datas 연동
+        viewControllers.forEach { $0.coordinator = self }
+        viewControllers.last?.datas = datas
         updateViewController = nil
         
-        navigationController.setViewControllers([viewController], animated: animated)
+        navigationController.setViewControllers(viewControllers, animated: animated)
         navigationController.interactivePopGestureRecognizer?.delegate = self
     }
     
