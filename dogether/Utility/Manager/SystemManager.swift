@@ -58,10 +58,7 @@ extension SystemManager {
           투두 챌린지 서비스 두게더에서
           팀원들과 함께 목표 달성을 시작해보세요 💪
           
-          👉 초대코드: \(joinCode)
-
-          👉 초대 링크:
-          \(shortURL!)
+          👉 초대코드: \(joinCode) (\(shortURL!))
           """]
       }
 }
