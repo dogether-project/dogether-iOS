@@ -60,7 +60,6 @@ extension RankingViewController: RankingDelegate {
                     title: "\(rankingEntity.name)님의 인증 정보",
                     todos: todos,
                     index: index,
-                    groupId: viewModel.rankingViewDatas.value.groupId,
                     rankingEntity: rankingEntity
                 )
                 coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
