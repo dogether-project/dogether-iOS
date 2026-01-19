@@ -14,8 +14,8 @@ final class DeepLinkManager {
 
     private var pendingInviteCode: String?
     
-    func resolveUrl(userActivity: NSUserActivity?) async throws {
-        if let userActivity, let url = userActivity.webpageURL {
+    func resolveUrl(userActivity: NSUserActivity) async throws {
+        if let url = userActivity.webpageURL {
             let resolved = try await ChottuLink.getAppLinkDataFromUrl(from: url.absoluteString)
             
             if let destinationURL = resolved.link,

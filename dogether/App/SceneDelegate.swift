@@ -30,7 +30,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         PushNoticeManager.shared.delegate = coordinator
         
         Task { @MainActor in
-            try await DeepLinkManager.shared.resolveUrl(userActivity: connectionOptions.userActivities.first)
+            if let userActivity = connectionOptions.userActivities.first {
+                try await DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
+            }
             
             coordinator?.setNavigationController(SplashViewController())
         }
