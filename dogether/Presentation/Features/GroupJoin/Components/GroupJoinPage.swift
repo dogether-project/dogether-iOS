@@ -122,6 +122,7 @@ final class GroupJoinPage: BasePage {
             if codeTextField.text != datas.code {
                 codeTextField.text = datas.code
                 
+                delegate?.updateCodeAction(code: datas.code)
                 delegate?.updateButtonStatusAction(status: datas.code.count < codeMaxLength ? .disabled : .enabled)
             }
             

@@ -20,35 +20,31 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let navigationController = UINavigationController()
         navigationController.isNavigationBarHidden = true
-        coordinator = NavigationCoordinator(navigationController: navigationController)
-        coordinator?.setNavigationController(SplashViewController())
-        
-        NetworkManager.shared.coordinator = coordinator
-        PushNoticeManager.shared.delegate = coordinator
         
         window = UIWindow(windowScene: scene)
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         
+        coordinator = NavigationCoordinator(navigationController: navigationController)
+        NetworkManager.shared.coordinator = coordinator
+        PushNoticeManager.shared.delegate = coordinator
+        
         Task { @MainActor in
             try await DeepLinkManager.shared.resolveUrl(userActivity: connectionOptions.userActivities.first)
+            
+            coordinator?.setNavigationController(SplashViewController())
         }
     }
     
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         Task { @MainActor in
             try await DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
-
-            // ???: 초대 코드를 입력하는 화면에서 딥링크를 타고 들어왔을 때도 해당 로직을 타며 새 창이 뜨는 문제를 발견했습니다.
-            /// 그냥 무조건 스플래시뷰로 이동시켜서 모든 상황에서 동일한 로직을 태우도록 만들면 어떨까요?
-            /// 아니면 모든 상황에서 스플레시 뷰로 이동하지 않고, 스플레시 뷰와 동일한 로직을 태우도록 설계하는 것도 좋을 것 같습니다
             
-//            if let code = DeepLinkManager.shared.consumeInviteCode() {
-//                let groupJoinViewController = GroupJoinViewController()
-//                let groupJoinViewDatas = GroupJoinViewDatas(code: code)
-//                coordinator?.pushViewController(groupJoinViewController, datas: groupJoinViewDatas)
-//            }
-            coordinator?.setNavigationController(SplashViewController())
+            if let code = DeepLinkManager.shared.consumeInviteCode() {
+                let groupJoinViewController = GroupJoinViewController()
+                let groupJoinViewDatas = GroupJoinViewDatas(code: code)
+                coordinator?.pushViewController(groupJoinViewController, datas: groupJoinViewDatas)
+            }
         }
     }
 

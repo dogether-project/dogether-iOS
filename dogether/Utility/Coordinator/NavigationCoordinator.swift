@@ -65,6 +65,13 @@ extension NavigationCoordinator {
     }
     
     func pushViewController(_ viewController: BaseViewController, datas: (any BaseEntity)? = nil, animated: Bool = true) {
+        // MARK: 새로 넣으려는 viewController와 현재 viewController가 같을 때는 page update
+        if let currentViewController = navigationController.viewControllers.last as? BaseViewController,
+           let datas, type(of: viewController) == type(of: currentViewController) {
+            currentViewController.pages?.forEach { $0.updateView(datas) }
+            return
+        }
+        
         viewController.coordinator = self
         viewController.datas = datas
         updateViewController = nil
