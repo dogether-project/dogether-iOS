@@ -29,6 +29,20 @@ final class NavigationCoordinator: NSObject {
         updateViewController?()
     }
     
+    // MARK: 그룹 가입이 가능한 상태인지 확인하는 임시 함수
+    // FIXME: 네이밍 수정 필요, canNotViewControllers 파라미터 여부 수정 필요
+    func canNotJoinGroup() -> Bool {
+        guard let currentViewController = navigationController.viewControllers.last else { return true }
+        
+        let canNotViewControllers: [UIViewController.Type] = [
+            SplashViewController.self,
+            UpdateViewController.self,
+            OnboardingViewController.self
+        ]
+        
+        return canNotViewControllers.contains { currentViewController.isKind(of: $0) }
+    }
+    
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         super.init()

@@ -40,6 +40,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         Task { @MainActor in
             try await DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
             
+            if let coordinator, coordinator.canNotJoinGroup() { return }
+            
             if let code = DeepLinkManager.shared.consumeInviteCode() {
                 let groupJoinViewController = GroupJoinViewController()
                 let groupJoinViewDatas = GroupJoinViewDatas(code: code)
