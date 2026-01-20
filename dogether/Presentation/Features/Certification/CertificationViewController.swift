@@ -17,24 +17,30 @@ final class CertificationViewController: BaseViewController {
         pages = [certificationPage]
 
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        onAppear()
+        loadCertificationView()
+        
+        coordinator?.updateViewController = loadCertificationView
     }
     
     override func setViewDatas() {
-//        if let datas = datas as? CertificationViewDatas {
-//            viewModel.certificationViewDatas.accept(datas)
-//        }
+        if let datas = datas as? PreCertificationViewDatas {
+            viewModel.preCertificationViewDatas.accept(datas)
+        }
         
         bind(viewModel.certificationViewDatas)
     }
 }
 
 extension CertificationViewController {
-    private func onAppear() {
+    private func loadCertificationView() {
         Task { [weak self] in
             guard let self else { return }
-            // TODO: 상황에 따른 API 호출 및 데이터 바인딩 로직 추가
+            try await viewModel.loadCertificationView()
             try await viewModel.readTodo()
         }
     }

@@ -51,7 +51,7 @@ protocol CertificationListPageDelegate {
     func updateBottomSheetVisibleAction(isShowSheet: Bool)
     func selectSortAction(index: Int)
     func selectFilterAction(filterType: FilterTypes)
-    func selectCertificationAction(title: String, todos: [TodoEntity], index: Int)
+    func selectCertificationAction(title: String, todo: TodoEntity)
     func didScrollToBottom()
 }
 
@@ -70,10 +70,15 @@ extension CertificationListViewController: CertificationListPageDelegate {
         viewModel.updateFilter(filter: filterType)
     }
     
-    func selectCertificationAction(title: String, todos: [TodoEntity], index: Int) {
+    func selectCertificationAction(title: String, todo: TodoEntity) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(title: title, todos: todos, index: index)
-        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
+        let preCertificationViewDatas = PreCertificationViewDatas(
+            title: title,
+            todoId: todo.id,
+            sortOption: viewModel.sortViewDatas.value.options[viewModel.sortViewDatas.value.index],
+            filter: viewModel.certificationListViewDatas.value.filter
+        )
+        coordinator?.pushViewController(certificationViewController, datas: preCertificationViewDatas)
     }
     
     func didScrollToBottom() {

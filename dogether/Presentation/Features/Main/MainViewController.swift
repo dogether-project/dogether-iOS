@@ -115,7 +115,7 @@ protocol MainDelegate {
     func goWriteTodoViewAction(todos: [TodoEntity])
     func selectFilterAction(filterType: FilterTypes)
     func goCertificateViewAction(todo: TodoEntity)
-    func goCertificationViewAction(index: Int)
+    func goCertificationViewAction(todo: TodoEntity)
 }
 
 extension MainViewController: MainDelegate {
@@ -235,15 +235,18 @@ extension MainViewController: MainDelegate {
         coordinator?.pushViewController(certificateImageViewController, datas: certificateViewDatas)
     }
     
-    func goCertificationViewAction(index: Int) {
+    func goCertificationViewAction(todo: TodoEntity) {
         let certificationViewController = CertificationViewController()
-        let certificationViewDatas = CertificationViewDatas(
+        let date = DateFormatterManager.formattedDate(
+            viewModel.sheetViewDatas.value.dateOffset
+        ).split(separator: ".").joined(separator: "-")
+        let preCertificationViewDatas = PreCertificationViewDatas(
             title: "내 인증 정보",
-            todos: viewModel.sheetViewDatas.value.todoList.filter {
-                viewModel.sheetViewDatas.value.filter == .all || viewModel.sheetViewDatas.value.filter == FilterTypes(status: $0.status.rawValue)
-            },
-            index: index
+            date: date,
+            groupId: viewModel.currentGroup.id,
+            todoId: todo.id,
+            filter: viewModel.sheetViewDatas.value.filter
         )
-        coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
+        coordinator?.pushViewController(certificationViewController, datas: preCertificationViewDatas)
     }
 }
