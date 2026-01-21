@@ -11,6 +11,7 @@ enum UserRouter: NetworkEndpoint {
     case getMyGroupActivity(groupId: Int)
     case getMyActivity(sort: String, page: String)
     case getMyCertificationStats(groupId: Int?)
+    case getMyActivityFromTodo(todoId: Int, sort: String)
     case getMyProfile
 
     var path: String {
@@ -21,6 +22,8 @@ enum UserRouter: NetworkEndpoint {
             return Path.api + Path.v2 + Path.my + "/certifications"
         case .getMyCertificationStats:
             return Path.api + Path.v2 + Path.my + "/certification-stats"
+        case .getMyActivityFromTodo(let todoId, _):
+            return Path.api + Path.v1 + Path.my + "/activity" + "/todos/\(todoId)" + "/group-certifications"
         case .getMyProfile:
             return Path.api + Path.v1 + Path.my + "/profile"
         }
@@ -28,7 +31,7 @@ enum UserRouter: NetworkEndpoint {
     
     var method: NetworkMethod {
         switch self {
-        case .getMyGroupActivity, .getMyActivity, .getMyCertificationStats, .getMyProfile:
+        case .getMyGroupActivity, .getMyActivity, .getMyCertificationStats, .getMyActivityFromTodo, .getMyProfile:
             return .get
         }
     }
@@ -44,6 +47,10 @@ enum UserRouter: NetworkEndpoint {
             guard let groupId = groupId else { return nil }
             return [
                 .init(name: "groupId", value: String(groupId))
+            ]
+        case let.getMyActivityFromTodo(_, sort):
+            return [
+                .init(name: "sortBy", value: sort)
             ]
         default:
             return nil

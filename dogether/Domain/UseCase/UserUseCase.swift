@@ -29,6 +29,10 @@ final class UserUseCase {
         try await repository.getCertificationListViewDatas(option: option, page: page)
     }
     
+    func getMyCertifications(todoId: Int, sortOption: SortOptions) async throws -> [TodoEntity] {
+        try await repository.getMyCertifications(todoId: todoId, sortOption: sortOption)
+    }
+    
     func getProfileViewDatas() async throws -> ProfileViewDatas {
         try await repository.getProfileViewDatas()
     }

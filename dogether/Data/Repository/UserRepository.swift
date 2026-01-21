@@ -92,6 +92,21 @@ final class UserRepository: UserProtocol {
         return (statsViewDatas, certificationListViewDatas)
     }
     
+    func getMyCertifications(todoId: Int, sortOption: SortOptions) async throws -> [TodoEntity] {
+        let response = try await userDataSource.getMyActivityFromTodo(todoId: todoId, sort: sortOption.sortString)
+        return response.certifications.map {
+            TodoEntity(
+                id: $0.id,
+                content: $0.content,
+                status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
+                canRemindReview: $0.canRequestCertificationReview,
+                certificationContent: $0.certificationContent,
+                certificationMediaUrl: $0.certificationMediaUrl,
+                reviewFeedback: $0.reviewFeedback
+            )
+        }
+    }
+    
     func getProfileViewDatas() async throws -> ProfileViewDatas {
         let response = try await userDataSource.getMyProfile()
         return ProfileViewDatas(

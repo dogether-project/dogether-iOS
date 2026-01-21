@@ -10,6 +10,7 @@ import RxRelay
 final class CertificationViewModel {
     private let challengeGroupsUseCase: ChallengeGroupsUseCase
     private let todosUseCase: TodosUseCase
+    private let userUseCase: UserUseCase
     
     private(set) var preCertificationViewDatas = BehaviorRelay<PreCertificationViewDatas>(
         value: PreCertificationViewDatas()
@@ -19,9 +20,11 @@ final class CertificationViewModel {
     init() {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
         let todosRepository = DIManager.shared.getTodosRepository()
+        let userRepository = DIManager.shared.getUserRepository()
         
         self.challengeGroupsUseCase = ChallengeGroupsUseCase(repository: challengeGroupsRepository)
         self.todosUseCase = TodosUseCase(repository: todosRepository)
+        self.userUseCase = UserUseCase(repository: userRepository)
     }
 }
 
@@ -30,9 +33,7 @@ extension CertificationViewModel {
         let datas = preCertificationViewDatas.value
         // MARK: from Main
         if let date = datas.date, let groupId = datas.groupId, let todoId = datas.todoId, let filter = datas.filter {
-            let todos = try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date).filter {
-                filter == .all || filter == FilterTypes(status: $0.status.rawValue)
-            }
+            let todos = try await getMyTodos(groupId: groupId, date: date, filter: filter)
             
             certificationViewDatas.update {
                 $0.title = datas.title
@@ -54,13 +55,30 @@ extension CertificationViewModel {
         
         // MARK: from CertificationList
         if let todoId = datas.todoId, let sortOption = datas.sortOption, let filter = datas.filter {
-            // FIXME: 추가된 API 적용
-            print("todo Id \(todoId), sortOption \(sortOption) filter \(filter)")
+            let todos = try await getMyCertifications(todoId: todoId, sortOption: sortOption, filter: filter)
+            
+            certificationViewDatas.update {
+                $0.title = datas.title
+                $0.index = todos.firstIndex { $0.id == todoId } ?? 0
+                $0.todos = todos
+            }
+        }
+    }
+    
+    func getMyTodos(groupId: Int, date: String, filter: FilterTypes) async throws -> [TodoEntity] {
+        try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date).filter {
+            filter == .all || filter == FilterTypes(status: $0.status.rawValue)
         }
     }
     
     func getMemberTodos(groupId: Int, memberId: Int) async throws -> (Int, [TodoEntity]) {
         try await challengeGroupsUseCase.getMemberTodos(groupId: groupId, memberId: memberId)
+    }
+    
+    func getMyCertifications(todoId: Int, sortOption: SortOptions, filter: FilterTypes) async throws -> [TodoEntity] {
+        try await userUseCase.getMyCertifications(todoId: todoId, sortOption: sortOption).filter {
+            filter == .all || filter == FilterTypes(status: $0.status.rawValue)
+        }
     }
     
     func setIndex(index: Int) async throws {

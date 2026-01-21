@@ -24,6 +24,11 @@ final class UserDataSource {
         try await NetworkManager.shared.request(UserRouter.getMyCertificationStats(groupId: groupId))
     }
 
+    
+    func getMyActivityFromTodo(todoId: Int, sort: String) async throws -> GetMyActivityFromTodoResponse {
+        try await NetworkManager.shared.request(UserRouter.getMyActivityFromTodo(todoId: todoId, sort: sort))
+    }
+    
     func getMyProfile() async throws -> GetMyProfileResponse {
         try await NetworkManager.shared.request(UserRouter.getMyProfile)
     }

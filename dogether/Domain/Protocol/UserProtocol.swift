@@ -19,5 +19,7 @@ protocol UserProtocol {
         certificationListViewDatas: CertificationListViewDatas
     )
     
+    func getMyCertifications(todoId: Int, sortOption: SortOptions) async throws -> [TodoEntity]
+    
     func getProfileViewDatas() async throws -> ProfileViewDatas
 }
