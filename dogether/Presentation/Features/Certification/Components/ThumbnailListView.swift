@@ -52,7 +52,7 @@ final class ThumbnailListView: BaseView {
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
-            if isFirst {
+            if isFirst && datas.todos.count > 0 {
                 isFirst = false
                 
                 datas.todos
