@@ -30,7 +30,7 @@ final class CertificateImagePage: BasePage {
     private let certificateButton = DogetherButton("다음")
     
     override func configureView() {
-        todoContentLabel.textColor = .grey0
+        todoContentLabel.textColor = Color.Text.default
         todoContentLabel.numberOfLines = 0
         
         certificationStackView.axis = .horizontal

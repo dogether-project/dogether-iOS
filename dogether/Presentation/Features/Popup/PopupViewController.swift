@@ -48,7 +48,7 @@ extension PopupViewController {
     private func onAppear() {
         // MARK: - setup for popup ui
         // FIXME: 추후 수정
-        view.backgroundColor = .grey900.withAlphaComponent(0.8)
+        view.backgroundColor = Color.Background.dim
         view.addTapAction { [weak self] _ in
             guard let self else { return }
             hidePopup()

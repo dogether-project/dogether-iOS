@@ -39,34 +39,34 @@ final class CounterView: BaseView {
     private var currentCount: Int?
     
     override func configureView() {
-        dogetherCountView.backgroundColor = .grey800
+        dogetherCountView.backgroundColor = Color.Background.elavated
         dogetherCountView.layer.cornerRadius = 12
         
         minusButton.tag = Directions.minus.tag
-        minusButton.backgroundColor = .grey700
+        minusButton.backgroundColor = Color.Background.surface
         minusButton.layer.cornerRadius = 8
         
         minusImageView.image = .minus.withRenderingMode(.alwaysTemplate)
-        minusImageView.tintColor = .grey0
+        minusImageView.tintColor = Color.Icon.default
         minusImageView.isUserInteractionEnabled = false
         
         plusButton.tag = Directions.plus.tag
-        plusButton.backgroundColor = .grey700
+        plusButton.backgroundColor = Color.Background.surface
         plusButton.layer.cornerRadius = 8
         
         plusImageView.image = .plus.withRenderingMode(.alwaysTemplate)
-        plusImageView.tintColor = .grey0
+        plusImageView.tintColor = Color.Icon.default
         plusImageView.isUserInteractionEnabled = false
         
-        currentLabel.textColor = .grey0
+        currentLabel.textColor = Color.Text.default
         currentLabel.font = Fonts.body1S
         
         minLabel.text = "\(min)\(unit)"
-        minLabel.textColor = .grey300
+        minLabel.textColor = Color.Text.secondary
         minLabel.font = Fonts.body2S
         
         maxLabel.text = "\(max)\(unit)"
-        maxLabel.textColor = .grey300
+        maxLabel.textColor = Color.Text.secondary
         maxLabel.font = Fonts.body2S
     }
     

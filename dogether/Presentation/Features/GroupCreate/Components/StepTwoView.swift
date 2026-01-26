@@ -48,7 +48,7 @@ final class StepTwoView: BaseView {
     
     override func configureView() {
         duration.text = "활동 기간"
-        duration.textColor = .grey200
+        duration.textColor = Color.Text.subtle
         duration.font = Fonts.body1B
         
         durationRow1 = horizontalStackView(buttons: [threeDaysButton, oneWeekButton])
@@ -56,7 +56,7 @@ final class StepTwoView: BaseView {
         durationStack = verticalStackView(stacks: [durationRow1, durationRow2])
         
         startAt.text = "시작일"
-        startAt.textColor = .grey200
+        startAt.textColor = Color.Text.subtle
         startAt.font = Fonts.body1B
         
         startAtStack = horizontalStackView(buttons: [todayButton, tomorrowButton])

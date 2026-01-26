@@ -50,26 +50,26 @@ final class TodoListItemButton: BaseButton {
     private let checkImageView = UIImageView(image: .chevronRight.withRenderingMode(.alwaysTemplate))
     
     override func configureView() {
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         layer.cornerRadius = 8
         
         todoImageView.image = todo.status.image
         
         contentLabel.text = todo.content
-        contentLabel.textColor = isUncertified ? isToday ? .grey0 : .grey400 : .grey300
+        contentLabel.textColor = isUncertified ? isToday ? Color.Text.default : Color.Text.disabled : Color.Text.secondary
         contentLabel.font = Fonts.body1S
         contentLabel.isUserInteractionEnabled = false
         
         certificationLabel.text = "인증하기"
-        certificationLabel.textColor = isToday ? .grey900 : .grey400
+        certificationLabel.textColor = isToday ? .grey900 : Color.Text.disabled // FIXME: 색상 추가 필요
         certificationLabel.textAlignment = .center
         certificationLabel.font = Fonts.body2S
         certificationLabel.layer.cornerRadius = 8
         certificationLabel.clipsToBounds = true
         certificationLabel.isUserInteractionEnabled = false
-        certificationLabel.backgroundColor = isToday ? .blue300 : .grey500
+        certificationLabel.backgroundColor = isToday ? Color.Background.primary : Color.Background.disabled
         
-        checkImageView.tintColor = .grey200
+        checkImageView.tintColor = Color.Icon.elavated
     }
     
     override func configureAction() { }

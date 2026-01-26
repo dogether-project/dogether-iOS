@@ -31,10 +31,10 @@ final class StatsSummaryStackView: BaseStackView {
         
         titleLabel.text = type.text
         titleLabel.font = Fonts.body2S
-        titleLabel.textColor = .grey200
+        titleLabel.textColor = Color.Text.subtle
         
         countLabel.font = Fonts.body2S
-        countLabel.textColor = .grey0
+        countLabel.textColor = Color.Text.default
     }
     
     override func configureAction() { }

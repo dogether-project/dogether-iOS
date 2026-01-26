@@ -50,11 +50,11 @@ final class ExaminatePage: BasePage {
         contentStackView.alignment = .fill
         
         titleLabel.text = "투두를 검사해주세요!"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.head1B
         titleLabel.textAlignment = .center
         
-        contentLabel.textColor = .grey0
+        contentLabel.textColor = Color.Text.default
         contentLabel.numberOfLines = 0
         
         examinationStackView.axis = .horizontal

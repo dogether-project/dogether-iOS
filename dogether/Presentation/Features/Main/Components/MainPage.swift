@@ -46,7 +46,7 @@ final class MainPage: BasePage {
     private(set) var currentIsScrollOnTop: Bool?
     
     override func configureView() {
-        dogetherSheet.backgroundColor = .grey800
+        dogetherSheet.backgroundColor = Color.Background.elavated
         dogetherSheet.layer.cornerRadius = 32
         dogetherSheet.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         dogetherSheet.isUserInteractionEnabled = true

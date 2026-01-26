@@ -42,11 +42,11 @@ enum FilterTypes: String, CaseIterable, BaseEntity {
     var backgroundColor: UIColor {
         switch self {
         case .all, .approve:
-            return .blue300
+            return Color.Background.primary
         case .wait:
-            return .dogetherYellow
+            return .dogetherYellow // FIXME: 컬러 추가 필요
         case .reject:
-            return .dogetherRed
+            return .dogetherRed // FIXME: 컬러 추가 필요
         }
     }
     

@@ -25,15 +25,15 @@ final class SettingButton: BaseButton {
     
     override func configureView() {
         buttonTitleLabel.text = title
-        buttonTitleLabel.textColor = .grey0
+        buttonTitleLabel.textColor = Color.Text.default
         buttonTitleLabel.font = Fonts.body1B
         
         textLabel.text = text
-        textLabel.textColor = .grey0
+        textLabel.textColor = Color.Text.default
         textLabel.font = Fonts.body1R
         textLabel.isHidden = text == nil
         
-        chevronImageView.tintColor = .grey200
+        chevronImageView.tintColor = Color.Icon.primary
         chevronImageView.isHidden = text != nil
     }
     

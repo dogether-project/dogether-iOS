@@ -33,7 +33,7 @@ final class DurationButton: BaseButton {
     private var currentDuration: GroupChallengeDurations?
     
     override func configureView() {
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         layer.borderWidth = 1.5
         
@@ -60,9 +60,9 @@ final class DurationButton: BaseButton {
                 currentDuration = datas
                 
                 let isColorful = duration == datas
-                layer.borderColor = isColorful ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
+                layer.borderColor = isColorful ? Color.Border.primary.cgColor : UIColor.grey800.cgColor // FIXME: 컬러 추가 필요
                 
-                label.textColor = isColorful ? .blue300 : .grey0
+                label.textColor = isColorful ? Color.Text.primary : Color.Text.default
                 label.font = isColorful ? Fonts.body1B : Fonts.body1S
             }
         }

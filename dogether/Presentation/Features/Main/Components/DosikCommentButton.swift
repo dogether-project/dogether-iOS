@@ -16,11 +16,11 @@ final class DosikCommentButton: BaseButton {
     
     override func configureView() {
         isHidden = true
-        backgroundColor = .grey50
+        backgroundColor = Color.Background.inverse
         layer.cornerRadius = 8
         layer.zPosition = 1
         
-        commentLabel.textColor = .grey800
+        commentLabel.textColor = Color.Text.inverse
         commentLabel.numberOfLines = 0
         commentLabel.setContentHuggingPriority(.required, for: .vertical)
         commentLabel.setContentCompressionResistancePriority(.required, for: .vertical)

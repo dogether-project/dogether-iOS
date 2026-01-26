@@ -14,14 +14,14 @@ final class DogetherGroupInfo: BaseView {
     
     private func descriptionLabel() -> UILabel {
         let label = UILabel()
-        label.textColor = .blue300
+        label.textColor = Color.Text.primary
         label.font = Fonts.body1B
         return label
     }
     
     private func infoLabel() -> UILabel {
         let label = UILabel()
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         label.font = Fonts.body1R
         return label
     }
@@ -43,13 +43,13 @@ final class DogetherGroupInfo: BaseView {
     private var currentEndAtString: String?
     
     override func configureView() {
-        groupInfoView.backgroundColor = .grey700
+        groupInfoView.backgroundColor = Color.Background.surface
         groupInfoView.layer.cornerRadius = 12
         
-        groupNameLabel.textColor = .grey0
+        groupNameLabel.textColor = Color.Text.default
         groupNameLabel.font = Fonts.head1B
         
-        dividerView.backgroundColor = .grey600
+        dividerView.backgroundColor = .grey600 // // FIXME: 색상 추가 필요
         
         durationDescriptionLabel = descriptionLabel()
         memberCountDescriptionLabel = descriptionLabel()

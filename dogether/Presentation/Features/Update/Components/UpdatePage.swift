@@ -33,14 +33,14 @@ final class UpdatePage: BasePage {
         typoImageView.contentMode = .scaleAspectFit
         
         titleLabel.text = "두게더가 새로워졌어요!"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.head1B
         
         descriptionLabel.attributedText = NSAttributedString(
             string: "두게더가 유저분들의 의견을 반영하여\n더 편하게 사용하도록 사용성을 개선했어요.\n지금 바로 업데이트하고 인증하러 가요!",
             attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
         )
-        descriptionLabel.textColor = .grey200
+        descriptionLabel.textColor = Color.Text.subtle
         descriptionLabel.numberOfLines = 0
         
         updateImageView.image = .partyDosik

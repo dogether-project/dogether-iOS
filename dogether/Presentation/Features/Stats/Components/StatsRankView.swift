@@ -16,28 +16,28 @@ final class StatsRankView: BaseView {
     private let rankLabel = UILabel()
     
     override func configureView() {
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         layer.masksToBounds = true
         
         iconImageView.image = .chart.withRenderingMode(.alwaysTemplate)
-        iconImageView.tintColor = .grey0
+        iconImageView.tintColor = Color.Icon.default
         iconImageView.contentMode = .scaleAspectFit
         
         titleLabel.text = "내 순위"
         titleLabel.font = Fonts.body1S
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         
         titleStackView.axis = .horizontal
         titleStackView.spacing = 8
         titleStackView.alignment = .center
         
         rankBaseLabel.font = Fonts.body1S
-        rankBaseLabel.textColor = .grey200
+        rankBaseLabel.textColor = Color.Text.subtle
         rankBaseLabel.textAlignment = .center
         
         rankLabel.font = Fonts.emphasis2B
-        rankLabel.textColor = .blue300
+        rankLabel.textColor = Color.Text.primary
         rankLabel.textAlignment = .center
     }
     

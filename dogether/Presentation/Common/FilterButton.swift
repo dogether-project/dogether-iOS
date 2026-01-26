@@ -85,9 +85,9 @@ final class FilterButton: BaseButton {
             let isColorful = type == datas
             
             backgroundColor = isColorful ? type.backgroundColor : .clear
-            layer.borderColor = isColorful ? type.backgroundColor.cgColor : UIColor.grey500.cgColor
-            icon.tintColor = isColorful ? .grey900 : .grey400
-            label.textColor = isColorful ? .grey800 : .grey300
+            layer.borderColor = isColorful ? type.backgroundColor.cgColor : UIColor.grey500.cgColor // FIXME: 컬러 추가 필요
+            icon.tintColor = isColorful ? .grey900 : Color.Icon.secondary // FIXME: 컬러 추가 필요
+            label.textColor = isColorful ? Color.Text.inverse : Color.Text.secondary
         }
     }
 }

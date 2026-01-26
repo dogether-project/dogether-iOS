@@ -28,7 +28,7 @@ final class CertificationListContentView: BaseView {
     private(set) var isPagingRequestInProgress: Bool = false
     
     override func configureView() {
-        headerLabel.textColor = .grey0
+        headerLabel.textColor = Color.Text.default
         headerLabel.font = Fonts.head1B
         headerLabel.numberOfLines = 0
         
@@ -134,7 +134,7 @@ extension CertificationListContentView {
         
         if let range = fullText.range(of: targetText) {
             let nsRange = NSRange(range, in: fullText)
-            attributedString.addAttribute(.foregroundColor, value: UIColor.blue300, range: nsRange)
+            attributedString.addAttribute(.foregroundColor, value: Color.Text.primary, range: nsRange)
         }
         
         headerLabel.attributedText = attributedString

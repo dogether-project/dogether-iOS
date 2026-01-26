@@ -45,7 +45,7 @@ final class CertificationPage: BasePage {
         certificationStackView.setCustomSpacing(8, after: statusView)
         certificationStackView.setCustomSpacing(16, after: contentLabel)
         
-        contentLabel.textColor = .grey0
+        contentLabel.textColor = Color.Text.default
         contentLabel.numberOfLines = 0
     }
     

@@ -22,15 +22,15 @@ final class ExaminateButton: BaseButton {
     private let stackView = UIStackView()
     
     override func configureView() {
-        backgroundColor = .grey0
+        backgroundColor = Color.Background.default
         layer.cornerRadius = 8
         tag = type.tag
         
         icon.image = type.image?.withRenderingMode(.alwaysTemplate)
-        icon.tintColor = .grey700
+        icon.tintColor = .grey700 // FIXME: 컬러 추가 필요
         
         label.text = type.rawValue
-        label.textColor = .grey700
+        label.textColor = .grey700 // FIXME: 컬러 추가 필요
         label.font = Fonts.body1S
         
         stackView.axis = .horizontal

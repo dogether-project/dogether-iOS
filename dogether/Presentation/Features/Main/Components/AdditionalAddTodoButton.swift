@@ -16,10 +16,10 @@ final class AdditionalAddTodoButton: BaseButton {
     
     override func configureView() {
         iconImageView.contentMode = .scaleAspectFit
-        iconImageView.tintColor = .grey200
+        iconImageView.tintColor = Color.Icon.elavated
         
         label.font = Fonts.body1S
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         
         stackView.axis = .horizontal
         stackView.spacing = 8

@@ -28,7 +28,7 @@ final class StartPage: BasePage {
             string: "소속된 그룹이 없어요.\n그룹을 만들거나 참여하세요!",
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
         )
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.numberOfLines = 0
         
         buttonStackView.axis = .vertical
@@ -97,7 +97,7 @@ final class StartPage: BasePage {
 extension StartPage {
     private func startButton(groupType: GroupTypes) -> UIButton {
         let button = UIButton()
-        button.backgroundColor = .grey800
+        button.backgroundColor = Color.Background.elavated
         button.layer.cornerRadius = 12
         button.tag = groupType.rawValue
         button.addAction(
@@ -112,19 +112,19 @@ extension StartPage {
         
         let titleLabel = UILabel()
         titleLabel.text = groupType.startTitleText
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.head2B
         titleLabel.isUserInteractionEnabled = false
         
         let subTitleLabel = UILabel()
         subTitleLabel.text = groupType.startSubTitleText
-        subTitleLabel.textColor = .grey300
+        subTitleLabel.textColor = Color.Text.secondary
         subTitleLabel.font = Fonts.body2R
         subTitleLabel.isUserInteractionEnabled = false
         
         let chevronImageView = UIImageView()
         chevronImageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        chevronImageView.tintColor = .grey200
+        chevronImageView.tintColor = Color.Text.subtle
         chevronImageView.isUserInteractionEnabled = false
         
         [imageView, titleLabel, subTitleLabel, chevronImageView].forEach { button.addSubview($0) }

@@ -99,7 +99,7 @@ extension OnboardingPage {
             string: step.title,
             attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
         )
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.numberOfLines = 0
         
         let subTitleLabel = UILabel()
@@ -107,7 +107,7 @@ extension OnboardingPage {
             string: step.subTitle,
             attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
         )
-        subTitleLabel.textColor = .grey200
+        subTitleLabel.textColor = Color.Text.subtle
         subTitleLabel.numberOfLines = 0
         
         let animationView = LottieAnimationView(name: step.lottieFileName)

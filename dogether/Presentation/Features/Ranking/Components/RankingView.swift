@@ -10,7 +10,7 @@ import UIKit
 final class RankingView: BaseView {
     private let rankingLabel = {
         let label = UILabel()
-        label.textColor = .grey0
+        label.textColor = Color.Text.default
         label.font = Fonts.body2S
         return label
     }()
@@ -19,7 +19,7 @@ final class RankingView: BaseView {
     
     private let nameLabel = {
         let label = UILabel()
-        label.textColor = .grey0
+        label.textColor = Color.Text.default
         label.font = Fonts.body1S
         return label
     }()
@@ -28,7 +28,7 @@ final class RankingView: BaseView {
     
     private let certificationLabel = {
         let label = UILabel()
-        label.textColor = .blue300
+        label.textColor = Color.Text.primary
         label.font = Fonts.body1S
         return label
     }()

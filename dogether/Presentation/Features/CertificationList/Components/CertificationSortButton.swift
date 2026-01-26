@@ -15,11 +15,11 @@ final class CertificationSortButton: BaseButton {
         backgroundColor = .clear
         layer.cornerRadius = 16
         layer.borderWidth = 1
-        layer.borderColor = UIColor.grey500.cgColor
+        layer.borderColor = UIColor.grey500.cgColor // FIXME: 컬러 추가 필요
         clipsToBounds = true
         
         sortTitleLabel.font = Fonts.body2S
-        sortTitleLabel.textColor = .white
+        sortTitleLabel.textColor = Color.Text.default
         
         arrowImageView.contentMode = .scaleAspectFit
     }

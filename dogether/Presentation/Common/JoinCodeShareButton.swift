@@ -16,12 +16,12 @@ final class JoinCodeShareButton: BaseButton {
     
     override func configureView() {
         layer.cornerRadius = 12
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         
-        codeLabel.textColor = .grey0
+        codeLabel.textColor = Color.Text.default
         codeLabel.font = Fonts.head1B
         
-        iconImageView.tintColor = .grey400
+        iconImageView.tintColor = Color.Icon.secondary
         
         stackView.axis = .horizontal
         stackView.spacing = 8

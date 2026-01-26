@@ -9,7 +9,7 @@ import Foundation
 
 final class SkeletonView: BaseView {
     override func configureView() {
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         layer.cornerRadius = 8
     }
 }

@@ -15,9 +15,9 @@ final class TodoStatusButton: BaseButton {
     override func configureView() {
         layer.cornerRadius = 16
         
-        icon.tintColor = .grey900
+        icon.tintColor = .grey900 // FIXME: 컬러 추가 필요
         
-        label.textColor = .grey800
+        label.textColor = Color.Text.inverse
         label.font = Fonts.body2S
         
         stackView.axis = .horizontal

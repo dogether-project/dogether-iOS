@@ -14,7 +14,7 @@ final class ExaminateDescriptionView: BaseView {
     
     override func configureView() {
         label.text = "검사 결과는 선택하면 수정할 수 없어요"
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         label.font = Fonts.body1R
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)

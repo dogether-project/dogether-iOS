@@ -15,15 +15,15 @@ final class RankingPage: BasePage {
     private let descriptionView = {
         let view = UIView()
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.grey600.cgColor
+        view.layer.borderColor = Color.Border.disabled.cgColor
         view.layer.borderWidth = 1
         
         let imageView = UIImageView(image: .notice.withRenderingMode(.alwaysTemplate))
-        imageView.tintColor = .grey400
+        imageView.tintColor = Color.Icon.secondary
         
         let label = UILabel()
         label.text = "달성률은 인증, 인정, 참여 기간을 기준으로 계산돼요."
-        label.textColor = .grey400
+        label.textColor = Color.Text.disabled
         label.font = Fonts.body2S
         
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
