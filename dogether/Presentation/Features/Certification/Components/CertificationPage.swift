@@ -61,6 +61,8 @@ final class CertificationPage: BasePage {
         
         contentLabel.textColor = .grey0
         contentLabel.numberOfLines = 0
+        
+        [certificateButton, remindCertificationButton, remindReviewButton].forEach { $0.isHidden = true }
     }
     
     override func configureAction() {

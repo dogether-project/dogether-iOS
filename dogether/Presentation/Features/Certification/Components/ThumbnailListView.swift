@@ -19,6 +19,7 @@ final class ThumbnailListView: BaseView {
     
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
+    private let skeletonViews = (0 ..< 6).map { _ in SkeletonView() }
     
     private var isFirst: Bool = true
     private var currentIndex: Int?
@@ -37,6 +38,7 @@ final class ThumbnailListView: BaseView {
     override func configureHierarchy() {
         [scrollView].forEach { addSubview($0) }
         [stackView].forEach { scrollView.addSubview($0) }
+        skeletonViews.forEach { stackView.addArrangedSubview($0) }
     }
     
     override func configureConstraints() {
@@ -47,13 +49,21 @@ final class ThumbnailListView: BaseView {
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
+        
+        skeletonViews.forEach { $0.snp.makeConstraints {
+            $0.width.height.equalTo(54)
+        } }
     }
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
-            if isFirst && datas.todos.count > 0 {
+            if datas.todos.isEmpty { return }
+            
+            if isFirst {
                 isFirst = false
+                
+                stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
                 
                 datas.todos
                     .enumerated().map {
