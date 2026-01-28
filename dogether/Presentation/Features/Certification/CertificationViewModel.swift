@@ -93,9 +93,9 @@ extension CertificationViewModel {
     }
     
     func readTodo(index: Int? = nil) async throws {
-        if certificationViewDatas.value.rankingEntity == nil { return }
         let index = index ?? certificationViewDatas.value.index
-        guard let todo = certificationViewDatas.value.todos[safe: index] else { return }
+        guard let todo = certificationViewDatas.value.todos[safe: index],
+              let _ = preCertificationViewDatas.value.memberId  else { return }
         try await challengeGroupsUseCase.readTodo(todo: todo)
     }
     
