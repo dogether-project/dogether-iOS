@@ -21,9 +21,9 @@ final class FilterStackView: BaseStackView {
     }
     
     private let allButton = FilterButton(type: .all)
-    private let waitButton = FilterButton(type: .wait)
-    private let rejectButton = FilterButton(type: .reject)
-    private let approveButton = FilterButton(type: .approve)
+    private let waitButton = FilterButton(type: .status(.pending))
+    private let rejectButton = FilterButton(type: .status(.reject))
+    private let approveButton = FilterButton(type: .status(.approve))
     
     override func configureView() {
         axis = .horizontal

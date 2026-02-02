@@ -120,7 +120,7 @@ final class TodoListView: BaseView {
             let isToday = datas.dateOffset == 0
             
             let currentTodoList = datas.todoList.filter {
-                datas.filter == .all || datas.filter == FilterTypes(status: $0.status.rawValue)
+                datas.filter == .all || datas.filter.reviewStatus == $0.status.reviewStatus
             }
             todoListStackView.isHidden = currentTodoList.isEmpty
             emptyListStackView.isHidden = !currentTodoList.isEmpty

@@ -10,8 +10,8 @@ import UIKit
 final class CertificationSummaryView: BaseView {
     private let stackView = UIStackView()
     private let achievedView = CertificationSummaryStatView(type: .achievement)
-    private let certifiedView = CertificationSummaryStatView(type: .approve)
-    private let notCertifiedView = CertificationSummaryStatView(type: .reject)
+    private let certifiedView = CertificationSummaryStatView(type: .review(.approve))
+    private let notCertifiedView = CertificationSummaryStatView(type: .review(.reject))
 
     override func configureView() {
         stackView.axis = .horizontal

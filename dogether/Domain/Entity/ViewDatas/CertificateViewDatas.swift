@@ -13,7 +13,7 @@ struct CertificateViewDatas: BaseEntity {
     var isFirstResponder: Bool
     
     init(
-        todo: TodoEntity = TodoEntity(id: 0, content: "", status: .waitCertification),
+        todo: TodoEntity = TodoEntity(id: 0, content: "", status: .uncertified),
         keyboardHeight: CGFloat = 0,
         isFirstResponder: Bool = false
     ) {

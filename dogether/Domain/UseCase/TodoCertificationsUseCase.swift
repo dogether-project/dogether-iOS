@@ -18,7 +18,7 @@ final class TodoCertificationsUseCase {
         return try await repository.getReviews()
     }
     
-    func reviewTodo(todoId: String, result: ReviewResults?, reviewFeedback: String) async throws {
+    func reviewTodo(todoId: String, result: ReviewStatus?, reviewFeedback: String) async throws {
         guard let result else { return }
         let reviewTodoRequest = ReviewTodoRequest(result: result, reviewFeedback: reviewFeedback)
         try await repository.reviewTodo(todoId: todoId, reviewTodoRequest: reviewTodoRequest)

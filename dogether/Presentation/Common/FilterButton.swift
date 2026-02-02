@@ -49,7 +49,7 @@ final class FilterButton: BaseButton {
         
         icon.image = type.image?.withRenderingMode(.alwaysTemplate)
         
-        label.text = type.rawValue
+        label.text = type.text
         label.font = Fonts.body2S
         
         stackView.axis = .horizontal

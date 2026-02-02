@@ -104,7 +104,7 @@ final class CertificationListContentView: BaseView {
                 
                 sections = datas.sections.compactMap { section in
                     let filteredTodos = section.todos.filter {
-                        datas.filter == .all || datas.filter == FilterTypes(status: $0.status.rawValue)
+                        datas.filter == .all || datas.filter.reviewStatus == $0.status.reviewStatus
                     }
                     return filteredTodos.isEmpty ? nil : SectionEntity(type: section.type, todos: filteredTodos)
                 }

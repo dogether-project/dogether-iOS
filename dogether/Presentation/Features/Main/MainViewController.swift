@@ -240,7 +240,7 @@ extension MainViewController: MainDelegate {
         let certificationViewDatas = CertificationViewDatas(
             title: "내 인증 정보",
             todos: viewModel.sheetViewDatas.value.todoList.filter {
-                viewModel.sheetViewDatas.value.filter == .all || viewModel.sheetViewDatas.value.filter == FilterTypes(status: $0.status.rawValue)
+                viewModel.sheetViewDatas.value.filter == .all || viewModel.sheetViewDatas.value.filter.reviewStatus == $0.status.reviewStatus
             },
             index: index
         )

@@ -35,7 +35,7 @@ final class TodoListItemButton: BaseButton {
         self.index = index
         self.todo = todo
         self.isToday = isToday
-        self.isUncertified = todo.status == .waitCertification
+        self.isUncertified = todo.status == .uncertified
         
         super.init(frame: .zero)
     }
@@ -84,7 +84,7 @@ final class TodoListItemButton: BaseButton {
             $0.height.equalTo(64)
         }
         
-        if todo.status != .waitCertification {
+        if todo.status != .uncertified {
             todoImageView.snp.makeConstraints {
                 $0.centerY.equalToSuperview()
                 $0.left.equalToSuperview().offset(16)

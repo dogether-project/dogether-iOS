@@ -38,7 +38,7 @@ final class ModalityViewModel {
         }
     }
     
-    func setResult(result: ReviewResults? = nil) {
+    func setResult(result: ReviewStatus? = nil) {
         examinateViewDatas.update {
             $0.result = result
         }
