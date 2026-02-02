@@ -53,7 +53,7 @@ final class UserRepository: UserProtocol {
         certificationListViewDatas: CertificationListViewDatas
     ) {
         async let activityResponse = userDataSource.getMyActivity(sort: option.sortString, page: String(page))
-        async let statsResponse = userDataSource.getMyCertificationStats(groupId: nil)
+        async let statsResponse = userDataSource.getMyCertificationStats()
 
         let (activity, stats) = try await (activityResponse, statsResponse)
 
