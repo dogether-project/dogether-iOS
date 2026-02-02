@@ -12,7 +12,6 @@ final class LoadingManager {
     
     private var loadingWindow: UIWindow?
     private var loadingCount: Int = 0
-    var isShowLoading: Bool = false
     
     private init() { }
     
@@ -24,8 +23,6 @@ final class LoadingManager {
                 guard let self, let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
                 let window = UIWindow(windowScene: windowScene)
                 let loadingViewController = LoadingViewController()
-                loadingViewController.datas = LoadingViewDatas(isShowLoading: isShowLoading)
-                isShowLoading = false
                 
                 window.frame = UIScreen.main.bounds
                 window.rootViewController = loadingViewController

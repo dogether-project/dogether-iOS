@@ -40,7 +40,6 @@ extension StatsViewController {
     private func loadStatsView() {
         Task { [weak self] in
             guard let self else { return }
-            LoadingManager.shared.isShowLoading = true
             try await viewModel.loadStatsView()
         }
     }

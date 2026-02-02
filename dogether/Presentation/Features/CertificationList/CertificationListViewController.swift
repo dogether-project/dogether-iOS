@@ -36,7 +36,6 @@ final class CertificationListViewController: BaseViewController {
 
 extension CertificationListViewController {
     private func onAppear() {
-        LoadingManager.shared.isShowLoading = true
         loadCertificationListView()
     }
     
