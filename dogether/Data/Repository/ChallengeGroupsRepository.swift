@@ -33,12 +33,13 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
         }
     }
     
-    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, todos: [TodoEntity]) {
+    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, isMine: Bool, todos: [TodoEntity]) {
         let response = try await challengeGroupsDataSource.getMemberTodos(
             groupId: String(groupId), memberId: String(memberId)
         )
         
         let currentIndex = response.currentTodoHistoryToReadIndex
+        let isMine = response.todos[0].isMine
         let memberTodos = response.todos.map {
             TodoEntity(
                 historyId: $0.historyId,
@@ -53,7 +54,7 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
                 reviewFeedback: $0.reviewFeedback
             )
         }
-        return (currentIndex, memberTodos)
+        return (currentIndex, isMine, memberTodos)
     }
     
     func readTodo(todoHistoryId: String) async throws {

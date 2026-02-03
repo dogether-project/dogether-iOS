@@ -9,19 +9,19 @@ import Foundation
 
 struct CertificationViewDatas: BaseEntity {
     var title: String
+    var isMine: Bool?
     var todos: [TodoEntity]
     var index: Int
-    var rankingEntity: RankingEntity?
     
     init(
         title: String = "",
+        isMine: Bool? = nil,
         todos: [TodoEntity] = [],
         index: Int = 0,
-        rankingEntity: RankingEntity? = nil
     ) {
         self.title = title
+        self.isMine = isMine
         self.todos = todos
         self.index = index
-        self.rankingEntity = rankingEntity
     }
 }

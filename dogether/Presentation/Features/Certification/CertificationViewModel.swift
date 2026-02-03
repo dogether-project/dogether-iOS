@@ -44,10 +44,11 @@ extension CertificationViewModel {
         
         // MARK: from Ranking
         if let groupId = datas.groupId, let memberId = datas.memberId {
-            let (index, todos) = try await getMemberTodos(groupId: groupId, memberId: memberId)
+            let (index, isMine, todos) = try await getMemberTodos(groupId: groupId, memberId: memberId)
             
             certificationViewDatas.update {
                 $0.title = datas.title
+                $0.isMine = isMine
                 $0.index = index
                 $0.todos = todos
             }
@@ -71,7 +72,7 @@ extension CertificationViewModel {
         }
     }
     
-    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (Int, [TodoEntity]) {
+    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (Int, Bool, [TodoEntity]) {
         try await challengeGroupsUseCase.getMemberTodos(groupId: groupId, memberId: memberId)
     }
     
@@ -82,7 +83,7 @@ extension CertificationViewModel {
     }
     
     func setIndex(index: Int) async throws {
-        if certificationViewDatas.value.rankingEntity == nil {
+        if certificationViewDatas.value.isMine == nil {
             certificationViewDatas.update { $0.index = index }
         } else {
             // MARK: 이전에 보고 있던 thumbnailStatus를 수정하고 이동한 todo의 read API를 호출
@@ -95,7 +96,7 @@ extension CertificationViewModel {
     func readTodo(index: Int? = nil) async throws {
         let index = index ?? certificationViewDatas.value.index
         guard let todo = certificationViewDatas.value.todos[safe: index],
-              let _ = preCertificationViewDatas.value.memberId  else { return }
+              let _ = preCertificationViewDatas.value.memberId else { return }
         try await challengeGroupsUseCase.readTodo(todo: todo)
     }
     

@@ -23,7 +23,7 @@ final class ChallengeGroupsUseCase {
         try await repository.getMyTodos(groupId: String(groupId), date: date).map { $0.with(createdAt: date) }
     }
     
-    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, todos: [TodoEntity]) {
+    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, isMine: Bool, todos: [TodoEntity]) {
         try await repository.getMemberTodos(groupId: groupId, memberId: memberId)
     }
     

@@ -29,8 +29,8 @@ final class ChallengeGroupsRepositoryTest: ChallengeGroupsProtocol {
         return certify_pendings + review_pendings + approves + rejects
     }
     
-    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, todos: [TodoEntity]) {
-        return (index: 3, todos: [
+    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, isMine: Bool, todos: [TodoEntity]) {
+        return (index: 3, isMine: false, todos: [
             TodoEntity(id: 1, content: "신규 기능 개발", status: .waitCertification, thumbnailStatus: .done),
             TodoEntity(id: 2, content: "치킨 먹기", status: .waitCertification, thumbnailStatus: .done, certificationContent: "치킨 냠냠", reviewFeedback: ""),
             TodoEntity(id: 1, content: "신규 기능 개발", status: .waitCertification, thumbnailStatus: .done, reviewFeedback: "test"),

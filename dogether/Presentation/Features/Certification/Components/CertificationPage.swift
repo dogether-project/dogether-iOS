@@ -150,10 +150,11 @@ final class CertificationPage: BasePage {
             
             let date = DateFormatterManager.formattedDate().split(separator: ".").joined(separator: "-")
             let isWaitCertification = todo.status == .waitCertification
-            let isToday = todo.createdAt == date || datas.rankingEntity != nil
-            certificateButton.isHidden = !(isWaitCertification && isToday)
-            remindCertificationButton.isHidden = !todo.canRemindCertification
-            remindReviewButton.isHidden = !todo.canRemindReview
+            let isToday = todo.createdAt ?? date == date
+            let isMine = datas.isMine ?? true
+            certificateButton.isHidden = !(isWaitCertification && isToday && isMine)
+            remindCertificationButton.isHidden = !(todo.canRemindCertification && !isMine)
+            remindReviewButton.isHidden = !(todo.canRemindReview && !isMine)
         }
     }
 }
