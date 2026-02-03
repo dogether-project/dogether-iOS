@@ -103,4 +103,14 @@ extension CertificationViewModel {
     func remindTodo(remindType: RemindTypes, todoId: Int) async throws {
         try await todosUseCase.remindTodo(remindType: remindType, todoId: todoId)
     }
+    
+    func updateButtonStatus(remindType: RemindTypes, todoId: Int) {
+        guard let index = certificationViewDatas.value.todos.firstIndex(where: { $0.id == todoId }) else { return }
+        switch remindType {
+        case .certification:
+            certificationViewDatas.update { $0.todos[index].canRemindCertification = false }
+        case .review:
+            certificationViewDatas.update { $0.todos[index].canRemindReview = false }
+        }
+    }
 }

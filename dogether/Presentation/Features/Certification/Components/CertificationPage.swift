@@ -178,11 +178,20 @@ final class CertificationPage: BasePage {
             
             let date = DateFormatterManager.formattedDate().split(separator: ".").joined(separator: "-")
             let isWaitCertification = todo.status == .waitCertification
+            let isWaitExamination = todo.status == .waitExamination
             let isToday = todo.createdAt ?? date == date
             let isMine = datas.isMine ?? true
+            
             certificateButton.isHidden = !(isWaitCertification && isToday && isMine)
-            remindCertificationButton.isHidden = !(todo.canRemindCertification && !isMine)
-            remindReviewButton.isHidden = !todo.canRemindReview
+            remindCertificationButton.isHidden = !(isWaitCertification && !isMine)
+            remindReviewButton.isHidden = !isWaitExamination
+            
+            remindCertificationButton.updateView(
+                DogetherButtonViewDatas(status: todo.canRemindCertification ? .enabled : .disabled)
+            )
+            remindReviewButton.updateView(
+                DogetherButtonViewDatas(status: todo.canRemindReview ? .enabled : .disabled)
+            )
         }
     }
 }
