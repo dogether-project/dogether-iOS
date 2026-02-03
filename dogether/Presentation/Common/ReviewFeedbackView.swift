@@ -11,6 +11,7 @@ final class ReviewFeedbackView: BaseView {
     private let reviewFeedbackLabel = UILabel()
     
     override func configureView() {
+        isHidden = true
         backgroundColor = .grey700
         layer.cornerRadius = 8
         

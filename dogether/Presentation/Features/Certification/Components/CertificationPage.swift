@@ -39,13 +39,16 @@ final class CertificationPage: BasePage {
     private let certificationStackView = UIStackView()
     private let certificationListView = CertificationListView()
     private let statusView = TodoStatusButton()
+    private let statusSkeletonView = SkeletonView()
     private let contentLabel = UILabel()
+    private let contentLabelSkeletonView = SkeletonView()
     private let reviewFeedbackView = ReviewFeedbackView()
     private let certificateButton = DogetherButton("인증하기")
     private let remindCertificationButton = DogetherButton("인증 재촉하기")
     private let remindReviewButton = DogetherButton("검사 재촉하기")
     
     private var currentTodo: TodoEntity?
+    private var isFirst: Bool = true
     
     override func configureView() {
         certificationScrollView.showsVerticalScrollIndicator = false
@@ -74,6 +77,9 @@ final class CertificationPage: BasePage {
           certificateButton, remindCertificationButton, remindReviewButton
         ].forEach { addSubview($0) }
         certificationScrollView.addSubview(certificationStackView)
+        
+        statusView.addSubview(statusSkeletonView)
+        contentLabel.addSubview(contentLabelSkeletonView)
     }
      
     override func configureConstraints() {
@@ -106,10 +112,13 @@ final class CertificationPage: BasePage {
         
         statusView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.width.equalTo(100)
+            $0.height.equalTo(36)
         }
         
         contentLabel.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(36)
         }
         
         reviewFeedbackView.snp.makeConstraints {
@@ -127,16 +136,35 @@ final class CertificationPage: BasePage {
         remindReviewButton.snp.makeConstraints {
             $0.bottom.horizontalEdges.equalToSuperview().inset(16)
         }
+        
+        [statusSkeletonView, contentLabelSkeletonView].forEach {
+            $0.snp.makeConstraints { $0.edges.equalToSuperview() }
+        }
     }
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? CertificationViewDatas else { return }
+        
         navigationHeader.updateView(datas)
         thumbnailListView.updateView(datas)
         certificationListView.updateView(datas)
         
         if let todo = datas.todos[safe: datas.index], currentTodo != todo {
+            if isFirst {
+                isFirst = false
+                
+                statusView.snp.remakeConstraints {
+                    $0.centerX.equalToSuperview()
+                }
+                
+                contentLabel.snp.remakeConstraints {
+                    $0.horizontalEdges.equalToSuperview().inset(16)
+                }
+                
+                [statusSkeletonView, contentLabelSkeletonView].forEach { $0.removeFromSuperview() }
+            }
+            
             currentTodo = todo
             
             statusView.updateView(todo.status)
@@ -154,7 +182,7 @@ final class CertificationPage: BasePage {
             let isMine = datas.isMine ?? true
             certificateButton.isHidden = !(isWaitCertification && isToday && isMine)
             remindCertificationButton.isHidden = !(todo.canRemindCertification && !isMine)
-            remindReviewButton.isHidden = !(todo.canRemindReview && !isMine)
+            remindReviewButton.isHidden = !todo.canRemindReview
         }
     }
 }
