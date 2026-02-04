@@ -8,6 +8,7 @@
 import Foundation
 
 struct GetMemberTodosResponse: Decodable {
+    let isMine: Bool
     let currentTodoHistoryToReadIndex: Int
     let todos: [TodoEntityInGetMemberTodos]
 }
@@ -23,7 +24,6 @@ struct TodoEntityInGetMemberTodos: Decodable {
     let certificationMediaUrl: String?
     let isRead: Bool
     let reviewFeedback: String?
-    let isMine: Bool
     
     init(
         historyId: Int,
@@ -35,8 +35,7 @@ struct TodoEntityInGetMemberTodos: Decodable {
         certificationContent: String? = nil,
         certificationMediaUrl: String? = nil,
         isRead: Bool,
-        reviewFeedback: String? = nil,
-        isMine: Bool
+        reviewFeedback: String? = nil
     ) {
         self.historyId = historyId
         self.todoId = todoId
@@ -48,6 +47,5 @@ struct TodoEntityInGetMemberTodos: Decodable {
         self.certificationMediaUrl = certificationMediaUrl
         self.isRead = isRead
         self.reviewFeedback = reviewFeedback
-        self.isMine = isMine
     }
 }

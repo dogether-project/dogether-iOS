@@ -41,7 +41,7 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
         if response.todos.isEmpty { throw NetworkError.noData }
         
         let currentIndex = response.currentTodoHistoryToReadIndex
-        let isMine = response.todos[0].isMine
+        let isMine = response.isMine
         let memberTodos = response.todos.map {
             TodoEntity(
                 historyId: $0.historyId,
