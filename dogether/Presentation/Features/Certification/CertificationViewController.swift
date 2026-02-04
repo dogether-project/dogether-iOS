@@ -40,8 +40,14 @@ extension CertificationViewController {
     private func loadCertificationView() {
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.loadCertificationView()
-            try await viewModel.readTodo()
+            do {
+                try await viewModel.loadCertificationView()
+                try await viewModel.readTodo()
+            } catch let error as NetworkError {
+                if case .noData = error {
+                    coordinator?.popViewController()
+                }
+            }
         }
     }
 }

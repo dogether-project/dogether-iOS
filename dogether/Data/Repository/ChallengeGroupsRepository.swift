@@ -38,6 +38,8 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
             groupId: String(groupId), memberId: String(memberId)
         )
         
+        if response.todos.isEmpty { throw NetworkError.noData }
+        
         let currentIndex = response.currentTodoHistoryToReadIndex
         let isMine = response.todos[0].isMine
         let memberTodos = response.todos.map {
