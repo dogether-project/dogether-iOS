@@ -33,8 +33,6 @@ final class StatsPage: BasePage {
     
     private let bottomSheetView = BottomSheetView(hasAddButton: false)
     
-//    private var errorView: ErrorView?
-    
     override func configureView() {
         dosikImageView.contentMode = .scaleAspectFit
         dosikArmView.contentMode = .scaleAspectFit
