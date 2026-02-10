@@ -40,6 +40,9 @@ extension CompleteViewController: CompleteDelegate {
            let data = viewModel.completeViewDatas.value
 
            Task {
+               LoadingManager.shared.showLoading()
+               defer { LoadingManager.shared.hideLoading() }
+               
                do {
                    let inviteItems = try await SystemManager.inviteGroup(
                        groupName: data.groupEntity.name,
