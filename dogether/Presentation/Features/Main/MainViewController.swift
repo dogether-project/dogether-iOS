@@ -166,9 +166,6 @@ extension MainViewController: MainDelegate {
         let group = viewModel.currentGroup
 
         Task {
-            LoadingManager.shared.showLoading()
-            defer { LoadingManager.shared.hideLoading() }
-
             do {
                 let inviteItems = try await SystemManager.inviteGroup(
                     groupName: group.name,

@@ -36,7 +36,6 @@ struct SystemManager {
 }
 
 extension SystemManager {
-    // FIXME: 딥링크 생성 중 로딩UI 추가 필요
     static func inviteGroup(groupName: String, joinCode: String) async throws -> [Any] {
           let destinationURL =
           "https://dogether.site/invite?code=\(joinCode)"
@@ -49,6 +48,9 @@ extension SystemManager {
           .setAndroidBehaviour(CLDynamicLinkBehaviour.app)
           .build()
 
+          LoadingManager.shared.showLoading()
+          defer { LoadingManager.shared.hideLoading() }
+        
           let shortURL = try await ChottuLink.createDynamicLink(for: builder)
 
           return ["""
