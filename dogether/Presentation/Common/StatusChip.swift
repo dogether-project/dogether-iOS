@@ -8,12 +8,12 @@
 import UIKit
 
 enum StatusChipStyle {
-    case selectable   // 필터 선택용 (선택/미선택 상태)
-    case display      // 상태 표시용 (단순 표시)
+    case selectable
+    case display
 }
 
 final class StatusChip: BaseButton {
-    // MARK: - Delegates (selectable 스타일 전용)
+    // MARK: - Delegates
     var mainDelegate: MainDelegate? {
         didSet {
             guard let filterType = filterType else { return }
@@ -47,7 +47,6 @@ final class StatusChip: BaseButton {
     
     // MARK: - Initializers
     
-    /// selectable 스타일용 (FilterButton 대체)
     init(filterType: FilterTypes) {
         self.style = .selectable
         self.filterType = filterType
@@ -55,7 +54,6 @@ final class StatusChip: BaseButton {
         super.init(frame: .zero)
     }
     
-    /// display 스타일용 (TodoStatusButton 대체)
     init() {
         self.style = .display
         self.filterType = nil
