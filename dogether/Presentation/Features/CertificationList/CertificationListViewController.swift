@@ -72,7 +72,7 @@ extension CertificationListViewController: CertificationListPageDelegate {
     
     func selectCertificationAction(title: String, todo: TodoEntity) {
         let certificationViewController = CertificationViewController()
-        let preCertificationViewDatas = PreCertificationViewDatas(
+        let preCertificationViewDatas = PreCertificationViewDatas.certificationList(
             title: title,
             todoId: todo.id,
             sortOption: viewModel.sortViewDatas.value.options[viewModel.sortViewDatas.value.index],

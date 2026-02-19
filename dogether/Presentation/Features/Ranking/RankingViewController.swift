@@ -52,7 +52,7 @@ protocol RankingDelegate {
 extension RankingViewController: RankingDelegate {
     func goCertificationViewAction(rankingEntity: RankingEntity) {
         let certificationViewController = CertificationViewController()
-        let preCertificationViewDatas = PreCertificationViewDatas(
+        let preCertificationViewDatas = PreCertificationViewDatas.ranking(
             title: "\(rankingEntity.name)님의 인증 정보",
             groupId: viewModel.rankingViewDatas.value.groupId,
             memberId: rankingEntity.memberId

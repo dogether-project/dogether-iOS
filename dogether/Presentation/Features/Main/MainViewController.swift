@@ -240,7 +240,7 @@ extension MainViewController: MainDelegate {
         let date = DateFormatterManager.formattedDate(
             viewModel.sheetViewDatas.value.dateOffset
         ).translateDateFormatForServer()
-        let preCertificationViewDatas = PreCertificationViewDatas(
+        let preCertificationViewDatas = PreCertificationViewDatas.main(
             title: "내 인증 정보",
             date: date,
             groupId: viewModel.currentGroup.id,

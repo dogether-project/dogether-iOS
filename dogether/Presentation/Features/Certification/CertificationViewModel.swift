@@ -12,9 +12,7 @@ final class CertificationViewModel {
     private let todosUseCase: TodosUseCase
     private let userUseCase: UserUseCase
     
-    private(set) var preCertificationViewDatas = BehaviorRelay<PreCertificationViewDatas>(
-        value: PreCertificationViewDatas()
-    )
+    private(set) var preCertificationViewDatas = BehaviorRelay<PreCertificationViewDatas?>(value: nil)
     private(set) var certificationViewDatas = BehaviorRelay<CertificationViewDatas>(value: CertificationViewDatas())
     
     init() {
@@ -30,36 +28,30 @@ final class CertificationViewModel {
 
 extension CertificationViewModel {
     func loadCertificationView() async throws {
-        let datas = preCertificationViewDatas.value
-        // MARK: from Main
-        if let date = datas.date, let groupId = datas.groupId, let todoId = datas.todoId, let filter = datas.filter {
+        guard let datas = preCertificationViewDatas.value else { return }
+
+        switch datas {
+        case .main(let title, let date, let groupId, let todoId, let filter):
             let todos = try await getMyTodos(groupId: groupId, date: date, filter: filter)
-            
             certificationViewDatas.update {
-                $0.title = datas.title
+                $0.title = title
                 $0.index = todos.firstIndex { $0.id == todoId } ?? 0
                 $0.todos = todos
             }
-        }
-        
-        // MARK: from Ranking
-        if let groupId = datas.groupId, let memberId = datas.memberId {
+
+        case .ranking(let title, let groupId, let memberId):
             let (index, isMine, todos) = try await getMemberTodos(groupId: groupId, memberId: memberId)
-            
             certificationViewDatas.update {
-                $0.title = datas.title
+                $0.title = title
                 $0.isMine = isMine
                 $0.index = index
                 $0.todos = todos
             }
-        }
-        
-        // MARK: from CertificationList
-        if let todoId = datas.todoId, let sortOption = datas.sortOption, let filter = datas.filter {
+
+        case .certificationList(let title, let todoId, let sortOption, let filter):
             let todos = try await getMyCertifications(todoId: todoId, sortOption: sortOption, filter: filter)
-            
             certificationViewDatas.update {
-                $0.title = datas.title
+                $0.title = title
                 $0.index = todos.firstIndex { $0.id == todoId } ?? 0
                 $0.todos = todos
             }
@@ -96,7 +88,7 @@ extension CertificationViewModel {
     func readTodo(index: Int? = nil) async throws {
         let index = index ?? certificationViewDatas.value.index
         guard let todo = certificationViewDatas.value.todos[safe: index],
-              let _ = preCertificationViewDatas.value.memberId else { return }
+              case .ranking = preCertificationViewDatas.value else { return }
         try await challengeGroupsUseCase.readTodo(todo: todo)
     }
     
