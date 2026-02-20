@@ -239,7 +239,7 @@ extension MainViewController: MainDelegate {
         let certificationViewController = CertificationViewController()
         let date = DateFormatterManager.formattedDate(
             viewModel.sheetViewDatas.value.dateOffset
-        ).split(separator: ".").joined(separator: "-")
+        ).translateDateFormatForServer()
         let preCertificationViewDatas = PreCertificationViewDatas(
             title: "내 인증 정보",
             date: date,

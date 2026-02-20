@@ -176,7 +176,7 @@ final class CertificationPage: BasePage {
             
             reviewFeedbackView.updateView(todo.reviewFeedback ?? "")
             
-            let date = DateFormatterManager.formattedDate().split(separator: ".").joined(separator: "-")
+            let date = DateFormatterManager.formattedDate().translateDateFormatForServer()
             let isWaitCertification = todo.status == .waitCertification
             let isWaitExamination = todo.status == .waitExamination
             let isToday = todo.createdAt ?? date == date

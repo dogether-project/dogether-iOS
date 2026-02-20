@@ -42,7 +42,7 @@ extension MainViewModel {
     }
     
     func getTodoList(dateOffset: Int, groupId: Int) async throws -> [TodoEntity] {
-        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
+        let date = DateFormatterManager.formattedDate(dateOffset).translateDateFormatForServer()
         return try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date)
     }
     
