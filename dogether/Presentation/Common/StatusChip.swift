@@ -7,8 +7,8 @@
 
 import UIKit
 
-enum StatusChipStyle {
-    case selectable
+enum StatusChipMode {
+    case selectable(FilterTypes)
     case display
 }
 
@@ -16,7 +16,7 @@ final class StatusChip: BaseButton {
     // MARK: - Delegates
     var mainDelegate: MainDelegate? {
         didSet {
-            guard let filterType = filterType else { return }
+            guard case let .selectable(filterType) = mode else { return }
             addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
@@ -28,7 +28,7 @@ final class StatusChip: BaseButton {
     
     var certificationListDelegate: CertificationListPageDelegate? {
         didSet {
-            guard let filterType = filterType else { return }
+            guard case let .selectable(filterType) = mode else { return }
             addAction(
                 UIAction { [weak self] _ in
                     guard let self else { return }
@@ -38,8 +38,7 @@ final class StatusChip: BaseButton {
         }
     }
     
-    private let style: StatusChipStyle
-    private let filterType: FilterTypes?
+    private let mode: StatusChipMode
     
     private let icon = UIImageView()
     private let label = UILabel()
@@ -48,15 +47,12 @@ final class StatusChip: BaseButton {
     // MARK: - Initializers
     
     init(filterType: FilterTypes) {
-        self.style = .selectable
-        self.filterType = filterType
-        
+        self.mode = .selectable(filterType)
         super.init(frame: .zero)
     }
     
     init() {
-        self.style = .display
-        self.filterType = nil
+        self.mode = .display
         
         super.init(frame: .zero)
     }
@@ -67,14 +63,16 @@ final class StatusChip: BaseButton {
     
     override func configureView() {
         layer.cornerRadius = 16
-        
-        if style == .selectable {
+
+        switch mode {
+        case let .selectable(filterType):
             layer.borderWidth = 1
+            icon.image = filterType.image?.withRenderingMode(.alwaysTemplate)
+            label.text = filterType.text
+        case .display:
+            layer.borderWidth = 0
         }
-        
-        icon.image = filterType?.image?.withRenderingMode(.alwaysTemplate)
-        
-        label.text = filterType?.text
+
         label.font = Fonts.body2S
         
         stackView.axis = .horizontal
@@ -107,17 +105,16 @@ final class StatusChip: BaseButton {
     // MARK: - updateView
     
     override func updateView(_ data: any BaseEntity) {
-        switch style {
-        case .selectable:
-            updateSelectableStyle(data)
+        switch mode {
+        case let .selectable(filterType):
+            updateSelectableStyle(data, filterType: filterType)
         case .display:
             updateDisplayStyle(data)
         }
     }
     
-    private func updateSelectableStyle(_ data: any BaseEntity) {
-        guard let selectedFilter = data as? FilterTypes,
-              let filterType = filterType else { return }
+    private func updateSelectableStyle(_ data: any BaseEntity, filterType: FilterTypes) {
+        guard let selectedFilter = data as? FilterTypes else { return }
         
         let isSelected = filterType == selectedFilter
         
