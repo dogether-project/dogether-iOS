@@ -68,7 +68,7 @@ final class UserRepository: UserProtocol {
                 TodoEntity(
                     id: info.id,
                     content: info.content,
-                    status: TodoStatus(rawValue: info.status) ?? .waitCertification,
+                    status: TodoStatus(rawValue: info.status) ?? .uncertified,
                     certificationContent: info.certificationContent,
                     certificationMediaUrl: info.certificationMediaUrl,
                     reviewFeedback: info.reviewFeedback,
