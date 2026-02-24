@@ -19,7 +19,7 @@ final class LoadingPage: BasePage {
         isHidden = true
         isUserInteractionEnabled = true
         
-        backgroundView.backgroundColor = .grey900.withAlphaComponent(0.8)
+        backgroundView.backgroundColor = Color.Background.dim
         
         animationView.loopMode = .loop
         animationView.contentMode = .scaleAspectFit

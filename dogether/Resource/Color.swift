@@ -15,7 +15,7 @@ enum Color {
         static let disabled = UIColor(named: "colorBgDisabled")!
         static let primary = UIColor(named: "colorBgPrimary")!
         static let inverse = UIColor(named: "colorBgInverse")!
-        static let dim = Color.Background.default.withAlphaComponent(0.8)
+        static let dim = UIColor(named: "colorBgDim")!
     }
     
     enum Icon {
@@ -47,6 +47,6 @@ enum Color {
     }
     
     enum Shadow {
-        static let `default` = Color.Background.default.withAlphaComponent(0.3)
+        static let `default` = UIColor(named: "colorShadowDefault")!
     }
 }
