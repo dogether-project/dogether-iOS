@@ -80,7 +80,7 @@ final class ThumbnailView: BaseView {
             if currentIsHighlizghted != datas.isHighlighted {
                 currentIsHighlizghted = datas.isHighlighted
                 
-                layer.borderColor = datas.isHighlighted ? Color.Background.default.cgColor : UIColor.clear.cgColor
+                layer.borderColor = datas.isHighlighted ? UIColor.grey0.cgColor : UIColor.clear.cgColor
             }
         }
     }
