@@ -10,7 +10,7 @@ import UIKit
 import RxRelay
 
 final class CertificateViewModel {
-    private let challengeGroupUseCase: ChallengeGroupUseCase
+    private let todosUseCase: TodosUseCase
     
     private(set) var certificateViewDatas = BehaviorRelay<CertificateViewDatas>(value: CertificateViewDatas())
     private(set) var certificateTextViewDatas = BehaviorRelay<DogetherTextViewDatas>(value: DogetherTextViewDatas())
@@ -19,8 +19,8 @@ final class CertificateViewModel {
     )
 
     init() {
-        let repository = DIManager.shared.getChallengeGroupsRepository()
-        self.challengeGroupUseCase = ChallengeGroupUseCase(repository: repository)
+        let todosRepository = DIManager.shared.getTodosRepository()
+        self.todosUseCase = TodosUseCase(repository: todosRepository)
     }
 }
 
@@ -58,6 +58,6 @@ extension CertificateViewModel {
         let todo = certificateViewDatas.value.todo
         guard let content = todo.certificationContent,
               let mediaUrl = todo.certificationMediaUrl else { return }
-        try await challengeGroupUseCase.certifyTodo(todoId: todo.id, content: content, mediaUrl: mediaUrl)
+        try await todosUseCase.certifyTodo(todoId: todo.id, content: content, mediaUrl: mediaUrl)
     }
 }

@@ -23,6 +23,9 @@ final class DogetherButton: BaseButton {
         setTitle(title, for: .normal)
         titleLabel?.font = Fonts.body1B
         layer.cornerRadius = 8
+        
+        setTitleColor(ButtonStatus.enabled.textColor, for: .normal)
+        backgroundColor = ButtonStatus.enabled.backgroundColor
     }
     
     override func configureAction() { }
@@ -45,8 +48,6 @@ final class DogetherButton: BaseButton {
             setTitleColor(datas.status.textColor, for: .normal)
             backgroundColor = datas.status.backgroundColor
             isEnabled = datas.status == .enabled
-            
-            isHidden = datas.isHidden
         }
     }
 }
@@ -54,10 +55,8 @@ final class DogetherButton: BaseButton {
 // MARK: - ViewDatas
 struct DogetherButtonViewDatas: BaseEntity {
     var status: ButtonStatus
-    var isHidden: Bool
     
-    init(status: ButtonStatus = .enabled, isHidden: Bool = false) {
+    init(status: ButtonStatus = .enabled) {
         self.status = status
-        self.isHidden = isHidden
     }
 }

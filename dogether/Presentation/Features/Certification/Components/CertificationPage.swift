@@ -12,12 +12,24 @@ final class CertificationPage: BasePage {
         didSet {
             thumbnailListView.delegate = delegate
             certificationListView.delegate = delegate
-//            certificateButton.addAction(
-//                UIAction { [weak self] _ in
-//                    guard let self, let currentTodo else { return }
-//                    delegate?.goCertificateViewAction(todo: currentTodo)
-//                }, for: .touchUpInside
-//            )
+            certificateButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.goCertificateViewAction(todo: currentTodo)
+                }, for: .touchUpInside
+            )
+            remindCertificationButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.remindTodoAction(remindType: .certification, todoId: currentTodo.id)
+                }, for: .touchUpInside
+            )
+            remindReviewButton.addAction(
+                UIAction { [weak self] _ in
+                    guard let self, let currentTodo else { return }
+                    delegate?.remindTodoAction(remindType: .review, todoId: currentTodo.id)
+                }, for: .touchUpInside
+            )
         }
     }
     
@@ -27,11 +39,16 @@ final class CertificationPage: BasePage {
     private let certificationStackView = UIStackView()
     private let certificationListView = CertificationListView()
     private let statusView = TodoStatusButton()
+    private let statusSkeletonView = SkeletonView()
     private let contentLabel = UILabel()
+    private let contentLabelSkeletonView = SkeletonView()
     private let reviewFeedbackView = ReviewFeedbackView()
-//    private let certificateButton = DogetherButton("인증하기")
+    private let certificateButton = DogetherButton("인증하기")
+    private let remindCertificationButton = DogetherButton("인증 재촉하기")
+    private let remindReviewButton = DogetherButton("검사 재촉하기")
     
     private var currentTodo: TodoEntity?
+    private var isFirst: Bool = true
     
     override func configureView() {
         certificationScrollView.showsVerticalScrollIndicator = false
@@ -47,6 +64,8 @@ final class CertificationPage: BasePage {
         
         contentLabel.textColor = .grey0
         contentLabel.numberOfLines = 0
+        
+        [certificateButton, remindCertificationButton, remindReviewButton].forEach { $0.isHidden = true }
     }
     
     override func configureAction() {
@@ -54,8 +73,13 @@ final class CertificationPage: BasePage {
     }
     
     override func configureHierarchy() {
-        [navigationHeader, thumbnailListView, certificationScrollView/*, certificateButton*/].forEach { addSubview($0) }
+        [ navigationHeader, thumbnailListView, certificationScrollView,
+          certificateButton, remindCertificationButton, remindReviewButton
+        ].forEach { addSubview($0) }
         certificationScrollView.addSubview(certificationStackView)
+        
+        statusView.addSubview(statusSkeletonView)
+        contentLabel.addSubview(contentLabelSkeletonView)
     }
      
     override func configureConstraints() {
@@ -88,44 +112,86 @@ final class CertificationPage: BasePage {
         
         statusView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
+            $0.width.equalTo(100)
+            $0.height.equalTo(36)
         }
         
         contentLabel.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.height.equalTo(36)
         }
         
         reviewFeedbackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
         }
         
-//        certificateButton.snp.makeConstraints {
-//            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
-//        }
+        certificateButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        remindCertificationButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        remindReviewButton.snp.makeConstraints {
+            $0.bottom.horizontalEdges.equalToSuperview().inset(16)
+        }
+        
+        [statusSkeletonView, contentLabelSkeletonView].forEach {
+            $0.snp.makeConstraints { $0.edges.equalToSuperview() }
+        }
     }
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         guard let datas = data as? CertificationViewDatas else { return }
+        
         navigationHeader.updateView(datas)
         thumbnailListView.updateView(datas)
         certificationListView.updateView(datas)
         
-        if currentTodo != datas.todos[datas.index] {
-            currentTodo = datas.todos[datas.index]
+        if let todo = datas.todos[safe: datas.index], currentTodo != todo {
+            if isFirst {
+                isFirst = false
+                
+                statusView.snp.remakeConstraints {
+                    $0.centerX.equalToSuperview()
+                }
+                
+                contentLabel.snp.remakeConstraints {
+                    $0.horizontalEdges.equalToSuperview().inset(16)
+                }
+                
+                [statusSkeletonView, contentLabelSkeletonView].forEach { $0.removeFromSuperview() }
+            }
             
-            statusView.updateView(datas.todos[datas.index].status)
+            currentTodo = todo
+            
+            statusView.updateView(todo.status)
             
             contentLabel.attributedText = NSAttributedString(
-                string:  datas.todos[datas.index].content,
+                string: todo.content,
                 attributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .center)
             )
             
-            reviewFeedbackView.updateView(datas.todos[datas.index].reviewFeedback ?? "")
+            reviewFeedbackView.updateView(todo.reviewFeedback ?? "")
             
-            // FIXME: 추후 수정
-//            var dogetherButtonViewDatas = certificateButton.currentViewDatas ?? DogetherButtonViewDatas()
-//            dogetherButtonViewDatas.isHidden = datas.rankingEntity != nil || datas.todos[datas.index].status != .waitCertification
-//            certificateButton.updateView(dogetherButtonViewDatas)
+            let date = DateFormatterManager.formattedDate().translateDateFormatForServer()
+            let isWaitCertification = todo.status == .waitCertification
+            let isWaitExamination = todo.status == .waitExamination
+            let isToday = todo.createdAt ?? date == date
+            let isMine = datas.isMine ?? true
+            
+            certificateButton.isHidden = !(isWaitCertification && isToday && isMine)
+            remindCertificationButton.isHidden = !(isWaitCertification && !isMine)
+            remindReviewButton.isHidden = !isWaitExamination
+            
+            remindCertificationButton.updateView(
+                DogetherButtonViewDatas(status: todo.canRemindCertification ? .enabled : .disabled)
+            )
+            remindReviewButton.updateView(
+                DogetherButtonViewDatas(status: todo.canRemindReview ? .enabled : .disabled)
+            )
         }
     }
 }

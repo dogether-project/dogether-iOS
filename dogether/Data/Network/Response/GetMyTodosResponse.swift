@@ -15,6 +15,7 @@ struct TodoEntityInGetMyTodos: Decodable {
     let id: Int
     let content: String
     var status: String
+    var canRequestCertificationReview: Bool
     var certificationContent: String?
     var certificationMediaUrl: String?
     var reviewFeedback: String?

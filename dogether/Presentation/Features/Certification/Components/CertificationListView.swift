@@ -19,6 +19,7 @@ final class CertificationListView: BaseView {
     
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
+    private let skeletonView = SkeletonView()
     
     private var isFirst: Bool = true
     private var currentIndex: Int?
@@ -40,6 +41,7 @@ final class CertificationListView: BaseView {
     override func configureHierarchy() {
         [scrollView].forEach { addSubview($0) }
         [stackView].forEach { scrollView.addSubview($0) }
+        stackView.addArrangedSubview(skeletonView)
     }
     
     override func configureConstraints() {
@@ -49,14 +51,24 @@ final class CertificationListView: BaseView {
         
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.width.equalToSuperview().offset(-32)
+            $0.height.equalToSuperview()
+        }
+        
+        skeletonView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
     }
     
     // MARK: - updateView
     override func updateView(_ data: (any BaseEntity)?) {
         if let datas = data as? CertificationViewDatas {
+            if datas.todos.isEmpty { return }
+            
             if isFirst {
                 isFirst = false
+                
+                stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
                 
                 layoutIfNeeded()
                 
@@ -78,7 +90,7 @@ final class CertificationListView: BaseView {
                         stackView.addArrangedSubview($0)
                     }
                 
-                stackView.snp.makeConstraints {
+                stackView.snp.remakeConstraints {
                     $0.horizontalEdges.equalToSuperview().inset(16)
                     $0.width.equalTo(frame.width * CGFloat(datas.todos.count) - 32)
                     $0.height.equalToSuperview()

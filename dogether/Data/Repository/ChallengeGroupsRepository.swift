@@ -25,6 +25,7 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
                 id: $0.id,
                 content: $0.content,
                 status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
+                canRemindReview: $0.canRequestCertificationReview,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
                 reviewFeedback: $0.reviewFeedback
@@ -32,31 +33,33 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
         }
     }
     
-    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, todos: [TodoEntity]) {
+    func getMemberTodos(groupId: Int, memberId: Int) async throws -> (index: Int, isMine: Bool, todos: [TodoEntity]) {
         let response = try await challengeGroupsDataSource.getMemberTodos(
             groupId: String(groupId), memberId: String(memberId)
         )
         
+        if response.todos.isEmpty { throw NetworkError.noData }
+        
         let currentIndex = response.currentTodoHistoryToReadIndex
+        let isMine = response.isMine
         let memberTodos = response.todos.map {
             TodoEntity(
-                id: $0.id,
+                historyId: $0.historyId,
+                id: $0.todoId,
                 content: $0.content,
                 status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
                 thumbnailStatus: $0.isRead ? .done : .yet,
+                canRemindCertification: $0.canRequestCertification,
+                canRemindReview: $0.canRequestCertificationReview,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
                 reviewFeedback: $0.reviewFeedback
             )
         }
-        return (currentIndex, memberTodos)
+        return (currentIndex, isMine, memberTodos)
     }
     
-    func readTodo(todoId: String) async throws {
-        try await challengeGroupsDataSource.readTodo(todoId: todoId)
-    }
-    
-    func certifyTodo(todoId: String, certifyTodoRequest: CertifyTodoRequest) async throws {
-        try await challengeGroupsDataSource.certifyTodo(todoId: todoId, certifyTodoRequest: certifyTodoRequest)
+    func readTodo(todoHistoryId: String) async throws {
+        try await challengeGroupsDataSource.readTodo(todoHistoryId: todoHistoryId)
     }
 }

@@ -51,20 +51,12 @@ protocol RankingDelegate {
 
 extension RankingViewController: RankingDelegate {
     func goCertificationViewAction(rankingEntity: RankingEntity) {
-        Task {
-            let (index, todos) = try await viewModel.getMemberTodos(memberId: rankingEntity.memberId)
-            
-            await MainActor.run {
-                let certificationViewController = CertificationViewController()
-                let certificationViewDatas = CertificationViewDatas(
-                    title: "\(rankingEntity.name)님의 인증 정보",
-                    todos: todos,
-                    index: index,
-                    groupId: viewModel.rankingViewDatas.value.groupId,
-                    rankingEntity: rankingEntity
-                )
-                coordinator?.pushViewController(certificationViewController, datas: certificationViewDatas)
-            }
-        }
+        let certificationViewController = CertificationViewController()
+        let preCertificationViewDatas = PreCertificationViewDatas.ranking(
+            title: "\(rankingEntity.name)님의 인증 정보",
+            groupId: viewModel.rankingViewDatas.value.groupId,
+            memberId: rankingEntity.memberId
+        )
+        coordinator?.pushViewController(certificationViewController, datas: preCertificationViewDatas)
     }
 }

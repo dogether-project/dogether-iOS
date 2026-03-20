@@ -11,7 +11,7 @@ import RxRelay
 
 final class MainViewModel {
     private let groupUseCase: GroupUseCase
-    private let challengeGroupsUseCase: ChallengeGroupUseCase
+    private let challengeGroupsUseCase: ChallengeGroupsUseCase
     private let todoCertificationsUseCase: TodoCertificationsUseCase
     
     private(set) var bottomSheetViewDatas = BehaviorRelay<BottomSheetViewDatas>(value: BottomSheetViewDatas())
@@ -30,7 +30,7 @@ final class MainViewModel {
         let todoCertificationsRepository = DIManager.shared.getTodoCertificationsRepository()
         
         self.groupUseCase = GroupUseCase(repository: groupRepository)
-        self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
+        self.challengeGroupsUseCase = ChallengeGroupsUseCase(repository: challengeGroupsRepository)
         self.todoCertificationsUseCase = TodoCertificationsUseCase(repository: todoCertificationsRepository)
     }
 }
@@ -42,7 +42,7 @@ extension MainViewModel {
     }
     
     func getTodoList(dateOffset: Int, groupId: Int) async throws -> [TodoEntity] {
-        let date = DateFormatterManager.formattedDate(dateOffset).split(separator: ".").joined(separator: "-")
+        let date = DateFormatterManager.formattedDate(dateOffset).translateDateFormatForServer()
         return try await challengeGroupsUseCase.getMyTodos(groupId: groupId, date: date)
     }
     

@@ -17,13 +17,19 @@ final class CertificationViewController: BaseViewController {
         pages = [certificationPage]
 
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        onAppear()
+        loadCertificationView()
+        
+        coordinator?.updateViewController = loadCertificationView
     }
     
     override func setViewDatas() {
-        if let datas = datas as? CertificationViewDatas {
-            viewModel.certificationViewDatas.accept(datas)
+        if let datas = datas as? PreCertificationViewDatas {
+            viewModel.preCertificationViewDatas.accept(datas)
         }
         
         bind(viewModel.certificationViewDatas)
@@ -31,10 +37,17 @@ final class CertificationViewController: BaseViewController {
 }
 
 extension CertificationViewController {
-    private func onAppear() {
+    private func loadCertificationView() {
         Task { [weak self] in
             guard let self else { return }
-            try await viewModel.readTodo()
+            do {
+                try await viewModel.loadCertificationView()
+                try await viewModel.readTodo()
+            } catch let error as NetworkError {
+                if case .noData = error {
+                    coordinator?.popViewController()
+                }
+            }
         }
     }
 }
@@ -45,6 +58,7 @@ protocol CertificationDelegate {
     func certificationTapAction(_ scrollView: UIScrollView, _ stackView: UIStackView, _ gesture: UITapGestureRecognizer)
     func certificationListScrollEndAction(index: Int)
     func goCertificateViewAction(todo: TodoEntity)
+    func remindTodoAction(remindType: RemindTypes, todoId: Int)
 }
 
 extension CertificationViewController: CertificationDelegate {
@@ -97,5 +111,14 @@ extension CertificationViewController: CertificationDelegate {
         let certificateImageViewController = CertificateImageViewController()
         let certificateViewDatas = CertificateViewDatas(todo: todo)
         coordinator?.pushViewController(certificateImageViewController, datas: certificateViewDatas)
+    }
+    
+    func remindTodoAction(remindType: RemindTypes, todoId: Int) {
+        Task { [weak self] in
+            guard let self else { return }
+            try await viewModel.remindTodo(remindType: remindType, todoId: todoId)
+            // TODO: 재촉 메시지가 전송되었어요 토스트 메시지 노출
+            viewModel.updateButtonStatus(remindType: remindType, todoId: todoId)
+        }
     }
 }

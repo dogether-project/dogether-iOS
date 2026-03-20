@@ -110,7 +110,11 @@ final class UserRepositoryTest: UserProtocol {
 
         return (statsViewDatas, certificationListViewDatas)
     }
-
+    
+    func getMyCertifications(todoId: Int, sortOption: SortOptions) async throws -> [TodoEntity] {
+        return []
+    }
+    
     func getProfileViewDatas() async throws -> ProfileViewDatas {
         return ProfileViewDatas(name: "두식", imageUrl: "")
     }

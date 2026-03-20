@@ -10,13 +10,13 @@ import Foundation
 import RxRelay
 
 final class TodoWriteViewModel {
-    private let challengeGroupsUseCase: ChallengeGroupUseCase
+    private let challengeGroupsUseCase: ChallengeGroupsUseCase
     
     private(set) var todoWriteViewDatas = BehaviorRelay<TodoWriteViewDatas>(value: TodoWriteViewDatas())
     
     init() {
         let challengeGroupsRepository = DIManager.shared.getChallengeGroupsRepository()
-        self.challengeGroupsUseCase = ChallengeGroupUseCase(repository: challengeGroupsRepository)
+        self.challengeGroupsUseCase = ChallengeGroupsUseCase(repository: challengeGroupsRepository)
     }
     
 }

@@ -66,6 +66,15 @@ extension DIManager {
         }
     }
     
+    func getTodosRepository(buildMode: BuildModes? = nil) -> TodosProtocol {
+        switch buildMode ?? defaultBuildMode {
+        case .debug:
+            return TodosRepositoryTest()
+        case .live:
+            return TodosRepository()
+        }
+    }
+    
     func getUserRepository(buildMode: BuildModes? = nil) -> UserProtocol {
         switch buildMode ?? defaultBuildMode {
         case .debug:

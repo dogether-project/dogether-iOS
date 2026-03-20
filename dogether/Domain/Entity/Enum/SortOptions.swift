@@ -1,8 +1,8 @@
 //
-//  CertificationSortOption.swift
+//  SortOptions.swift
 //  dogether
 //
-//  Created by yujaehong on 5/19/25.
+//  Created by seungyooooong on 1/19/26.
 //
 
 import Foundation
