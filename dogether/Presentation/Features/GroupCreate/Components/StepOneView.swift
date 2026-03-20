@@ -39,19 +39,19 @@ final class StepOneView: BaseView {
     
     override func configureView() {
         groupNameTitleLabel.text = "그룹명"
-        groupNameTitleLabel.textColor = .grey200
+        groupNameTitleLabel.textColor = Color.Text.subtle
         groupNameTitleLabel.font = Fonts.body1B
         
         groupNameTextField.attributedPlaceholder = NSAttributedString(
             string: "멋진 그룹명으로 동기부여를 해보세요 !",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.grey300]
+            attributes: [NSAttributedString.Key.foregroundColor: Color.Text.secondary]
         )
-        groupNameTextField.textColor = .grey0
+        groupNameTextField.textColor = Color.Text.default
         groupNameTextField.font = Fonts.body1S
-        groupNameTextField.tintColor = .blue300
+        groupNameTextField.tintColor = Color.Icon.primary
         groupNameTextField.returnKeyType = .done
         groupNameTextField.borderStyle = .none
-        groupNameTextField.backgroundColor = .grey800
+        groupNameTextField.backgroundColor = Color.Background.elavated
         groupNameTextField.layer.cornerRadius = 12
         groupNameTextField.layer.borderWidth = 1
         groupNameTextField.layer.borderColor = UIColor.clear.cgColor
@@ -59,11 +59,11 @@ final class StepOneView: BaseView {
         groupNameTextField.leftView = leftPaddingView
         groupNameTextField.leftViewMode = .always
         
-        groupNameCountLabel.textColor = .grey300
+        groupNameCountLabel.textColor = Color.Text.secondary
         groupNameCountLabel.font = Fonts.smallS
         
         groupNameMaxLengthLabel.text = "/\(groupNameMaxLength)"
-        groupNameMaxLengthLabel.textColor = .grey300
+        groupNameMaxLengthLabel.textColor = Color.Text.secondary
         groupNameMaxLengthLabel.font = Fonts.smallS
         
         groupNameCountStackView.axis = .horizontal
@@ -141,13 +141,13 @@ extension StepOneView: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        groupNameTextField.layer.borderColor = UIColor.blue300.cgColor
-        groupNameCountLabel.textColor = .blue300
+        groupNameTextField.layer.borderColor = Color.Border.primary.cgColor
+        groupNameCountLabel.textColor = Color.Text.primary
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         groupNameTextField.layer.borderColor = UIColor.clear.cgColor
-        groupNameCountLabel.textColor = .grey300
+        groupNameCountLabel.textColor = Color.Text.secondary
     }
     
     @objc private func dismissKeyboard() { endEditing(true) }

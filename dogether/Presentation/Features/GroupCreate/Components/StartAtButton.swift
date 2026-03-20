@@ -35,7 +35,7 @@ final class StartAtButton: BaseButton {
     private var currentStartAt: GroupStartAts?
     
     override func configureView() {
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         layer.borderWidth = 1.5
         
@@ -84,10 +84,10 @@ final class StartAtButton: BaseButton {
                 currentStartAt = datas
                 
                 let isColorful = startAt == datas
-                layer.borderColor = isColorful ? UIColor.blue300.cgColor : UIColor.grey800.cgColor
-                icon.tintColor = isColorful ? .blue300 : .grey0
-                label.textColor = isColorful ? .blue300 : .grey0
-                descriptionLabel.textColor = isColorful ? .blue300 : .grey0
+                layer.borderColor = isColorful ? Color.Border.primary.cgColor : UIColor.grey800.cgColor // FIXME: 컬러 추가 필요
+                icon.tintColor = isColorful ? Color.Icon.primary : Color.Icon.default
+                label.textColor = isColorful ? Color.Text.primary : Color.Text.default
+                descriptionLabel.textColor = isColorful ? Color.Text.primary : Color.Text.default
             }
         }
     }

@@ -38,11 +38,11 @@ final class GroupManagementCell: BaseTableViewCell {
         contentView.backgroundColor = .clear
         selectionStyle = .none
         
-        containerView.backgroundColor = .grey800
+        containerView.backgroundColor = Color.Background.elavated
         containerView.layer.cornerRadius = 12
         
         titleLabel.font = Fonts.head2B
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         
         memberTitleLabel.text = "그룹원"
         dateTitleLabel.text = "종료일"
@@ -50,17 +50,17 @@ final class GroupManagementCell: BaseTableViewCell {
         
         [memberTitleLabel, dateTitleLabel, codeTitleLabel].forEach { titleLabel in
             titleLabel.font = Fonts.smallR
-            titleLabel.textColor = .grey200
+            titleLabel.textColor = Color.Text.subtle
         }
         
         [memberValueLabel, dateValueLabel, codeValueLabel].forEach { valueLabel in
             valueLabel.font = Fonts.smallR
-            valueLabel.textColor = .grey0
+            valueLabel.textColor = Color.Text.default
         }
         
         leaveButton.setTitle("탈퇴하기", for: .normal)
-        leaveButton.setTitleColor(.grey0, for: .normal)
-        leaveButton.backgroundColor = .grey700
+        leaveButton.setTitleColor(Color.Text.default, for: .normal)
+        leaveButton.backgroundColor = Color.Background.surface
         leaveButton.titleLabel?.font = Fonts.body2S
         leaveButton.layer.cornerRadius = 6
     }

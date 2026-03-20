@@ -56,13 +56,13 @@ final class BottomSheetView: BaseView {
     override func configureView() {
         alpha = 0
         
-        backgroundView.backgroundColor = UIColor.black.withAlphaComponent(0.5)  // FIXME: 추후 ColorBackgroundDim 으로 변경
+        backgroundView.backgroundColor = Color.Background.dim
         
-        sheetView.backgroundColor = .grey700
+        sheetView.backgroundColor = Color.Background.surface
         sheetView.layer.cornerRadius = 12
         sheetView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        sheetTitleLabel.textColor = .grey0
+        sheetTitleLabel.textColor = Color.Text.default
         sheetTitleLabel.font = Fonts.head2B
         
         itemListStackView.axis = .vertical
@@ -151,7 +151,7 @@ final class BottomSheetView: BaseView {
 extension BottomSheetView {
     private func itemButton(index: Int, title: String, isSelected: Bool) -> UIButton {
         let button = UIButton()
-        button.backgroundColor = .grey700
+        button.backgroundColor = Color.Background.surface
         button.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -172,7 +172,7 @@ extension BottomSheetView {
         
         let titleLabel = UILabel()
         titleLabel.text = title
-        titleLabel.textColor = isSelected ? .blue300 : .grey400
+        titleLabel.textColor = isSelected ? Color.Text.primary : Color.Text.disabled
         titleLabel.font = isSelected ? Fonts.body1B : Fonts.body1S
         
         let checkImageView = UIImageView(image: .check)
@@ -201,7 +201,7 @@ extension BottomSheetView {
     
     private func addGroupButton() -> UIButton {
         let button = UIButton()
-        button.backgroundColor = .grey700
+        button.backgroundColor = Color.Background.surface
         button.addAction(
             UIAction { [weak self] _ in
                 guard let self else { return }
@@ -216,7 +216,7 @@ extension BottomSheetView {
         
         let titleLabel = UILabel()
         titleLabel.text = "새 그룹 추가하기"
-        titleLabel.textColor = .grey200
+        titleLabel.textColor = Color.Text.subtle
         titleLabel.font = Fonts.body1B
         
         [addGroupImageView, titleLabel].forEach { button.addSubview($0) }

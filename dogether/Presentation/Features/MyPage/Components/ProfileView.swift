@@ -21,7 +21,7 @@ final class ProfileView: BaseStackView {
         profileImageView.image = .profile
         profileImageView.contentMode = .scaleAspectFit
         
-        nameLabel.textColor = .grey0
+        nameLabel.textColor = Color.Text.default
         nameLabel.font = Fonts.head2B
     }
     

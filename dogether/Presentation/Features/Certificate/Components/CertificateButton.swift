@@ -23,13 +23,13 @@ final class CertificateButton: BaseButton {
     
     override func configureView() {
         layer.cornerRadius = 8
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         tag = type.rawValue
             
         iconImageView.image = type.image
         
         label.text = type.title
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         label.font = Fonts.body1S
         
         stackView.axis = .horizontal

@@ -19,7 +19,7 @@ final class PopupPage: BasePage {
     private let examinateStackView = ExaminateStackView()
     
     override func configureView() {
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         layer.cornerRadius = 12
     }
     

@@ -41,8 +41,8 @@ final class StepButtonStackView: BaseStackView {
         distribution = .fillEqually
         
         prevButton.setTitle("이전", for: .normal)
-        prevButton.setTitleColor(.grey200, for: .normal)
-        prevButton.backgroundColor = .grey500
+        prevButton.setTitleColor(Color.Text.subtle, for: .normal)
+        prevButton.backgroundColor = Color.Background.disabled
         prevButton.titleLabel?.font = Fonts.body1B
         prevButton.layer.cornerRadius = 8
         prevButton.tag = Directions.prev.tag

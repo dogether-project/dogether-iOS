@@ -45,25 +45,25 @@ final class GroupJoinPage: BasePage {
     
     override func configureView() {
         titleLabel.text = "초대코드 입력"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.emphasis2B
         
         subTitleLabel.text = "초대받은 링크에서 초대코드를 확인할 수 있어요"
-        subTitleLabel.textColor = .grey200
+        subTitleLabel.textColor = Color.Text.subtle
         subTitleLabel.font = Fonts.body1R
         
         codeTextField.attributedPlaceholder = NSAttributedString(
             string: "코드입력 (8자리)",
-            attributes: [.foregroundColor: UIColor.grey300]
+            attributes: [.foregroundColor: Color.Text.secondary]
         )
         codeTextField.font = Fonts.body1S
-        codeTextField.textColor = .grey0
-        codeTextField.backgroundColor = .grey800
+        codeTextField.textColor = Color.Text.default
+        codeTextField.backgroundColor = Color.Background.elavated
         codeTextField.layer.cornerRadius = 12
         codeTextField.layer.masksToBounds = true
         codeTextField.keyboardType = .asciiCapable
         codeTextField.returnKeyType = .done
-        codeTextField.tintColor = .blue300
+        codeTextField.tintColor = Color.Icon.primary
         codeTextField.autocorrectionType = .no
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: codeTextField.frame.height))
         codeTextField.leftView = leftPaddingView
@@ -197,7 +197,7 @@ extension GroupJoinPage: UITextFieldDelegate {
 
     private func setTextFieldBorderColor() {
         if codeTextField.isFirstResponder {
-            codeTextField.layer.borderColor = UIColor.blue300.cgColor
+            codeTextField.layer.borderColor = Color.Border.primary.cgColor
             codeTextField.layer.borderWidth = 1.5
         } else {
             codeTextField.layer.borderColor = UIColor.clear.cgColor

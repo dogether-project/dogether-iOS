@@ -10,12 +10,12 @@ import UIKit
 final class TimerView: BaseView {
     private let timerView = {
         let view = UIView()
-        view.backgroundColor = .grey700
+        view.backgroundColor = Color.Background.surface
         view.layer.cornerRadius = 142 / 2
         
         let imageView = UIImageView()
         imageView.image = .wait.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .blue300
+        imageView.tintColor = Color.Icon.primary
         
         [imageView].forEach { view.addSubview($0) }
         
@@ -32,7 +32,7 @@ final class TimerView: BaseView {
         let view = UIView()
         
         let shapeLayer = CAShapeLayer()
-        shapeLayer.strokeColor = UIColor.blue300.cgColor
+        shapeLayer.strokeColor = Color.Background.primary.cgColor
         shapeLayer.fillColor = UIColor.clear.cgColor
         shapeLayer.lineWidth = 6
         
@@ -58,15 +58,15 @@ final class TimerView: BaseView {
     private let timerStackView = UIStackView()
     
     override func configureView() {
-        timerLabel.textColor = .grey0
+        timerLabel.textColor = Color.Text.default
         timerLabel.font = Fonts.head1B
         
         titleLabel.text = "내일부터 투두를 시작할 수 있어요!"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.head2B
         
         subTitleLabel.text = "오늘은 계획을 세우고, 내일부터 실천해보세요!"
-        subTitleLabel.textColor = .grey300
+        subTitleLabel.textColor = Color.Text.secondary
         subTitleLabel.font = Fonts.body2R
         
         timerStackView.axis = .vertical

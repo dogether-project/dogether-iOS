@@ -42,18 +42,18 @@ final class AlertStackView: BaseStackView {
         
         imageView.contentMode = .scaleAspectFit
         
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.numberOfLines = 0
         
-        messageLabel.textColor = .grey200
+        messageLabel.textColor = Color.Text.subtle
         messageLabel.numberOfLines = 0
         
-        cancelButton.setTitleColor(.grey200, for: .normal)
+        cancelButton.setTitleColor(Color.Text.subtle, for: .normal)
         cancelButton.titleLabel?.font = Fonts.body1B
         cancelButton.layer.cornerRadius = 8
-        cancelButton.backgroundColor = .grey500
+        cancelButton.backgroundColor = Color.Background.disabled
         
-        confirmButton.setTitleColor(.grey800, for: .normal)
+        confirmButton.setTitleColor(Color.Text.inverse, for: .normal)
         confirmButton.titleLabel?.font = Fonts.body1B
         confirmButton.layer.cornerRadius = 8
         

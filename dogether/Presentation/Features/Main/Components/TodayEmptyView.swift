@@ -27,11 +27,11 @@ final class TodayEmptyView: BaseView {
     
     override func configureView() {
         titleLabel.text = "오늘의 투두를 작성해보세요"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.head2B
         
         subTitleLabel.text = "매일 자정부터 새로운 투두를 입력해요"
-        subTitleLabel.textColor = .grey300
+        subTitleLabel.textColor = Color.Text.secondary
         subTitleLabel.font = Fonts.body2R
         
         emptyStackView.axis = .vertical

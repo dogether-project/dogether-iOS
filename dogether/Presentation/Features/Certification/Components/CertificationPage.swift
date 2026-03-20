@@ -26,7 +26,7 @@ final class CertificationPage: BasePage {
     private let certificationScrollView = UIScrollView()
     private let certificationStackView = UIStackView()
     private let certificationListView = CertificationListView()
-    private let statusView = TodoStatusButton()
+    private let statusView = StatusChip()
     private let contentLabel = UILabel()
     private let reviewFeedbackView = ReviewFeedbackView()
 //    private let certificateButton = DogetherButton("인증하기")
@@ -45,7 +45,7 @@ final class CertificationPage: BasePage {
         certificationStackView.setCustomSpacing(8, after: statusView)
         certificationStackView.setCustomSpacing(16, after: contentLabel)
         
-        contentLabel.textColor = .grey0
+        contentLabel.textColor = Color.Text.default
         contentLabel.numberOfLines = 0
     }
     

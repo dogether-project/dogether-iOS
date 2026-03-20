@@ -33,15 +33,15 @@ final class ExaminateStackView: BaseStackView {
     private let descriptionView = {
         let view = UIView()
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.grey600.cgColor
+        view.layer.borderColor = Color.Border.disabled.cgColor
         view.layer.borderWidth = 1
         
         let imageView = UIImageView(image: .notice.withRenderingMode(.alwaysTemplate))
-        imageView.tintColor = .grey400
+        imageView.tintColor = Color.Icon.secondary
         
         let label = UILabel()
         label.text = "검사가 완료된 피드백은 바꿀 수 없어요"
-        label.textColor = .grey400
+        label.textColor = Color.Text.disabled
         label.font = Fonts.body2S
         
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
@@ -69,10 +69,10 @@ final class ExaminateStackView: BaseStackView {
         axis = .vertical
         
         closeButton.setImage(.close.withRenderingMode(.alwaysTemplate), for: .normal)
-        closeButton.tintColor = .grey0
+        closeButton.tintColor = Color.Icon.default
         
         titleLabel.text = "이유를 들려주세요 !"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.textAlignment = .center
         titleLabel.font = Fonts.head1B
     }

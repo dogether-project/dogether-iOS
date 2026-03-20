@@ -22,7 +22,7 @@ final class RankingTopView: BaseView {
     
     private let rankingView = {
         let view = UIView()
-        view.backgroundColor = .grey700
+        view.backgroundColor = Color.Background.surface
         view.layer.cornerRadius = 12
         return view
     }()
@@ -32,14 +32,14 @@ final class RankingTopView: BaseView {
     
     private let nameLabel = {
         let label = UILabel()
-        label.textColor = .grey0
+        label.textColor = Color.Text.default
         label.font = Fonts.body1B
         return label
     }()
     
     private let certificationLabel = {
         let label = UILabel()
-        label.textColor = .blue300
+        label.textColor = Color.Text.primary
         label.font = Fonts.body2S
         return label
     }()
@@ -47,7 +47,7 @@ final class RankingTopView: BaseView {
     private let emptyProfileView = {
         let view = UIView()
         view.layer.cornerRadius = 26
-        view.layer.borderColor = UIColor.grey600.cgColor
+        view.layer.borderColor = Color.Border.disabled.cgColor
         view.layer.borderWidth = 1
         return view
     }()
@@ -55,7 +55,7 @@ final class RankingTopView: BaseView {
     private let emptyNameLabel = {
         let label = UILabel()
         label.text = "-"
-        label.textColor = .grey400
+        label.textColor = Color.Text.disabled
         label.font = Fonts.body1B
         return label
     }()
@@ -63,7 +63,7 @@ final class RankingTopView: BaseView {
     private let emptyCertificationLabel = {
         let label = UILabel()
         label.text = "-"
-        label.textColor = .grey400
+        label.textColor = Color.Text.disabled
         label.font = Fonts.body2S
         return label
     }()

@@ -36,25 +36,25 @@ final class ExaminatePage: BasePage {
     private let descriptionView = ExaminateDescriptionView()
     private let imageView = CertificationImageView(type: .logo)
     private let contentLabel = UILabel()
-    private let rejectButton = ExaminateButton(type: .reject)
-    private let approveButton = ExaminateButton(type: .approve)
+    private let rejectButton = ExaminateButton(type: .status(.reject))
+    private let approveButton = ExaminateButton(type: .status(.approve))
     private let examinationStackView = UIStackView()
     private let reviewFeedbackView = ReviewFeedbackView()
     
     private(set) var currentReview: ReviewEntity?
     private(set) var currentFeedback: String?
-    private(set) var currentResult: ReviewResults?
+    private(set) var currentResult: ReviewStatus?
     
     override func configureView() {
         contentStackView.axis = .vertical
         contentStackView.alignment = .fill
         
         titleLabel.text = "투두를 검사해주세요!"
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.font = Fonts.head1B
         titleLabel.textAlignment = .center
         
-        contentLabel.textColor = .grey0
+        contentLabel.textColor = Color.Text.default
         contentLabel.numberOfLines = 0
         
         examinationStackView.axis = .horizontal

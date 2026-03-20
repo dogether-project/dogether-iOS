@@ -36,11 +36,11 @@ final class CompletePage: BasePage {
 
     private let noticeView = {
         let imageView = UIImageView(image: .notice.withRenderingMode(.alwaysTemplate))
-        imageView.tintColor = .grey400
+        imageView.tintColor = Color.Icon.secondary
         
         let label = UILabel()
         label.text = "카카오톡, 문자 등을 통해 공유해보세요 !"
-        label.textColor = .grey400
+        label.textColor = Color.Text.disabled
         label.font = Fonts.body2R
 
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
@@ -53,7 +53,7 @@ final class CompletePage: BasePage {
     }()
 
     override func configureView() {
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
     }

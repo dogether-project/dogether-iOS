@@ -36,7 +36,7 @@ final class CertificationImageView: BaseImageView {
     override func configureView() {
         image = type.image
         contentMode = .scaleAspectFit
-        backgroundColor = .grey900
+        backgroundColor = Color.Background.default
         clipsToBounds = true
         layer.cornerRadius = 12
         
@@ -51,17 +51,17 @@ final class CertificationImageView: BaseImageView {
         gradientLayer.cornerRadius = 12
         
         gradientView.layer.cornerRadius = 12
-        gradientView.layer.borderColor = UIColor.grey700.cgColor
+        gradientView.layer.borderColor = UIColor.grey700.cgColor // FIXME: 색상 추가 필요
         gradientView.layer.borderWidth = 1
         
         certificationContentLabel.attributedText = NSAttributedString(
             string: type.content ?? "",
             attributes: Fonts.getAttributes(for: Fonts.body1R, textAlignment: .center)
         )
-        certificationContentLabel.textColor = .grey0
+        certificationContentLabel.textColor = Color.Text.default
         certificationContentLabel.numberOfLines = 0
         
-        certificatorLabel.textColor = .grey100
+        certificatorLabel.textColor = .grey100 // FIXME: 색상 추가 필요
         certificatorLabel.font = Fonts.head2B
     }
     

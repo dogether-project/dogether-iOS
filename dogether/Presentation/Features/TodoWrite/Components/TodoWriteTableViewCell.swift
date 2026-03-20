@@ -15,7 +15,7 @@ final class TodoWriteTableViewCell: BaseTableViewCell {
     
     private let tableViewCell = {
         let view = UIView()
-        view.backgroundColor = .grey800
+        view.backgroundColor = Color.Background.elavated
         view.layer.cornerRadius = 8
         return view
     }()
@@ -29,7 +29,7 @@ final class TodoWriteTableViewCell: BaseTableViewCell {
     private let deleteButton = {
         let button = UIButton()
         button.setImage(.close.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .grey300
+        button.tintColor = .grey300 // FIXME: 컬러 추가 필요
         return button
     }()
     
@@ -69,7 +69,7 @@ final class TodoWriteTableViewCell: BaseTableViewCell {
 extension TodoWriteTableViewCell {
     func setExtraInfo(todo: WriteTodoEntity, index: Int, deleteAction: @escaping (Int) -> Void) {
         todoLabel.text = todo.content
-        todoLabel.textColor = todo.enabled ? .grey0 : .grey400
+        todoLabel.textColor = todo.enabled ? Color.Text.default : Color.Text.disabled
         deleteButton.tag = index
         deleteButton.removeTarget(nil, action: nil, for: .touchUpInside)
         deleteButton.isHidden = !todo.enabled

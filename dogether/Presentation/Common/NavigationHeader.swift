@@ -32,13 +32,13 @@ final class NavigationHeader: BaseView{
     private let prevButton = {
         let button = UIButton()
         button.setImage(.arrowLeft.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .grey0
+        button.tintColor = Color.Icon.default
         return button
     }()
     
     private let titleLabel = {
         let label = UILabel()
-        label.textColor = .grey0
+        label.textColor = Color.Text.default
         label.font = Fonts.head2B
         return label
     }()

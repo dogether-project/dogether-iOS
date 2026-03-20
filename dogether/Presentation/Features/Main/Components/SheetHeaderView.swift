@@ -38,7 +38,7 @@ final class SheetHeaderView: BaseView {
     
     override func configureView() {
         dateLabel.text = "2000.01.01"
-        dateLabel.textColor = .grey0
+        dateLabel.textColor = Color.Text.default
         dateLabel.font = Fonts.head2B
         
         prevButton.setImage(.prevButton, for: .normal)

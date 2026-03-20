@@ -26,18 +26,18 @@ final class RankingButton: BaseButton {
     private(set) var currentAlpha: CGFloat?
     
     override func configureView() {
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         layer.cornerRadius = 8
         
         chartImageView.isUserInteractionEnabled = false
         
         label.text = "그룹 활동 한눈에 보기 !"
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         label.font = Fonts.body1S
         label.isUserInteractionEnabled = false
         
         chevronImageView.image = .chevronRight.withRenderingMode(.alwaysTemplate)
-        chevronImageView.tintColor = .grey200
+        chevronImageView.tintColor = Color.Icon.elavated
         chevronImageView.isUserInteractionEnabled = false
     }
     

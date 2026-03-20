@@ -24,14 +24,14 @@ final class CertificateContentPage: BasePage {
     private let descriptionView = {
         let view = UIView()
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.grey600.cgColor
+        view.layer.borderColor = Color.Border.disabled.cgColor
         view.layer.borderWidth = 1
         
         let imageView = UIImageView(image: .notice)
         
         let label = UILabel()
         label.text = "한번 인증한 내용은 바꿀 수 없어요"
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         label.font = Fonts.body2S
         
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
@@ -59,7 +59,7 @@ final class CertificateContentPage: BasePage {
     
     override func configureView() {
         descriptionLabel.text = "인증 내용을 보완해주세요!"
-        descriptionLabel.textColor = .grey0
+        descriptionLabel.textColor = Color.Text.default
         descriptionLabel.textAlignment = .center
         descriptionLabel.font = Fonts.head1B
     }

@@ -16,7 +16,7 @@ final class PastEmptyView: BaseView {
     private let titleLabel = {
         let label = UILabel()
         label.text = "해당 날짜에 작성된 투두가 없어요"
-        label.textColor = .grey200
+        label.textColor = Color.Text.subtle
         label.font = Fonts.head2B
         return label
     }()
@@ -24,7 +24,7 @@ final class PastEmptyView: BaseView {
     private let subTitleLabel = {
         let label = UILabel()
         label.text = "과거 날짜에서는 새로운 투두를 작성할 수 없어요"
-        label.textColor = .grey400
+        label.textColor = Color.Text.disabled
         label.font = Fonts.body2R
         return label
     }()

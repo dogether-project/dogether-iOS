@@ -28,7 +28,7 @@ final class CertificationListContentView: BaseView {
     private(set) var isPagingRequestInProgress: Bool = false
     
     override func configureView() {
-        headerLabel.textColor = .grey0
+        headerLabel.textColor = Color.Text.default
         headerLabel.font = Fonts.head1B
         headerLabel.numberOfLines = 0
         
@@ -104,7 +104,7 @@ final class CertificationListContentView: BaseView {
                 
                 sections = datas.sections.compactMap { section in
                     let filteredTodos = section.todos.filter {
-                        datas.filter == .all || datas.filter == FilterTypes(status: $0.status.rawValue)
+                        datas.filter == .all || datas.filter.reviewStatus == $0.status.reviewStatus
                     }
                     return filteredTodos.isEmpty ? nil : SectionEntity(type: section.type, todos: filteredTodos)
                 }
@@ -134,7 +134,7 @@ extension CertificationListContentView {
         
         if let range = fullText.range(of: targetText) {
             let nsRange = NSRange(range, in: fullText)
-            attributedString.addAttribute(.foregroundColor, value: UIColor.blue300, range: nsRange)
+            attributedString.addAttribute(.foregroundColor, value: Color.Text.primary, range: nsRange)
         }
         
         headerLabel.attributedText = attributedString

@@ -19,7 +19,7 @@ struct MemberCertificationInfo {
     init(
         id: Int = 0,
         content: String = "",
-        status: TodoStatus = .waitCertification,
+        status: TodoStatus = .uncertified,
         certificationContent: String? = nil,
         certificationMediaUrl: String? = nil,
         feedback: String? = nil,

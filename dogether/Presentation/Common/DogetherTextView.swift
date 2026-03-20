@@ -27,7 +27,7 @@ final class DogetherTextView: BaseTextView {
     private(set) var currentIsShowKeyboard: Bool?
 
     override func configureView() {
-        textColor = .grey50
+        textColor = .grey50 // FIXME: 컬러 추가 필요
         font = Fonts.body1S
         
         tintColor = .blue300
@@ -36,7 +36,7 @@ final class DogetherTextView: BaseTextView {
         textContainer.lineFragmentPadding = 0
         textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         layer.borderWidth = 1
         
@@ -44,14 +44,14 @@ final class DogetherTextView: BaseTextView {
             string: type.placeHolder,
             attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
-        placeHolder.textColor = .grey300
+        placeHolder.textColor = Color.Text.secondary
         placeHolder.numberOfLines = 0
         placeHolder.lineBreakMode = .byWordWrapping
         
         textCountLabel.font = Fonts.smallS
         
         maxLengthLabel.text = "/\(type.maxLength)"
-        maxLengthLabel.textColor = .grey400
+        maxLengthLabel.textColor = Color.Text.disabled
         maxLengthLabel.font = Fonts.smallS
     }
     
@@ -100,8 +100,8 @@ final class DogetherTextView: BaseTextView {
             if currentIsShowKeyboard != datas.isShowKeyboard {
                 currentIsShowKeyboard = datas.isShowKeyboard
                 
-                layer.borderColor = datas.isShowKeyboard ? UIColor.blue300.cgColor : UIColor.clear.cgColor
-                textCountLabel.textColor = datas.isShowKeyboard ? .blue300 : .grey400
+                layer.borderColor = datas.isShowKeyboard ? Color.Border.primary.cgColor : UIColor.clear.cgColor
+                textCountLabel.textColor = datas.isShowKeyboard ? Color.Text.primary : Color.Text.disabled
             }
         }
     }

@@ -11,7 +11,7 @@ struct ReviewTodoRequest: Encodable {
     let result: String
     let reviewFeedback: String
     
-    init(result: ReviewResults, reviewFeedback: String) {
+    init(result: ReviewStatus, reviewFeedback: String) {
         self.result = result.rawValue
         self.reviewFeedback = reviewFeedback
     }

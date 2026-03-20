@@ -11,10 +11,10 @@ final class ReviewFeedbackView: BaseView {
     private let reviewFeedbackLabel = UILabel()
     
     override func configureView() {
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         layer.cornerRadius = 8
         
-        reviewFeedbackLabel.textColor = .grey0
+        reviewFeedbackLabel.textColor = Color.Text.default
         reviewFeedbackLabel.numberOfLines = 0
     }
     

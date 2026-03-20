@@ -122,10 +122,10 @@ enum AlertTypes {
     var buttonColor: UIColor {
         switch self {
         case .leaveGroup, .withdraw:
-            return .dogetherRed
+            return .dogetherRed // FIXME: 컬러 추가 필요
         case .pushNotice, .gallery, .camera, .logout, .saveTodo,
                 .needLogout, .needRevoke, .alreadyParticipated, .fullGroup, .unableToParticipate:
-            return .blue300
+            return Color.Background.primary
         }
     }
     

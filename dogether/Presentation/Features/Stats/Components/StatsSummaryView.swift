@@ -14,13 +14,13 @@ final class StatsSummaryView: BaseView {
     private let titleStackView = UIStackView()
     
     private let achievedStackView = StatsSummaryStackView(type: .achievement)
-    private let approveStackView = StatsSummaryStackView(type: .approve)
-    private let rejectStackView = StatsSummaryStackView(type: .reject)
+    private let approveStackView = StatsSummaryStackView(type: .review(.approve))
+    private let rejectStackView = StatsSummaryStackView(type: .review(.reject))
     
     private let summaryStackView = UIStackView()
     
     override func configureView() {
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         layer.masksToBounds = true
         
@@ -29,7 +29,7 @@ final class StatsSummaryView: BaseView {
         
         titleLabel.text = "요약"
         titleLabel.font = Fonts.body1S
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         
         titleStackView.axis = .horizontal
         titleStackView.spacing = 4

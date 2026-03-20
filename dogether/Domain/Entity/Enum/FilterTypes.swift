@@ -7,83 +7,113 @@
 
 import UIKit
 
-enum FilterTypes: String, CaseIterable, BaseEntity {
-    case all = "전체"
-    case wait = "검사 대기"
-    case reject = "노인정"
-    case approve = "인정"
-    
+enum FilterTypes: BaseEntity, Equatable {
+    case all
+    case status(ReviewStatus)
+
+    // MARK: - 스타일 속성
     var tag: Int {
         switch self {
         case .all:
             return 0
-        case .wait:
-            return 1
-        case .reject:
-            return 2
-        case .approve:
-            return 3
+        case .status(let status):
+            switch status {
+            case .pending: return 1
+            case .reject: return 2
+            case .approve: return 3
+            }
         }
     }
-    
+
+    var text: String {
+        switch self {
+        case .all:
+            return "전체"
+        case .status(let status):
+            return status.text
+        }
+    }
+
     var image: UIImage? {
         switch self {
         case .all:
             return nil
-        case .wait:
-            return .wait
-        case .reject:
-            return .reject
-        case .approve:
-            return .approve
+        case .status(let status):
+            return status.image
         }
     }
-    
+
     var backgroundColor: UIColor {
         switch self {
-        case .all, .approve:
-            return .blue300
-        case .wait:
-            return .dogetherYellow
-        case .reject:
-            return .dogetherRed
+        case .all:
+            return Color.Background.primary
+        case .status(let status):
+            return status.backgroundColor
         }
     }
-    
+
     var emptyTitle: String {
         switch self {
-        case .wait:
-            return "검사 대기 중인 투두가 없어요"
-        case .reject:
-            return "노인정받은 투두가 없어요"
-        case .approve:
-            return "인정받은 투두가 없어요"
-        default:
+        case .all:
             return ""
+        case .status(let status):
+            switch status {
+            case .pending:
+                return "검사 대기 중인 투두가 없어요"
+            case .reject:
+                return "노인정받은 투두가 없어요"
+            case .approve:
+                return "인정받은 투두가 없어요"
+            }
         }
     }
-    
-    var reviewResult: ReviewResults? {
+
+    var reviewStatus: ReviewStatus? {
         switch self {
-        case .reject:
-            return .reject
-        case .approve:
-            return .approve
-        default:
+        case .all:
             return nil
+        case .status(let status):
+            return status
         }
     }
 }
 
+// MARK: - CaseIterable 대체
 extension FilterTypes {
-    init?(status: String) {
-        switch status.uppercased() {
+    static var allCases: [FilterTypes] {
+        [.all, .status(.pending), .status(.reject), .status(.approve)]
+    }
+}
+
+// MARK: - 서버 응답 매핑용
+extension FilterTypes {
+    init?(rawValue: String) {
+        switch rawValue {
+        case "전체":
+            self = .all
+        case "검사 대기":
+            self = .status(.pending)
+        case "노인정":
+            self = .status(.reject)
+        case "인정":
+            self = .status(.approve)
+        default:
+            return nil
+        }
+    }
+
+    var rawValue: String {
+        return text
+    }
+
+    init?(statusString: String) {
+        switch statusString.uppercased() {
         case "REVIEW_PENDING":
-            self = .wait
+            self = .status(.pending)
         case "REJECT":
-            self = .reject
+            self = .status(.reject)
         case "APPROVE":
-            self = .approve
+            self = .status(.approve)
         default:
             return nil
         }

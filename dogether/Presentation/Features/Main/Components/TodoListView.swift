@@ -43,10 +43,10 @@ final class TodoListView: BaseView {
         todoListStackView.spacing = 8
         todoListStackView.distribution = .fillEqually
         
-        emptyListTitleLabel.textColor = .grey200
+        emptyListTitleLabel.textColor = Color.Text.subtle
         emptyListTitleLabel.font = Fonts.head2B
         emptyListDescriptionLabel.text = "오늘 하루 이루고 싶은 목표를 입력해보세요!"
-        emptyListDescriptionLabel.textColor = .grey400
+        emptyListDescriptionLabel.textColor = Color.Text.disabled
         emptyListDescriptionLabel.font = Fonts.body2R
         
         emptyListStackView.axis = .vertical
@@ -120,7 +120,7 @@ final class TodoListView: BaseView {
             let isToday = datas.dateOffset == 0
             
             let currentTodoList = datas.todoList.filter {
-                datas.filter == .all || datas.filter == FilterTypes(status: $0.status.rawValue)
+                datas.filter == .all || datas.filter.reviewStatus == $0.status.reviewStatus
             }
             todoListStackView.isHidden = currentTodoList.isEmpty
             emptyListStackView.isHidden = !currentTodoList.isEmpty

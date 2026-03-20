@@ -11,7 +11,7 @@ final class CertificationCell: UICollectionViewCell {
     static let reuseIdentifier = "CertificationCell"
     
     private let imageView = UIImageView()
-    private let statusButton = TodoStatusButton()
+    private let statusView = StatusChip()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,13 +23,13 @@ final class CertificationCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         
         contentView.addSubview(imageView)
-        contentView.addSubview(statusButton)
+        contentView.addSubview(statusView)
         
         imageView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalToSuperview()
         }
         
-        statusButton.snp.makeConstraints {
+        statusView.snp.makeConstraints {
             $0.leading.equalToSuperview().offset(12)
             $0.bottom.equalToSuperview().offset(-12)
         }
@@ -46,6 +46,6 @@ final class CertificationCell: UICollectionViewCell {
     func configure(with certificationItem: TodoEntity) {
         imageView.loadImage(url: certificationItem.certificationMediaUrl)
         
-        statusButton.updateView(certificationItem.status)
+        statusView.updateView(certificationItem.status)
     }
 }

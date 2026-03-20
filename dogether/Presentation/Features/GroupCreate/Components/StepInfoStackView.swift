@@ -18,17 +18,17 @@ final class StepInfoStackView: BaseStackView {
         spacing = 8
         alignment = .leading
         
-        currentStepLabel.textColor = .blue300
+        currentStepLabel.textColor = Color.Text.primary
         currentStepLabel.font = Fonts.body1S
         
         maxStepLabel.text = "/\(CreateGroupSteps.allCases.count)"
-        maxStepLabel.textColor = .grey0
+        maxStepLabel.textColor = Color.Text.default
         maxStepLabel.font = Fonts.body1S
         
         stepLabelStackView.axis = .horizontal
         stepLabelStackView.distribution = .fillProportionally
         
-        stepDescriptionLabel.textColor = .grey0
+        stepDescriptionLabel.textColor = Color.Text.default
         stepDescriptionLabel.font = Fonts.head1B
     }
     

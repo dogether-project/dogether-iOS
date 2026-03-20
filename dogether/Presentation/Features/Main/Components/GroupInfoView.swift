@@ -94,7 +94,7 @@ final class GroupInfoView: BaseView {
         // FIXME: 임시 처리, 추후 수정
         dosikImageView.isHidden = type == .stats
         
-        nameLabel.textColor = .blue300
+        nameLabel.textColor = Color.Text.primary
         nameLabel.font = Fonts.head1B
         
         groupNameStackView.axis = .horizontal
@@ -105,9 +105,9 @@ final class GroupInfoView: BaseView {
         joinCodeStackView = infoStackView(description: "초대코드")
         endDateStackView = infoStackView(description: "종료일")
         
-        memberInfoLabel.textColor = .grey0
-        joinCodeInfoLabel.textColor = .grey0
-        endDateInfoLabel.textColor = .grey0
+        memberInfoLabel.textColor = Color.Text.default
+        joinCodeInfoLabel.textColor = Color.Text.default
+        endDateInfoLabel.textColor = Color.Text.default
         
         joinCodeInfoStackView.axis = .horizontal
         joinCodeInfoStackView.spacing = 2
@@ -117,11 +117,11 @@ final class GroupInfoView: BaseView {
         groupInfoStackView.spacing = 16
         
         durationDescriptionLabel.text = "진행 현황"
-        durationDescriptionLabel.textColor = .grey300
+        durationDescriptionLabel.textColor = Color.Text.secondary
         durationDescriptionLabel.font = Fonts.body2R
         
         durationInfoLabel.text = "(n일차)"
-        durationInfoLabel.textColor = .grey300
+        durationInfoLabel.textColor = Color.Text.secondary
         durationInfoLabel.font = Fonts.smallR
         
         durationInfoStackView.axis = .horizontal
@@ -134,8 +134,8 @@ final class GroupInfoView: BaseView {
         
         durationProgressView.layer.cornerRadius = 4
         durationProgressView.clipsToBounds = true
-        durationProgressView.trackTintColor = .grey800
-        durationProgressView.progressTintColor = .blue300
+        durationProgressView.trackTintColor = .grey800 // FIXME: 컬러 추가 필요
+        durationProgressView.progressTintColor = Color.Icon.primary
         
         if let durationProgressLayer = durationProgressView.subviews.last {
             durationProgressLayer.layer.cornerRadius = 4
@@ -266,7 +266,7 @@ extension GroupInfoView {
             string: description,
             attributes: Fonts.getAttributes(for: Fonts.body2R, textAlignment: .left)
         )
-        label.textColor = .grey300
+        label.textColor = Color.Text.secondary
         
         let stackView = UIStackView(arrangedSubviews: [label])
         stackView.axis = .vertical

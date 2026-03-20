@@ -56,14 +56,14 @@ final class TodoWritePage: BasePage {
             string: "아직 작성된 투두가 없어요",
             attributes: Fonts.getAttributes(for: Fonts.head2B, textAlignment: .center)
         )
-        titleLabel.textColor = .grey400
+        titleLabel.textColor = Color.Text.disabled
         
         let subTitleLabel = UILabel()
         subTitleLabel.attributedText = NSAttributedString(
             string: "오늘 하루 이루고 싶은 목표를 입력해보세요!",
             attributes: Fonts.getAttributes(for: Fonts.body2R, textAlignment: .center)
         )
-        subTitleLabel.textColor = .grey400
+        subTitleLabel.textColor = Color.Text.disabled
         
         let stackView = UIStackView(arrangedSubviews: [imageView, titleLabel, subTitleLabel])
         stackView.axis = .vertical
@@ -95,18 +95,18 @@ final class TodoWritePage: BasePage {
             string: DateFormatterManager.formattedDate(format: .MdE),
             attributes: Fonts.getAttributes(for: Fonts.body1S, textAlignment: .left)
         )
-        dateLabel.textColor = .grey300
-        todoLimitLabel.textColor = .grey0
+        dateLabel.textColor = Color.Text.secondary
+        todoLimitLabel.textColor = Color.Text.default
         
         todoTextField.font = Fonts.body1S
-        todoTextField.tintColor = .blue300
-        todoTextField.textColor = .grey0
+        todoTextField.tintColor = Color.Icon.primary
+        todoTextField.textColor = Color.Text.default
         todoTextField.returnKeyType = .done
         todoTextField.borderStyle = .none
-        todoTextField.backgroundColor = .grey800
+        todoTextField.backgroundColor = Color.Background.elavated
         todoTextField.layer.cornerRadius = 12
         todoTextField.layer.borderWidth = 0
-        todoTextField.layer.borderColor = UIColor.blue300.cgColor
+        todoTextField.layer.borderColor = Color.Border.primary.cgColor
         
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: todoTextField.frame.height))
         todoTextField.leftView = leftPaddingView
@@ -116,12 +116,12 @@ final class TodoWritePage: BasePage {
         todoTextField.rightView = rightPaddingView
         todoTextField.rightViewMode = .always
         
-        todoLimitTextCount.textColor = .grey500
+        todoLimitTextCount.textColor = .grey500 // FIXME: 컬러 추가 필요
         todoLimitTextCount.font = Fonts.smallS
         
-        addButton.backgroundColor = .grey600
+        addButton.backgroundColor = .grey600 // FIXME: 컬러 추가 필요
         addButton.layer.cornerRadius = 8
-        addButton.tintColor = .grey400
+        addButton.tintColor = Color.Icon.secondary
         
         addButtonImageView.image = .plus.withRenderingMode(.alwaysTemplate)
         addButtonImageView.isUserInteractionEnabled = false
@@ -261,24 +261,24 @@ extension TodoWritePage {
         todoTextField.isEnabled = canAddTodo
         todoTextField.attributedPlaceholder = NSAttributedString(
             string: canAddTodo ? "예) 30분 걷기, 책 20페이지 읽기" : "모든 투두를 작성했어요!",
-            attributes: [.foregroundColor: canAddTodo ? UIColor.grey300 : UIColor.grey400]
+            attributes: [.foregroundColor: canAddTodo ? Color.Text.secondary : Color.Text.disabled]
         )
-        todoTextField.backgroundColor = canAddTodo ? .grey800 : .grey500
+        todoTextField.backgroundColor = canAddTodo ? Color.Background.elavated : Color.Background.disabled
         todoLimitTextCount.isHidden = !canAddTodo
 
         todoLimitTextCount.attributedText = makeAttributedText(
             current: "\((currentTodo ?? "").count)",
             maximum: "/\(todoMaxLength)",
-            currentColor: .blue300,
-            maximumColor: .grey400
+            currentColor: Color.Text.primary,
+            maximumColor: Color.Text.disabled
         )
     }
     
     private func updateAddButtonStatus() {
         let trimmed = (currentTodo ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         addButton.isEnabled = !trimmed.isEmpty
-        addButton.backgroundColor = trimmed.isEmpty ? .grey600 : .blue300
-        addButton.tintColor = trimmed.isEmpty ? .grey400 : .grey900
+        addButton.backgroundColor = trimmed.isEmpty ? .grey600 : Color.Background.primary // FIXME: 컬러 추가 필요
+        addButton.tintColor = trimmed.isEmpty ? Color.Icon.secondary : .grey900 // FIXME: 컬러 추가 필요
     }
     
     private func updateTodoLimitLabel() {
@@ -288,8 +288,8 @@ extension TodoWritePage {
             prefix: "추가 가능 투두 ",
             current: current,
             maximum: "/\(todoMaxCount)",
-            currentColor: .blue300,
-            maximumColor: .grey600,
+            currentColor: Color.Text.primary,
+            maximumColor: .grey600, // FIXME: 컬러 추가 필요
             baseAttributes: Fonts.getAttributes(for: Fonts.head1B, textAlignment: .left)
         )
     }

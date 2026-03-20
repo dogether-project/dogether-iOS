@@ -16,7 +16,7 @@ final class CertificationSectionHeader: UICollectionReusableView {
         super.init(frame: frame)
         
         titleLabel.font = .boldSystemFont(ofSize: 18)
-        titleLabel.textColor = .white
+        titleLabel.textColor = Color.Text.default
         
         addSubview(titleLabel)
         

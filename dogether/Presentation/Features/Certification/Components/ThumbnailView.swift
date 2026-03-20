@@ -16,7 +16,7 @@ final class ThumbnailView: BaseView {
     private(set) var currentIsHighlizghted: Bool?
     
     override func configureView() {
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         layer.borderWidth = 1
         
@@ -24,7 +24,7 @@ final class ThumbnailView: BaseView {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 12
         
-        doneOverlayView.backgroundColor = .grey800.withAlphaComponent(0.8)
+        doneOverlayView.backgroundColor = Color.Background.dim
         doneOverlayView.layer.cornerRadius = 12
     }
     

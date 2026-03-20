@@ -16,7 +16,7 @@ final class DoneView: BaseView {
     private let titleLabel = {
         let label = UILabel()
         label.text = "그룹 활동 기간이 모두 끝났어요 !"
-        label.textColor = .grey0
+        label.textColor = Color.Text.default
         label.font = Fonts.head2B
         return label
     }()
@@ -24,7 +24,7 @@ final class DoneView: BaseView {
     private let subTitleLabel = {
         let label = UILabel()
         label.text = "오늘이 지나면 이 페이지는 더 이상 열 수 없어요"
-        label.textColor = .grey300
+        label.textColor = Color.Text.secondary
         label.font = Fonts.body2R
         return label
     }()

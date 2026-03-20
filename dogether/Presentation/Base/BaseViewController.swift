@@ -19,7 +19,7 @@ class BaseViewController: UIViewController, CoordinatorDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .grey900
+        view.backgroundColor = Color.Background.default
         
         guard let pages else { return }
         configurePages(pages)

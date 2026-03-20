@@ -27,10 +27,9 @@ final class MyPageButton: BaseButton {
         iconImageView.image = icon
         
         buttonTitleLabel.text = title
-        buttonTitleLabel.textColor = .grey100
+        buttonTitleLabel.textColor = Color.Text.subtle
         buttonTitleLabel.font = Fonts.body1R
-        
-        chevronImageView.tintColor = .grey200
+        chevronImageView.tintColor = Color.Border.elavated
     }
     
     override func configureAction() { }

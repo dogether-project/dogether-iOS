@@ -24,7 +24,7 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
             TodoEntity(
                 id: $0.id,
                 content: $0.content,
-                status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
+                status: TodoStatus(rawValue: $0.status) ?? .uncertified,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,
                 reviewFeedback: $0.reviewFeedback
@@ -42,7 +42,7 @@ final class ChallengeGroupsRepository: ChallengeGroupsProtocol {
             TodoEntity(
                 id: $0.id,
                 content: $0.content,
-                status: TodoStatus(rawValue: $0.status) ?? .waitCertification,
+                status: TodoStatus(rawValue: $0.status) ?? .uncertified,
                 thumbnailStatus: $0.isRead ? .done : .yet,
                 certificationContent: $0.certificationContent,
                 certificationMediaUrl: $0.certificationMediaUrl,

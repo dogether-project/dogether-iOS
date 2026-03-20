@@ -28,14 +28,14 @@ final class DogetherHeader: BaseView {
     private let dogetherIconTypo = {
         let imageView = UIImageView()
         imageView.image = .logoTypo.withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = .grey0
+        imageView.tintColor = Color.Icon.default
         return imageView
     }()
     
     private let myPageButton = {
         let button = UIButton()
         button.setImage(.myPage.withRenderingMode(.alwaysTemplate), for: .normal)
-        button.tintColor = .grey0
+        button.tintColor = Color.Icon.default
         return button
     }()
     

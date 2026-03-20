@@ -10,10 +10,10 @@ import Foundation
 struct ExaminateViewDatas: BaseEntity {
     var index: Int
     var reviews: [ReviewEntity]
-    var result: ReviewResults?
+    var result: ReviewStatus?
     var feedback: String
-    
-    init(index: Int = 0, reviews: [ReviewEntity] = [], result: ReviewResults? = nil, feedback: String = "") {
+
+    init(index: Int = 0, reviews: [ReviewEntity] = [], result: ReviewStatus? = nil, feedback: String = "") {
         self.index = index
         self.reviews = reviews
         self.result = result

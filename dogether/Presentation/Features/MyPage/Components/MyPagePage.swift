@@ -50,8 +50,8 @@ final class MyPagePage: BasePage {
     private let statsLabel = UILabel()
     private let statsButton = DogetherButton("통계 보러가기")
     private let statsContainerView = UIView()
-    private let myTodosListButton = MyPageButton(icon: .timer, title: "인증목록")
-    private let groupManagementButton = MyPageButton(icon: .group, title: "그룹관리")
+    private let myTodosListButton = MyPageButton(icon: .timer, title: "인증 목록")
+    private let groupManagementButton = MyPageButton(icon: .group, title: "그룹 관리")
     private let settingButton = MyPageButton(icon: .setting, title: "설정")
     private let mypageButtonStackView = UIStackView()
     
@@ -61,12 +61,12 @@ final class MyPagePage: BasePage {
         
         statsLabel.text = "그룹별 진행 상황을 모아봤어요!"
         statsLabel.font = Fonts.body1S
-        statsLabel.textColor = .grey0
+        statsLabel.textColor = Color.Text.default
         statsLabel.textAlignment = .center
         
         statsContainerView.backgroundColor = .clear
         statsContainerView.layer.cornerRadius = 12
-        statsContainerView.layer.borderColor = UIColor.grey800.cgColor
+        statsContainerView.layer.borderColor = Color.Border.disabled.cgColor
         statsContainerView.layer.borderWidth = 1.5
         
         mypageButtonStackView.axis = .vertical

@@ -27,11 +27,11 @@ final class ErrorPage: BasePage {
     
     override func configureView() {
         titleLabel.text = "서비스 이용이 원활하지 않아요"
-        titleLabel.textColor = .grey200
+        titleLabel.textColor = Color.Text.subtle
         titleLabel.font = Fonts.head2B
         
         descriptionLabel.text = "잠시 후 다시 접속해주세요."
-        descriptionLabel.textColor = .grey400
+        descriptionLabel.textColor = Color.Text.disabled
         descriptionLabel.font = Fonts.body2R
         
         stackView.axis = .vertical

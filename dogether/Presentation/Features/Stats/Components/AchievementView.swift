@@ -19,16 +19,16 @@ final class AchievementView: BaseView {
     private let barMaxHeight: CGFloat = 187
     
     override func configureView() {
-        backgroundColor = .grey800
+        backgroundColor = Color.Background.elavated
         layer.cornerRadius = 12
         clipsToBounds = true
         
-        titleIconImageView.tintColor = .grey0
+        titleIconImageView.tintColor = Color.Icon.default
         titleIconImageView.contentMode = .scaleAspectFit
         
         titleLabel.text = "인증한 기간"
         titleLabel.font = Fonts.body1S
-        titleLabel.textColor = .grey0
+        titleLabel.textColor = Color.Text.default
         
         titleStackView.axis = .horizontal
         titleStackView.spacing = 8
@@ -57,7 +57,7 @@ final class AchievementView: BaseView {
             let label = UILabel()
             label.text = "\($0)"
             label.font = Fonts.body2S
-            label.textColor = .grey400
+            label.textColor = Color.Text.disabled
             return label
         }.forEach { yAxisStackView.addArrangedSubview($0) }
         
@@ -128,7 +128,7 @@ final class AchievementView: BaseView {
             backgroundImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
             
             let filledBar = UIView()
-            filledBar.backgroundColor = (index == data.count - 1) ? .blue300 : .blue200
+            filledBar.backgroundColor = (index == data.count - 1) ? Color.Background.primary : .blue200 // FIXME: 컬러 추가 필요
             filledBar.layer.cornerRadius = 4
             filledBar.clipsToBounds = true
             backgroundBar.addSubview(filledBar)
@@ -147,7 +147,7 @@ final class AchievementView: BaseView {
             let dayLabel = UILabel()
             dayLabel.text = "\(achievement.day)일차"
             dayLabel.font = Fonts.body2S
-            dayLabel.textColor = .grey0
+            dayLabel.textColor = Color.Text.default
             dayLabel.textAlignment = .center
             dayLabel.snp.makeConstraints {
                 $0.width.equalTo(50)
@@ -160,14 +160,14 @@ final class AchievementView: BaseView {
 extension AchievementView {
     private func addSpeechBubble(to container: UIView, ratio: CGFloat) {
         let bubbleContainer = UIView()
-        bubbleContainer.backgroundColor = .blue300
+        bubbleContainer.backgroundColor = Color.Background.primary
         bubbleContainer.clipsToBounds = true
         container.addSubview(bubbleContainer)
         
         let bubbleLabel = UILabel()
         bubbleLabel.text = "\(Int(ratio * 100))% 달성중"
         bubbleLabel.font = Fonts.body2S
-        bubbleLabel.textColor = .grey0
+        bubbleLabel.textColor = Color.Text.default
         bubbleLabel.textAlignment = .center
         bubbleContainer.addSubview(bubbleLabel)
         
@@ -185,7 +185,7 @@ extension AchievementView {
         bubbleContainer.layer.cornerRadius = 15
         
         let tailImageView = UIImageView(image: .blueTail)
-        tailImageView.tintColor = .blue300
+        tailImageView.tintColor = Color.Icon.primary
         tailImageView.contentMode = .scaleAspectFit
         container.addSubview(tailImageView)
         

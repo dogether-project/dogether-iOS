@@ -22,7 +22,7 @@ final class CertificationSummaryStatView: BaseView {
     private let countLabel = UILabel()
 
     override func configureView() {
-        backgroundColor = .grey700
+        backgroundColor = Color.Background.surface
         layer.cornerRadius = 12
         clipsToBounds = true
         
@@ -31,11 +31,11 @@ final class CertificationSummaryStatView: BaseView {
         
         titleLabel.text = type.text
         titleLabel.font = Fonts.body2S
-        titleLabel.textColor = .grey200
+        titleLabel.textColor = Color.Text.subtle
         titleLabel.textAlignment = .center
         
         countLabel.font = Fonts.head2B
-        countLabel.textColor = .grey0
+        countLabel.textColor = Color.Text.default
         countLabel.textAlignment = .center
     }
     

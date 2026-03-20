@@ -14,18 +14,18 @@ enum ButtonStatus {
     var textColor: UIColor {
         switch self {
         case .enabled:
-            return .grey800
+            return Color.Text.inverse
         case .disabled:
-            return .grey400
+            return Color.Text.disabled
         }
     }
     
     var backgroundColor: UIColor {
         switch self {
         case .enabled:
-            return .blue300
+            return Color.Background.primary
         case .disabled:
-            return .grey500
+            return Color.Background.disabled
         }
     }
 }

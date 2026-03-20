@@ -31,12 +31,12 @@ final class EmptyStateView: BaseView {
         
         titleLabel.text = title
         titleLabel.font = Fonts.head2B
-        titleLabel.textColor = .grey200
+        titleLabel.textColor = Color.Text.subtle
         titleLabel.textAlignment = .center
         
         descriptionLabel.text = descriptionText
         descriptionLabel.font = Fonts.body2R
-        descriptionLabel.textColor = .grey400
+        descriptionLabel.textColor = Color.Text.disabled
         descriptionLabel.textAlignment = .center
         descriptionLabel.numberOfLines = 2
     }
