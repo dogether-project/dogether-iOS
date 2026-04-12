@@ -35,9 +35,12 @@ extension SplashViewController {
             
             if try await viewModel.checkParticipating() {
                 coordinator?.setNavigationController(StartViewController())
-            } else {
-                coordinator?.setNavigationController(MainViewController())
+                coordinator?.handleDeepLinkIfNeeded()
+                return
             }
+            
+            coordinator?.setNavigationController(MainViewController())
+            coordinator?.handleDeepLinkIfNeeded()
         }
     }
 }
