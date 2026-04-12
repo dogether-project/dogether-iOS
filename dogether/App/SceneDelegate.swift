@@ -28,7 +28,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         Task { @MainActor in
             if let userActivity = connectionOptions.userActivities.first {
-                try await DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
+                DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
             }
             
             coordinator?.setNavigationController(SplashViewController())
@@ -37,7 +37,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         Task { @MainActor in
-            try await DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
+            DeepLinkManager.shared.resolveUrl(userActivity: userActivity)
             coordinator?.handleDeepLinkIfNeeded()
         }
     }

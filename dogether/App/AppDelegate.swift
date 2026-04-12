@@ -8,10 +8,9 @@
 import UIKit
 
 import FirebaseCore
-import ChottuLinkSDK
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, ChottuLinkDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
@@ -23,13 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, ChottuLinkDelegate {
         UNUserNotificationCenter.current().delegate = PushNoticeManager.shared
         FirebaseApp.configure()
         application.registerForRemoteNotifications()
-        
-        // MARK: - ChottuLink 
-        let config = CLConfiguration(
-            apiKey: SystemManager.chottuLinkAPIKey,
-            delegate: self
-        )
-        ChottuLink.initialize(config: config)
         
         return true
     }

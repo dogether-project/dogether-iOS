@@ -10,7 +10,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:dogether-app.chottu.link</string>
+		<string>applinks:dogether.site</string>
 	</array>
 </dict>
 </plist>
