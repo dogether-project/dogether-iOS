@@ -17,8 +17,9 @@ final class MainViewController: BaseViewController {
         pages = [mainPage]
 
         super.viewDidLoad()
-        
-        onAppear()
+
+        checkAuthorization()
+        getReviews()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,11 +39,6 @@ final class MainViewController: BaseViewController {
 }
 
 extension MainViewController {
-    private func onAppear() {
-        checkAuthorization()
-        getReviews()
-    }
-    
     private func checkAuthorization() {
         Task { [weak self] in
             guard let self else { return }
@@ -158,25 +154,16 @@ extension MainViewController: MainDelegate {
     
     func inviteAction() {
         let group = viewModel.currentGroup
+        let inviteItems = SystemManager.inviteGroup(
+            groupName: group.name,
+            joinCode: group.joinCode
+        )
 
-        Task {
-            do {
-                let inviteItems = try await SystemManager.inviteGroup(
-                    groupName: group.name,
-                    joinCode: group.joinCode
-                )
-
-                await MainActor.run {
-                    let activityVC = UIActivityViewController(
-                        activityItems: inviteItems,
-                        applicationActivities: nil
-                    )
-                    present(activityVC, animated: true)
-                }
-            } catch {
-                // FIXME: 초대 링크 생성 실패 처리
-            }
-        }
+        let activityVC = UIActivityViewController(
+            activityItems: inviteItems,
+            applicationActivities: nil
+        )
+        present(activityVC, animated: true)
     }
     
     func goPastAction() {

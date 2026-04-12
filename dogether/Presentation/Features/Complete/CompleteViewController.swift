@@ -37,26 +37,16 @@ extension CompleteViewController: CompleteDelegate {
     }
     
     func shareJoinCodeAction() {
-           let data = viewModel.completeViewDatas.value
+        let data = viewModel.completeViewDatas.value
+        let inviteItems = SystemManager.inviteGroup(
+            groupName: data.groupEntity.name,
+            joinCode: data.joinCode
+        )
 
-           Task {
-               do {
-                   let inviteItems = try await SystemManager.inviteGroup(
-                       groupName: data.groupEntity.name,
-                       joinCode: data.joinCode
-                   )
-
-                   await MainActor.run {
-                       let activityVC = UIActivityViewController(
-                           activityItems: inviteItems,
-                           applicationActivities: nil
-                       )
-                       present(activityVC, animated: true)
-                   }
-
-               } catch {
-                   // FIXME: 초대 링크 생성 실패 에러처리
-               }
-           }
-       }
+        let activityVC = UIActivityViewController(
+            activityItems: inviteItems,
+            applicationActivities: nil
+        )
+        present(activityVC, animated: true)
+    }
 }
