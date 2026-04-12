@@ -48,6 +48,20 @@ final class NavigationCoordinator: NSObject {
 
 // MARK: view
 extension NavigationCoordinator {
+    func handleDeepLinkIfNeeded() {
+        if checkCurrentViewController(
+            SplashViewController.self,
+            UpdateViewController.self,
+            OnboardingViewController.self
+        ) { return }
+        
+        guard let code = DeepLinkManager.shared.consumeInviteCode() else { return }
+        
+        let groupJoinViewController = GroupJoinViewController()
+        let groupJoinViewDatas = GroupJoinViewDatas(code: code)
+        pushViewController(groupJoinViewController, datas: groupJoinViewDatas)
+    }
+    
     func setNavigationController(
         _ viewControllers: BaseViewController...,
         datas: (any BaseEntity)? = nil,
